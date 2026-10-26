@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 26.10.2026, App-Version **1.2**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
+Stand 26.10.2026, App-Version **1.3**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
 und auf dem iPhone des Nutzers als Home-Bildschirm-App installiert.
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -38,7 +38,8 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
 - **Messfenster der Steigung** 10 m / 50 m / 200 m (Standard) / 1 km. Höhenmeter hängen stark davon ab:
   164 / 159 / 136 / 80 m; eine Tabelle dazu steht in der App unter „Woher die Zahlen kommen“.
 - Wasser/Verpflegung und Staffelwechsel standardmäßig **aus**, einschaltbar. Halbmarathon-Marke immer sichtbar.
-- Straßennamen am Fuß des Profils, aktuelle Straße blau.
+- Straßennamen am Fuß des Profils, aktuelle Straße blau. Ist das Profil unter 180 px hoch (Kartengröße-Stufen 2 und 3,
+  kleine iPhones schon ab Stufe 1), entfallen sie, damit die Kurve frei bleibt (seit 1.3, Wunsch des Nutzers).
 - **Kartengröße umschaltbar, zur Probe** (seit 1.2): Knopf ↕︎ unter +/− auf der Kartenseite, nur im Vollbild, schaltet
   reihum durch die Höhe der Anzeige-Seiten: Stufe 0 = wie bisher (150 px), 1 = 230 px (**Start**), 2 = 300 px,
   3 = 350 px. Die Zahlenseite verteilt dann ihre Zeilen und bekommt größere Zahlen. Das Profil behält mindestens
