@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 26.10.2026, App-Version **1.5**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
+Stand 26.10.2026, App-Version **1.6**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
 und auf dem iPhone des Nutzers als Home-Bildschirm-App installiert.
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -48,13 +48,16 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
 - **Start und Ziel** im Profil (seit 1.4): Start im Stil der Halbmarathon-Marke, Ziel als karierte Zielflagge; auf der
   Karte ein kariertes Feld am Streckenende (seit 1.5).
 - **Zieleinlauf** (seit 1.5): Überquert der Läufer die Ziellinie (Abspielen, Wischen oder Knöpfe), erscheint eine
-  Zielkarte mit Zielband, „ZIEL“ im Farbverlauf der Steigungsklassen, Ø-Pace, Zielzeit, Höhenmetern und Kosten der
-  Steigung, dazu etwa 3 s Konfetti (entfällt bei „Bewegung reduzieren“). Antippen schließt. Liegt fest über der
+  Zielkarte mit Zielband, „ZIEL“ im Farbverlauf der Steigungsklassen, Ø-Pace, Zielzeit, Bergauf/Bergab und dem Satz
+  „Das Höhenprofil kostet 1:32 min.“ (Wortlaut vom Nutzer gewünscht, ab 60 s in min), dazu etwa 3 s Konfetti (entfällt bei „Bewegung reduzieren“). Antippen schließt. Liegt fest über der
   Seite, schiebt nichts.
 - **Hell/Dunkel-Umschalter** (Sonne/Mond) links oben in der Anzeige, **Versionsnummer** rechts oben (nur Vollbild).
   Beide liegen absolut im Leerraum über „Kilometer“ und „Höhe“ und schieben nichts. Der Umschalter wechselt zum
   Gegenteil des Sichtbaren; landet er dabei auf der Systemeinstellung, folgt die App wieder dem System
   (`localStorage` `hhm-theme`, gesetzt im Kopf vor dem ersten Zeichnen). Versionstext kommt aus `APP_VERSION`.
+- **Farben** (seit 1.6): Hell gedämpft, kein reines Weiß (`--surface` #eef2f5, `--bg` #dbe2e8), weil es blendete.
+  Kartenuntergrund wird nach dem Zeichnen der Kacheln getönt: dunkel per `screen` aufgehellt, hell per `multiply`
+  abgedunkelt (`drawMap`, zwei Werte). Die Kachel-JPGs selbst sind unverändert.
 - Keine Textmarkierung (`user-select: none`), keine Emoji-Darstellung von Pfeilen (`︎`).
 
 ## Datenaufbereitung (`werkzeuge/hamburg/work/`)
