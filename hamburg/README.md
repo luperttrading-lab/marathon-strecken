@@ -17,4 +17,4 @@ Inoffiziell, kein Angebot des Veranstalters.
 ## Updates
 
 `APP_VERSION` in `index.html` und `version.json` bei jeder Änderung gemeinsam hochzählen. Die App prüft beim Öffnen und beim Zurückholen aus dem Hintergrund,
-ein Tipp auf die Versionsnummer im Kopf prüft von Hand.
+ein Tipp auf die Versionsnummer (im Vollbild rechts oben in der Anzeige) prüft von Hand.
