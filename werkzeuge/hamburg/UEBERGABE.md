@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 26.10.2026, App-Version **1.1**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
+Stand 26.10.2026, App-Version **1.2**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
 und auf dem iPhone des Nutzers als Home-Bildschirm-App installiert.
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -22,7 +22,8 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
 ## Entscheidungen des Nutzers (nicht wieder aufmachen, ohne zu fragen)
 
 - **Nichts darf springen.** Anzeige oben mit fester Höhe: Texte einzeilig mit Auslassungspunkten, die Kartenseite
-  bestimmt nie die Höhe (`contain: size`-Prinzip, die Zahlenseite gibt sie vor).
+  bestimmt nie die Höhe (`contain: size`-Prinzip; in Kartengröße-Stufe 0 gibt die Zahlenseite sie vor, ab Stufe 1
+  gilt eine feste Höhe für beide Seiten).
 - **Start im Vollbild** (Klasse `body.run`): Anzeige, Läuferblick, Übersicht und Steuerung auf einem Bildschirm.
   ☰ führt zu Zwischenzeiten, Einstellungen, Rampen und Quellen.
 - **Anzeige oben hat zwei wischbare Seiten: Zahlen und Karte.** Fotoseiten (Wikimedia, Sehenswertes, Straßenfotos
@@ -38,6 +39,11 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   164 / 159 / 136 / 80 m; eine Tabelle dazu steht in der App unter „Woher die Zahlen kommen“.
 - Wasser/Verpflegung und Staffelwechsel standardmäßig **aus**, einschaltbar. Halbmarathon-Marke immer sichtbar.
 - Straßennamen am Fuß des Profils, aktuelle Straße blau.
+- **Kartengröße umschaltbar, zur Probe** (seit 1.2): Knopf ↕︎ unter +/− auf der Kartenseite, nur im Vollbild, schaltet
+  reihum durch die Höhe der Anzeige-Seiten: Stufe 0 = wie bisher (150 px), 1 = 230 px (**Start**), 2 = 300 px,
+  3 = 350 px. Die Zahlenseite verteilt dann ihre Zeilen und bekommt größere Zahlen. Das Profil behält mindestens
+  120 px; auf kleinen Bildschirmen werden Stufen mit gleicher Höhe übersprungen. `localStorage` `hhm-gr`.
+  **Offen:** Der Nutzer probiert die Stufen aus und entscheidet dann, welche wieder rausfliegen.
 - **Hell/Dunkel-Umschalter** (Sonne/Mond) links oben in der Anzeige, **Versionsnummer** rechts oben (nur Vollbild).
   Beide liegen absolut im Leerraum über „Kilometer“ und „Höhe“ und schieben nichts. Der Umschalter wechselt zum
   Gegenteil des Sichtbaren; landet er dabei auf der Systemeinstellung, folgt die App wieder dem System
