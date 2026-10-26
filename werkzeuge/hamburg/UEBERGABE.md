@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 26.10.2026, App-Version **1.6**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
+Stand 26.10.2026, App-Version **1.7**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
 und auf dem iPhone des Nutzers als Home-Bildschirm-App installiert.
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -55,7 +55,10 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   Beide liegen absolut im Leerraum über „Kilometer“ und „Höhe“ und schieben nichts. Der Umschalter wechselt zum
   Gegenteil des Sichtbaren; landet er dabei auf der Systemeinstellung, folgt die App wieder dem System
   (`localStorage` `hhm-theme`, gesetzt im Kopf vor dem ersten Zeichnen). Versionstext kommt aus `APP_VERSION`.
-- **Farben** (seit 1.6): Hell gedämpft, kein reines Weiß (`--surface` #eef2f5, `--bg` #dbe2e8), weil es blendete.
+- **Farben** (seit 1.6, in 1.7 nachgedunkelt): Hell gedämpft, kein reines Weiß (`--surface` #e2e7eb, `--bg` #cdd5dc,
+  `--muted` #4f5f6c), weil es blendete. Die Strecke auf der hellen Karte hat einen dunklen Rand (`--ink`), sonst
+  verschwinden die flachen, hellgrauen Abschnitte im Kartengrund. Dunkel bleibt bewusst dunkler: die Strecke hebt
+  sich dort besser ab.
   Kartenuntergrund wird nach dem Zeichnen der Kacheln getönt: dunkel per `screen` aufgehellt, hell per `multiply`
   abgedunkelt (`drawMap`, zwei Werte). Die Kachel-JPGs selbst sind unverändert.
 - Keine Textmarkierung (`user-select: none`), keine Emoji-Darstellung von Pfeilen (`︎`).

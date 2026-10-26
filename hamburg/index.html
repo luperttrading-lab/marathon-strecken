@@ -8,10 +8,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="HH-Marathon">
 <meta name="theme-color" content="#0b141c" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#dbe2e8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#cdd5dc" media="(prefers-color-scheme: light)">
 <script>
 /* Hell/Dunkel: eigene Wahl (hhm-theme) vor dem ersten Zeichnen setzen, sonst blitzt kurz die Systemdarstellung auf */
-const THEME_BG = { light: "#dbe2e8", dark: "#0b141c" };
+const THEME_BG = { light: "#cdd5dc", dark: "#0b141c" };
 function applyTheme(t) {
   const r = document.documentElement;
   if (t) r.dataset.theme = t; else delete r.dataset.theme;
@@ -45,11 +45,11 @@ body { margin: 0; } img { max-width: 100%; } [hidden] { display: none !important
 <style>
 /* Layout: ein Instrumentenpult in einer Spalte – Anzeige, wischbarer Läuferblick, ganze Strecke, Einstellungen, Rampenliste */
 :root {
-  --bg: #dbe2e8;           /* gedämpft: reines Weiß blendete */
-  --surface: #eef2f5;
+  --bg: #cdd5dc;           /* gedämpft: reines Weiß blendete, 1.6 war noch zu hell */
+  --surface: #e2e7eb;
   --ink: #102130;
-  --muted: #586977;
-  --rule: #c7d1da;
+  --muted: #4f5f6c;
+  --rule: #bcc7d1;
   --grid: rgba(16, 33, 48, 0.09);
   --blue: #1b5bd0;          /* die blaue Linie auf dem Asphalt */
   --blue-soft: rgba(27, 91, 208, 0.12);
@@ -352,7 +352,7 @@ body.run .close { border-color: var(--edge); }
 </div>
 <div class="wrap">
   <header class="top">
-    <span class="eyebrow">Haspa Marathon Hamburg · Kurs 2025/2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.6</button></span>
+    <span class="eyebrow">Haspa Marathon Hamburg · Kurs 2025/2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.7</button></span>
     <h1>Steigungsprofil zum Durchwischen</h1>
     <p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>
   </header>
@@ -360,7 +360,7 @@ body.run .close { border-color: var(--edge); }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <button type="button" class="corner l" id="theme-btn" aria-label="Hell oder dunkel umschalten"><svg class="sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg class="moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.6 10.4A6 6 0 0 1 5.6 2.4a6 6 0 1 0 8 8z" fill="currentColor"/></svg></button>
-    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.6</button>
+    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.7</button>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -1115,10 +1115,10 @@ function drawMap() {
     const im = mapImg(name); if (im.complete && im.naturalWidth) c.drawImage(im, x, y, ww, hh);
   }
   // Untergrund: dunkel etwas aufhellen (Straßen sonst kaum zu sehen), hell etwas abdunkeln (blendet sonst)
-  c.globalCompositeOperation = isDark() ? "screen" : "multiply"; c.fillStyle = isDark() ? "rgba(255, 255, 255, 0.13)" : "#cfd7de";
+  c.globalCompositeOperation = isDark() ? "screen" : "multiply"; c.fillStyle = isDark() ? "rgba(255, 255, 255, 0.13)" : "#c3cdd5";
   c.fillRect(0, 0, w, h); c.globalCompositeOperation = "source-over";
   const g = WIN[S.win].g, P = RP.map(([a, b]) => { const [gx, gy] = merc(a, b, lvl); return [SX(gx), SY(gy)]; });
-  c.lineCap = "round"; c.lineJoin = "round"; c.strokeStyle = COL["--surface"]; c.lineWidth = 7; c.beginPath();
+  c.lineCap = "round"; c.lineJoin = "round"; c.strokeStyle = COL[isDark() ? "--surface" : "--ink"]; c.lineWidth = 7; c.beginPath();
   P.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.stroke();
   const paths = CLASS_TOK.map(() => new Path2D());
   for (let i = 0; i < P.length - 1; i++) { const p = paths[cls(valAt(g, (RK[i] + RK[i + 1]) / 2))]; p.moveTo(P[i][0], P[i][1]); p.lineTo(P[i + 1][0], P[i + 1][1]); }
@@ -1217,7 +1217,7 @@ readColors(); renderLegend(); recompute(); setPos(S.pos); requestAnimationFrame(
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { applyGr(); dirty = true; });
 </script>
 <script>
-const APP_VERSION = '1.6';
+const APP_VERSION = '1.7';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
