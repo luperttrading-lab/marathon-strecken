@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 26.10.2026, App-Version **1.4**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
+Stand 26.10.2026, App-Version **1.5**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
 und auf dem iPhone des Nutzers als Home-Bildschirm-App installiert.
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -45,7 +45,12 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   1 = 230 px (**Start**), 2 = 300 px. Die Zahlenseite verteilt dann ihre Zeilen und bekommt größere Zahlen. Das Profil
   behält mindestens 120 px; auf kleinen Bildschirmen werden Stufen mit gleicher Höhe übersprungen. `localStorage`
   `hhm-gr`. Eine vierte Stufe (350 px) hat der Nutzer nach dem Test verworfen: Profil zu klein, Karte kaum größer.
-- **Start und Ziel** stehen im Profil als Marken im Stil der Halbmarathon-Marke (seit 1.4).
+- **Start und Ziel** im Profil (seit 1.4): Start im Stil der Halbmarathon-Marke, Ziel als karierte Zielflagge; auf der
+  Karte ein kariertes Feld am Streckenende (seit 1.5).
+- **Zieleinlauf** (seit 1.5): Überquert der Läufer die Ziellinie (Abspielen, Wischen oder Knöpfe), erscheint eine
+  Zielkarte mit Zielband, „ZIEL“ im Farbverlauf der Steigungsklassen, Ø-Pace, Zielzeit, Höhenmetern und Kosten der
+  Steigung, dazu etwa 3 s Konfetti (entfällt bei „Bewegung reduzieren“). Antippen schließt. Liegt fest über der
+  Seite, schiebt nichts.
 - **Hell/Dunkel-Umschalter** (Sonne/Mond) links oben in der Anzeige, **Versionsnummer** rechts oben (nur Vollbild).
   Beide liegen absolut im Leerraum über „Kilometer“ und „Höhe“ und schieben nichts. Der Umschalter wechselt zum
   Gegenteil des Sichtbaren; landet er dabei auf der Systemeinstellung, folgt die App wieder dem System
