@@ -1,12 +1,24 @@
 # Marathon-Strecken
 
 Steigungsprofile von Marathonstrecken als Web-Apps für den Home-Bildschirm, ausgeliefert über GitHub Pages.
+Inoffiziell, kein Angebot der Veranstalter.
 
-| Strecke | App | Ordner |
-|---|---|---|
-| Hamburg (Kurs 2025/2026) | https://luperttrading-lab.github.io/marathon-strecken/hamburg/ | [`hamburg/`](hamburg/) |
+**Startseite mit Auswahl:** https://luperttrading-lab.github.io/marathon-strecken/ – in Safari öffnen, *Teilen → Zum Home-Bildschirm*,
+dann liegen alle Strecken in einer App.
 
-Jede Strecke liegt in einem eigenen Ordner mit eigenem Service Worker und eigener Versionsnummer, damit die Home-Bildschirm-Adresse einer Strecke stabil bleibt.
+| Strecke | App | Ordner | Aufbereitung |
+|---|---|---|---|
+| Hamburg (Kurs 2025/2026) | https://luperttrading-lab.github.io/marathon-strecken/hamburg/ | [`hamburg/`](hamburg/) | [`werkzeuge/hamburg/`](werkzeuge/hamburg/UEBERGABE.md) |
+| Frankfurt (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/frankfurt/ | [`frankfurt/`](frankfurt/) | [`werkzeuge/frankfurt/`](werkzeuge/frankfurt/UEBERGABE.md) |
 
-Aufbereitung der Daten (Skripte, Zwischendaten) und eine Übergabe-Notiz mit allen Entscheidungen liegen unter
-[`werkzeuge/hamburg/`](werkzeuge/hamburg/UEBERGABE.md). Die App selbst ist `hamburg/index.html` und wird direkt dort bearbeitet.
+## Regeln für Änderungen
+
+- Gearbeitet wird direkt in `<strecke>/index.html` bzw. `index.html` (Startseite). Die Skripte unter `werkzeuge/` sind nur die Herkunft.
+- Hamburg und Frankfurt haben **denselben Code**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur Strecke
+  und den Speicherschlüsseln (`hhm-…` bzw. `ffm-…`). Eine Änderung am Verhalten oder Aussehen in **beiden** Dateien nachziehen.
+- Jede App und die Startseite haben ihre eigene Versionsnummer: bei jeder Änderung `APP_VERSION` in der `index.html` und
+  `version.json` im selben Ordner gemeinsam hochzählen, sonst kommt das Update auf dem iPhone nicht an.
+- Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `ffm-`, `start-`). Ein Service Worker löscht
+  nur Caches mit seinem eigenen Präfix, weil sich alle Apps unter `luperttrading-lab.github.io` denselben Speicher teilen.
+- Hell/Dunkel gilt für alle gemeinsam (`localStorage` `marathon-theme`).
+- Neue Strecke: eigener Ordner neben den anderen, Karte auf der Startseite ergänzen.

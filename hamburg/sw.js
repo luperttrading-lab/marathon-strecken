@@ -8,7 +8,8 @@ self.addEventListener("install", e => {
 });
 
 self.addEventListener("activate", e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))));
+  // nur eigene alte Caches löschen: Startseite und andere Strecken teilen sich denselben Speicher
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith("hh-") && k !== CACHE).map(k => caches.delete(k)))));
   self.clients.claim();
 });
 

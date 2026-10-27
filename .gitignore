@@ -1,0 +1,4 @@
+# Rohdaten der Veranstalter und heruntergeladene Kartenkacheln bleiben lokal
+werkzeuge/*/dl/
+werkzeuge/*/assets/
+__pycache__/
