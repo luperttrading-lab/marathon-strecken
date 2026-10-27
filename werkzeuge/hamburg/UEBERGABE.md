@@ -1,7 +1,7 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 26.10.2026, App-Version **1.14**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
-und auf dem iPhone des Nutzers als Home-Bildschirm-App installiert.
+Stand 27.10.2026, App-Version **1.16**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
 gemessen und verworfen wurde.
@@ -116,8 +116,12 @@ Die Originaldateien des Veranstalters liegen nicht im Repo; sie kommen von
 - Startseite mit Auswahl im Hauptordner (`index.html`, eigene Version), Frankfurt unter `frankfurt/` mit demselben Code.
   Regeln für beide Apps stehen im README im Hauptordner.
 - Blauer Pfeil ‹ ganz links oben in der Anzeige (vor Sonne/Mond, seit 1.12, auch im Vollbild) und Link
-  „‹ Alle Strecken“ im Kopf der Normalansicht führen zur Startseite. In einer nur aus `hamburg/` installierten
-  Home-Bildschirm-App öffnet er sich als Safari-Blatt; als eine App gilt die Startseite (Scope Hauptordner).
+  „‹ Alle Strecken“ im Kopf der Normalansicht führen zur Startseite.
+- **Nur eine App** (Entscheidung des Nutzers, 27.10.2026, Hamburg 1.16): Die Strecken haben kein eigenes Manifest und
+  kein eigenes Symbol mehr, sondern verweisen auf `../manifest.webmanifest` und `../apple-touch-icon.png`
+  (Titel „Marathon“). *Zum Home-Bildschirm* installiert damit auch aus einer Strecke heraus immer die ganze App
+  (Start auf der Startseite, Scope Hauptordner). Ein früher nur aus `hamburg/` installiertes Symbol bleibt die alte
+  Einzel-App: löschen und neu hinzufügen.
 - Hell/Dunkel gemeinsam über `marathon-theme` (Rückfall auf das alte `hhm-theme`).
 - Service Worker löscht nur Caches mit Präfix `hh-`: vorher hätte jede Aktivierung die Offline-Speicher der anderen
   Apps derselben Adresse gelöscht (gilt auch für andere Repos unter luperttrading-lab.github.io, die noch so arbeiten).

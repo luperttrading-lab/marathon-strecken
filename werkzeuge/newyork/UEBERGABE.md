@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil New-York-City-Marathon
 
-Stand 27.10.2026, App-Version **1.1** (Zwischenstufen der Karte, kein Grau am Kartenrand, siehe Hamburg-Übergabe), live unter https://luperttrading-lab.github.io/marathon-strecken/newyork/.
+Stand 27.10.2026, App-Version **1.2** (1.1: Zwischenstufen der Karte, kein Grau am Kartenrand, siehe Hamburg-Übergabe; 1.2: kein eigenes Manifest und Symbol, siehe README), live unter https://luperttrading-lab.github.io/marathon-strecken/newyork/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.14) mit eigenen Daten, Texten und Speicherschlüsseln (`nyc-…`).
 Alle Entscheidungen zur Bedienung und zum Aussehen stehen in [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) und gelten
@@ -33,7 +33,7 @@ Die anderen Strecken haben keine Rampen; dort ändert die Zeile nichts.
 5. `streets.py` (Nominatim alle 150 m), `clean.py` (wie Frankfurt, Rohwerte aus `lidar.json`, ohne Festhallen-Regel),
    `build.py` (beide Nominatim-Namen der Queensboro Bridge zusammengeführt; Getränkestellen je Meile), `route.py`,
    `tiles.py` (Zoom 12–15 entlang der Strecke), `../../tiles_z11.py newyork` (Übersicht).
-6. `app.py`: baut `newyork/` aus `hamburg/index.html` (Symbol auf Pflaume, Staffel-Einstellung ausgeblendet, Zoom 11 in
+6. `app.py`: baut `newyork/` aus `hamburg/index.html` (Symbol auf Pflaume, seit 1.2 nicht mehr verwendet, Staffel-Einstellung ausgeblendet, Zoom 11 in
    `D.tiles` und in der Kartenliste des Service Workers). **Nur historisch**, gearbeitet wird in `newyork/index.html`.
 
 ## Übersichtskarte (Zoom 11)

@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Berlin-Marathon
 
-Stand 27.10.2026, App-Version **1.2**, live unter https://luperttrading-lab.github.io/marathon-strecken/berlin/.
+Stand 27.10.2026, App-Version **1.4** (seit 1.4 ohne eigenes Manifest und Symbol, siehe README), live unter https://luperttrading-lab.github.io/marathon-strecken/berlin/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.12) mit eigenen Daten, Texten und Speicherschlüsseln (`bln-…`).
 Alle Entscheidungen zur Bedienung und zum Aussehen stehen in [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) und gelten
@@ -22,7 +22,7 @@ Veranstalter noch den Kurs 2026; die App trägt deshalb „BMW Berlin-Marathon �
    `Höhe_in_Meter_über_NHN`), alle 10 m, 8 parallel, ~7 min. GetMap liefert nur ein eingefärbtes Bild, keine Höhen.
 4. `streets.py` (Nominatim alle 150 m), `clean.py` (wie Frankfurt, ohne Festhallen-Regel), `build.py` (Brückennamen:
    Kronprinzenbrücke, Michaelbrücke, Kottbusser Brücke statt der Straßen, die Nominatim nennt), `route.py`, `tiles.py`.
-5. `app.py`: hat aus `hamburg/index.html` die Erstausgabe von `berlin/` gebaut (Symbol auf Tannengrün). **Nur historisch.**
+5. `app.py`: hat aus `hamburg/index.html` die Erstausgabe von `berlin/` gebaut (Symbol auf Tannengrün, seit 1.4 nicht mehr verwendet). **Nur historisch.**
 
 ## Ergebnis und Abgleich
 

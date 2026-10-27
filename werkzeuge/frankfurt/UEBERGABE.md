@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Frankfurt-Marathon
 
-Stand 27.10.2026, App-Version **1.3**, live unter https://luperttrading-lab.github.io/marathon-strecken/frankfurt/.
+Stand 27.10.2026, App-Version **1.5** (seit 1.5 ohne eigenes Manifest und Symbol, siehe README), live unter https://luperttrading-lab.github.io/marathon-strecken/frankfurt/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.11) mit eigenen Daten, Texten und Speicherschlüsseln (`ffm-…`).
 Alle Entscheidungen zur Bedienung und zum Aussehen stehen in [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) und gelten
@@ -26,7 +26,7 @@ hier genauso. Änderungen am gemeinsamen Code in beiden Apps nachziehen (siehe R
    rund −3 m) bleibt, nur die Bahnbrücke darüber ist entfernt.
 6. `build.py` → `data.json`; benennt „B 40“ in Schwanheimer Brücke und „F 1 Freifläche“ in Festhalle um.
 7. `route.py`, `tiles.py` (wie Hamburg; z15 nur entlang der Strecke) → Kartenstücke in `../assets`.
-8. `app.py`: hat aus `hamburg/index.html` die Erstausgabe von `frankfurt/` gebaut (Daten, Texte, Schlüssel, Symbol auf Weinrot).
+8. `app.py`: hat aus `hamburg/index.html` die Erstausgabe von `frankfurt/` gebaut (Daten, Texte, Schlüssel, Symbol auf Weinrot, seit 1.5 nicht mehr verwendet).
    **Nur historisch**, gearbeitet wird direkt in `frankfurt/index.html`.
 
 ## Abgleich

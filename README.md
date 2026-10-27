@@ -26,7 +26,9 @@ dann liegen alle Strecken in einer App.
   Farben ihres App-Symbols „42,195“ (Schwarz, Blau #1b5bd0/#6a9cff), und hat keinen eigenen Umschalter.
 - Neue Strecke: eigener Ordner neben den anderen, Karte auf der Startseite ergänzen. Reihenfolge: New York als Highlight oben
   (Klasse `card top`), danach die deutschen Strecken alphabetisch. Alle Strecken liegen in **einer** App: installiert wird
-  die Startseite, ihr Scope umfasst alle Unterordner.
+  die Startseite, ihr Scope umfasst alle Unterordner. Die Strecken haben **kein eigenes Manifest und Symbol**, sie verweisen auf
+  `../manifest.webmanifest`, `../apple-touch-icon.png` und `../icon-192.png`; *Zum Home-Bildschirm* aus einer Strecke
+  installiert so ebenfalls die ganze App.
   Übersichtskarte: `cd werkzeuge && python3 tiles_z11.py <strecke>`, Ergebnis in `D.tiles["11"]` und in die Kartenliste von `sw.js`.
   Danach `python3 tiles_rand.py <strecke>` (New York: `tiles_rand.py newyork 2`): baut z11–z13 mit einem Kachelrand entlang der Strecke
   neu, damit die mitlaufende Karte an Start, Ziel und Außenkurven nicht ins Graue schaut, und trägt `D.tiles` und `sw.js` selbst ein.
