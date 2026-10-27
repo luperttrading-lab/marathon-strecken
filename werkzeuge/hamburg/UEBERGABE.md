@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 26.10.2026, App-Version **1.11**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
+Stand 26.10.2026, App-Version **1.12**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
 und auf dem iPhone des Nutzers als Home-Bildschirm-App installiert.
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -97,7 +97,8 @@ Die Originaldateien des Veranstalters liegen nicht im Repo; sie kommen von
 
 - Startseite mit Auswahl im Hauptordner (`index.html`, eigene Version), Frankfurt unter `frankfurt/` mit demselben Code.
   Regeln für beide Apps stehen im README im Hauptordner.
-- Kopf der Normalansicht: Link „‹ Alle Strecken“ zur Startseite. In einer nur aus `hamburg/` installierten
+- Blauer Pfeil ‹ ganz links oben in der Anzeige (vor Sonne/Mond, seit 1.12, auch im Vollbild) und Link
+  „‹ Alle Strecken“ im Kopf der Normalansicht führen zur Startseite. In einer nur aus `hamburg/` installierten
   Home-Bildschirm-App öffnet er sich als Safari-Blatt; als eine App gilt die Startseite (Scope Hauptordner).
 - Hell/Dunkel gemeinsam über `marathon-theme` (Rückfall auf das alte `hhm-theme`).
 - Service Worker löscht nur Caches mit Präfix `hh-`: vorher hätte jede Aktivierung die Offline-Speicher der anderen
