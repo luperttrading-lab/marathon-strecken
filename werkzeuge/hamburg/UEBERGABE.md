@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.33** (1.33: Steigungszahl ohne Farbe; 1.32: Steigungszahl immer lesbar; 1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.34** (1.34: geschätzte Brücken schraffiert statt abgedunkelt; 1.33: Steigungszahl ohne Farbe; 1.32: Steigungszahl immer lesbar; 1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -162,6 +162,8 @@ Die Originaldateien des Veranstalters liegen nicht im Repo; sie kommen von
 - Service Worker löscht nur Caches mit Präfix `hh-`: vorher hätte jede Aktivierung die Offline-Speicher der anderen
   Apps derselben Adresse gelöscht (gilt auch für andere Repos unter luperttrading-lab.github.io, die noch so arbeiten).
 - Brückenbeschriftung allgemein nach `kind` (Brücke, Tunnel, Unterführung).
+- Geschätzte Abschnitte (Brücken, Tunnel, Rampen): gestrichelte Oberkante, darunter seit 1.34 **schraffiert** statt
+  abgedunkelt; mit den dunklen Farben für steil bergab sah ein abgedunkeltes Stück wie ein steiles Gefälle aus (NYC km 2,7).
 
 ## Fallstricke
 
