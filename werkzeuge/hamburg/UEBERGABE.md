@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.35** (1.35: Farben fest (bergauf Rot bis Aubergine, bergab Blau), Dreieck unter der Skala, nur noch dunkel; 1.34: geschätzte Brücken schraffiert statt abgedunkelt; 1.33: Steigungszahl ohne Farbe; 1.32: Steigungszahl immer lesbar; 1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.36** (1.36: Gesamtstrecke unten mit feiner weißer Linie und Schalter farbig/einfarbig, die drei hellsten Bergab-Blau weniger türkis; 1.35: Farben fest (bergauf Rot bis Aubergine, bergab Blau), Dreieck unter der Skala, nur noch dunkel; 1.34: geschätzte Brücken schraffiert statt abgedunkelt; 1.33: Steigungszahl ohne Farbe; 1.32: Steigungszahl immer lesbar; 1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -50,13 +50,17 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
 - **Farbklassen der Steigung** (seit 1.35 fest, `CLASS_EDGES` / `CLASS_FARBE` im Skript; Wahl des Nutzers nach
   Testvarianten 1.25–1.34): gespiegelte Grenzen ±0,5 / 1,5 / 3 / 4,5 / 6 / 8 / 10, 15 Klassen. Flach (±0,5) grün;
   bergab sieben Blautöne von Himmelblau bis Marineblau, die dunkler werden (Helligkeit L 0,74 → 0,31, die Mitte
-  zwischen den Testsätzen „tief“ und „leicht“); bergauf gelb (0,5–1,5), orange (1,5–3), dann Rot über Bordeaux bis
-  Aubergine (3–4,5 / 4,5–6 / 6–8 / 8–10 / ≥ 10). Benachbarte Stufen liegen in ΔE (OKLab ×100) bei 6,7–9,4 bergab
+  zwischen den Testsätzen „tief“ und „leicht“; seit 1.36 die drei hellsten weniger türkis, OKLCH-Farbton
+  245 / 251 / 255 statt 230 / 240 / 248 bei gleicher Helligkeit); bergauf gelb (0,5–1,5), orange (1,5–3), dann Rot über Bordeaux bis
+  Aubergine (3–4,5 / 4,5–6 / 6–8 / 8–10 / ≥ 10). Benachbarte Stufen liegen in ΔE (OKLab ×100) bei 6,7–9,2 bergab
   und 6,8–10 in den dunklen Bergauf-Stufen: mit Legende gut, aus dem Augenwinkel nur grob unterscheidbar.
   Die CSS-Tokens `--g-u1…u3` bleiben für Zieltitel, Konfetti und den roten Live-Punkt.
 - **Steigungsskala**: ein Feld je Klasse, darunter ein schmales **Dreieck**, dessen Spitze nach oben auf die aktive
   Farbe zeigt (`gaugePos`, anteilig im Feld). Darüber stieß es ans Komma der Zahl (bis 1.34). Die große
   Steigungszahl ist ohne Farbe (seit 1.33): in Klassenfarbe verschwand Marineblau im Dunkeln.
+- **Gesamtstrecke unten** (seit 1.36): feine weiße Linie auf der Höhe (0,75 px, `--ink`), damit die Form auch über
+  Marineblau und Aubergine klar bleibt. In den Einstellungen umschaltbar farbig (Standard) / einfarbig (`OV_EIN`,
+  Speicherschlüssel `ov-einfarbig`).
 - Wasser/Verpflegung und Staffelwechsel standardmäßig **aus**, einschaltbar. Halbmarathon-Marke immer sichtbar.
 - Straßennamen am Fuß des Profils, aktuelle Straße blau. Welche Namen gezeigt werden, entscheidet `roadLabels` einmal je
   Maßstab über die ganze Strecke, nie je Position: sonst springen sie beim Abspielen (so bis 1.8). Ein Name bleibt am
