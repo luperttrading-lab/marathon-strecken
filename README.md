@@ -12,15 +12,16 @@ dann liegen alle Strecken in einer App.
 | Berlin (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/berlin/ | [`berlin/`](berlin/) | [`werkzeuge/berlin/`](werkzeuge/berlin/UEBERGABE.md) |
 | Frankfurt (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/frankfurt/ | [`frankfurt/`](frankfurt/) | [`werkzeuge/frankfurt/`](werkzeuge/frankfurt/UEBERGABE.md) |
 | New York (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/newyork/ | [`newyork/`](newyork/) | [`werkzeuge/newyork/`](werkzeuge/newyork/UEBERGABE.md) |
+| Köln (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/koeln/ | [`koeln/`](koeln/) | [`werkzeuge/koeln/`](werkzeuge/koeln/UEBERGABE.md) |
 
 ## Regeln für Änderungen
 
 - Gearbeitet wird direkt in `<strecke>/index.html` bzw. `index.html` (Startseite). Die Skripte unter `werkzeuge/` sind nur die Herkunft.
-- Hamburg, Berlin, Frankfurt und New York haben **denselben Code**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur
-  Strecke und den Speicherschlüsseln (`hhm-…`, `bln-…`, `ffm-…`, `nyc-…`). Eine Änderung am Verhalten oder Aussehen in **allen** Dateien nachziehen.
+- Hamburg, Berlin, Frankfurt, New York und Köln haben **denselben Code**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur
+  Strecke und den Speicherschlüsseln (`hhm-…`, `bln-…`, `ffm-…`, `nyc-…`, `kln-…`). Eine Änderung am Verhalten oder Aussehen in **allen** Dateien nachziehen.
 - Jede App und die Startseite haben ihre eigene Versionsnummer: bei jeder Änderung `APP_VERSION` in der `index.html` und
   `version.json` im selben Ordner gemeinsam hochzählen, sonst kommt das Update auf dem iPhone nicht an.
-- Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `bln-`, `ffm-`, `nyc-`, `start-`). Ein Service Worker löscht
+- Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `bln-`, `ffm-`, `nyc-`, `kln-`, `start-`). Ein Service Worker löscht
   nur Caches mit seinem eigenen Präfix, weil sich alle Apps unter `luperttrading-lab.github.io` denselben Speicher teilen.
 - Hell/Dunkel gilt für alle Strecken gemeinsam (`localStorage` `marathon-theme`). Die Startseite ist immer dunkel, in den
   Farben ihres App-Symbols „42,195“ (Schwarz, Blau #1b5bd0/#6a9cff), und hat keinen eigenen Umschalter.
