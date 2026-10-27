@@ -26,7 +26,9 @@ dann liegen alle Strecken in einer App.
   Farben ihres App-Symbols „42,195“ (Schwarz, Blau #1b5bd0/#6a9cff), und hat keinen eigenen Umschalter.
 - **Renntermine** auf der Startseite: `data-termine` an jeder Karte (ISO-Daten, durch Leerzeichen getrennt, `?` = vom
   Veranstalter noch nicht bestätigt, angezeigt als „ca. 31. Oktober 2027“). Die Seite zeigt selbst den nächsten Termin ab heute
-  mit Countdown; ist keiner mehr bekannt, nur den üblichen Monat (`data-monat`). Einmal im Jahr neue Termine nachtragen.
+  mit Countdown; ist keiner mehr bekannt, nur den üblichen Monat (`data-monat`). Einmal im Jahr neue Termine nachtragen,
+  **auch in jeder Strecke** in `D.termine` (gleiche Schreibweise, steuert „Live nach Plan“ am Renntag). Dort stehen außerdem
+  `D.tz` (Zeitzone der Uhrzeiten) und `D.start` (Startzeit der ersten Welle in Minuten ab Mitternacht).
 - Neue Strecke: eigener Ordner neben den anderen, Karte auf der Startseite ergänzen. Reihenfolge: New York als Highlight oben
   (Klasse `card top`), danach die deutschen Strecken alphabetisch. Alle Strecken liegen in **einer** App: installiert wird
   die Startseite, ihr Scope umfasst alle Unterordner. Die Strecken haben **kein eigenes Manifest und Symbol**, sie verweisen auf

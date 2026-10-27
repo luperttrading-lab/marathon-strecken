@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.18**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.19**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -46,6 +46,15 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   Maßstab über die ganze Strecke, nie je Position: sonst springen sie beim Abspielen (so bis 1.8). Ein Name bleibt am
   linken Rand stehen, bis das Ende seiner Straße ihn hinausschiebt. Ist das Profil unter 180 px hoch (Kartengröße-Stufen 2 und 3,
   kleine iPhones schon ab Stufe 1), entfallen sie, damit die Kurve frei bleibt (seit 1.3, Wunsch des Nutzers).
+- **Für Zuschauer** (seit 1.19, Abschnitt unter den Zwischenzeiten): Startzeit mit zwei Rädern (`start`, Minuten ab
+  Mitternacht, Voreinstellung `D.start`), Uhrzeit an Start, jeder 5-km-Marke, 21,1 und Ziel mit Straße. „Plan teilen“
+  schickt `…/<strecke>/?ziel=3:45:00&start=9:35`; der Link übernimmt beides nur für den Besuch (nichts gespeichert) und
+  startet am Renntag (`D.termine`) gleich „Live nach Plan“: Der Punkt steht jede Sekunde dort, wo der Läufer laut
+  Pace-Modell gerade ist, der Abspielknopf zeigt „Start 9:35“ bzw. „● Live“; Antippen oder Wischen beendet es.
+  Uhrzeiten in der Zeitzone der Strecke (`D.tz`), mit Hinweis auf den Unterschied zur Uhr des Betrachters am Renntag.
+- **Pace-Band** (seit 1.19, Knopf unter den Zwischenzeiten): Bild 1170 × 2532 (Sperrbildschirm, oben Platz für die Uhr),
+  km 1–42,2 in zwei Spalten: Gesamtzeit, Zeit für den km, Sekunden gegenüber flach (orange langsamer, blau schneller).
+  Wird synchron erzeugt und über das Teilen-Menü übergeben (iPhone: „Bild sichern“).
 - **Jeder Start bei km 0** (seit 1.18): Die Stelle wird nicht mehr gespeichert. Nur der Neustart nach einem Update
   behält sie, einmalig über `sessionStorage` (`hhm-pos`). Einstellungen (Zoom, Zielzeit, Karte …) bleiben gespeichert.
 - **Knopf zum Start** (seit 1.18): kleiner Knopf ganz links in der Knopfleiste (Strich mit Dreieck), bei km 0
