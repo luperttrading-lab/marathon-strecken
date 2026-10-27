@@ -77,7 +77,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
   <header>
     <span class="eyebrow">Steigungsprofile</span>
     <h1>Welche Strecke?</h1>
-    <p class="sub">Wischbares Höhenprofil, Steigung, Pace-Modell und Karte, aus amtlichen Laserscans entlang der offiziellen Strecke.</p>
+    <p class="sub">Wo es bergauf geht, was dich das an Zeit kostet und wann du wo bist. Gemessen mit Laserscans entlang der offiziellen Strecke.</p>
   </header>
     <a class="card top" href="newyork/">
       <span class="tag">Highlight</span>
@@ -113,7 +113,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
       <span class="go" aria-hidden="true">›</span>
     </a>
   <p class="note">Alle Profile im gleichen Höhenmaßstab. Auf dem iPhone: <b>Teilen →&#xFE0E; Zum Home-Bildschirm</b>, dann liegen alle Strecken in einer App.</p>
-  <footer>Inoffiziell, kein Angebot der Veranstalter. Daten: offizielle Strecken, Höhenmodelle DGM1 Hamburg, Berlin und Hessen, USGS 3DEP (New York), © OpenStreetMap-Mitwirkende. <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.6</button></footer>
+  <footer>Inoffiziell, kein Angebot der Veranstalter. Daten: offizielle Strecken, Höhenmodelle DGM1 Hamburg, Berlin und Hessen, USGS 3DEP (New York), © OpenStreetMap-Mitwirkende. <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.7</button></footer>
 </div>
 <script>
 /* Nächster Termin je Strecke: der erste aus data-termine ab heute ("?" = vom Veranstalter noch nicht bestätigt, angezeigt als "ca.").
@@ -132,7 +132,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
       + ' <span class="' + (tage <= 14 ? "bald" : "bis") + '">· ' + bis + "</span>";
   });
 })();
-const APP_VERSION = '1.6';
+const APP_VERSION = '1.7';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
