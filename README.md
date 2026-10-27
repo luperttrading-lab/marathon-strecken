@@ -24,6 +24,9 @@ dann liegen alle Strecken in einer App.
   nur Caches mit seinem eigenen Präfix, weil sich alle Apps unter `luperttrading-lab.github.io` denselben Speicher teilen.
 - Hell/Dunkel gilt für alle Strecken gemeinsam (`localStorage` `marathon-theme`). Die Startseite ist immer dunkel, in den
   Farben ihres App-Symbols „42,195“ (Schwarz, Blau #1b5bd0/#6a9cff), und hat keinen eigenen Umschalter.
+- **Renntermine** auf der Startseite: `data-termine` an jeder Karte (ISO-Daten, durch Leerzeichen getrennt, `?` = vom
+  Veranstalter noch nicht bestätigt, angezeigt als „ca. 31. Oktober 2027“). Die Seite zeigt selbst den nächsten Termin ab heute
+  mit Countdown; ist keiner mehr bekannt, nur den üblichen Monat (`data-monat`). Einmal im Jahr neue Termine nachtragen.
 - Neue Strecke: eigener Ordner neben den anderen, Karte auf der Startseite ergänzen. Reihenfolge: New York als Highlight oben
   (Klasse `card top`), danach die deutschen Strecken alphabetisch. Alle Strecken liegen in **einer** App: installiert wird
   die Startseite, ihr Scope umfasst alle Unterordner. Die Strecken haben **kein eigenes Manifest und Symbol**, sie verweisen auf
