@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil München-Marathon
 
-Stand 27.10.2026, App-Version **1.0**, live unter https://luperttrading-lab.github.io/marathon-strecken/muenchen/.
+Stand 27.10.2026, App-Version **1.1** (1.1: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/muenchen/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.22) mit eigenen Daten, Texten und Speicherschlüsseln (`muc-…`), ohne eigenes
 Manifest und Symbol. Alle Entscheidungen zur Bedienung und zum Aussehen stehen in

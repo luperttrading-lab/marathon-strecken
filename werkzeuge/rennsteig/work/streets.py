@@ -1,4 +1,5 @@
 # Straßennamen alle 150 m (GPX-Meter) per Nominatim-Rückwärtssuche, 1 Abfrage/s -> streets2026.json
+# Rennsteig: als Ort statt Stadtteil das Dorf bzw. die Gemeinde (im Wald gibt es keine Stadtteile).
 import json, time, urllib.request, urllib.parse
 g = json.load(open("gpx2026.json")); pts, d = g["pts"], g["d"]
 def at(m):
@@ -14,12 +15,12 @@ while s <= d[-1]:
     try:
         r = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "marathon-profile-check/1.0 (private use)"}), timeout=20))
         a = r.get("address", {})
-        out.append([s, a.get("road") or a.get("pedestrian") or a.get("footway") or a.get("cycleway") or "", a.get("suburb") or a.get("quarter") or a.get("city_district") or ""])
+        out.append([s, a.get("road") or a.get("pedestrian") or a.get("footway") or a.get("cycleway") or "", a.get("hamlet") or a.get("village") or a.get("town") or a.get("municipality") or ""])
     except Exception as ex:   # meist HTTP 429: einmal nach Pause wiederholen
         time.sleep(5)
         try:
             r = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "marathon-profile-check/1.0 (private use)"}), timeout=20)); a = r.get("address", {})
-            out.append([s, a.get("road") or a.get("pedestrian") or a.get("footway") or a.get("cycleway") or a.get("path") or "", a.get("suburb") or a.get("quarter") or a.get("city_district") or ""])
+            out.append([s, a.get("road") or a.get("pedestrian") or a.get("footway") or a.get("cycleway") or a.get("path") or "", a.get("hamlet") or a.get("village") or a.get("town") or a.get("municipality") or ""])
         except Exception:
             out.append([s, "", ""])
     time.sleep(1.3)

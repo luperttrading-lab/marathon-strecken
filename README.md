@@ -15,15 +15,16 @@ dann liegen alle Strecken in einer App.
 | Köln (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/koeln/ | [`koeln/`](koeln/) | [`werkzeuge/koeln/`](werkzeuge/koeln/UEBERGABE.md) |
 | München (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/muenchen/ | [`muenchen/`](muenchen/) | [`werkzeuge/muenchen/`](werkzeuge/muenchen/UEBERGABE.md) |
 | Oberelbe (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/oberelbe/ | [`oberelbe/`](oberelbe/) | [`werkzeuge/oberelbe/`](werkzeuge/oberelbe/UEBERGABE.md) |
+| Rennsteiglauf-Marathon (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/rennsteig/ | [`rennsteig/`](rennsteig/) | [`werkzeuge/rennsteig/`](werkzeuge/rennsteig/UEBERGABE.md) |
 
 ## Regeln für Änderungen
 
 - Gearbeitet wird direkt in `<strecke>/index.html` bzw. `index.html` (Startseite). Die Skripte unter `werkzeuge/` sind nur die Herkunft.
-- Hamburg, Berlin, Frankfurt, New York, Köln, München und Oberelbe haben **denselben Code**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur
-  Strecke und den Speicherschlüsseln (`hhm-…`, `bln-…`, `ffm-…`, `nyc-…`, `kln-…`, `muc-…`, `oem-…`). Eine Änderung am Verhalten oder Aussehen in **allen** Dateien nachziehen.
+- Hamburg, Berlin, Frankfurt, New York, Köln, München, Oberelbe und Rennsteig haben **denselben Code**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur
+  Strecke und den Speicherschlüsseln (`hhm-…`, `bln-…`, `ffm-…`, `nyc-…`, `kln-…`, `muc-…`, `oem-…`, `rsl-…`). Eine Änderung am Verhalten oder Aussehen in **allen** Dateien nachziehen.
 - Jede App und die Startseite haben ihre eigene Versionsnummer: bei jeder Änderung `APP_VERSION` in der `index.html` und
   `version.json` im selben Ordner gemeinsam hochzählen, sonst kommt das Update auf dem iPhone nicht an.
-- Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `bln-`, `ffm-`, `nyc-`, `kln-`, `muc-`, `oem-`, `start-`). Ein Service Worker löscht
+- Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `bln-`, `ffm-`, `nyc-`, `kln-`, `muc-`, `oem-`, `rsl-`, `start-`). Ein Service Worker löscht
   nur Caches mit seinem eigenen Präfix, weil sich alle Apps unter `luperttrading-lab.github.io` denselben Speicher teilen.
 - Hell/Dunkel gilt für alle Strecken gemeinsam (`localStorage` `marathon-theme`). Die Startseite ist immer dunkel, in den
   Farben ihres App-Symbols „42,195“ (Schwarz, Blau #1b5bd0/#6a9cff), und hat keinen eigenen Umschalter.
@@ -37,6 +38,9 @@ dann liegen alle Strecken in einer App.
   die Startseite, ihr Scope umfasst alle Unterordner. Die Strecken haben **kein eigenes Manifest und Symbol**, sie verweisen auf
   `../manifest.webmanifest`, `../apple-touch-icon.png` und `../icon-192.png`; *Zum Home-Bildschirm* aus einer Strecke
   installiert so ebenfalls die ganze App.
+- Mini-Profile der Startseite: gemeinsamer Höhenmaßstab 40 m = 56 px (Weg je Karte gleich breit), Grundhöhe 64 px;
+  mehr Höhenbereich bekommt eine höhere Grafik statt eines anderen Maßstabs (`.spark.hoch` New York 112 px,
+  `.spark.berg` Rennsteig 240 px). Pfad: 200 Punkte, je Punkt das Maximum der letzten 100 m.
   Übersichtskarte: `cd werkzeuge && python3 tiles_z11.py <strecke>`, Ergebnis in `D.tiles["11"]` und in die Kartenliste von `sw.js`.
   Danach `python3 tiles_rand.py <strecke>` (New York: `tiles_rand.py newyork 2`): baut z11–z13 mit einem Kachelrand entlang der Strecke
   neu, damit die mitlaufende Karte an Start, Ziel und Außenkurven nicht ins Graue schaut, und trägt `D.tiles` und `sw.js` selbst ein.

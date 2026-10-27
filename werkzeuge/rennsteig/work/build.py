@@ -11,14 +11,26 @@ hm = hg.copy()                                   # gleitender Median über 3 Pun
 for i in range(1, len(hg) - 1): hm[i] = np.median(hg[i-1:i+2])
 # Straßen: Abschnitte mit Name und Stadtteil
 st = json.load(open("streets2026.json"))
+# Der Rennsteig ist alte Grenze: der Ort (Gemeinde, streets.py) springt oft für ein, zwei Abfragen zur Nachbargemeinde.
+# Läufe unter 600 m (4 Abfragen) übernehmen den Ort davor.
+qs = [e[2] for e in st]; i = 0
+while i < len(qs):
+    j = i
+    while j + 1 < len(qs) and qs[j + 1] == qs[i]: j += 1
+    if i > 0 and j + 1 < len(qs) and j - i + 1 < 4:
+        for m in range(i, j + 1): qs[m] = qs[i - 1]
+    i = j + 1
+for e, q in zip(st, qs): e[2] = q
+# Nominatim nennt auf Waldwegen den Wanderweg samt Zweitnamen oder gar nichts (km 13,7–15,6, ein Forstweg ohne Namen
+# in OSM); dort läuft die Strecke auf dem Rennsteig. Wo sie neben einer Landstraße läuft, bleibt deren Nummer stehen.
+STRASSEN = {"Rennsteig, Werra Burgen Steig": "Rennsteig", "Weg": ""}
 segs, prev, last_road, last_q = [], None, "", ""
 for s_gpx, road, q in st:
-    road = road or last_road; q = q or last_q
+    road = STRASSEN.get(road, road) or "Rennsteig"; q = q or last_q
     km_ = float(official(s_gpx))
     if road != prev: segs.append([round(km_), road, q]); prev = road
     last_road, last_q = road, q
 segs[0][0] = 0
-STRASSEN = {}
 for sg in segs: sg[1] = STRASSEN.get(sg[1], sg[1])
 # Brücken und Unterführungen (der Buckel am Zieleinlauf in die Festhalle ist nur geglättet, nicht gelistet)
 NAMEN = {}   # Nominatim nennt sonst die anliegende Straße

@@ -49,6 +49,26 @@ seen = {}
 for i, n in enumerate(path):
     if n in seen and i - seen[n] > 2: print("  Knoten doppelt befahren:", n, round(dp[seen[n]]), round(dp[i]))
     seen[n] = i
+# Schleifen der Linie, die der Weg abkürzt (Linie > 50 m neben dem Weg): dort die Linie selbst übernehmen. Betrifft die
+# Schleife durch Schmiedefeld bei km 41,1 und die Runde um den Sportplatz vor dem Ziel. Mit ihnen passen die Kilometer der
+# Verpflegungsstellen (5,8 / 18,3 / 33,4) auf 0,1 km, ohne sie lägen sie bis 0,3 km zu weit hinten.
+qd = np.arange(0, dp[-1], 2.0); dicht = np.c_[np.interp(qd, dp, xyp[:, 0]), np.interp(qd, dp, xyp[:, 1])]
+dist = cKDTree(dicht).query(line)[0]; pt = cKDTree(xyp)
+over = dist > 50; i = 0; teile = []
+while i < len(s):
+    if not over[i]: i += 1; continue
+    j = i
+    while j + 1 < len(s) and over[j + 1]: j += 1
+    while i > 0 and dist[i - 1] > 5: i -= 1                      # bis dorthin, wo Linie und Weg wieder zusammenliegen
+    while j + 1 < len(s) and dist[j + 1] > 5: j += 1
+    teile.append((i, j)); i = j + 1
+neu, k0 = [], 0
+for i, j in teile:
+    a_ = pt.query(line[i])[1]; b_ = pt.query(line[j])[1] if j + 1 < len(s) else len(xyp) - 1
+    neu += list(xyp[k0:a_ + 1]) + list(line[i:j + 1]); k0 = b_ + 1 if j + 1 < len(s) else len(xyp)
+    print(f"  Linie übernommen: {s[i]:.0f}–{s[j]:.0f} m, max {dist[i:j + 1].max():.0f} m neben dem Weg")
+neu += list(xyp[k0:]) + ([M[-1]] if not teile or teile[-1][1] + 1 >= len(s) else [])
+xyp = np.array(neu)
 lo, la = TI.transform(xyp[:, 0], xyp[:, 1])
 pts = [(float(a), float(b), 0.0) for a, b in zip(la, lo)]
 def hav(p, q):

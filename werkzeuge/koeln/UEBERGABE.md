@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Köln-Marathon
 
-Stand 27.10.2026, App-Version **1.1** (1.1: Deutzer Brücke gemessen statt gerade), live unter https://luperttrading-lab.github.io/marathon-strecken/koeln/.
+Stand 27.10.2026, App-Version **1.2** (1.2: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung; 1.1: Deutzer Brücke gemessen statt gerade), live unter https://luperttrading-lab.github.io/marathon-strecken/koeln/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.22) mit eigenen Daten, Texten und Speicherschlüsseln (`kln-…`), ohne eigenes
 Manifest und Symbol (eine App für alle Strecken). Alle Entscheidungen zur Bedienung und zum Aussehen stehen in

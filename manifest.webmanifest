@@ -7,7 +7,7 @@
  "display": "standalone",
  "background_color": "#000000",
  "theme_color": "#000000",
- "description": "Steigungsprofile von Marathonstrecken: New York, Berlin, Frankfurt, Hamburg, Köln, München und Oberelbe.",
+ "description": "Steigungsprofile von Marathonstrecken: New York, Berlin, Frankfurt, Hamburg, Köln, München, Oberelbe und Rennsteig.",
  "icons": [
   {
    "src": "icon-192.png",
