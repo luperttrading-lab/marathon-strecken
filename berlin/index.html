@@ -105,19 +105,20 @@ h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 3
 .val { font-family: var(--font-display); font-weight: 700; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .val small { font-size: 16px; font-weight: 600; color: var(--muted); margin-left: 2px; }
 .grade-val { font-size: 44px; }
-.gauge { position: relative; height: 8px; border-radius: 4px; margin-top: 6px; display: grid; grid-template-columns: repeat(7, 1fr); overflow: hidden; }
+.gauge { position: relative; height: 8px; border-radius: 4px; margin-top: 2px; display: grid; grid-template-columns: repeat(7, 1fr); overflow: hidden; }
 .gauge span:nth-child(1) { background: var(--g-d3); } .gauge span:nth-child(2) { background: var(--g-d2); }
 .gauge span:nth-child(3) { background: var(--g-d1); } .gauge span:nth-child(4) { background: var(--g-0); }
 .gauge span:nth-child(5) { background: var(--g-u1); } .gauge span:nth-child(6) { background: var(--g-u2); }
 .gauge span:nth-child(7) { background: var(--g-u3); }
-.gauge-wrap { position: relative; }
+.gauge-wrap { position: relative; padding-top: 12px; }
 .farbtest { align-items: center; }
 .farbtest .seg button { min-width: 36px; padding: 5px 9px; }
 body.run .farbtest { flex: none; padding-inline: 10px; gap: 8px; flex-wrap: nowrap; }
 body.run .farbtest .mini-note, body.run .farbtest .lbl { display: none; }
 .farbtest { flex-wrap: wrap; }
 body.run .farbtest .seg button { min-height: 28px; padding: 3px 10px; font-size: 13px; }
-.needle { position: absolute; top: 2px; width: 4px; height: 14px; margin-left: -2px; border-radius: 2px; background: var(--ink); box-shadow: 0 0 0 2px var(--surface); transition: left 0.08s linear; }
+/* Zeiger: schmales Dreieck über der Skala, die Spitze zeigt auf die aktive Farbe */
+.needle { position: absolute; top: 0; width: 10px; height: 13px; margin-left: -5px; background: var(--ink); clip-path: polygon(0 0, 100% 0, 50% 100%); transition: left 0.08s linear; }
 .street { font-weight: 600; font-size: 15px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .street .q { color: var(--muted); font-weight: 400; margin-left: 6px; }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-top: 1px solid var(--rule); padding-top: 10px; }
@@ -269,7 +270,9 @@ body.run .readout { flex: none; padding: 9px 12px; gap: 6px; }
 body.run .val { font-size: 24px; }
 body.run .grade-val { font-size: 30px; }
 body.run .lbl { font-size: 10.5px; }
-body.run .gauge { height: 6px; margin-top: 4px; }
+body.run .gauge { height: 6px; margin-top: 1px; }
+body.run .gauge-wrap { padding-top: 10px; }
+body.run .needle { width: 8px; height: 10px; margin-left: -4px; }
 body.run .street { font-size: 14px; }
 body.run .stats { gap: 6px; padding-top: 6px; }
 body.run .stats .v { font-size: 16px; }
@@ -372,7 +375,7 @@ body.run .close { border-color: var(--edge); }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">BMW Berlin-Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.15</button></span>
+    <span class="eyebrow">BMW Berlin-Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.16</button></span>
     <h1>Steigungsprofil zum Durchwischen</h1>
     <p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>
   </header>
@@ -381,7 +384,7 @@ body.run .close { border-color: var(--edge); }
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     <button type="button" class="corner l" id="theme-btn" aria-label="Hell oder dunkel umschalten"><svg class="sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg class="moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.6 10.4A6 6 0 0 1 5.6 2.4a6 6 0 1 0 8 8z" fill="currentColor"/></svg></button>
-    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.15</button>
+    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.16</button>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -433,7 +436,6 @@ body.run .close { border-color: var(--edge); }
     </div>
     <div class="row farbtest" id="farbtest"><span class="lbl">Farben zum Testen</span>
       <div class="seg" role="group" aria-label="Farbvariante"><button type="button" data-farben="A">A</button><button type="button" data-farben="1">1</button><button type="button" data-farben="2">2</button><button type="button" data-farben="3">3</button><button type="button" data-farben="4">4</button></div>
-      <div class="seg" role="group" aria-label="Farbe für flach"><button type="button" data-flach="grau">grau</button><button type="button" data-flach="gruen">grün</button><button type="button" data-flach="salbei">salbei</button></div>
       <span class="mini-note" id="farb-note"></span></div>
     <canvas id="overview" aria-label="Ganze Strecke. Antippen springt an die Stelle."></canvas>
     <div class="row posrow"><input type="range" id="pos" min="0" max="42195" step="10" value="0" aria-label="Position auf der Strecke in Metern"></div>
@@ -596,14 +598,16 @@ const mss = s => { s = Math.round(s); return Math.floor(s / 60) + ":" + String(s
 const secs = s => { const r = Math.round(s); return (r > 0 ? "+" : r < 0 ? "−" : "±") + Math.abs(r) + " s"; };
 
 /* Farbklassen der Steigung in %. A ist die bisherige Skala (Farben aus den CSS-Tokens --g-…). 1–4 sind Vorschläge zum
-   Testen: bergauf ab 3 % fünf Stufen (3–4,5 / 4,5–6 / 6–8 / 8–10 / ≥ 10), die dunkler werden; im Dunkeln nur bis zu einer
-   mittleren Helligkeit, sonst verschwänden sie im Grund. Bergab vorerst wie die frühere Variante C. Flach ist eigens
-   umschaltbar (grau / grün / salbei). Umschalter unter der Legende; nach der Wahl bleibt eine Skala übrig. */
-const AB_HELL = ["#1b2f7e", "#12729c", "#4aa6c8", "#a6d8ea"], AB_DUNKEL = ["#3f64d8", "#2392cb", "#55bddb", "#b4e4ee"];
-const VOR_HELL = ["#f2c95a", "#e8823a"], VOR_DUNKEL = ["#efd760", "#f39136"];
-const STEIL = { edges: [-6, -3, -1.5, -0.5, 0.5, 1.5, 3, 4.5, 6, 8, 10],
-  txt: ["≤ −6 %", "−6 bis −3", "−3 bis −1,5", "−1,5 bis −0,5", "flach ±0,5", "0,5 bis 1,5", "1,5 bis 3", "3 bis 4,5", "4,5 bis 6", "6 bis 8", "8 bis 10", "≥ 10 %"] };
-const steil = (name, hell, dunkel, vorH = VOR_HELL, vorD = VOR_DUNKEL) => ({ name, ...STEIL, hell: [...AB_HELL, "#97a3ae", ...vorH, ...hell], dunkel: [...AB_DUNKEL, "#44566a", ...vorD, ...dunkel] });
+   Testen mit gespiegelten Grenzen: bergauf 0,5 / 1,5 / 3 / 4,5 / 6 / 8 / 10, bergab ebenso. Flach grün, leichtes Gefälle
+   (−0,5 … −1,5) dunkelgrün, dann sechs Blautöne, die dunkler werden; bergauf gelb, orange und fünf dunkler werdende Stufen
+   (1 Rot→Purpur, 2 lange Rot→Aubergine, 3 Rot→Magenta→Violett, 4 dunkles Orange ab 3 %). Im Dunkeln enden die Verläufe
+   bei mittlerer Helligkeit, sonst verschwänden sie im Grund. Umschalter unter der Legende; nach der Wahl bleibt eine übrig. */
+const AB_HELL = ["#111f71", "#0b3c92", "#045da7", "#107eb7", "#179fc7", "#55bfd1", "#2b7440"], AB_DUNKEL = ["#344da2", "#3168c4", "#1f86de", "#11a6ec", "#13c7f4", "#59e4f3", "#317a45"];
+const FLACH_HELL = "#5aae5f", FLACH_DUNKEL = "#4caf63", VOR_HELL = ["#f2c95a", "#e8823a"], VOR_DUNKEL = ["#efd760", "#f39136"];
+const STEIL = { edges: [-10, -8, -6, -4.5, -3, -1.5, -0.5, 0.5, 1.5, 3, 4.5, 6, 8, 10],
+  txt: ["≤ −10 %", "−10 bis −8", "−8 bis −6", "−6 bis −4,5", "−4,5 bis −3", "−3 bis −1,5", "−1,5 bis −0,5", "flach ±0,5",
+        "0,5 bis 1,5", "1,5 bis 3", "3 bis 4,5", "4,5 bis 6", "6 bis 8", "8 bis 10", "≥ 10 %"] };
+const steil = (name, hell, dunkel) => ({ name, ...STEIL, hell: [...AB_HELL, FLACH_HELL, ...VOR_HELL, ...hell], dunkel: [...AB_DUNKEL, FLACH_DUNKEL, ...VOR_DUNKEL, ...dunkel] });
 const FARBEN = {
   A: { name: "bisher, rot ab 3 %", edges: [-3, -1.5, -0.5, 0.5, 1.5, 3], tok: ["--g-d3", "--g-d2", "--g-d1", "--g-0", "--g-u1", "--g-u2", "--g-u3"],
        txt: ["≤ −3 %", "−3 bis −1,5", "−1,5 bis −0,5", "flach ±0,5", "0,5 bis 1,5", "1,5 bis 3", "≥ 3 %"] },
@@ -612,10 +616,9 @@ const FARBEN = {
   3: steil("Rot → Magenta → Violett", ["#d7352d", "#ad115c", "#80005c", "#510057", "#250146"], ["#f5493e", "#d23477", "#ac2c81", "#822d89", "#563089"]),
   4: steil("dunkles Orange ab 3 %, Rot ab 4,5 %", ["#d95f1e", "#c32324", "#9a0b2c", "#660741", "#330340"], ["#eb6f32", "#e4423c", "#c2324d", "#952b6a", "#672c79"])
 };
-const FLACH = { grau: null, gruen: { name: "grün", hell: "#5aae5f", dunkel: "#4caf63" }, salbei: { name: "salbei", hell: "#86ad86", dunkel: "#5b8a68" } };
-let FV = "A", FL = "grau", CLASS_EDGES = FARBEN.A.edges, CLASS_TOK = FARBEN.A.tok, CLASS_TXT = FARBEN.A.txt;
-function setFarben(id, fl) {
-  FV = FARBEN[id] ? String(id) : "A"; if (fl !== undefined) FL = fl in FLACH ? fl : "grau";
+let FV = "A", CLASS_EDGES = FARBEN.A.edges, CLASS_TOK = FARBEN.A.tok, CLASS_TXT = FARBEN.A.txt;
+function setFarben(id) {
+  FV = FARBEN[id] ? String(id) : "A";
   const v = FARBEN[FV]; CLASS_EDGES = v.edges; CLASS_TXT = v.txt; CLASS_TOK = Array.from({ length: v.edges.length + 1 }, (_, k) => "k" + k);
 }
 const cls = g => { let c = 0; while (c < CLASS_EDGES.length && g >= CLASS_EDGES[c]) c++; return c; };
@@ -623,8 +626,7 @@ let COL = {};
 function readColors() {
   const cs = getComputedStyle(document.documentElement);
   for (const t of ["--bg", "--surface", "--ink", "--muted", "--rule", "--grid", "--blue", "--blue-soft", "--map-tint", ...FARBEN.A.tok]) COL[t] = cs.getPropertyValue(t).trim();
-  const v = FARBEN[FV], cols = v.hell ? (isDark() ? v.dunkel : v.hell).slice() : v.tok.map(t => COL[t]), f = FLACH[FL];
-  if (f) cols[v.edges.indexOf(-0.5) + 1] = isDark() ? f.dunkel : f.hell;
+  const v = FARBEN[FV], cols = v.hell ? (isDark() ? v.dunkel : v.hell) : v.tok.map(t => COL[t]);
   cols.forEach((c, k) => { COL["k" + k] = c; });
   renderGauge();
 }
@@ -1452,11 +1454,9 @@ function drawPage() { if (page === 1) drawMap(); }
 const retheme = () => { readColors(); renderLegend(); renderRamps(); renderSplits(); dirty = true; };
 function renderFarbtest() {
   for (const b of document.querySelectorAll("[data-farben]")) b.setAttribute("aria-pressed", b.dataset.farben === FV);
-  for (const b of document.querySelectorAll("[data-flach]")) b.setAttribute("aria-pressed", b.dataset.flach === FL);
-  $("farb-note").textContent = FV + ": " + FARBEN[FV].name + ", flach " + (FLACH[FL] ? FLACH[FL].name : "grau");
+  $("farb-note").textContent = FV + ": " + FARBEN[FV].name + (FV === "A" ? "" : ", flach grün, bergab Blau");
 }
 document.querySelectorAll("[data-farben]").forEach(b => b.addEventListener("click", () => { setFarben(b.dataset.farben); store.set("farben", FV); renderFarbtest(); retheme(); }));
-document.querySelectorAll("[data-flach]").forEach(b => b.addEventListener("click", () => { setFarben(FV, b.dataset.flach); store.set("flach", FL); renderFarbtest(); retheme(); }));
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", retheme);
 new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 $("theme-btn").addEventListener("click", () => {
@@ -1476,7 +1476,7 @@ $("bridges").textContent = [["Tunnel", "Tunnel"], ["Unterführung", "Unterführu
 $("img-note").innerHTML = D.imgNote;
 
 document.body.classList.add("run");
-setFarben(store.get("farben", "A"), store.get("flach", "grau")); renderFarbtest();
+setFarben(store.get("farben", "A")); renderFarbtest();
 readColors(); renderLegend(); recompute(); setPos(S.pos); requestAnimationFrame(frame);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { applyGr(); dirty = true; });
 </script>
@@ -1484,7 +1484,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.15';
+const APP_VERSION = '1.16';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
