@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.26** (1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.27** (1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -48,11 +48,11 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   50 m (höchstens ~8 Linien); seit 1.26 außerdem mindestens 18 px Abstand, sonst die nächste Stufe (kleine iPhones im Vollbild). Der Bereich gilt für die ganze Strecke, nicht je Ausschnitt. Über 100 m reicht bisher nur
   der Rennsteig (180 m, Linien alle 25 m).
 - **Farbklassen der Steigung** (`FARBEN` im Skript): A ist die bisherige Skala mit 7 Klassen (CSS-Tokens `--g-…`).
-  **Seit 1.25 vorübergehend** fünf Varianten zum Testen, umschaltbar unter der Legende (`farben` im Speicher):
-  B 9 Klassen (+ Magenta ab 6 %, Dunkelblau ab −6 %), C 10 Klassen (+ Violett ab 10 %), D wie C mit grünem Flachstück,
-  E grob mit 7 Klassen (grün bis ±1 %, rot ab 6 %). Neue Bergab-Stufen mit größeren Helligkeitsschritten: in A sind
-  im Dunkeln −3…−1,5 und −1,5…−0,5 kaum zu unterscheiden (ΔE 6,6). Die Skala über der Steigung hat ein Feld je Klasse,
-  die Nadel steht anteilig in ihrem Feld (`gaugePos`). Nach der Wahl des Nutzers: eine Variante behalten, Umschalter entfernen.
+  **Seit 1.25 vorübergehend** Varianten zum Testen, umschaltbar unter der Legende und im Vollbild (`farben`, `flach` im
+  Speicher). Seit 1.27: A bisher, 1–4 mit fünf Stufen ab 3 % (3–4,5 / 4,5–6 / 6–8 / 8–10 / ≥ 10), die dunkler werden
+  (1 Rot→Purpur, 2 lange Rot→Aubergine, 3 Rot→Magenta→Violett, 4 dunkles Orange ab 3 %), bergab wie die frühere
+  Variante C; flach eigens grau, grün oder salbei. Die Skala über der Steigung hat ein Feld je Klasse, die Nadel steht
+  anteilig in ihrem Feld (`gaugePos`). Nach der Wahl des Nutzers: eine Skala behalten, Umschalter entfernen.
 - Wasser/Verpflegung und Staffelwechsel standardmäßig **aus**, einschaltbar. Halbmarathon-Marke immer sichtbar.
 - Straßennamen am Fuß des Profils, aktuelle Straße blau. Welche Namen gezeigt werden, entscheidet `roadLabels` einmal je
   Maßstab über die ganze Strecke, nie je Position: sonst springen sie beim Abspielen (so bis 1.8). Ein Name bleibt am

@@ -114,7 +114,8 @@ h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 3
 .farbtest { align-items: center; }
 .farbtest .seg button { min-width: 36px; padding: 5px 9px; }
 body.run .farbtest { flex: none; padding-inline: 10px; gap: 8px; flex-wrap: nowrap; }
-body.run .farbtest .mini-note { display: none; }
+body.run .farbtest .mini-note, body.run .farbtest .lbl { display: none; }
+.farbtest { flex-wrap: wrap; }
 body.run .farbtest .seg button { min-height: 28px; padding: 3px 10px; font-size: 13px; }
 .needle { position: absolute; top: 2px; width: 4px; height: 14px; margin-left: -2px; border-radius: 2px; background: var(--ink); box-shadow: 0 0 0 2px var(--surface); transition: left 0.08s linear; }
 .street { font-weight: 600; font-size: 15px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -371,7 +372,7 @@ body.run .close { border-color: var(--edge); }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">BMW Berlin-Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.14</button></span>
+    <span class="eyebrow">BMW Berlin-Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.15</button></span>
     <h1>Steigungsprofil zum Durchwischen</h1>
     <p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>
   </header>
@@ -380,7 +381,7 @@ body.run .close { border-color: var(--edge); }
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     <button type="button" class="corner l" id="theme-btn" aria-label="Hell oder dunkel umschalten"><svg class="sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg class="moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.6 10.4A6 6 0 0 1 5.6 2.4a6 6 0 1 0 8 8z" fill="currentColor"/></svg></button>
-    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.14</button>
+    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.15</button>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -431,7 +432,8 @@ body.run .close { border-color: var(--edge); }
       <div class="legend" id="legend"></div>
     </div>
     <div class="row farbtest" id="farbtest"><span class="lbl">Farben zum Testen</span>
-      <div class="seg" role="group" aria-label="Farbvariante"><button type="button" data-farben="A">A</button><button type="button" data-farben="B">B</button><button type="button" data-farben="C">C</button><button type="button" data-farben="D">D</button><button type="button" data-farben="E">E</button></div>
+      <div class="seg" role="group" aria-label="Farbvariante"><button type="button" data-farben="A">A</button><button type="button" data-farben="1">1</button><button type="button" data-farben="2">2</button><button type="button" data-farben="3">3</button><button type="button" data-farben="4">4</button></div>
+      <div class="seg" role="group" aria-label="Farbe für flach"><button type="button" data-flach="grau">grau</button><button type="button" data-flach="gruen">grün</button><button type="button" data-flach="salbei">salbei</button></div>
       <span class="mini-note" id="farb-note"></span></div>
     <canvas id="overview" aria-label="Ganze Strecke. Antippen springt an die Stelle."></canvas>
     <div class="row posrow"><input type="range" id="pos" min="0" max="42195" step="10" value="0" aria-label="Position auf der Strecke in Metern"></div>
@@ -593,33 +595,37 @@ const hms = s => { s = Math.round(s); const h = Math.floor(s / 3600), m = Math.f
 const mss = s => { s = Math.round(s); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
 const secs = s => { const r = Math.round(s); return (r > 0 ? "+" : r < 0 ? "−" : "±") + Math.abs(r) + " s"; };
 
-/* Farbklassen der Steigung in %. A ist die bisherige Skala (Farben aus den CSS-Tokens --g-…). B–E sind Varianten
-   zum Testen, umschaltbar unter der Legende (Speicherschlüssel „farben“); nach der Wahl bleibt nur eine übrig. */
+/* Farbklassen der Steigung in %. A ist die bisherige Skala (Farben aus den CSS-Tokens --g-…). 1–4 sind Vorschläge zum
+   Testen: bergauf ab 3 % fünf Stufen (3–4,5 / 4,5–6 / 6–8 / 8–10 / ≥ 10), die dunkler werden; im Dunkeln nur bis zu einer
+   mittleren Helligkeit, sonst verschwänden sie im Grund. Bergab vorerst wie die frühere Variante C. Flach ist eigens
+   umschaltbar (grau / grün / salbei). Umschalter unter der Legende; nach der Wahl bleibt eine Skala übrig. */
 const AB_HELL = ["#1b2f7e", "#12729c", "#4aa6c8", "#a6d8ea"], AB_DUNKEL = ["#3f64d8", "#2392cb", "#55bddb", "#b4e4ee"];
-const AUF_HELL = ["#f2c95a", "#e8823a", "#cc3329", "#a8136f", "#8e3fc4"], AUF_DUNKEL = ["#efd760", "#f39136", "#ee4a4a", "#df4aa8", "#c77df0"];
-const STEIL_TXT = ["≤ −6 %", "−6 bis −3", "−3 bis −1,5", "−1,5 bis −0,5", "flach ±0,5", "0,5 bis 1,5", "1,5 bis 3", "3 bis 6"];
+const VOR_HELL = ["#f2c95a", "#e8823a"], VOR_DUNKEL = ["#efd760", "#f39136"];
+const STEIL = { edges: [-6, -3, -1.5, -0.5, 0.5, 1.5, 3, 4.5, 6, 8, 10],
+  txt: ["≤ −6 %", "−6 bis −3", "−3 bis −1,5", "−1,5 bis −0,5", "flach ±0,5", "0,5 bis 1,5", "1,5 bis 3", "3 bis 4,5", "4,5 bis 6", "6 bis 8", "8 bis 10", "≥ 10 %"] };
+const steil = (name, hell, dunkel, vorH = VOR_HELL, vorD = VOR_DUNKEL) => ({ name, ...STEIL, hell: [...AB_HELL, "#97a3ae", ...vorH, ...hell], dunkel: [...AB_DUNKEL, "#44566a", ...vorD, ...dunkel] });
 const FARBEN = {
-  A: { name: "bisher, 7 Farben, rot ab 3 %", edges: [-3, -1.5, -0.5, 0.5, 1.5, 3], tok: ["--g-d3", "--g-d2", "--g-d1", "--g-0", "--g-u1", "--g-u2", "--g-u3"],
+  A: { name: "bisher, rot ab 3 %", edges: [-3, -1.5, -0.5, 0.5, 1.5, 3], tok: ["--g-d3", "--g-d2", "--g-d1", "--g-0", "--g-u1", "--g-u2", "--g-u3"],
        txt: ["≤ −3 %", "−3 bis −1,5", "−1,5 bis −0,5", "flach ±0,5", "0,5 bis 1,5", "1,5 bis 3", "≥ 3 %"] },
-  B: { name: "9 Farben: neu Magenta ab 6 %, Dunkelblau ab −6 %", edges: [-6, -3, -1.5, -0.5, 0.5, 1.5, 3, 6], txt: [...STEIL_TXT, "≥ 6 %"],
-       hell: [...AB_HELL, "#97a3ae", ...AUF_HELL.slice(0, 4)], dunkel: [...AB_DUNKEL, "#44566a", ...AUF_DUNKEL.slice(0, 4)] },
-  C: { name: "10 Farben: Magenta ab 6 %, Violett ab 10 %", edges: [-6, -3, -1.5, -0.5, 0.5, 1.5, 3, 6, 10], txt: [...STEIL_TXT, "6 bis 10", "≥ 10 %"],
-       hell: [...AB_HELL, "#97a3ae", ...AUF_HELL], dunkel: [...AB_DUNKEL, "#44566a", ...AUF_DUNKEL] },
-  D: { name: "wie C, flach grün", edges: [-6, -3, -1.5, -0.5, 0.5, 1.5, 3, 6, 10], txt: [...STEIL_TXT, "6 bis 10", "≥ 10 %"],
-       hell: [...AB_HELL, "#5aae5f", ...AUF_HELL], dunkel: [...AB_DUNKEL, "#4caf63", ...AUF_DUNKEL] },
-  E: { name: "grob, 7 Farben: flach grün bis ±1 %, rot ab 6 %", edges: [-6, -3, -1, 1, 3, 6],
-       txt: ["≤ −6 %", "−6 bis −3", "−3 bis −1", "flach ±1", "1 bis 3", "3 bis 6", "≥ 6 %"],
-       hell: ["#1b2f7e", "#12729c", "#a6d8ea", "#5aae5f", "#f2c95a", "#e8823a", "#cc3329"],
-       dunkel: ["#3f64d8", "#2392cb", "#b4e4ee", "#4caf63", "#efd760", "#f39136", "#ee4a4a"] }
+  1: steil("Rot → Purpur", ["#d7352d", "#af1b3e", "#830a44", "#580045", "#2c013b"], ["#f5493e", "#d43a56", "#ae3465", "#883070", "#613075"]),
+  2: steil("lange Rot → Aubergine", ["#d7352d", "#b31124", "#890024", "#5d0428", "#2f0133"], ["#f5493e", "#d9353c", "#b72d41", "#922e4e", "#672f6b"]),
+  3: steil("Rot → Magenta → Violett", ["#d7352d", "#ad115c", "#80005c", "#510057", "#250146"], ["#f5493e", "#d23477", "#ac2c81", "#822d89", "#563089"]),
+  4: steil("dunkles Orange ab 3 %, Rot ab 4,5 %", ["#d95f1e", "#c32324", "#9a0b2c", "#660741", "#330340"], ["#eb6f32", "#e4423c", "#c2324d", "#952b6a", "#672c79"])
 };
-let FV = "A", CLASS_EDGES = FARBEN.A.edges, CLASS_TOK = FARBEN.A.tok, CLASS_TXT = FARBEN.A.txt;
-function setFarben(id) { FV = FARBEN[id] ? id : "A"; const v = FARBEN[FV]; CLASS_EDGES = v.edges; CLASS_TXT = v.txt; CLASS_TOK = v.tok || v.hell.map((_, k) => "k" + k); }
+const FLACH = { grau: null, gruen: { name: "grün", hell: "#5aae5f", dunkel: "#4caf63" }, salbei: { name: "salbei", hell: "#86ad86", dunkel: "#5b8a68" } };
+let FV = "A", FL = "grau", CLASS_EDGES = FARBEN.A.edges, CLASS_TOK = FARBEN.A.tok, CLASS_TXT = FARBEN.A.txt;
+function setFarben(id, fl) {
+  FV = FARBEN[id] ? String(id) : "A"; if (fl !== undefined) FL = fl in FLACH ? fl : "grau";
+  const v = FARBEN[FV]; CLASS_EDGES = v.edges; CLASS_TXT = v.txt; CLASS_TOK = Array.from({ length: v.edges.length + 1 }, (_, k) => "k" + k);
+}
 const cls = g => { let c = 0; while (c < CLASS_EDGES.length && g >= CLASS_EDGES[c]) c++; return c; };
 let COL = {};
 function readColors() {
   const cs = getComputedStyle(document.documentElement);
   for (const t of ["--bg", "--surface", "--ink", "--muted", "--rule", "--grid", "--blue", "--blue-soft", "--map-tint", ...FARBEN.A.tok]) COL[t] = cs.getPropertyValue(t).trim();
-  const v = FARBEN[FV]; if (v.hell) (isDark() ? v.dunkel : v.hell).forEach((c, k) => { COL["k" + k] = c; });
+  const v = FARBEN[FV], cols = v.hell ? (isDark() ? v.dunkel : v.hell).slice() : v.tok.map(t => COL[t]), f = FLACH[FL];
+  if (f) cols[v.edges.indexOf(-0.5) + 1] = isDark() ? f.dunkel : f.hell;
+  cols.forEach((c, k) => { COL["k" + k] = c; });
   renderGauge();
 }
 // Skala über der Steigung: ein Feld je Farbklasse; die Nadel steht innerhalb ihres Feldes anteilig zwischen den Grenzen
@@ -1446,9 +1452,11 @@ function drawPage() { if (page === 1) drawMap(); }
 const retheme = () => { readColors(); renderLegend(); renderRamps(); renderSplits(); dirty = true; };
 function renderFarbtest() {
   for (const b of document.querySelectorAll("[data-farben]")) b.setAttribute("aria-pressed", b.dataset.farben === FV);
-  $("farb-note").textContent = FV + ": " + FARBEN[FV].name;
+  for (const b of document.querySelectorAll("[data-flach]")) b.setAttribute("aria-pressed", b.dataset.flach === FL);
+  $("farb-note").textContent = FV + ": " + FARBEN[FV].name + ", flach " + (FLACH[FL] ? FLACH[FL].name : "grau");
 }
 document.querySelectorAll("[data-farben]").forEach(b => b.addEventListener("click", () => { setFarben(b.dataset.farben); store.set("farben", FV); renderFarbtest(); retheme(); }));
+document.querySelectorAll("[data-flach]").forEach(b => b.addEventListener("click", () => { setFarben(FV, b.dataset.flach); store.set("flach", FL); renderFarbtest(); retheme(); }));
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", retheme);
 new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 $("theme-btn").addEventListener("click", () => {
@@ -1468,7 +1476,7 @@ $("bridges").textContent = [["Tunnel", "Tunnel"], ["Unterführung", "Unterführu
 $("img-note").innerHTML = D.imgNote;
 
 document.body.classList.add("run");
-setFarben(store.get("farben", "A")); renderFarbtest();
+setFarben(store.get("farben", "A"), store.get("flach", "grau")); renderFarbtest();
 readColors(); renderLegend(); recompute(); setPos(S.pos); requestAnimationFrame(frame);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { applyGr(); dirty = true; });
 </script>
@@ -1476,7 +1484,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.14';
+const APP_VERSION = '1.15';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
