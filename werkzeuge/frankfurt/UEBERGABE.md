@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Frankfurt-Marathon
 
-Stand 27.10.2026, App-Version **1.15** (1.15 Farbvarianten A–E zum Testen unter der Legende; 1.14 Brücken über Main und Nidda gemessen statt gerade; 1.13 Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.12 Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung; seit 1.5 ohne eigenes Manifest und Symbol, siehe README; 1.6 Pace im Läuferblick; 1.7 Start bei km 0, Knopf zum Start; 1.8 Zuschauerplan und Pace-Band; 1.9 Uhrzeit im Läuferblick; 1.10 Ziffern ruhig; 1.11 Feld deckend), live unter https://luperttrading-lab.github.io/marathon-strecken/frankfurt/.
+Stand 27.10.2026, App-Version **1.16** (1.16 Farbwahl auch im Vollbild; 1.15 Farbvarianten A–E zum Testen unter der Legende; 1.14 Brücken über Main und Nidda gemessen statt gerade; 1.13 Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.12 Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung; seit 1.5 ohne eigenes Manifest und Symbol, siehe README; 1.6 Pace im Läuferblick; 1.7 Start bei km 0, Knopf zum Start; 1.8 Zuschauerplan und Pace-Band; 1.9 Uhrzeit im Läuferblick; 1.10 Ziffern ruhig; 1.11 Feld deckend), live unter https://luperttrading-lab.github.io/marathon-strecken/frankfurt/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.11) mit eigenen Daten, Texten und Speicherschlüsseln (`ffm-…`).
 Alle Entscheidungen zur Bedienung und zum Aussehen stehen in [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) und gelten

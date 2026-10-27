@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil New-York-City-Marathon
 
-Stand 27.10.2026, App-Version **1.11** (1.11: Farbvarianten A–E zum Testen unter der Legende; 1.10: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.9: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung; 1.8: Feld deckend; 1.7: Ziffern ruhig; 1.6: Uhrzeit im Läuferblick; 1.5: Zuschauerplan und Pace-Band; 1.4: Start bei km 0, Knopf zum Start; 1.3: Pace im Läuferblick; 1.1: Zwischenstufen der Karte, kein Grau am Kartenrand, siehe Hamburg-Übergabe; 1.2: kein eigenes Manifest und Symbol, siehe README), live unter https://luperttrading-lab.github.io/marathon-strecken/newyork/.
+Stand 27.10.2026, App-Version **1.12** (1.12: Farbwahl auch im Vollbild; 1.11: Farbvarianten A–E zum Testen unter der Legende; 1.10: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.9: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung; 1.8: Feld deckend; 1.7: Ziffern ruhig; 1.6: Uhrzeit im Läuferblick; 1.5: Zuschauerplan und Pace-Band; 1.4: Start bei km 0, Knopf zum Start; 1.3: Pace im Läuferblick; 1.1: Zwischenstufen der Karte, kein Grau am Kartenrand, siehe Hamburg-Übergabe; 1.2: kein eigenes Manifest und Symbol, siehe README), live unter https://luperttrading-lab.github.io/marathon-strecken/newyork/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.14) mit eigenen Daten, Texten und Speicherschlüsseln (`nyc-…`).
 Alle Entscheidungen zur Bedienung und zum Aussehen stehen in [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) und gelten

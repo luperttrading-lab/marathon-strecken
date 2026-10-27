@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.25** (1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.26** (1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -45,7 +45,7 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
 - **Messfenster der Steigung** 10 m / 50 m / 200 m (Standard) / 1 km. Höhenmeter hängen stark davon ab:
   164 / 159 / 136 / 80 m; eine Tabelle dazu steht in der App unter „Woher die Zahlen kommen“.
 - **Höhenachse** (seit 1.23): Hilfslinien alle 5 m, ab 30 m Höhenbereich alle 10 m, ab 100 m alle 25 m, ab 200 m alle
-  50 m (höchstens ~8 Linien). Der Bereich gilt für die ganze Strecke, nicht je Ausschnitt. Über 100 m reicht bisher nur
+  50 m (höchstens ~8 Linien); seit 1.26 außerdem mindestens 18 px Abstand, sonst die nächste Stufe (kleine iPhones im Vollbild). Der Bereich gilt für die ganze Strecke, nicht je Ausschnitt. Über 100 m reicht bisher nur
   der Rennsteig (180 m, Linien alle 25 m).
 - **Farbklassen der Steigung** (`FARBEN` im Skript): A ist die bisherige Skala mit 7 Klassen (CSS-Tokens `--g-…`).
   **Seit 1.25 vorübergehend** fünf Varianten zum Testen, umschaltbar unter der Legende (`farben` im Speicher):
