@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Frankfurt-Marathon
 
-Stand 27.10.2026, App-Version **1.8** (seit 1.5 ohne eigenes Manifest und Symbol, siehe README; 1.6 Pace im Läuferblick; 1.7 Start bei km 0, Knopf zum Start; 1.8 Zuschauerplan und Pace-Band), live unter https://luperttrading-lab.github.io/marathon-strecken/frankfurt/.
+Stand 27.10.2026, App-Version **1.9** (seit 1.5 ohne eigenes Manifest und Symbol, siehe README; 1.6 Pace im Läuferblick; 1.7 Start bei km 0, Knopf zum Start; 1.8 Zuschauerplan und Pace-Band; 1.9 Uhrzeit im Läuferblick), live unter https://luperttrading-lab.github.io/marathon-strecken/frankfurt/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.11) mit eigenen Daten, Texten und Speicherschlüsseln (`ffm-…`).
 Alle Entscheidungen zur Bedienung und zum Aussehen stehen in [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) und gelten

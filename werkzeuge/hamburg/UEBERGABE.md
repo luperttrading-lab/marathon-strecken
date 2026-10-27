@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.19**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.20**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -59,6 +59,9 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   behält sie, einmalig über `sessionStorage` (`hhm-pos`). Einstellungen (Zoom, Zielzeit, Karte …) bleiben gespeichert.
 - **Knopf zum Start** (seit 1.18): kleiner Knopf ganz links in der Knopfleiste (Strich mit Dreieck), bei km 0
   abgeblendet, nie ausgeblendet. Die sechs Knöpfe teilen sich auch außerhalb des Vollbilds eine Zeile.
+- **Uhrzeit im Läuferblick** (seit 1.20): vor der Pace im selben Feld oben rechts die Uhrzeit an dieser Stelle
+  (Startzeit + Plan); bei „Live nach Plan“ mit rotem Punkt die aktuelle Uhr an der Strecke. Zusatz „NY“ bzw.
+  „Ortszeit“, wenn der Betrachter am Renntag in einer anderen Zeitzone ist.
 - **Pace im Läuferblick** (seit 1.17): klein oben rechts im Profil die Pace an der aktuellen Stelle und dahinter die
   Abweichung zur Pace im Flachen (wie „Pace hier“, z. B. „4:38 +38 s“), auf halbdurchsichtiger Fläche, feste Spalten.
 - **Übersicht auf der Karte** (seit 1.14): „−“ eine Stufe unter z12 zeigt die ganze Strecke, passend zur Kartengröße und

@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Berlin-Marathon
 
-Stand 27.10.2026, App-Version **1.7** (seit 1.4 ohne eigenes Manifest und Symbol, siehe README; 1.5 Pace im Läuferblick; 1.6 Start bei km 0, Knopf zum Start; 1.7 Zuschauerplan und Pace-Band), live unter https://luperttrading-lab.github.io/marathon-strecken/berlin/.
+Stand 27.10.2026, App-Version **1.8** (seit 1.4 ohne eigenes Manifest und Symbol, siehe README; 1.5 Pace im Läuferblick; 1.6 Start bei km 0, Knopf zum Start; 1.7 Zuschauerplan und Pace-Band; 1.8 Uhrzeit im Läuferblick), live unter https://luperttrading-lab.github.io/marathon-strecken/berlin/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.12) mit eigenen Daten, Texten und Speicherschlüsseln (`bln-…`).
 Alle Entscheidungen zur Bedienung und zum Aussehen stehen in [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) und gelten
