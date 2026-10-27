@@ -357,7 +357,7 @@ body.run .close { border-color: var(--edge); }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">TCS New York City Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.2</button></span>
+    <span class="eyebrow">TCS New York City Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.3</button></span>
     <h1>Steigungsprofil zum Durchwischen</h1>
     <p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>
   </header>
@@ -366,7 +366,7 @@ body.run .close { border-color: var(--edge); }
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     <button type="button" class="corner l" id="theme-btn" aria-label="Hell oder dunkel umschalten"><svg class="sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg class="moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.6 10.4A6 6 0 0 1 5.6 2.4a6 6 0 1 0 8 8z" fill="currentColor"/></svg></button>
-    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.2</button>
+    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.3</button>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -777,6 +777,20 @@ function drawMain() {
   c.strokeStyle = COL["--blue"]; c.lineWidth = 2; c.beginPath(); c.moveTo(cx, padT - 6); c.lineTo(cx, h - padB); c.stroke();
   c.fillStyle = COL["--surface"]; c.beginPath(); c.arc(cx, cy, 7, 0, Math.PI * 2); c.fill();
   c.fillStyle = COL["--blue"]; c.beginPath(); c.arc(cx, cy, 5, 0, Math.PI * 2); c.fill();
+  // Pace hier und Abweichung zur Pace im Flachen, klein oben rechts (im Vollbild steht oben meist die Karte statt der Werte).
+  // Feste Spalten, damit beim Abspielen nichts hin und her springt
+  { const pace = P.p0 * valAt(P.ratio, S.pos), fd = getComputedStyle(document.body).getPropertyValue("--font-display");
+    c.save(); c.textBaseline = "middle"; c.font = "600 15px " + fd;
+    const wP = Math.max(c.measureText("0:00").width, c.measureText("8:88").width);
+    c.font = "500 12px " + fd;
+    const wD = Math.max(c.measureText("+188 s").width, c.measureText("−188 s").width);
+    const bw = 8 + wP + 5 + wD + 8, bh = 20, bx = w - 6 - bw, by = 2, r = 6;
+    c.fillStyle = COL["--surface"]; c.globalAlpha = 0.85; c.beginPath();
+    c.moveTo(bx + r, by); c.arcTo(bx + bw, by, bx + bw, by + bh, r); c.arcTo(bx + bw, by + bh, bx, by + bh, r); c.arcTo(bx, by + bh, bx, by, r); c.arcTo(bx, by, bx + bw, by, r);
+    c.fill(); c.globalAlpha = 1;
+    c.font = "600 15px " + fd; c.fillStyle = COL["--ink"]; c.textAlign = "right"; c.fillText(mss(pace), bx + 8 + wP, by + bh / 2 + 1);
+    c.font = "500 12px " + fd; c.fillStyle = COL["--muted"]; c.textAlign = "left"; c.fillText(secs(pace - P.p0), bx + 8 + wP + 5, by + bh / 2 + 1);
+    c.restore(); }
   // Überhöhung
   const ex = (S.zoom / w) / ((YMAX - YMIN) / ph);
   $("exag").textContent = "Seitlich wischen · Höhe " + Math.round(ex) + "-fach überhöht";
@@ -1267,7 +1281,7 @@ readColors(); renderLegend(); recompute(); setPos(S.pos); requestAnimationFrame(
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { applyGr(); dirty = true; });
 </script>
 <script>
-const APP_VERSION = '1.2';
+const APP_VERSION = '1.3';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");

@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.16**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.17**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -46,6 +46,8 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   Maßstab über die ganze Strecke, nie je Position: sonst springen sie beim Abspielen (so bis 1.8). Ein Name bleibt am
   linken Rand stehen, bis das Ende seiner Straße ihn hinausschiebt. Ist das Profil unter 180 px hoch (Kartengröße-Stufen 2 und 3,
   kleine iPhones schon ab Stufe 1), entfallen sie, damit die Kurve frei bleibt (seit 1.3, Wunsch des Nutzers).
+- **Pace im Läuferblick** (seit 1.17): klein oben rechts im Profil die Pace an der aktuellen Stelle und dahinter die
+  Abweichung zur Pace im Flachen (wie „Pace hier“, z. B. „4:38 +38 s“), auf halbdurchsichtiger Fläche, feste Spalten.
 - **Übersicht auf der Karte** (seit 1.14): „−“ eine Stufe unter z12 zeigt die ganze Strecke, passend zur Kartengröße und
   mittig (rechts Platz für die Knöpfe); die Karte folgt dann nicht dem Läufer, der Punkt wandert. Kartenstücke z11 aus
   `werkzeuge/tiles_z11.py <strecke>`. `mapz` 11 = Übersicht.
