@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Frankfurt-Marathon
 
-Stand 27.10.2026, App-Version **1.25** (1.25 Farben fest (bergauf Rot bis Aubergine, bergab Blau), Dreieck unter der Skala, nur noch dunkel; 1.24 geschätzte Brücken schraffiert statt abgedunkelt; 1.23 Steigungszahl ohne Farbe; 1.22 Steigungszahl immer lesbar; 1.21 Schalter Blautöne bergab auto/tief/leicht; 1.20 Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.19 nur flach grün, bergab sieben Blautöne; 1.18 Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.17 Farbvarianten A, 1–4 und Schalter für flach; 1.16 Farbwahl auch im Vollbild; 1.15 Farbvarianten A–E zum Testen unter der Legende; 1.14 Brücken über Main und Nidda gemessen statt gerade; 1.13 Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.12 Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung; seit 1.5 ohne eigenes Manifest und Symbol, siehe README; 1.6 Pace im Läuferblick; 1.7 Start bei km 0, Knopf zum Start; 1.8 Zuschauerplan und Pace-Band; 1.9 Uhrzeit im Läuferblick; 1.10 Ziffern ruhig; 1.11 Feld deckend), live unter https://luperttrading-lab.github.io/marathon-strecken/frankfurt/.
+Stand 27.10.2026, App-Version **1.26** (1.26 Festhalle ebenerdig zum Vorplatz; 1.25 Farben fest (bergauf Rot bis Aubergine, bergab Blau), Dreieck unter der Skala, nur noch dunkel; 1.24 geschätzte Brücken schraffiert statt abgedunkelt; 1.23 Steigungszahl ohne Farbe; 1.22 Steigungszahl immer lesbar; 1.21 Schalter Blautöne bergab auto/tief/leicht; 1.20 Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.19 nur flach grün, bergab sieben Blautöne; 1.18 Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.17 Farbvarianten A, 1–4 und Schalter für flach; 1.16 Farbwahl auch im Vollbild; 1.15 Farbvarianten A–E zum Testen unter der Legende; 1.14 Brücken über Main und Nidda gemessen statt gerade; 1.13 Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.12 Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung; seit 1.5 ohne eigenes Manifest und Symbol, siehe README; 1.6 Pace im Läuferblick; 1.7 Start bei km 0, Knopf zum Start; 1.8 Zuschauerplan und Pace-Band; 1.9 Uhrzeit im Läuferblick; 1.10 Ziffern ruhig; 1.11 Feld deckend), live unter https://luperttrading-lab.github.io/marathon-strecken/frankfurt/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.11) mit eigenen Daten, Texten und Speicherschlüsseln (`ffm-…`).
 Alle Entscheidungen zur Bedienung und zum Aussehen stehen in [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) und gelten
@@ -37,7 +37,10 @@ hier genauso. Änderungen am gemeinsamen Code in beiden Apps nachziehen (siehe R
 ## Abgleich
 
 Veranstalter: „Gesamthöhenunterschied 27,8 m“ und „83 Höhenmeter“. Laserscan: tiefster Punkt 90,0 m (Unterführung
-Oeserstraße, km 28,7), höchster 118,1 m (Eschersheimer Landstraße, km 10,2), also 28,1 m; ↑ 86 m mit 200-m-Fenster (bis 1.13 mit geraden Brücken 82 m).
+Oeserstraße, km 28,7), höchster 118,1 m (Eschersheimer Landstraße, km 10,2), also 28,1 m; ↑ 85 m mit 200-m-Fenster (bis 1.13 mit geraden Brücken 82 m, 1.14–1.25 86 m).
+Zieleinlauf (seit 1.26): Friedrich-Ebert-Anlage eben (97,2 ±0,1 m auf 500 m); vom Abbiegen aufs Messegelände (km 42,01)
+bis vor die Festhalle (km 42,12) +1,2 m, gemessen auf freiem Grund (DOM = DGM auf 0,05 m), also echt, ~1 %. In der Halle
+flach auf Höhe des Vorplatzes (98,4 m); bis 1.25 stieg die Linie dort an der Gebäudekante bis 99,2 m.
 Rohdaten Punkt für Punkt ↑ 148 m (bis 1.13: 178 m, darin das Auf und Ab ins Wasser unter den Brücken). Steilste Stelle über 200 m: 3,1 % bei km 9,96.
 
 ## Offen

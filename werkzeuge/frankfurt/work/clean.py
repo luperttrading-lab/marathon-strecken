@@ -70,6 +70,10 @@ while i < len(h):
     i = j + 1
 good = ~bad
 hc = np.interp(np.arange(len(h)), np.where(good)[0], h[good])
+# Festhalle (Zieleinlauf, seit 1.26): unter dem Dach kennt das DGM keinen Boden, an der Gebäudekante steigt es bis 103 m.
+# Die Halle liegt ebenerdig zum Vorplatz: ab dem letzten Punkt, an dem Oberflächen- und Geländemodell übereinstimmen
+# (km 42,12, 98,4 m), flach bis ins Ziel. Bis 1.25 stieg die Linie dort weiter bis 99,2 m.
+i0 = int(np.searchsorted(k, 42125)); hc[i0:] = hc[i0 - 1]
 for o in out:
     print(f"km {o['a']/1000:6.2f}-{o['b']/1000:6.2f} {o['b']-o['a']:5.0f} m  {o['kind']:12s} {o['name']:28s} {o['ha']:5.1f} -> {o['hb']:5.1f}  (im Modell {o['extrem']:5.1f})")
 json.dump({"k": k.tolist(), "h": hc.tolist(), "raw": raw.tolist(), "regions": out}, open("clean.json", "w"), ensure_ascii=False)
