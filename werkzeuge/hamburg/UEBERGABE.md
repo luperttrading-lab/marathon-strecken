@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 26.10.2026, App-Version **1.12**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
+Stand 26.10.2026, App-Version **1.13**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/
 und auf dem iPhone des Nutzers als Home-Bildschirm-App installiert.
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -30,6 +30,10 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   „Blick voraus“ von Panoramax) wurden gebaut und **ausdrücklich wieder entfernt**.
 - **Drehräder senkrecht** (wie die Zielzeit), Variante „drei Zeilen, knapp angeschnitten“, 52 px hoch,
   Ausschnitt 0,5–10 km in 0,5er-Schritten, Tempo ×100–×1000 in 100er-Schritten. Ränder und Nachbarzahlen kontrastreich.
+- **Voreinstellung der Zielzeit (seit 1.13): genau 4:00 /km im Flachen**, damit „Pace hier“ und die Kilometerzeiten die
+  Abweichung durch das Höhenprofil gegenüber 4:00 zeigen. Die Zielzeit enthält dann die Kosten des Profils und ist je
+  Strecke verschieden: Hamburg 2:50:01, Berlin 2:49:24, Frankfurt 2:49:31 (nicht 2:48:46,8 – das wäre 4:00 im Schnitt).
+  Speicherschlüssel `goal-v2`; frühere Einstellungen (`goal-s`) werden bewusst nicht mehr gelesen.
 - **Zielzeit sekundengenau per Drehrad.** Ein Rad übernimmt erst nach Berührung und nach dem Einrasten den sichtbaren
   Wert (iOS rollt nach dem Loslassen weiter; das hatte einmal zu falschen Zeiten geführt).
 - **Pace-Modell:** Minetti et al. (2002), skaliert auf die Erfahrung des Nutzers: **1,0 s je Höhenmeter bei 15 km/h**

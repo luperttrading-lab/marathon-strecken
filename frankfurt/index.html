@@ -357,7 +357,7 @@ body.run .close { border-color: var(--edge); }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Mainova Frankfurt Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.1</button></span>
+    <span class="eyebrow">Mainova Frankfurt Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.2</button></span>
     <h1>Steigungsprofil zum Durchwischen</h1>
     <p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>
   </header>
@@ -366,7 +366,7 @@ body.run .close { border-color: var(--edge); }
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     <button type="button" class="corner l" id="theme-btn" aria-label="Hell oder dunkel umschalten"><svg class="sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg class="moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.6 10.4A6 6 0 0 1 5.6 2.4a6 6 0 1 0 8 8z" fill="currentColor"/></svg></button>
-    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.1</button>
+    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.2</button>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -460,7 +460,7 @@ body.run .close { border-color: var(--edge); }
       <span class="note">10 m ist der Abstand der Messpunkte. Die Höhen sind aber über 30 m gegen Ausreißer geglättet, deshalb zeigt 10 m kaum mehr als 50 m. 50 m zeigt kurze Spitzen wie Brückenrampen, 1 km zeigt, was über Minuten in den Beinen ankommt. Höhenmeter und Pace rechnen mit demselben Fenster.</span>
     </div>
     <div class="setting">
-      <div class="head"><span class="lbl">Zielzeit</span><span class="goal" id="goal-out">3:30:00</span></div>
+      <div class="head"><span class="lbl">Zielzeit</span><span class="goal" id="goal-out">–</span></div>
       <div class="timepanel" id="goal-wheels">
         <div class="wcol" id="wg-h"></div><span class="colon" aria-hidden="true">:</span><div class="wcol" id="wg-m"></div><span class="colon" aria-hidden="true">:</span><div class="wcol" id="wg-s"></div>
       </div>
@@ -589,8 +589,9 @@ const valAt = (arr, x) => { const t = clamp(x, 0, (N - 1) * STEP) / STEP; const 
 /* Pace-Modell: Energiekosten Laufen nach Minetti et al. 2002, J/(kg·m), i = Steigung als Bruch */
 const minetti = i => 155.4 * i ** 5 - 30.4 * i ** 4 - 43.3 * i ** 3 + 46.3 * i ** 2 + 19.5 * i + 3.6;
 let P = null;
-function buildPace() {
-  const g = WIN[S.win].g, ratio = new Float64Array(N), t = new Float64Array(N);
+// Pace-Faktor je Messpunkt (1 = flach) und die damit gewichtete Strecke in Metern
+function paceRatio() {
+  const g = WIN[S.win].g, ratio = new Float64Array(N);
   for (let i = 0; i < N; i++) {
     // Minetti-Kurve auf die eingestellten Kosten je Höhenmeter skaliert (Minetti: 19,5/3,6 = 5,42 flache Meter je Höhenmeter);
     // bergab wächst der Gewinn nur bis −4 %, steiler bringt nicht mehr
@@ -598,6 +599,10 @@ function buildPace() {
     ratio[i] = gi >= 0 ? 1 + sc * (minetti(gi) / 3.6 - 1) : 1 - S.down * sc * (1 - minetti(Math.max(gi, -0.04)) / 3.6);
   }
   let sum = 0; for (let i = 1; i < N; i++) sum += (ratio[i - 1] + ratio[i]) / 2 * STEP;
+  return { ratio, sum };
+}
+function buildPace() {
+  const { ratio, sum } = paceRatio(), t = new Float64Array(N);
   const p0 = S.goal / (sum / 1000) ; // s/km im Flachen bei gleicher Anstrengung
   for (let i = 1; i < N; i++) t[i] = t[i - 1] + (ratio[i - 1] + ratio[i]) / 2 * STEP / 1000 * p0;
   const scale = S.goal / valAt(t, L); for (let i = 0; i < N; i++) t[i] *= scale;
@@ -646,10 +651,16 @@ const ROADS = (() => {
 
 /* Zustand */
 const store = { get(k, d) { try { const v = localStorage.getItem("ffm-" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem("ffm-" + k, JSON.stringify(v)); } catch (e) {} } };
-const S = { pos: store.get("pos", 0), win: store.get("win", 200), zoom: store.get("zoom", 2000), goal: store.get("goal-s", store.get("goal", 210) * 60), down: store.get("down-v2", 0.5), speed: store.get("speed", 300), vp: store.get("vp", false), relay: store.get("relay", false), secHm: store.get("sechm", 1.0), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
+const S = { pos: store.get("pos", 0), win: store.get("win", 200), zoom: store.get("zoom", 2000), goal: store.get("goal-v2", null), down: store.get("down-v2", 0.5), speed: store.get("speed", 300), vp: store.get("vp", false), relay: store.get("relay", false), secHm: store.get("sechm", 1.0), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
 if (![10, 50, 200, 1000].includes(S.win)) S.win = 200;
 S.zoom = (S.zoom >= 500 && S.zoom <= 10000) ? Math.round(S.zoom / 500) * 500 : 2000;
 S.speed = clamp(Math.round(S.speed / 100) * 100 || 300, 100, 1000);
+// Voreinstellung: genau 4:00 /km im Flachen; die Zielzeit enthält dann, was das Höhenprofil kostet (je Strecke verschieden)
+if (typeof S.goal !== "number" || !(S.goal > 0)) {
+  const { ratio } = paceRatio(), c = new Float64Array(N);   // gewichtete Meter bis genau 42 195 m (das Raster reicht 5 m weiter)
+  for (let i = 1; i < N; i++) c[i] = c[i - 1] + (ratio[i - 1] + ratio[i]) / 2 * STEP;
+  S.goal = Math.round(240 * valAt(c, L) / 1000);
+}
 
 const $ = id => document.getElementById(id);
 const main = $("main"), ov = $("overview"), mctx = main.getContext("2d"), octx = ov.getContext("2d");
@@ -1053,7 +1064,7 @@ document.querySelectorAll("[data-split]").forEach(b => b.addEventListener("click
 const pad2 = v => String(v).padStart(2, "0");
 let goalT = null;
 const setGoal = (h, m, s) => {
-  S.goal = h * 3600 + m * 60 + s; store.set("goal-s", S.goal);
+  S.goal = h * 3600 + m * 60 + s; store.set("goal-v2", S.goal);
   $("goal-out").textContent = hms(S.goal);
   clearTimeout(goalT); goalT = setTimeout(recompute, 120);
 };
@@ -1240,7 +1251,7 @@ readColors(); renderLegend(); recompute(); setPos(S.pos); requestAnimationFrame(
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { applyGr(); dirty = true; });
 </script>
 <script>
-const APP_VERSION = '1.1';
+const APP_VERSION = '1.2';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
