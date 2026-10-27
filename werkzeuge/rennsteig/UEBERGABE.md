@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Rennsteiglauf-Marathon
 
-Stand 27.10.2026, App-Version **1.9** (1.9: Steigungszahl immer lesbar; 1.8: Schalter Blautöne bergab auto/tief/leicht; 1.7: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.6: nur flach grün, bergab sieben Blautöne; 1.5: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.4: Farbvarianten A, 1–4 und Schalter für flach; 1.3: Farbwahl auch im Vollbild; 1.2: Farbvarianten A–E zum Testen unter der Legende; 1.1: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; Untertitel nennt das 20-m-Raster), live unter https://luperttrading-lab.github.io/marathon-strecken/rennsteig/.
+Stand 27.10.2026, App-Version **1.10** (1.10: Steigungszahl ohne Farbe; 1.9: Steigungszahl immer lesbar; 1.8: Schalter Blautöne bergab auto/tief/leicht; 1.7: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.6: nur flach grün, bergab sieben Blautöne; 1.5: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.4: Farbvarianten A, 1–4 und Schalter für flach; 1.3: Farbwahl auch im Vollbild; 1.2: Farbvarianten A–E zum Testen unter der Legende; 1.1: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; Untertitel nennt das 20-m-Raster), live unter https://luperttrading-lab.github.io/marathon-strecken/rennsteig/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.23) mit eigenen Daten, Texten und Speicherschlüsseln (`rsl-…`), ohne eigenes
 Manifest und Symbol. Alle Entscheidungen zur Bedienung und zum Aussehen stehen in
