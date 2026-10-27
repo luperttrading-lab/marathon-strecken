@@ -17,6 +17,8 @@ m = re.search(r'^const D = \{.*\};$', t, re.M); t = t[:m.start()] + "const D = "
 rep('<meta name="description" content="Steigungsprofil des Hamburg-Marathons: Höhe, Steigung, Pace-Modell und Karte.">',
     '<meta name="description" content="Steigungsprofil des Marathons beim GutsMuths-Rennsteiglauf: Höhe, Steigung, Pace-Modell und Karte.">')
 rep('<title>Steigungsprofil Hamburg-Marathon</title>', '<title>Steigungsprofil Rennsteiglauf-Marathon</title>')
+rep('<p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>',
+    '<p class="sub">Laser-Geländemodell Thüringen (20-m-Raster) entlang der Strecke des Veranstalters, alle 10 m ausgewertet.</p>')
 rep('<span class="eyebrow">Haspa Marathon Hamburg · Kurs 2025/2026 · ', '<span class="eyebrow">GutsMuths-Rennsteiglauf · Marathon · Kurs 2026 · ')
 rep(re.search(r'const SHORT = \{.*?\};', t).group(0), 'const SHORT = {};')
 # eigene Speicherschlüssel, damit Einstellungen getrennt bleiben

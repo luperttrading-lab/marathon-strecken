@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.23** (1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.24** (1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -40,6 +40,8 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
 - **Pace-Modell:** Minetti et al. (2002), skaliert auf die Erfahrung des Nutzers: **1,0 s je Höhenmeter bei 15 km/h**
   (= 4,2 m flache Strecke je Höhenmeter; Minetti ergibt 5,4 m bzw. 1,3 s). Einstellbar 0,5–2,0 s.
   Bergab-Gewinn standardmäßig **halb**, und nur bis −4 % Gefälle, steiler bringt nichts zusätzlich.
+  Die 1,0 s gelten für sanfte Anstiege; Minetti ist konvex, bei 5 % kostet ein Höhenmeter 1,1 s, bei 8 % 1,2 s. Seit 1.24
+  nennt der Text über den Zwischenzeiten den Wert bei 8 % (`kostHm`), weil „+43 m, +48 s“ sonst wie ein Rechenfehler aussah.
 - **Messfenster der Steigung** 10 m / 50 m / 200 m (Standard) / 1 km. Höhenmeter hängen stark davon ab:
   164 / 159 / 136 / 80 m; eine Tabelle dazu steht in der App unter „Woher die Zahlen kommen“.
 - **Höhenachse** (seit 1.23): Hilfslinien alle 5 m, ab 30 m Höhenbereich alle 10 m, ab 100 m alle 25 m, ab 200 m alle
