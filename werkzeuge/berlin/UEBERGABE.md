@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Berlin-Marathon
 
-Stand 27.10.2026, App-Version **1.1**, live unter https://luperttrading-lab.github.io/marathon-strecken/berlin/.
+Stand 27.10.2026, App-Version **1.2**, live unter https://luperttrading-lab.github.io/marathon-strecken/berlin/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.12) mit eigenen Daten, Texten und Speicherschlüsseln (`bln-…`).
 Alle Entscheidungen zur Bedienung und zum Aussehen stehen in [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) und gelten
