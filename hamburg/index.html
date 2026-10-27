@@ -366,7 +366,7 @@ body.run .close { border-color: var(--edge); }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Haspa Marathon Hamburg · Kurs 2025/2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.20</button></span>
+    <span class="eyebrow">Haspa Marathon Hamburg · Kurs 2025/2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.21</button></span>
     <h1>Steigungsprofil zum Durchwischen</h1>
     <p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>
   </header>
@@ -375,7 +375,7 @@ body.run .close { border-color: var(--edge); }
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     <button type="button" class="corner l" id="theme-btn" aria-label="Hell oder dunkel umschalten"><svg class="sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg class="moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.6 10.4A6 6 0 0 1 5.6 2.4a6 6 0 1 0 8 8z" fill="currentColor"/></svg></button>
-    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.20</button>
+    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.21</button>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -728,6 +728,15 @@ function roadLabels(c, mpp) {
   }
   return roadLab.set;
 }
+// Ziffern beim Zeichnen ins Canvas in gleich breiten Zellen (wie tabular-nums im Text), sonst wackelt eine laufende Zahl
+// je nachdem, welche Ziffern gerade dran sind (eine 1 ist schmaler als eine 0)
+const tabZelle = (c, ch, dw) => /\d/.test(ch) ? dw : c.measureText(ch).width;
+const tabZiffer = c => Math.max(...[..."0123456789"].map(d => c.measureText(d).width));
+const tabBreite = (c, s) => { const dw = tabZiffer(c); return [...s].reduce((a, ch) => a + tabZelle(c, ch, dw), 0); };
+function tabText(c, s, x, y, align) {   // align "right": x ist der rechte Rand, "left": der linke
+  const dw = tabZiffer(c); let p = align === "right" ? x - tabBreite(c, s) : x; c.textAlign = "center";
+  for (const ch of s) { const cw = tabZelle(c, ch, dw); c.fillText(ch, p + cw / 2, y); p += cw; }
+}
 function drawMain() {
   const { w, h, dpr } = sizeCanvas(main); const c = mctx;
   c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
@@ -819,19 +828,19 @@ function drawMain() {
   { const pace = P.p0 * valAt(P.ratio, S.pos), fd = getComputedStyle(document.body).getPropertyValue("--font-display");
     const uz = S.live ? ortsZeit().s / 60 : S.start + valAt(P.t, S.pos) / 60, sU = " Uhr" + UHR_ZUSATZ;
     c.save(); c.textBaseline = "middle"; c.font = "600 15px " + fd;
-    const wU = c.measureText("88:88").width, wP = Math.max(c.measureText("0:00").width, c.measureText("8:88").width);
+    const wU = tabBreite(c, "00:00"), wP = tabBreite(c, "0:00");
     c.font = "500 12px " + fd;
-    const wS = c.measureText(sU).width, wD = Math.max(c.measureText("+188 s").width, c.measureText("−188 s").width), wL = S.live ? 12 : 0;
+    const wS = c.measureText(sU).width, wD = Math.max(tabBreite(c, "+188 s"), tabBreite(c, "−188 s")), wL = S.live ? 12 : 0;
     const bw = 8 + wL + wU + wS + 12 + wP + 5 + wD + 8, bh = 20, bx = w - 6 - bw, by = 2, r = 6;
     c.fillStyle = COL["--surface"]; c.globalAlpha = 0.85; c.beginPath();
     c.moveTo(bx + r, by); c.arcTo(bx + bw, by, bx + bw, by + bh, r); c.arcTo(bx + bw, by + bh, bx, by + bh, r); c.arcTo(bx, by + bh, bx, by, r); c.arcTo(bx, by, bx + bw, by, r);
     c.fill(); c.globalAlpha = 1;
     const my = by + bh / 2 + 1; let x = bx + 8;
     if (S.live) { c.fillStyle = COL["--g-u3"]; c.beginPath(); c.arc(x + 4, by + bh / 2, 4, 0, Math.PI * 2); c.fill(); x += wL; }
-    c.font = "600 15px " + fd; c.fillStyle = COL["--ink"]; c.textAlign = "right"; c.fillText(uhr(uz), x + wU, my); x += wU;
+    c.font = "600 15px " + fd; c.fillStyle = COL["--ink"]; tabText(c, uhr(uz), x + wU, my, "right"); x += wU;
     c.font = "500 12px " + fd; c.fillStyle = COL["--muted"]; c.textAlign = "left"; c.fillText(sU, x, my); x += wS + 12;
-    c.font = "600 15px " + fd; c.fillStyle = COL["--ink"]; c.textAlign = "right"; c.fillText(mss(pace), x + wP, my);
-    c.font = "500 12px " + fd; c.fillStyle = COL["--muted"]; c.textAlign = "left"; c.fillText(secs(pace - P.p0), x + wP + 5, my);
+    c.font = "600 15px " + fd; c.fillStyle = COL["--ink"]; tabText(c, mss(pace), x + wP, my, "right");
+    c.font = "500 12px " + fd; c.fillStyle = COL["--muted"]; tabText(c, secs(pace - P.p0), x + wP + 5, my, "left");
     c.restore(); }
   // Überhöhung
   const ex = (S.zoom / w) / ((YMAX - YMIN) / ph);
@@ -1414,7 +1423,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.20';
+const APP_VERSION = '1.21';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");

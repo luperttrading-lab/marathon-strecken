@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.20**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.21**, live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -23,7 +23,8 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
 
 - **Nichts darf springen.** Anzeige oben mit fester Höhe: Texte einzeilig mit Auslassungspunkten, die Kartenseite
   bestimmt nie die Höhe (`contain: size`-Prinzip; in Kartengröße-Stufe 0 gibt die Zahlenseite sie vor, ab Stufe 1
-  gilt eine feste Höhe für beide Seiten).
+  gilt eine feste Höhe für beide Seiten). Laufende Zahlen im Canvas (Uhrzeit, Pace im Profil) zeichnet `tabText` Ziffer für
+  Ziffer in gleich breite Zellen, weil es im Canvas kein `tabular-nums` gibt (seit 1.21).
 - **Start im Vollbild** (Klasse `body.run`): Anzeige, Läuferblick, Übersicht und Steuerung auf einem Bildschirm.
   ☰ führt zu Zwischenzeiten, Einstellungen, Rampen und Quellen.
 - **Anzeige oben hat zwei wischbare Seiten: Zahlen und Karte.** Fotoseiten (Wikimedia, Sehenswertes, Straßenfotos
