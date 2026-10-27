@@ -20,5 +20,6 @@ dann liegen alle Strecken in einer App.
   `version.json` im selben Ordner gemeinsam hochzählen, sonst kommt das Update auf dem iPhone nicht an.
 - Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `ffm-`, `start-`). Ein Service Worker löscht
   nur Caches mit seinem eigenen Präfix, weil sich alle Apps unter `luperttrading-lab.github.io` denselben Speicher teilen.
-- Hell/Dunkel gilt für alle gemeinsam (`localStorage` `marathon-theme`).
+- Hell/Dunkel gilt für beide Strecken gemeinsam (`localStorage` `marathon-theme`). Die Startseite ist immer dunkel, in den
+  Farben ihres App-Symbols „42,195“ (Schwarz, Blau #1b5bd0/#6a9cff), und hat keinen eigenen Umschalter.
 - Neue Strecke: eigener Ordner neben den anderen, Karte auf der Startseite ergänzen.
