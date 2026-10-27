@@ -13,6 +13,13 @@ def px(lat, lon, z):
     return (lon + 180) / 360 * n, (1 - math.log(math.tan(math.radians(lat)) + 1 / math.cos(math.radians(lat))) / math.pi) / 2 * n
 z = 11
 x0, y1 = px(bbox[0], bbox[2], z); x1, y0 = px(bbox[1], bbox[3], z)
+# Was die Übersicht zeigt, rechnet die App mit fitZ aus der Kartengröße. Bei schmalen, langen Strecken (New York)
+# zoomt sie weit heraus und zeigt seitlich viel mehr als den Rand oben: für alle üblichen Kartengrößen abdecken.
+P = [px(a, b, z) for a, b in pts]; rx0, rx1 = min(p[0] for p in P), max(p[0] for p in P); ry0, ry1 = min(p[1] for p in P), max(p[1] for p in P)
+for w in (300, 340, 390, 420):
+    for h in (140, 230, 320):
+        sc = min((w - 70) / (rx1 - rx0), (h - 28) / (ry1 - ry0)); cx, cy = (rx0 + rx1) / 2, (ry0 + ry1) / 2; mx = (w - 42) / 2
+        x0 = min(x0, cx - (mx + 16) / sc); x1 = max(x1, cx + (w - mx + 16) / sc); y0 = min(y0, cy - (h / 2 + 16) / sc); y1 = max(y1, cy + (h / 2 + 16) / sc)
 ts = [(x, y) for x in range(int(x0 // 256), int(x1 // 256) + 1) for y in range(int(y0 // 256), int(y1 // 256) + 1)]
 def fetch(x, y):
     f = f"{CACHE}/osm_{z}_{x}_{y}.png"
