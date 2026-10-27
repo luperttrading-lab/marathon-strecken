@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.37** (1.37: Höhenangaben auf Schildern lesbar, Straßennamen in eigener Zeile unter der km-Skala; 1.36: Gesamtstrecke unten mit feiner weißer Linie und Schalter farbig/einfarbig, die drei hellsten Bergab-Blau weniger türkis; 1.35: Farben fest (bergauf Rot bis Aubergine, bergab Blau), Dreieck unter der Skala, nur noch dunkel; 1.34: geschätzte Brücken schraffiert statt abgedunkelt; 1.33: Steigungszahl ohne Farbe; 1.32: Steigungszahl immer lesbar; 1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.38** (1.38: Höhenangaben mit dunklem Schein statt Kasten; 1.37: Höhenangaben auf Schildern lesbar, Straßennamen in eigener Zeile unter der km-Skala; 1.36: Gesamtstrecke unten mit feiner weißer Linie und Schalter farbig/einfarbig, die drei hellsten Bergab-Blau weniger türkis; 1.35: Farben fest (bergauf Rot bis Aubergine, bergab Blau), Dreieck unter der Skala, nur noch dunkel; 1.34: geschätzte Brücken schraffiert statt abgedunkelt; 1.33: Steigungszahl ohne Farbe; 1.32: Steigungszahl immer lesbar; 1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -46,8 +46,9 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   164 / 159 / 136 / 80 m; eine Tabelle dazu steht in der App unter „Woher die Zahlen kommen“.
 - **Höhenachse** (seit 1.23): Hilfslinien alle 5 m, ab 30 m Höhenbereich alle 10 m, ab 100 m alle 25 m, ab 200 m alle
   50 m (höchstens ~8 Linien); seit 1.26 außerdem mindestens 18 px Abstand, sonst die nächste Stufe (kleine iPhones im Vollbild). Der Bereich gilt für die ganze Strecke, nicht je Ausschnitt. Über 100 m reicht bisher nur
-  der Rennsteig (180 m, Linien alle 25 m). Seit 1.37 stehen die Höhenangaben auf einem Schild in
-  der Grundfarbe (`schild`), sonst waren sie auf den Steigungsfarben kaum lesbar; ein Wert, der oben in eine
+  der Rennsteig (180 m, Linien alle 25 m). Höhenangaben seit 1.38 hell mit dunklem Schein nach
+  unten und feiner Kontur (`textSchein`), sonst waren sie auf den Steigungsfarben kaum lesbar (1.37 mit Schild in
+  der Grundfarbe: dem Nutzer zu kastig); ein Wert, der oben in eine
   Markenbeschriftung wie „Halbmarathon“ liefe, entfällt. „Brücke“ bei geschätzten Stücken steht über der Kurve.
 - **Farbklassen der Steigung** (seit 1.35 fest, `CLASS_EDGES` / `CLASS_FARBE` im Skript; Wahl des Nutzers nach
   Testvarianten 1.25–1.34): gespiegelte Grenzen ±0,5 / 1,5 / 3 / 4,5 / 6 / 8 / 10, 15 Klassen. Flach (±0,5) grün;
