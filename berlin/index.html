@@ -135,7 +135,7 @@ canvas { display: block; width: 100%; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: var(--muted); }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
 input[type="range"] { width: 100%; accent-color: var(--blue); margin: 0; }
-.transport { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.transport { display: flex; gap: 6px; justify-content: center; flex-wrap: nowrap; }
 
 button, .seg button {
   font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--rule);
@@ -143,8 +143,10 @@ button, .seg button {
 }
 button:hover { border-color: var(--muted); }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-.transport button { font-family: var(--font-display); font-weight: 600; font-size: 15px; min-width: 52px; }
-#play { background: var(--blue); color: #fff; border-color: var(--blue); min-width: 96px; }
+.transport button { font-family: var(--font-display); font-weight: 600; font-size: 15px; min-width: 0; flex: 1 1 auto; padding-inline: 6px; }
+#b-0 { flex: 0 0 38px; display: grid; place-items: center; }
+.transport button:disabled { opacity: 0.35; cursor: default; }
+#play { background: var(--blue); color: #fff; border-color: var(--blue); flex: 1.6 1 auto; }
 .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
 .seg button { border: 0; border-radius: 0; min-height: 34px; padding: 5px 11px; font-size: 14px; }
 .seg button + button { border-left: 1px solid var(--rule); }
@@ -357,7 +359,7 @@ body.run .close { border-color: var(--edge); }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">BMW Berlin-Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.5</button></span>
+    <span class="eyebrow">BMW Berlin-Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.6</button></span>
     <h1>Steigungsprofil zum Durchwischen</h1>
     <p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>
   </header>
@@ -366,7 +368,7 @@ body.run .close { border-color: var(--edge); }
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     <button type="button" class="corner l" id="theme-btn" aria-label="Hell oder dunkel umschalten"><svg class="sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg class="moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.6 10.4A6 6 0 0 1 5.6 2.4a6 6 0 1 0 8 8z" fill="currentColor"/></svg></button>
-    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.5</button>
+    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.6</button>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -419,6 +421,7 @@ body.run .close { border-color: var(--edge); }
     <canvas id="overview" aria-label="Ganze Strecke. Antippen springt an die Stelle."></canvas>
     <div class="row posrow"><input type="range" id="pos" min="0" max="42195" step="10" value="0" aria-label="Position auf der Strecke in Metern"></div>
     <div class="transport">
+      <button type="button" id="b-0" aria-label="Zurück zum Start"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x="2.5" y="3" width="2" height="10" rx="0.6" fill="currentColor"/><path d="M13.5 3.2v9.6L5.8 8z" fill="currentColor"/></svg></button>
       <button type="button" id="b-k" aria-label="1 Kilometer zurück">−1 km</button>
       <button type="button" id="b-h" aria-label="100 Meter zurück">−100</button>
       <button type="button" id="play">&#x25B6;&#xFE0E; Laufen</button>
@@ -651,7 +654,9 @@ const ROADS = (() => {
 
 /* Zustand */
 const store = { get(k, d) { try { const v = localStorage.getItem("bln-" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem("bln-" + k, JSON.stringify(v)); } catch (e) {} } };
-const S = { pos: store.get("pos", 0), win: store.get("win", 200), zoom: store.get("zoom", 2000), goal: store.get("goal-v2", null), down: store.get("down-v2", 0.5), speed: store.get("speed", 300), vp: store.get("vp", false), relay: store.get("relay", false), secHm: store.get("sechm", 1.0), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
+// Jeder Start vom Home-Bildschirm beginnt bei km 0. Nur der Neustart nach einem Update behält die Stelle (einmalig, sessionStorage)
+const posNachUpdate = (() => { try { const v = sessionStorage.getItem("bln-pos"); sessionStorage.removeItem("bln-pos"); return v === null ? 0 : (+v || 0); } catch (_) { return 0; } })();
+const S = { pos: posNachUpdate, win: store.get("win", 200), zoom: store.get("zoom", 2000), goal: store.get("goal-v2", null), down: store.get("down-v2", 0.5), speed: store.get("speed", 300), vp: store.get("vp", false), relay: store.get("relay", false), secHm: store.get("sechm", 1.0), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
 if (![10, 50, 200, 1000].includes(S.win)) S.win = 200;
 S.zoom = (S.zoom >= 500 && S.zoom <= 10000) ? Math.round(S.zoom / 500) * 500 : 2000;
 S.speed = clamp(Math.round(S.speed / 100) * 100 || 300, 100, 1000);
@@ -850,7 +855,7 @@ function updateReadout() {
     $("r-nxt").textContent = "in " + nf((nxt.a - x) / 1000, 1) + " km";
     $("r-nxt2").textContent = Math.round(nxt.len) + " m · +" + nf(nxt.rise, 1) + " m · Ø " + nf(nxt.avg, 1) + " % · " + streetAt(nxt.a)[1];
   } else { $("r-nxt").textContent = "–"; $("r-nxt2").textContent = "keiner mehr bis ins Ziel"; }
-  $("pos").value = Math.round(x / 10) * 10;
+  $("pos").value = Math.round(x / 10) * 10; $("b-0").disabled = x < 5;
 }
 
 function renderRamps() {
@@ -1001,11 +1006,9 @@ function renderSettings() {
 function recompute() { buildPace(); buildRamps(); renderSettings(); renderRamps(); renderSplits(); renderHmMethods(); dirty = true; }
 
 function setPos(x) { const vorher = S.pos; S.pos = clamp(x, 0, L); if (vorher < L - 1 && S.pos >= L - 1) zielFeier(); dirty = true; }
-let saveT = 0;
 function frame() {
   if (dirty) {
     dirty = false; drawMain(); drawOverview(); updateReadout(); markRampRows(); markSplitRows(); drawPage();
-    const now = performance.now(); if (now - saveT > 800) { saveT = now; store.set("pos", Math.round(S.pos)); }
   }
   requestAnimationFrame(frame);
 }
@@ -1064,6 +1067,7 @@ ov.addEventListener("pointermove", e => { if (ovDrag) ovPos(e); });
 ov.addEventListener("pointerup", () => { ovDrag = false; }); ov.addEventListener("pointercancel", () => { ovDrag = false; });
 $("pos").addEventListener("input", e => { stop(); setPos(+e.target.value); });
 [["b-k", -1000], ["b-h", -100], ["f-h", 100], ["f-k", 1000]].forEach(([id, d]) => $(id).addEventListener("click", () => { stop(); setPos(S.pos + d); }));
+$("b-0").addEventListener("click", () => { stop(); setPos(0); });
 
 /* Einstellungen */
 document.querySelectorAll("[data-zoom]").forEach(b => b.addEventListener("click", () => { S.zoom = +b.dataset.zoom; store.set("zoom", S.zoom); renderSettings(); dirty = true; }));
@@ -1281,7 +1285,7 @@ readColors(); renderLegend(); recompute(); setPos(S.pos); requestAnimationFrame(
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { applyGr(); dirty = true; });
 </script>
 <script>
-const APP_VERSION = '1.5';
+const APP_VERSION = '1.6';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
@@ -1294,8 +1298,8 @@ const APP_VERSION = '1.5';
     if (sekunden) infoTimer = setTimeout(() => { if (updateEl.classList.contains("info")) ausblenden(); }, sekunden * 1000);
   };
   const zeigeBanner = text => { updateEl.className = "update"; document.getElementById("update-text").textContent = text; document.getElementById("update-go").hidden = false; einblenden(); };
-  // Zustand sofort sichern: Position, Einstellungen liegen schon im Speicher
-  const speichereAlles = () => { try { if (typeof S !== "undefined") localStorage.setItem("bln-pos", JSON.stringify(Math.round(S.pos))); } catch (_) {} };
+  // Stelle für den Neustart nach dem Update sichern (nur diese Sitzung); Einstellungen liegen schon im Speicher
+  const speichereAlles = () => { try { if (typeof S !== "undefined") sessionStorage.setItem("bln-pos", JSON.stringify(Math.round(S.pos))); } catch (_) {} };
   updateEl.addEventListener("click", () => { if (updateEl.classList.contains("info")) ausblenden(); });
   document.getElementById("update-go").addEventListener("click", () => { speichereAlles(); location.reload(); });
 
