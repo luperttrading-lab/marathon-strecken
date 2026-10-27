@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Rennsteiglauf-Marathon
 
-Stand 27.10.2026, App-Version **1.1** (1.1: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; Untertitel nennt das 20-m-Raster), live unter https://luperttrading-lab.github.io/marathon-strecken/rennsteig/.
+Stand 27.10.2026, App-Version **1.2** (1.2: Farbvarianten A–E zum Testen unter der Legende; 1.1: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; Untertitel nennt das 20-m-Raster), live unter https://luperttrading-lab.github.io/marathon-strecken/rennsteig/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.23) mit eigenen Daten, Texten und Speicherschlüsseln (`rsl-…`), ohne eigenes
 Manifest und Symbol. Alle Entscheidungen zur Bedienung und zum Aussehen stehen in

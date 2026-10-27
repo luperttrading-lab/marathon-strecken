@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.24** (1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.25** (1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -47,6 +47,12 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
 - **Höhenachse** (seit 1.23): Hilfslinien alle 5 m, ab 30 m Höhenbereich alle 10 m, ab 100 m alle 25 m, ab 200 m alle
   50 m (höchstens ~8 Linien). Der Bereich gilt für die ganze Strecke, nicht je Ausschnitt. Über 100 m reicht bisher nur
   der Rennsteig (180 m, Linien alle 25 m).
+- **Farbklassen der Steigung** (`FARBEN` im Skript): A ist die bisherige Skala mit 7 Klassen (CSS-Tokens `--g-…`).
+  **Seit 1.25 vorübergehend** fünf Varianten zum Testen, umschaltbar unter der Legende (`farben` im Speicher):
+  B 9 Klassen (+ Magenta ab 6 %, Dunkelblau ab −6 %), C 10 Klassen (+ Violett ab 10 %), D wie C mit grünem Flachstück,
+  E grob mit 7 Klassen (grün bis ±1 %, rot ab 6 %). Neue Bergab-Stufen mit größeren Helligkeitsschritten: in A sind
+  im Dunkeln −3…−1,5 und −1,5…−0,5 kaum zu unterscheiden (ΔE 6,6). Die Skala über der Steigung hat ein Feld je Klasse,
+  die Nadel steht anteilig in ihrem Feld (`gaugePos`). Nach der Wahl des Nutzers: eine Variante behalten, Umschalter entfernen.
 - Wasser/Verpflegung und Staffelwechsel standardmäßig **aus**, einschaltbar. Halbmarathon-Marke immer sichtbar.
 - Straßennamen am Fuß des Profils, aktuelle Straße blau. Welche Namen gezeigt werden, entscheidet `roadLabels` einmal je
   Maßstab über die ganze Strecke, nie je Position: sonst springen sie beim Abspielen (so bis 1.8). Ein Name bleibt am
