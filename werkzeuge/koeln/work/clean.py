@@ -1,4 +1,4 @@
-# Brücken und Unterführungen im DGM erkennen und überbrücken -> clean.json (Köln: aus Berlin übernommen, Deutzer Brücke von Hand)
+# Brücken und Unterführungen im DGM erkennen und überbrücken -> clean.json (Köln: aus Berlin übernommen, Deutzer Brücke gemessen)
 # DGM1 ist ein Geländemodell: auf Brücken misst es Wasser oder Gleise darunter (Senke), an Unterführungen das Bauwerk
 # darüber (Buckel). Stufen > 1,5 m auf 10 m paarweise -> Bereich, dazwischen linear.
 import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -6,6 +6,12 @@ import json, numpy as np
 from common import official
 r = json.load(open("dgm2026_10m.json"))
 s = np.array([x[0] for x in r]); raw = np.array([x[3] for x in r], float); k = official(s)
+# Deutzer Brücke (km 0,50–1,10): Fahrbahn aus dem Oberflächenmodell DOM1 (dom.py) statt Rhein aus dem DGM. Damit ist sie
+# gemessen, nicht geschätzt, und steht nicht unter den gestrichelten Brücken. Bis 1.0 eine Gerade 49,7 -> 51,2 m;
+# die Fahrbahn steigt aber bis 56,8 m in der Strommitte.
+dom = dict((round(a, 3), h) for a, h in json.load(open("dom_deutz.json")))
+for i, sg in enumerate(s):
+    if round(sg, 3) in dom: raw[i] = dom[round(sg, 3)]
 streets = json.load(open("streets2026.json"))
 def street(gpx_m):
     best = streets[0]
@@ -34,9 +40,6 @@ for n, (i, di) in enumerate(steps):
     if partner is not None: regions.append((i, partner + 1)); used |= {i, partner}
     else: regions.append(spike(i)); used.add(i)
 for a, b in regions: bad[a + 1:b] = True
-# Deutzer Brücke von Hand: Das Modell fällt schon vor dem Widerlager zur Böschung am Rheinufer unter der Brücke ab.
-# Die Fahrbahn beginnt am Hochpunkt der Auffahrt in Deutz (km 0,54, 49,7 m) und endet am Heumarkt (km 1,06, 51,2 m).
-for a_, b_ in [(545, 1058)]: bad[(k > a_) & (k < b_)] = True
 def edges(mask):
     m = mask.copy(); i = 0
     while i < len(m):
