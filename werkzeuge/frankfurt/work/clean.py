@@ -1,4 +1,4 @@
-# Brücken und Unterführungen im DGM erkennen und überbrücken -> clean.json
+# Brücken und Unterführungen im DGM erkennen und überbrücken -> clean.json (seit 1.14: Brücken über Main und Nidda gemessen)
 # DGM1 ist ein Geländemodell: auf Brücken misst es Wasser oder Gleise darunter (Senke), an Unterführungen den Bahndamm
 # oder die Autobahn darüber (Buckel). Stufen > 1,5 m auf 10 m paarweise -> Bereich, dazwischen linear.
 import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -6,6 +6,11 @@ import json, numpy as np
 from common import official
 r = json.load(open("dgm2026_10m.json"))
 s = np.array([x[0] for x in r]); raw = np.array([x[3] for x in r], float); k = official(s)
+# Alte Brücke, Schwanheimer Brücke und die zwei Nidda-Brücken: Fahrbahn aus dem Oberflächenmodell DOM1 (dom.py) statt Wasser
+# aus dem DGM. Damit sind sie gemessen, nicht geschätzt, und stehen nicht unter den gestrichelten Brücken.
+dom = dict((round(a, 3), h) for a, h in json.load(open("dom_bruecken.json")))
+for i, sg in enumerate(s):
+    if round(sg, 3) in dom: raw[i] = dom[round(sg, 3)]
 streets = json.load(open("streets2026.json"))
 def street(gpx_m):
     best = streets[0]
