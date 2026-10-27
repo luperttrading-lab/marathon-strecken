@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.30** (1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.31** (1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -54,7 +54,8 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   −0,5…−1,5 dunkelgrün); bergauf gelb, orange, dann fünf dunkler werdende Stufen
   (1 Rot→Purpur, 2 lange Rot→Aubergine, 3 Rot→Magenta→Violett, 4 dunkles Orange ab 3 %). Im Dunkeln enden die Verläufe
   bei mittlerer Helligkeit. Die Skala über der Steigung hat ein Feld je Klasse; der Zeiger ist seit 1.28 ein schmales
-  Dreieck über der Skala (`gaugePos`). Nach der Wahl des Nutzers: eine Skala behalten, Umschalter entfernen.
+  Dreieck über der Skala (`gaugePos`). Seit 1.31 zusätzlich Blautöne bergab „auto“ (je Modus), „tief“ (Satz des hellen Modus)
+  oder „leicht“ (Satz des dunklen Modus) in beiden Modi (`blau` im Speicher). Nach der Wahl des Nutzers: eine Skala behalten, Umschalter entfernen.
 - Wasser/Verpflegung und Staffelwechsel standardmäßig **aus**, einschaltbar. Halbmarathon-Marke immer sichtbar.
 - Straßennamen am Fuß des Profils, aktuelle Straße blau. Welche Namen gezeigt werden, entscheidet `roadLabels` einmal je
   Maßstab über die ganze Strecke, nie je Position: sonst springen sie beim Abspielen (so bis 1.8). Ein Name bleibt am

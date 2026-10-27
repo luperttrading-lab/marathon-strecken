@@ -375,7 +375,7 @@ body.run .close { border-color: var(--edge); }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Marathon München by Brooks · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.8</button></span>
+    <span class="eyebrow">Marathon München by Brooks · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.9</button></span>
     <h1>Steigungsprofil zum Durchwischen</h1>
     <p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>
   </header>
@@ -384,7 +384,7 @@ body.run .close { border-color: var(--edge); }
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     <button type="button" class="corner l" id="theme-btn" aria-label="Hell oder dunkel umschalten"><svg class="sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg class="moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.6 10.4A6 6 0 0 1 5.6 2.4a6 6 0 1 0 8 8z" fill="currentColor"/></svg></button>
-    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.8</button>
+    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.9</button>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -436,6 +436,7 @@ body.run .close { border-color: var(--edge); }
     </div>
     <div class="row farbtest" id="farbtest"><span class="lbl">Farben zum Testen</span>
       <div class="seg" role="group" aria-label="Farbvariante"><button type="button" data-farben="A">A</button><button type="button" data-farben="1">1</button><button type="button" data-farben="2">2</button><button type="button" data-farben="3">3</button><button type="button" data-farben="4">4</button></div>
+      <div class="seg" role="group" aria-label="Blautöne bergab"><button type="button" data-blau="auto">auto</button><button type="button" data-blau="tief">tief</button><button type="button" data-blau="leicht">leicht</button></div>
       <span class="mini-note" id="farb-note"></span></div>
     <canvas id="overview" aria-label="Ganze Strecke. Antippen springt an die Stelle."></canvas>
     <div class="row posrow"><input type="range" id="pos" min="0" max="42195" step="10" value="0" aria-label="Position auf der Strecke in Metern"></div>
@@ -616,6 +617,8 @@ const FARBEN = {
   3: steil("Rot → Magenta → Violett", ["#d7352d", "#ad115c", "#80005c", "#510057", "#250146"], ["#f5493e", "#d23477", "#ac2c81", "#822d89", "#563089"]),
   4: steil("dunkles Orange ab 3 %, Rot ab 4,5 %", ["#d95f1e", "#c32324", "#9a0b2c", "#660741", "#330340"], ["#eb6f32", "#e4423c", "#c2324d", "#952b6a", "#672c79"])
 };
+// Blautöne bergab zum Vergleich: „auto“ je nach Modus, „tief“ immer der Satz des hellen Modus, „leicht“ immer der des dunklen
+let BLAU = "auto";
 let FV = "A", CLASS_EDGES = FARBEN.A.edges, CLASS_TOK = FARBEN.A.tok, CLASS_TXT = FARBEN.A.txt;
 function setFarben(id) {
   FV = FARBEN[id] ? String(id) : "A";
@@ -626,7 +629,8 @@ let COL = {};
 function readColors() {
   const cs = getComputedStyle(document.documentElement);
   for (const t of ["--bg", "--surface", "--ink", "--muted", "--rule", "--grid", "--blue", "--blue-soft", "--map-tint", ...FARBEN.A.tok]) COL[t] = cs.getPropertyValue(t).trim();
-  const v = FARBEN[FV], cols = v.hell ? (isDark() ? v.dunkel : v.hell) : v.tok.map(t => COL[t]);
+  const v = FARBEN[FV], cols = v.hell ? (isDark() ? v.dunkel : v.hell).slice() : v.tok.map(t => COL[t]);
+  if (v.hell && BLAU !== "auto") (BLAU === "tief" ? AB_HELL : AB_DUNKEL).forEach((c, k) => { cols[k] = c; });
   cols.forEach((c, k) => { COL["k" + k] = c; });
   renderGauge();
 }
@@ -1454,9 +1458,11 @@ function drawPage() { if (page === 1) drawMap(); }
 const retheme = () => { readColors(); renderLegend(); renderRamps(); renderSplits(); dirty = true; };
 function renderFarbtest() {
   for (const b of document.querySelectorAll("[data-farben]")) b.setAttribute("aria-pressed", b.dataset.farben === FV);
-  $("farb-note").textContent = FV + ": " + FARBEN[FV].name + (FV === "A" ? "" : ", flach grün, bergab Blau");
+  for (const b of document.querySelectorAll("[data-blau]")) b.setAttribute("aria-pressed", b.dataset.blau === BLAU);
+  $("farb-note").textContent = FV + ": " + FARBEN[FV].name + (FV === "A" ? "" : ", flach grün, bergab Blau " + BLAU);
 }
 document.querySelectorAll("[data-farben]").forEach(b => b.addEventListener("click", () => { setFarben(b.dataset.farben); store.set("farben", FV); renderFarbtest(); retheme(); }));
+document.querySelectorAll("[data-blau]").forEach(b => b.addEventListener("click", () => { BLAU = b.dataset.blau; store.set("blau", BLAU); renderFarbtest(); retheme(); }));
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", retheme);
 new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 $("theme-btn").addEventListener("click", () => {
@@ -1476,7 +1482,7 @@ $("bridges").textContent = [["Tunnel", "Tunnel"], ["Unterführung", "Unterführu
 $("img-note").innerHTML = D.imgNote;
 
 document.body.classList.add("run");
-setFarben(store.get("farben", "A")); renderFarbtest();
+setFarben(store.get("farben", "A")); BLAU = ["auto", "tief", "leicht"].includes(store.get("blau", "auto")) ? store.get("blau", "auto") : "auto"; renderFarbtest();
 readColors(); renderLegend(); recompute(); setPos(S.pos); requestAnimationFrame(frame);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { applyGr(); dirty = true; });
 </script>
@@ -1484,7 +1490,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.8';
+const APP_VERSION = '1.9';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
