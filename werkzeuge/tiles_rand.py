@@ -70,7 +70,7 @@ for z, ts in STUFEN.items():
         for cx in range(0, W, CH):
             if not have[cy // 256:(cy + CH) // 256, cx // 256:(cx + CH) // 256].any(): continue
             box = (cx, cy, min(cx + CH, W), min(cy + CH, H)); crop = base.crop(box)
-            for theme, fn in (("dunkel", dark), ("hell", light)):
+            for theme, fn in (("dunkel", dark),):   # seit 1.35 nur dunkel
                 fn(crop).save(f"{APP}karte-{theme}-z{z}-{cx // CH}-{cy // CH}.jpg", "JPEG", quality=76, optimize=True)
             chunks.append([cx, cy, box[2] - cx, box[3] - cy, f"z{z}-{cx // CH}-{cy // CH}"])
     meta[str(z)] = {"x0": tx0 * 256, "y0": ty0 * 256, "chunks": chunks}

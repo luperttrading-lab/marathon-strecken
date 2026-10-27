@@ -51,7 +51,7 @@ chunks = []
 for cy in range(0, H, 1024):
     for cx in range(0, W, 1024):
         box = (cx, cy, min(cx + 1024, W), min(cy + 1024, H)); crop = base.crop(box)
-        for theme, fn in (("dunkel", dark), ("hell", light)):
+        for theme, fn in (("dunkel", dark),):   # seit 1.35 nur dunkel
             fn(crop).save(f"{APP}karte-{theme}-z{z}-{cx // 1024}-{cy // 1024}.jpg", "JPEG", quality=76, optimize=True)
         chunks.append([cx, cy, box[2] - cx, box[3] - cy, f"z{z}-{cx // 1024}-{cy // 1024}"])
 meta = {"x0": tx0 * 256, "y0": ty0 * 256, "chunks": chunks}

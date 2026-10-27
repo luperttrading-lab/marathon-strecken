@@ -26,7 +26,8 @@ dann liegen alle Strecken in einer App.
   `version.json` im selben Ordner gemeinsam hochzählen, sonst kommt das Update auf dem iPhone nicht an.
 - Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `bln-`, `ffm-`, `nyc-`, `kln-`, `muc-`, `oem-`, `rsl-`, `start-`). Ein Service Worker löscht
   nur Caches mit seinem eigenen Präfix, weil sich alle Apps unter `luperttrading-lab.github.io` denselben Speicher teilen.
-- Hell/Dunkel gilt für alle Strecken gemeinsam (`localStorage` `marathon-theme`). Die Startseite ist immer dunkel, in den
+- **Nur dunkel** (seit Hamburg 1.35 in allen Strecken): kein Hell/Dunkel-Umschalter mehr, keine hellen Kartenbilder.
+  Die Startseite ist ebenfalls immer dunkel, in den
   Farben ihres App-Symbols „42,195“ (Schwarz, Blau #1b5bd0/#6a9cff), und hat keinen eigenen Umschalter.
 - **Renntermine** auf der Startseite: `data-termine` an jeder Karte (ISO-Daten, durch Leerzeichen getrennt, `?` = vom
   Veranstalter noch nicht bestätigt, angezeigt als „ca. 31. Oktober 2027“). Die Seite zeigt selbst den nächsten Termin ab heute

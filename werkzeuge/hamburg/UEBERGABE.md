@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.34** (1.34: geschätzte Brücken schraffiert statt abgedunkelt; 1.33: Steigungszahl ohne Farbe; 1.32: Steigungszahl immer lesbar; 1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.35** (1.35: Farben fest (bergauf Rot bis Aubergine, bergab Blau), Dreieck unter der Skala, nur noch dunkel; 1.34: geschätzte Brücken schraffiert statt abgedunkelt; 1.33: Steigungszahl ohne Farbe; 1.32: Steigungszahl immer lesbar; 1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -47,17 +47,16 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
 - **Höhenachse** (seit 1.23): Hilfslinien alle 5 m, ab 30 m Höhenbereich alle 10 m, ab 100 m alle 25 m, ab 200 m alle
   50 m (höchstens ~8 Linien); seit 1.26 außerdem mindestens 18 px Abstand, sonst die nächste Stufe (kleine iPhones im Vollbild). Der Bereich gilt für die ganze Strecke, nicht je Ausschnitt. Über 100 m reicht bisher nur
   der Rennsteig (180 m, Linien alle 25 m).
-- **Farbklassen der Steigung** (`FARBEN` im Skript): A ist die bisherige Skala mit 7 Klassen (CSS-Tokens `--g-…`).
-  **Seit 1.25 vorübergehend** Varianten zum Testen, umschaltbar unter der Legende und im Vollbild (`farben` im Speicher).
-  Seit 1.28: A bisher; 1–4 mit gespiegelten Grenzen ±0,5 / 1,5 / 3 / 4,5 / 6 / 8 / 10 (15 Klassen): flach grün,
-  bergab sieben dunkler werdende Blautöne von Himmelblau bis Marineblau (seit 1.30; 1.29 Türkis bis Indigo, davor
-  −0,5…−1,5 dunkelgrün); bergauf gelb, orange, dann fünf dunkler werdende Stufen
-  (1 Rot→Purpur, 2 lange Rot→Aubergine, 3 Rot→Magenta→Violett, 4 dunkles Orange ab 3 %). Im Dunkeln enden die Verläufe
-  bei mittlerer Helligkeit. Die Skala über der Steigung hat ein Feld je Klasse; der Zeiger ist seit 1.28 ein schmales
-  Dreieck über der Skala (`gaugePos`). Die große Steigungszahl ist seit 1.33 ohne Farbe (Wunsch des Nutzers): in
-  Klassenfarbe verschwand Marineblau im Dunkeln, aufgehellt wurde die Zahl bei steilen Stufen heller statt dunkler.
-  Die Farbe zeigen Skala und Dreieck. Seit 1.31 zusätzlich Blautöne bergab „auto“ (je Modus), „tief“ (Satz des hellen Modus)
-  oder „leicht“ (Satz des dunklen Modus) in beiden Modi (`blau` im Speicher). Nach der Wahl des Nutzers: eine Skala behalten, Umschalter entfernen.
+- **Farbklassen der Steigung** (seit 1.35 fest, `CLASS_EDGES` / `CLASS_FARBE` im Skript; Wahl des Nutzers nach
+  Testvarianten 1.25–1.34): gespiegelte Grenzen ±0,5 / 1,5 / 3 / 4,5 / 6 / 8 / 10, 15 Klassen. Flach (±0,5) grün;
+  bergab sieben Blautöne von Himmelblau bis Marineblau, die dunkler werden (Helligkeit L 0,74 → 0,31, die Mitte
+  zwischen den Testsätzen „tief“ und „leicht“); bergauf gelb (0,5–1,5), orange (1,5–3), dann Rot über Bordeaux bis
+  Aubergine (3–4,5 / 4,5–6 / 6–8 / 8–10 / ≥ 10). Benachbarte Stufen liegen in ΔE (OKLab ×100) bei 6,7–9,4 bergab
+  und 6,8–10 in den dunklen Bergauf-Stufen: mit Legende gut, aus dem Augenwinkel nur grob unterscheidbar.
+  Die CSS-Tokens `--g-u1…u3` bleiben für Zieltitel, Konfetti und den roten Live-Punkt.
+- **Steigungsskala**: ein Feld je Klasse, darunter ein schmales **Dreieck**, dessen Spitze nach oben auf die aktive
+  Farbe zeigt (`gaugePos`, anteilig im Feld). Darüber stieß es ans Komma der Zahl (bis 1.34). Die große
+  Steigungszahl ist ohne Farbe (seit 1.33): in Klassenfarbe verschwand Marineblau im Dunkeln.
 - Wasser/Verpflegung und Staffelwechsel standardmäßig **aus**, einschaltbar. Halbmarathon-Marke immer sichtbar.
 - Straßennamen am Fuß des Profils, aktuelle Straße blau. Welche Namen gezeigt werden, entscheidet `roadLabels` einmal je
   Maßstab über die ganze Strecke, nie je Position: sonst springen sie beim Abspielen (so bis 1.8). Ein Name bleibt am
@@ -106,7 +105,11 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   Zielkarte mit Zielband, „ZIEL“ im Farbverlauf der Steigungsklassen, Ø-Pace, Zielzeit, Bergauf/Bergab und dem Satz
   „Das Höhenprofil kostet 1:32 min.“ (Wortlaut vom Nutzer gewünscht, ab 60 s in min), dazu etwa 3 s Konfetti (entfällt bei „Bewegung reduzieren“). Antippen schließt. Liegt fest über der
   Seite, schiebt nichts.
-- **Hell/Dunkel-Umschalter** (Sonne/Mond) links oben in der Anzeige, **Versionsnummer** rechts oben (nur Vollbild).
+- **Nur dunkel** (seit 1.35, Wunsch des Nutzers: der helle Grund war zu hell, und jede Farbe brauchte einen zweiten
+  Satz). Der Kopf setzt `applyTheme("dark")`, Sonne/Mond und die hellen Kartenbilder sind entfernt, die
+  Kartenwerkzeuge erzeugen nur noch `karte-dunkel-…`; Service Worker mit neuem Cache-Namen `…-marathon-profil-2`,
+  damit der alte Cache samt hellen Bildern gelöscht wird. Die hellen CSS-Werte stehen noch im Stil, wirken aber nicht.
+- Bis 1.34: **Hell/Dunkel-Umschalter** (Sonne/Mond) links oben in der Anzeige, **Versionsnummer** rechts oben (nur Vollbild).
   Beide liegen absolut im Leerraum über „Kilometer“ und „Höhe“ und schieben nichts. Der Umschalter wechselt zum
   Gegenteil des Sichtbaren; landet er dabei auf der Systemeinstellung, folgt die App wieder dem System
   (`localStorage` `hhm-theme`, gesetzt im Kopf vor dem ersten Zeichnen). Versionstext kommt aus `APP_VERSION`.
