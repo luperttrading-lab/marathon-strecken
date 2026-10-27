@@ -49,6 +49,16 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
 - **Übersicht auf der Karte** (seit 1.14): „−“ eine Stufe unter z12 zeigt die ganze Strecke, passend zur Kartengröße und
   mittig (rechts Platz für die Knöpfe); die Karte folgt dann nicht dem Läufer, der Punkt wandert. Kartenstücke z11 aus
   `werkzeuge/tiles_z11.py <strecke>`. `mapz` 11 = Übersicht.
+- **Zwischenstufen zwischen Übersicht und z12** (seit Hamburg 1.15, Berlin 1.3, Frankfurt 1.4, New York 1.1): `mapStufen(w, h)`
+  setzt so viele Stufen ein, dass kein Schritt größer als Faktor 2 ist (`k = ceil(12 − Übersicht) − 1`, gleichmäßig verteilt).
+  Hängt von Streckenausdehnung und Kartengröße ab: New York 1–2, Hamburg und Berlin bei kleiner Karte 1, Frankfurt keine.
+  Zwischenstufen folgen dem Läufer und zeichnen mit den z11-Stücken. Gespeichert in `mapz-v2` (`"ov"` = Übersicht, sonst Zoom);
+  die alte Einstellung `mapz` wird beim ersten Start übernommen.
+- **Kein Grau am Kartenrand** (gleiche Versionen): Ab z12 steht der Läufer in der Mitte; das feste Rechteck um die Strecke
+  (±0,012° / ±0,02°, in z13 nur ~115 px) reichte an Start, Ziel und Außenkurven nicht (New York z12 am Start bis 42 % grau,
+  Frankfurt bis 29 %, Hamburg bis 13 %). `werkzeuge/tiles_rand.py <strecke> [Rand z11]` baut z11–z13 neu: bisherige Fläche
+  plus ein Kachelrand entlang der ganzen Strecke (z11 bei New York zwei Kacheln für die tiefen Zwischenstufen), schreibt
+  `D.tiles` und die Kartenliste in `sw.js`. Geprüft für jede Stufe alle 250 m bei 390 und 430 px Breite und beiden Kartengrößen: 0 % grau.
 - **Kartengröße umschaltbar** (seit 1.2): Knopf ↕︎ unter +/− auf der Kartenseite, nur im Vollbild, schaltet reihum
   durch die Höhe der Anzeige-Seiten: Stufe 0 = wie bisher (150 px, für genaueres Hinsehen auf die Steigung),
   1 = 230 px (**Start**), 2 = 300 px. Die Zahlenseite verteilt dann ihre Zeilen und bekommt größere Zahlen. Das Profil
@@ -95,6 +105,7 @@ Die Originaldateien des Veranstalters liegen nicht im Repo; sie kommen von
 5. `build.py` baut `data.json` (Höhen in cm im 10-m-Raster, Median über 30 m, Straßen, Marken, Brücken).
 6. `route.py` → Koordinaten alle 50 m (`route50.json`), `tiles.py` → Kartenstücke z12–z15 (z15 nur entlang der
    Strecke), hell entsättigt, dunkel invertiert und farbgedreht.
+   Danach `../../tiles_rand.py <strecke>` (z11–z13 mit Streckenrand, siehe oben).
 7. `digit.py` hat das ursprüngliche Profilbild des Nutzers ausgelesen (Kalibrierung ±1,4 m). Es zeigt einen
    **älteren Kurs** (Staffelwechsel 16,3/27,7/32,7 statt 15,4/27,2/32,4), die Form stimmt mit dem DGM überein.
 8. `pwa_build.py` hat aus der damaligen Artifact-Fassung die App gebaut. **Nur noch historisch** – die Artifact-Fassung

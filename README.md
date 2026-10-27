@@ -28,3 +28,5 @@ dann liegen alle Strecken in einer App.
   (Klasse `card top`), danach die deutschen Strecken alphabetisch. Alle Strecken liegen in **einer** App: installiert wird
   die Startseite, ihr Scope umfasst alle Unterordner.
   Übersichtskarte: `cd werkzeuge && python3 tiles_z11.py <strecke>`, Ergebnis in `D.tiles["11"]` und in die Kartenliste von `sw.js`.
+  Danach `python3 tiles_rand.py <strecke>` (New York: `tiles_rand.py newyork 2`): baut z11–z13 mit einem Kachelrand entlang der Strecke
+  neu, damit die mitlaufende Karte an Start, Ziel und Außenkurven nicht ins Graue schaut, und trägt `D.tiles` und `sw.js` selbst ein.

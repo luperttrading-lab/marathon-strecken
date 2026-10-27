@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil New-York-City-Marathon
 
-Stand 27.10.2026, App-Version **1.0**, live unter https://luperttrading-lab.github.io/marathon-strecken/newyork/.
+Stand 27.10.2026, App-Version **1.1** (Zwischenstufen der Karte, kein Grau am Kartenrand, siehe Hamburg-Übergabe), live unter https://luperttrading-lab.github.io/marathon-strecken/newyork/.
 
 Die App ist eine Kopie der Hamburg-App (Stand 1.14) mit eigenen Daten, Texten und Speicherschlüsseln (`nyc-…`).
 Alle Entscheidungen zur Bedienung und zum Aussehen stehen in [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) und gelten
