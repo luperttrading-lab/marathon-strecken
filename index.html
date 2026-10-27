@@ -133,7 +133,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
       <span class="go" aria-hidden="true">›</span>
     </a>
   <p class="note">Beide Profile im gleichen Höhenmaßstab. Auf dem iPhone: <b>Teilen →&#xFE0E; Zum Home-Bildschirm</b>, dann liegen beide Strecken in einer App.</p>
-  <footer>Inoffiziell, kein Angebot der Veranstalter. Daten: offizielle Strecken, Höhenmodelle DGM1 Hamburg und Hessen, © OpenStreetMap-Mitwirkende. <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.0</button></footer>
+  <footer>Inoffiziell, kein Angebot der Veranstalter. Daten: offizielle Strecken, Höhenmodelle DGM1 Hamburg und Hessen, © OpenStreetMap-Mitwirkende. <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.1</button></footer>
 </div>
 <script>
 /* Hell/Dunkel: gleicher Schlüssel wie in den Apps */
@@ -144,7 +144,7 @@ document.getElementById("theme-btn").addEventListener("click", () => {
 });
 </script>
 <script>
-const APP_VERSION = '1.0';
+const APP_VERSION = '1.1';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
