@@ -20,17 +20,19 @@ gx = gpx_of(np.minimum(grid, L))
 ei = np.clip(np.searchsorted(dg, gx, side="right") - 1, 0, len(kan["names"]) - 1)
 roads = [KURZ.get(kan["names"][i], kan["names"][i]) for i in ei]
 qs = [st[min(len(st) - 1, max(0, int(round(x / 50))))][1] for x in gx]
-def glaetten(v, mind):
+def glaetten(v, mind):   # mind: Mindestlänge in m, Zahl oder Funktion des Namens
     for i in range(1, len(v)): v[i] = v[i] or v[i - 1]
     i = 0
     while i < len(v):
         j = i
         while j + 1 < len(v) and v[j + 1] == v[i]: j += 1
-        if i > 0 and (j + 1 - i) * STEP < mind: v[i:j + 1] = [v[i - 1]] * (j + 1 - i)
+        if i > 0 and (j + 1 - i) * STEP < (mind(v[i]) if callable(mind) else mind): v[i:j + 1] = [v[i - 1]] * (j + 1 - i)
         i = j + 1
     for i in range(len(v) - 2, -1, -1): v[i] = v[i] or v[i + 1]
     return v
-roads = glaetten(roads, 80); qs = glaetten(qs, 600)
+# Gemeinden am Rand des Bois de Vincennes liegen oft nur auf einer Straßenseite (Grenze auf der Avenue de Gravelle): 600 m;
+# Arrondissements schon ab 250 m, sonst verschwindet das 9. an der Opéra Garnier
+roads = glaetten(roads, 80); qs = glaetten(qs, lambda o: 250 if "Arrondissement" in o else 600)
 # Ortswechsel auf den nächsten Straßenwechsel im Umkreis von 100 m legen (die Grenzen laufen über Plätze und Kreuzungen)
 wechsel = [i for i in range(1, len(roads)) if roads[i] != roads[i - 1]]
 for i in [i for i in range(1, len(qs)) if qs[i] != qs[i - 1]]:
@@ -45,9 +47,9 @@ for x, road, q in zip(grid, roads, qs):
 segs[0][0] = 0
 bridges = [{"a": round(r["a"]), "b": round(r["b"]), "name": KURZ.get(r["name"], r["name"]) or r["kind"], "kind": r["kind"]} for r in c["regions"]]
 # Namen nach dem, was darüber bzw. darunter liegt (OSM): Plätze über den Tunneln an der Seine, Gräben unter den Brücken
-NAMEN = [(9290, "Rue de Picpus über die Coulée verte"), (20230, "Avenue de Gravelle über den Périphérique"), (20610, "Rue de Charenton"),
-         (27500, "Tunnel des Tuileries"), (28680, "Tunnel unter der Place de la Concorde"), (29280, "Tunnel unter der Place du Canada"),
-         (30030, "Tunnel unter der Place de l’Alma"), (30950, "Unterführung Place de Varsovie")]
+NAMEN = [(9800, "Rue de Picpus über die Coulée verte"), (20570, "Avenue de Gravelle über den Périphérique"), (20955, "Rue de Charenton"),
+         (27700, "Tunnel des Tuileries"), (28890, "Tunnel unter der Place de la Concorde"), (29490, "Tunnel unter der Place du Canada"),
+         (30220, "Tunnel unter der Place de l’Alma"), (31130, "Unterführung Place de Varsovie"), (34180, "Boulevard Exelmans")]
 for km, nm in NAMEN:
     b_ = [b_ for b_ in bridges if b_["a"] <= km <= b_["b"]]; assert len(b_) == 1, (km, nm); b_[0]["name"] = nm
 bridges.sort(key=lambda x: x["a"])

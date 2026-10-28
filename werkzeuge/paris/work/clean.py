@@ -15,7 +15,7 @@ def name_at(m):
     return kan["names"][i]
 h = raw.copy()
 # Rampe vom Quai Henri IV hinunter ans Ufer (Linie springt am Ende der Esplanade 3,7 m in 10 m): gleichmäßig über 120 m
-for a_, b_ in [(25130, 25250)]:
+for a_, b_ in [(25800, 25920)]:   # Linienmeter
     i, j = np.searchsorted(s, a_), np.searchsorted(s, b_)
     h[i:j + 1] = np.linspace(h[i], h[j], j - i + 1)
 bad = np.zeros(len(h), bool); tunnel = np.zeros(len(h), bool)
