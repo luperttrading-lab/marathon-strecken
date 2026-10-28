@@ -40,6 +40,8 @@ dann liegen alle Strecken in einer App.
   die Startseite, ihr Scope umfasst alle Unterordner. Die Strecken haben **kein eigenes Manifest und Symbol**, sie verweisen auf
   `../manifest.webmanifest`, `../apple-touch-icon.png` und `../icon-192.png`; *Zum Home-Bildschirm* aus einer Strecke
   installiert so ebenfalls die ganze App.
+- Kartenzeile der Startseite: Höhenmeter bergauf und bergab mit 200-m-Fenster (Werte wie „Ganze Strecke“ in der App), Pfeile als
+  gezeichnete Linien (`.pf`, SVG), nicht als Textzeichen ↑: das saß auf dem iPhone klein und tief (seit Startseite 1.16).
 - Mini-Profile der Startseite: gemeinsamer Höhenmaßstab 40 m = 56 px (Weg je Karte gleich breit), Grundhöhe 64 px;
   mehr Höhenbereich bekommt eine höhere Grafik statt eines anderen Maßstabs (`.spark.hoch` New York 112 px,
   `.spark.berg` Rennsteig 240 px, `.spark.boston` 208 px). Pfad: 200 Punkte, je Punkt das Maximum der letzten 100 m.
