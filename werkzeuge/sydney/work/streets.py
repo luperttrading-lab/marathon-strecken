@@ -27,6 +27,9 @@ for s, px, py in zip(ss, x, y):
         t = wege[pw[j]]; dist = float(np.hypot(*(np.array(pk[j]) - [px, py]))); sc = dist + AUF[t["highway"]]
         if best is None or sc < best[0]: best = (sc, t)
     t = best[1] if best else {}
+    # Auf der Brücke liegt die GPX zwischen Bradfield Highway und den Cahill-Spuren; OSM führt alle als „Sydney Harbour
+    # Bridge“ (bridge:name), angezeigt wird der Brückenname wie in New York
+    if t.get("bridge:name") == "Sydney Harbour Bridge": t = dict(t, name="Harbour Bridge")
     out.append([float(s), t.get("name", ""), t.get("name:en", ""), t.get("bridge", ""), t.get("tunnel", ""), t.get("highway", "")])
 json.dump(out, open("strassen.json", "w"), ensure_ascii=False)
 from itertools import groupby
