@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Paris-Marathon (Kurs 2025)
 
-Stand 28.10.2026, App-Version **1.3** (1.3: Brücken-Beschriftungen überlappen nicht mehr; 1.2: Linie repariert, die Schleife um die Opéra Garnier fehlte; Kurs 2026 verglichen; 1.1: Kästchen bunt/grau neben der Gesamtstrecke, Diagramm „So rechnet das Pace-Modell“; 1.0: Erstausgabe), live unter https://luperttrading-lab.github.io/marathon-strecken/paris/.
+Stand 28.10.2026, App-Version **1.4** (1.4: Tempo-Rad mit ×1 (Echtzeit), ×50 und ×100–×180 in 20er-Schritten; 1.3: Brücken-Beschriftungen überlappen nicht mehr; 1.2: Linie repariert, die Schleife um die Opéra Garnier fehlte; Kurs 2026 verglichen; 1.1: Kästchen bunt/grau neben der Gesamtstrecke, Diagramm „So rechnet das Pace-Modell“; 1.0: Erstausgabe), live unter https://luperttrading-lab.github.io/marathon-strecken/paris/.
 
 Die App ist eine Kopie der Boston-App (Stand 1.0) mit eigenen Daten, Texten und Speicherschlüsseln (`par-…`), ohne eigenes
 Manifest und Symbol. Alle Entscheidungen zur Bedienung und zum Aussehen stehen in
