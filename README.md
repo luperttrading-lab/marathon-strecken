@@ -12,6 +12,8 @@ dann liegen alle Strecken in einer App.
 | Berlin (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/berlin/ | [`berlin/`](berlin/) | [`werkzeuge/berlin/`](werkzeuge/berlin/UEBERGABE.md) |
 | Frankfurt (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/frankfurt/ | [`frankfurt/`](frankfurt/) | [`werkzeuge/frankfurt/`](werkzeuge/frankfurt/UEBERGABE.md) |
 | New York (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/newyork/ | [`newyork/`](newyork/) | [`werkzeuge/newyork/`](werkzeuge/newyork/UEBERGABE.md) |
+| London (Kurs 2026, Blue Start) | https://luperttrading-lab.github.io/marathon-strecken/london/ | [`london/`](london/) | [`werkzeuge/london/`](werkzeuge/london/UEBERGABE.md) |
+| Chicago (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/chicago/ | [`chicago/`](chicago/) | [`werkzeuge/chicago/`](werkzeuge/chicago/UEBERGABE.md) |
 | Boston (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/boston/ | [`boston/`](boston/) | [`werkzeuge/boston/`](werkzeuge/boston/UEBERGABE.md) |
 | Köln (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/koeln/ | [`koeln/`](koeln/) | [`werkzeuge/koeln/`](werkzeuge/koeln/UEBERGABE.md) |
 | München (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/muenchen/ | [`muenchen/`](muenchen/) | [`werkzeuge/muenchen/`](werkzeuge/muenchen/UEBERGABE.md) |
@@ -21,11 +23,11 @@ dann liegen alle Strecken in einer App.
 ## Regeln für Änderungen
 
 - Gearbeitet wird direkt in `<strecke>/index.html` bzw. `index.html` (Startseite). Die Skripte unter `werkzeuge/` sind nur die Herkunft.
-- Hamburg, Berlin, Frankfurt, New York, Boston, Köln, München, Oberelbe und Rennsteig haben **denselben Code**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur
-  Strecke und den Speicherschlüsseln (`hhm-…`, `bln-…`, `ffm-…`, `nyc-…`, `bos-…`, `kln-…`, `muc-…`, `oem-…`, `rsl-…`). Eine Änderung am Verhalten oder Aussehen in **allen** Dateien nachziehen.
+- Hamburg, Berlin, Frankfurt, New York, London, Chicago, Boston, Köln, München, Oberelbe und Rennsteig haben **denselben Code**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur
+  Strecke und den Speicherschlüsseln (`hhm-…`, `bln-…`, `ffm-…`, `nyc-…`, `ldn-…`, `chi-…`, `bos-…`, `kln-…`, `muc-…`, `oem-…`, `rsl-…`). Eine Änderung am Verhalten oder Aussehen in **allen** Dateien nachziehen.
 - Jede App und die Startseite haben ihre eigene Versionsnummer: bei jeder Änderung `APP_VERSION` in der `index.html` und
   `version.json` im selben Ordner gemeinsam hochzählen, sonst kommt das Update auf dem iPhone nicht an.
-- Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `bln-`, `ffm-`, `nyc-`, `bos-`, `kln-`, `muc-`, `oem-`, `rsl-`, `start-`). Ein Service Worker löscht
+- Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `bln-`, `ffm-`, `nyc-`, `ldn-`, `chi-`, `bos-`, `kln-`, `muc-`, `oem-`, `rsl-`, `start-`). Ein Service Worker löscht
   nur Caches mit seinem eigenen Präfix, weil sich alle Apps unter `luperttrading-lab.github.io` denselben Speicher teilen.
 - **Nur dunkel** (seit Hamburg 1.35 in allen Strecken): kein Hell/Dunkel-Umschalter mehr, keine hellen Kartenbilder.
   Die Startseite ist ebenfalls immer dunkel, in den
@@ -36,7 +38,7 @@ dann liegen alle Strecken in einer App.
   **auch in jeder Strecke** in `D.termine` (gleiche Schreibweise, steuert „Live nach Plan“ am Renntag). Dort stehen außerdem
   `D.tz` (Zeitzone der Uhrzeiten; `D.ort`/`D.ortKurz` nennen den Ort dazu, wenn die Zeitzone ihn nicht verrät, z. B. Boston) und `D.start` (Startzeit der ersten Welle in Minuten ab Mitternacht).
 - Neue Strecke: eigener Ordner neben den anderen, Karte auf der Startseite ergänzen. Reihenfolge: New York als Highlight oben
-  (Klasse `card top`), danach Boston, dann die deutschen Strecken alphabetisch. Alle Strecken liegen in **einer** App: installiert wird
+  (Klasse `card top`), danach London, Chicago und Boston (nach Teilnehmerzahl), dann die deutschen Strecken alphabetisch. Alle Strecken liegen in **einer** App: installiert wird
   die Startseite, ihr Scope umfasst alle Unterordner. Die Strecken haben **kein eigenes Manifest und Symbol**, sie verweisen auf
   `../manifest.webmanifest`, `../apple-touch-icon.png` und `../icon-192.png`; *Zum Home-Bildschirm* aus einer Strecke
   installiert so ebenfalls die ganze App.
@@ -44,7 +46,7 @@ dann liegen alle Strecken in einer App.
   gezeichnete Linien (`.pf`, SVG), nicht als Textzeichen ↑: das saß auf dem iPhone klein und tief (seit Startseite 1.16).
 - Mini-Profile der Startseite: gemeinsamer Höhenmaßstab 40 m = 56 px (Weg je Karte gleich breit), Grundhöhe 64 px;
   mehr Höhenbereich bekommt eine höhere Grafik statt eines anderen Maßstabs (`.spark.hoch` New York 112 px,
-  `.spark.berg` Rennsteig 240 px, `.spark.boston` 208 px). Pfad: 200 Punkte, je Punkt das Maximum der letzten 100 m.
+  `.spark.berg` Rennsteig 240 px, `.spark.boston` 208 px, `.spark.london` 80 px). Pfad: 200 Punkte, je Punkt das Maximum der letzten 100 m.
   Übersichtskarte: `cd werkzeuge && python3 tiles_z11.py <strecke>`, Ergebnis in `D.tiles["11"]` und in die Kartenliste von `sw.js`.
-  Danach `python3 tiles_rand.py <strecke>` (New York und Boston: `tiles_rand.py <strecke> 2`): baut z11–z13 mit einem Kachelrand entlang der Strecke
+  Danach `python3 tiles_rand.py <strecke>` (New York, London, Chicago und Boston: `tiles_rand.py <strecke> 2`): baut z11–z13 mit einem Kachelrand entlang der Strecke
   neu, damit die mitlaufende Karte an Start, Ziel und Außenkurven nicht ins Graue schaut, und trägt `D.tiles` und `sw.js` selbst ein.
