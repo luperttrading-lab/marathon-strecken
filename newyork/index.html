@@ -143,7 +143,7 @@ canvas { display: block; width: 100%; }
 .ovfarbe[aria-pressed="true"] i { background: linear-gradient(135deg, #143790, #2b94f4 22%, #4caf63 40%, #efd760 56%, #f39136 70%, #f5493e 84%, #922e4e); }
 .ovfarbe:focus-visible { outline: none; }
 .ovfarbe:focus-visible i { outline: 2px solid var(--blue); outline-offset: 2px; }
-#pace-chart { height: 210px; }
+#pace-chart { height: 240px; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: var(--muted); }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
 input[type="range"] { width: 100%; accent-color: var(--blue); margin: 0; }
@@ -525,7 +525,7 @@ body.run .close { border-color: var(--edge); }
           <button type="button" id="d-50" data-down="0.5">halb</button>
           <button type="button" id="d-0" data-down="0">gar nicht</button>
         </div></div>
-      <span class="note">Pace-Modell: Energiekosten des Laufens nach Steigung (Minetti u. a. 2002). Bei gleicher Leistung wird man bergauf langsamer und bergab schneller. Ob du den Bergab-Gewinn wirklich mitnimmst, ist eine Annahme, deshalb kannst du sie hier wählen. Voreinstellung: halb.</span>
+      <span class="note">Pace-Modell: bergauf die Energiekosten des Laufens nach Steigung (Minetti u. a. 2002). Bergab bei „halb“ anfangs die Hälfte dessen, was dieselbe Steigung bergauf kostet, am schnellsten bei −8 %, steiler wieder langsamer, wie es Felddaten von Läufern zeigen. „Voll“ verdoppelt den Gewinn, „gar nicht“ rechnet bergab wie flach. Voreinstellung: halb.</span>
     </div>
     <div class="setting">
       <div class="head"><span class="lbl">So rechnet das Pace-Modell</span><span class="note" id="pk-out"></span></div>
@@ -661,12 +661,31 @@ const minetti = i => 155.4 * i ** 5 - 30.4 * i ** 4 - 43.3 * i ** 3 + 46.3 * i *
 // Sekunden je Höhenmeter bei 15 km/h an einer Steigung i (Bruch): an sanften Anstiegen S.secHm, steiler mehr (Minetti ist konvex)
 const kostHm = i => S.secHm / 0.24 / (19.5 / 3.6) * (minetti(i) / 3.6 - 1) / i * 0.24;
 let P = null;
-// Pace-Faktor an einer Steigung gi (Bruch; 1 = flach): Minetti-Kurve auf die eingestellten Kosten je Höhenmeter skaliert
-// (Minetti: 19,5/3,6 = 5,42 flache Meter je Höhenmeter); bergab zählt der Gewinn mit S.down und wächst nur bis BERGAB_GRENZE,
-// steiler bringt nichts mehr (Annahme der App: dort bremst man). grenze = -1 rechnet ohne Grenze (Vergleich im Diagramm).
-const BERGAB_GRENZE = -0.04;
-const paceFaktor = (gi, grenze = BERGAB_GRENZE) => { const sc = S.secHm / 0.24 / (19.5 / 3.6);
-  return gi >= 0 ? 1 + sc * (minetti(gi) / 3.6 - 1) : 1 - S.down * sc * (1 - minetti(Math.max(gi, grenze, -0.2)) / 3.6); };
+// Pace-Faktor an einer Steigung gi (Bruch; 1 = flach). Bergauf die Minetti-Kurve, skaliert auf die eingestellten Kosten je
+// Höhenmeter (Minetti: 19,5/3,6 = 5,42 flache Meter je Höhenmeter). Bergab seit Hamburg 1.44 eine U-Kurve, abgestimmt im
+// Pace-Kurven-Simulator an Felddaten aus 20 belgischen Trailrennen (Jidovtseff und De Cock 2026) und Stravas
+// Herzfrequenzmodell: bei „halb“ anfangs die halbe Bergauf-Steigung, am schnellsten bei BERGAB.xm % (BERGAB.gm % schneller
+// als flach, kubisch), bei BERGAB.x0 % wieder so schnell wie flach, steiler immer langsamer (Parabel und Kubik zu gleichen
+// Teilen, BERGAB.p). „voll“ verdoppelt die Abweichung vom Flachen, „gar nicht“ rechnet bergab wie flach. Auf ±BERGAB.w %
+// rundet ein Übergang den Knick bei 0 ab (Steigung dort: Mittel beider Seiten). Alles skaliert mit den Kosten je Höhenmeter.
+const BERGAB = { r: 0.5, w: 1, xm: -8, gm: 12, x0: -16, p: 0.5 }, UNSICHER = -8;   // steiler als UNSICHER %: Quellen weichen ab
+const pfAuf = x => S.secHm / 0.24 / (19.5 / 3.6) * (minetti(x / 100) / 3.6 - 1);       // x in % (≥ 0), Faktor − 1
+function pfAb(x) {                                                                       // x in % (< 0), Faktor − 1 bei „halb“
+  const B = BERGAB, k = S.secHm, s0 = B.r * k / 24, tief = B.gm / 100 * k, h = -B.xm, L = B.xm - B.x0;
+  if (x >= B.xm) { const t = (x - B.xm) / h; return -tief * (2 * t ** 3 - 3 * t ** 2 + 1) + s0 * h * (t ** 3 - t ** 2); }
+  const u = (B.xm - x) / L; return -tief + tief * ((1 - B.p) * u * u + B.p * u ** 3);
+}
+function paceFaktor(gi) {
+  const x = gi * 100, d = S.down * 2, w = d ? BERGAB.w : 0, unten = xx => d * pfAb(xx);
+  if (Math.abs(x) < w) {   // Hermite-Stück auf [−w, 0] bzw. [0, w]
+    const e = 1e-3, sm = (S.secHm / 24 + d * BERGAB.r * S.secHm / 24) / 2;
+    const [a, ya, ma, yb, mb] = x >= 0 ? [0, 0, sm, pfAuf(w), (pfAuf(w + e) - pfAuf(w - e)) / (2 * e)]
+      : [-w, unten(-w), (unten(-w + e) - unten(-w - e)) / (2 * e), 0, sm];
+    const t = (x - a) / w;
+    return 1 + (2 * t ** 3 - 3 * t ** 2 + 1) * ya + (t ** 3 - 2 * t ** 2 + t) * w * ma + (-2 * t ** 3 + 3 * t ** 2) * yb + (t ** 3 - t ** 2) * w * mb;
+  }
+  return 1 + (x >= 0 ? pfAuf(x) : unten(x));
+}
 // Pace-Faktor je Messpunkt (1 = flach) und die damit gewichtete Strecke in Metern
 function paceRatio() {
   const g = WIN[S.win].g, ratio = new Float64Array(N);
@@ -962,30 +981,31 @@ function drawOverview() {
   for (const mk of D.marks) if ((mk.c === "relay" && S.relay) || mk.c === "half") { c.fillStyle = COL[MARK_STYLE[mk.c]]; c.fillRect(X(mk.k) - 1, pad + ph, 2, 4); }
 }
 
-// Pace je Steigung (seit Hamburg 1.41), bei den Einstellungen, die sie verändern: durchgezogen die App (paceFaktor mit den
-// eingestellten Kosten und dem Bergab-Gewinn), gestrichelt das Labormodell (Minetti unverändert, voller Gewinn), grau die
-// Zone jenseits von BERGAB_GRENZE, in der bergab nichts mehr dazukommt; der Punkt ist die Steigung an der aktuellen Stelle.
+// Pace je Steigung (seit Hamburg 1.41, U-Kurve seit 1.44), bei den Einstellungen, die sie verändern: durchgezogen die App
+// (paceFaktor mit den eingestellten Kosten und dem Bergab-Gewinn), gestrichelt das Labormodell (Minetti unverändert, voller
+// Gewinn, unten abgeschnitten), grau die Zone steiler als UNSICHER, in der die Quellen auseinanderliegen; der Punkt ist die
+// Steigung an der aktuellen Stelle.
 const pk = $("pace-chart"), pkctx = pk.getContext("2d");
 function drawPaceChart() {
   const { w, h, dpr } = sizeCanvas(pk); if (!w) return; const c = pkctx;
   c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
-  const G0 = -10, G1 = 10, p0 = P.p0, app = g => paceFaktor(g / 100) * p0, lab = g => minetti(g / 100) / 3.6 * p0;
+  const G0 = -20, G1 = 10, p0 = P.p0, app = g => paceFaktor(g / 100) * p0, lab = g => minetti(g / 100) / 3.6 * p0;
   const gs = []; for (let g = G0; g <= G1 + 1e-9; g += 0.25) gs.push(g);
-  const vs = gs.flatMap(g => [app(g), lab(g)]), y0 = Math.floor(Math.min(...vs) / 30) * 30, y1 = Math.ceil(Math.max(...vs) / 30) * 30;
+  const va = gs.map(app), y0 = Math.floor((Math.min(...va) - 10) / 30) * 30, y1 = Math.ceil(Math.max(...va, lab(G1)) / 30) * 30;
   const L0 = 40, R0 = 42, T0 = 8, B0 = 20;   // Ränder: Pace links, Kurvennamen rechts, Steigung unten
   const X = g => L0 + (g - G0) / (G1 - G0) * (w - L0 - R0), Y = v => T0 + (y1 - v) / (y1 - y0) * (h - T0 - B0);
   const font = getComputedStyle(document.body).fontFamily; c.font = "500 10.5px " + font;
-  const gr = BERGAB_GRENZE * 100;
-  c.fillStyle = COL["--ink"]; c.globalAlpha = 0.07; c.fillRect(X(G0), T0, X(gr) - X(G0), h - T0 - B0); c.globalAlpha = 1;
+  c.fillStyle = COL["--ink"]; c.globalAlpha = 0.07; c.fillRect(X(G0), T0, X(UNSICHER) - X(G0), h - T0 - B0); c.globalAlpha = 1;
   const ys = (y1 - y0) / 30 > 7 ? 60 : 30;
   c.strokeStyle = COL["--grid"]; c.lineWidth = 1; c.fillStyle = COL["--muted"]; c.textAlign = "right"; c.textBaseline = "middle";
   for (let v = Math.ceil(y0 / ys) * ys; v <= y1; v += ys) { const y = Math.round(Y(v)) + 0.5; c.beginPath(); c.moveTo(L0, y); c.lineTo(w - R0, y); c.stroke(); c.fillText(mss(v), L0 - 6, y); }
   c.textAlign = "center"; c.textBaseline = "top";
   for (let g = G0; g <= G1; g += 5) { const x = Math.round(X(g)) + 0.5; c.beginPath(); c.moveTo(x, T0); c.lineTo(x, h - B0); c.stroke(); c.fillText((g > 0 ? "+" : g < 0 ? "−" : "") + Math.abs(g) + " %", x, h - B0 + 5); }
-  c.textAlign = "left"; c.textBaseline = "top"; c.fillText("ab " + nf(gr, 0).replace("-", "−") + " %", X(G0) + 5, T0 + 4); c.fillText("kein Gewinn", X(G0) + 5, T0 + 17); c.fillText("mehr", X(G0) + 5, T0 + 30);
+  c.textAlign = "left"; c.textBaseline = "top"; c.fillText("steiler als", X(G0) + 5, T0 + 4); c.fillText(nf(UNSICHER, 0).replace("-", "−") + " %:", X(G0) + 5, T0 + 17); c.fillText("unsicher", X(G0) + 5, T0 + 30);
   const kurve = (f, farbe, breite, strich) => { c.strokeStyle = farbe; c.lineWidth = breite; c.setLineDash(strich); c.lineJoin = "round"; c.beginPath();
     gs.forEach((g, k) => k ? c.lineTo(X(g), Y(f(g))) : c.moveTo(X(g), Y(f(g)))); c.stroke(); c.setLineDash([]); };
-  kurve(lab, COL["--muted"], 1.5, [5, 4]); kurve(app, COL["--blue"], 2.25, []);
+  c.save(); c.beginPath(); c.rect(L0, T0, w - L0 - R0, h - T0 - B0); c.clip();
+  kurve(lab, COL["--muted"], 1.5, [5, 4]); kurve(app, COL["--blue"], 2.25, []); c.restore();
   // Namen rechts an den Kurvenenden, nicht übereinander
   let ya = Y(app(G1)), yl = Y(lab(G1)); if (Math.abs(ya - yl) < 13) { const m = (ya + yl) / 2, s = ya < yl ? -1 : 1; ya = m + s * 6.5; yl = m - s * 6.5; }
   c.textBaseline = "middle"; c.font = "600 11px " + font; c.fillStyle = COL["--blue"]; c.fillText("App", w - R0 + 5, ya);
@@ -996,18 +1016,21 @@ function drawPaceChart() {
   c.fillStyle = COL["--ink"]; c.font = "600 11px " + font; c.textAlign = xh > w - R0 - 30 ? "right" : "left"; c.textBaseline = "bottom";
   c.fillText("hier", xh + (c.textAlign === "left" ? 7 : -7), yh - 4);
 }
-// Text zum Diagramm: Zahlen für die eingestellte Pace und was die Grenze auf dieser Strecke ausmacht
+// Text zum Diagramm: Zahlen für die eingestellte Pace und wie viel der Strecke steiler als UNSICHER bergab geht
 function paceChartNote() {
-  const p0 = P.p0, at = g => paceFaktor(g / 100) * p0, g = WIN[S.win].g, gr = BERGAB_GRENZE * 100;
-  let steil = 0, ohne = 0;
-  for (let i = 1; i < N; i++) { const gi = (g[i - 1] + g[i]) / 2 / 100; if (gi * 100 < gr) { steil += STEP; ohne += (paceFaktor(gi) - paceFaktor(gi, -1)) * STEP / 1000 * p0; } }
-  const gew = S.down === 1 ? "ganz" : S.down === 0.5 ? "zur Hälfte" : "gar nicht";
+  const p0 = P.p0, at = g => paceFaktor(g / 100) * p0, g = WIN[S.win].g, B = BERGAB, pc = v => nf(v, 0).replace("-", "−") + " %";
+  let steil = 0;
+  for (let i = 1; i < N; i++) if ((g[i - 1] + g[i]) / 2 < UNSICHER) steil += STEP;
+  const fenster = "Messfenster " + (S.win === 1000 ? "1 km" : S.win + " m");
   $("pk-out").textContent = "flach " + mss(p0) + " /km";
   $("pk-note").textContent = "Durchgezogen die App mit deinen Einstellungen, gestrichelt das Labormodell (Minetti u. a. 2002, unverändert). Bergauf: +5 % "
-    + mss(at(5)) + " /km (" + secs(at(5) - p0) + "), +10 % " + mss(at(10)) + " /km (" + secs(at(10) - p0) + "). Bergab zählt der Gewinn " + gew
-    + (S.down ? " und wächst nur bis " + nf(gr, 0).replace("-", "−") + " % Gefälle: dort " + mss(at(gr)) + " /km (" + secs(at(gr) - p0) + "), steiler nicht schneller. Die Grenze ist eine Annahme der App: Steiler bergab muss man bremsen, und Oberschenkel und Knie fangen jeden Schritt ab; das Labor misst nur den Energieverbrauch. "
-      + (steil >= 50 ? "Auf dieser Strecke sind " + nf(steil / 1000, steil < 1000 ? 2 : 1) + " km steiler als " + nf(gr, 0).replace("-", "−") + " % (Messfenster " + (S.win === 1000 ? "1 km" : S.win + " m") + ")" + (Math.round(ohne) >= 1 ? "; ohne Grenze wärst du dort " + Math.round(ohne) + " s schneller." : "; die Grenze kostet dort weniger als 1 s.") : "Auf dieser Strecke ist kein Stück steiler als " + nf(gr, 0).replace("-", "−") + " % (Messfenster " + (S.win === 1000 ? "1 km" : S.win + " m") + "), die Grenze spielt hier keine Rolle.")
-      : ", bergab rechnet die App wie flach.");
+    + mss(at(5)) + " /km (" + secs(at(5) - p0) + "), +10 % " + mss(at(10)) + " /km (" + secs(at(10) - p0) + "). "
+    + (S.down ? "Bergab" + (S.down === 1 ? " mit doppeltem Gewinn" : "") + ": −4 % " + mss(at(-4)) + " /km (" + secs(at(-4) - p0) + "), am schnellsten bei " + pc(B.xm) + " mit "
+      + mss(at(B.xm)) + " /km (" + secs(at(B.xm) - p0) + "), bei " + pc(B.x0) + " wieder so schnell wie flach, steiler langsamer (−20 %: " + mss(at(-20)) + " /km). "
+      + "Steil bergab muss man bremsen; so zeigen es Felddaten aus 20 belgischen Trailrennen (Jidovtseff und De Cock 2026) und Stravas Herzfrequenzmodell, das Labor misst nur den Energieverbrauch. "
+      + "Steiler als " + pc(UNSICHER) + " liegen diese Quellen auseinander, dort ist die Umrechnung unsicher (grau). "
+      + (steil >= 50 ? "Auf dieser Strecke sind " + nf(steil / 1000, steil < 1000 ? 2 : 1) + " km so steil (" + fenster + ")." : "Auf dieser Strecke ist kein Stück so steil (" + fenster + ").")
+      : "Bergab rechnet die App wie flach.");
 }
 
 function updateReadout() {
@@ -1565,7 +1588,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.29';
+const APP_VERSION = '1.30';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");

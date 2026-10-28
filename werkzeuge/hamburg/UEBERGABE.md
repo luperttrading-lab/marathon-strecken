@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.43** (1.43: Tempo-Rad mit ×1 (Echtzeit), ×50 und ×100–×180 in 20er-Schritten; 1.42: Brücken-Beschriftungen überlappen nicht mehr; 1.41: Kästchen bunt/grau neben der Gesamtstrecke, Diagramm „So rechnet das Pace-Modell“; 1.40: Ortsname bei Uhrzeiten aus `D.ort`, für Boston, sonst unverändert; 1.39: Seite springt beim Drehen an Zielzeit und Startzeit nicht mehr; 1.38: Höhenangaben mit dunklem Schein statt Kasten; 1.37: Höhenangaben auf Schildern lesbar, Straßennamen in eigener Zeile unter der km-Skala; 1.36: Gesamtstrecke unten mit feiner weißer Linie und Schalter farbig/einfarbig, die drei hellsten Bergab-Blau weniger türkis; 1.35: Farben fest (bergauf Rot bis Aubergine, bergab Blau), Dreieck unter der Skala, nur noch dunkel; 1.34: geschätzte Brücken schraffiert statt abgedunkelt; 1.33: Steigungszahl ohne Farbe; 1.32: Steigungszahl immer lesbar; 1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.44** (1.44: Bergab U-Kurve statt Grenze bei −4 %: am schnellsten bei −8 %, ab −16 % langsamer als flach, ohne Knick bei 0 %; 1.43: Tempo-Rad mit ×1 (Echtzeit), ×50 und ×100–×180 in 20er-Schritten; 1.42: Brücken-Beschriftungen überlappen nicht mehr; 1.41: Kästchen bunt/grau neben der Gesamtstrecke, Diagramm „So rechnet das Pace-Modell“; 1.40: Ortsname bei Uhrzeiten aus `D.ort`, für Boston, sonst unverändert; 1.39: Seite springt beim Drehen an Zielzeit und Startzeit nicht mehr; 1.38: Höhenangaben mit dunklem Schein statt Kasten; 1.37: Höhenangaben auf Schildern lesbar, Straßennamen in eigener Zeile unter der km-Skala; 1.36: Gesamtstrecke unten mit feiner weißer Linie und Schalter farbig/einfarbig, die drei hellsten Bergab-Blau weniger türkis; 1.35: Farben fest (bergauf Rot bis Aubergine, bergab Blau), Dreieck unter der Skala, nur noch dunkel; 1.34: geschätzte Brücken schraffiert statt abgedunkelt; 1.33: Steigungszahl ohne Farbe; 1.32: Steigungszahl immer lesbar; 1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -42,7 +42,13 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   Wert (iOS rollt nach dem Loslassen weiter; das hatte einmal zu falschen Zeiten geführt).
 - **Pace-Modell:** Minetti et al. (2002), skaliert auf die Erfahrung des Nutzers: **1,0 s je Höhenmeter bei 15 km/h**
   (= 4,2 m flache Strecke je Höhenmeter; Minetti ergibt 5,4 m bzw. 1,3 s). Einstellbar 0,5–2,0 s.
-  Bergab-Gewinn standardmäßig **halb**, und nur bis −4 % Gefälle, steiler bringt nichts zusätzlich.
+  Bergab seit 1.44 eine U-Kurve (`BERGAB`, abgestimmt mit dem Nutzer im „Pace-Kurven-Simulator“, einem privaten Artifact,
+  an Felddaten aus 20 belgischen Trailrennen, Jidovtseff und De Cock 2026, und Stravas Herzfrequenzmodell): bei **halb**
+  (Standard) anfangs die halbe Bergauf-Steigung, am schnellsten bei −8 % (12 % schneller als flach, 3:31 bei 4:00), bei
+  −16 % wieder so schnell wie flach, steiler immer langsamer (Parabel und Kubik je zur Hälfte, −20 %: 4:52). „voll“
+  verdoppelt die Abweichung vom Flachen, „gar nicht“ rechnet bergab wie flach. Auf ±1 % rundet ein Hermite-Übergang den
+  Knick bei 0 ab (Steigung dort: Mittel beider Seiten); das macht jede Strecke rund 10 s schneller, weil die häufigen
+  Steigungen um 0 % etwas weniger kosten. Bis 1.43: halber Minetti-Gewinn, ab −4 % kein weiterer.
   Die 1,0 s gelten für sanfte Anstiege; Minetti ist konvex, bei 5 % kostet ein Höhenmeter 1,1 s, bei 8 % 1,2 s. Seit 1.24
   nennt der Text über den Zwischenzeiten den Wert bei 8 % (`kostHm`), weil „+43 m, +48 s“ sonst wie ein Rechenfehler aussah.
 - **Messfenster der Steigung** 10 m / 50 m / 200 m (Standard) / 1 km. Höhenmeter hängen stark davon ab:
@@ -69,11 +75,13 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   `ov-einfarbig`): seit 1.41 mit dem Kästchen rechts neben der Übersicht (Wunsch des Nutzers). Es zeigt den Zustand nach
   dem Antippen: grau, solange sie bunt ist, in Regenbogenfarben, solange sie grau ist. Der Schalter in den Einstellungen
   ist damit entfallen.
-- **Diagramm „So rechnet das Pace-Modell“** (seit 1.41, Einstellungen nach „Bergab-Gewinn“): Pace je Steigung von −10 bis
-  +10 % bei der eigenen Pace im Flachen, App (`paceFaktor`) gegen Labormodell (Minetti unverändert), graue Zone jenseits
-  von `BERGAB_GRENZE` (−4 %), Punkt an der Steigung der aktuellen Stelle. Der Text rechnet aus, wie viele km der Strecke
-  steiler bergab gehen und was die Grenze dort kostet (Boston 1,8 km / 7 s, New York 1,3 km / 3 s, Rennsteig 7,5 km / 70 s,
-  Messfenster 200 m). Die Einstellung „Bergab-Gewinn“ wiegt viel mehr: halb statt voll kostet in Boston 2:49 min.
+- **Diagramm „So rechnet das Pace-Modell“** (seit 1.41, Einstellungen nach „Bergab-Gewinn“): Pace je Steigung, seit 1.44
+  von −20 bis +10 % bei der eigenen Pace im Flachen, App (`paceFaktor`) gegen Labormodell (Minetti unverändert, unten
+  abgeschnitten), graue Zone steiler als `UNSICHER` (−8 %), wo Strava und Felddaten auseinanderliegen, Punkt an der
+  Steigung der aktuellen Stelle. Der Text nennt die Pace bei +5, +10 und −4 %, das Minimum und wie viele km steiler als
+  −8 % sind (nur Rennsteig: 2,0 km, Messfenster 200 m). Profilkosten bei 2:50:00 gegenüber 1.43: Boston −21 s, Sydney
+  −19 s, New York −15 s, Kapstadt −14 s, flache Strecken −7 bis −12 s (Rundung bei 0 %), Rennsteig −57 s. Die Einstellung
+  „Bergab-Gewinn“ wiegt weiter viel mehr als die Form der Kurve.
 - Wasser/Verpflegung und Staffelwechsel standardmäßig **aus**, einschaltbar. Halbmarathon-Marke immer sichtbar.
 - Straßennamen seit 1.37 in eigener Zeile unter der km-Skala (vorher am Fuß der Fläche, wo Kurve und Farben sie auf
   flachen Stücken überdeckten, z. B. New York km 22–23), aktuelle Straße blau. Welche Namen gezeigt werden, entscheidet `roadLabels` einmal je
