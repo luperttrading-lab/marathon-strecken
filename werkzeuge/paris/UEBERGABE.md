@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Paris-Marathon (Kurs 2025)
 
-Stand 28.10.2026, App-Version **1.0** (Erstausgabe), live unter https://luperttrading-lab.github.io/marathon-strecken/paris/.
+Stand 28.10.2026, App-Version **1.1** (1.1: Kästchen bunt/grau neben der Gesamtstrecke, Diagramm „So rechnet das Pace-Modell“; 1.0: Erstausgabe), live unter https://luperttrading-lab.github.io/marathon-strecken/paris/.
 
 Die App ist eine Kopie der Boston-App (Stand 1.0) mit eigenen Daten, Texten und Speicherschlüsseln (`par-…`), ohne eigenes
 Manifest und Symbol. Alle Entscheidungen zur Bedienung und zum Aussehen stehen in
@@ -9,7 +9,7 @@ Manifest und Symbol. Alle Entscheidungen zur Bedienung und zum Aussehen stehen i
 **Warum Kurs 2025:** Ab 2027 richtet Cadence Running United den Lauf aus (bis 2026 ASO), als „ASICS Marathon de Paris“,
 50. Ausgabe am Sonntag, 4. April 2027 (`D.termine`). Die neue Strecke wird erst Anfang 2027 vorgestellt und soll sich künftig
 jedes Jahr ändern. Die Website der ASO ist abgeschaltet. Gezeigt wird deshalb der Kurs 2025 (13. April 2025) zum Vergleich und
-Nachschauen; der Kurs 2024 war zu 92 % gleich (Abweichungen km 8,4–10,2, 11,8–12,2 und 24,7–25,9; 2024 wegen Hochwasser oben
+Nachschauen; der Kurs 2024 war zu 92 % gleich, 2026 (12. April) laut Streckenbeschreibungen derselbe (Abweichungen km 8,4–10,2, 11,8–12,2 und 24,7–25,9; 2024 wegen Hochwasser oben
 auf den Quais statt durch den Tunnel des Tuileries). Start 2025 um 8:00 Uhr (Elite und vordere Startblöcke, runpack.fr),
 `D.start` = 480. `D.tz` Europe/Paris, `D.ortKurz` „ Paris“. Hinweis-Kasten auf der Startseite (seit 1.18).
 

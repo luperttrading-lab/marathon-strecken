@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Hamburg-Marathon
 
-Stand 27.10.2026, App-Version **1.40** (1.40: Ortsname bei Uhrzeiten aus `D.ort`, für Boston, sonst unverändert; 1.39: Seite springt beim Drehen an Zielzeit und Startzeit nicht mehr; 1.38: Höhenangaben mit dunklem Schein statt Kasten; 1.37: Höhenangaben auf Schildern lesbar, Straßennamen in eigener Zeile unter der km-Skala; 1.36: Gesamtstrecke unten mit feiner weißer Linie und Schalter farbig/einfarbig, die drei hellsten Bergab-Blau weniger türkis; 1.35: Farben fest (bergauf Rot bis Aubergine, bergab Blau), Dreieck unter der Skala, nur noch dunkel; 1.34: geschätzte Brücken schraffiert statt abgedunkelt; 1.33: Steigungszahl ohne Farbe; 1.32: Steigungszahl immer lesbar; 1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
+Stand 27.10.2026, App-Version **1.41** (1.41: Kästchen bunt/grau neben der Gesamtstrecke, Diagramm „So rechnet das Pace-Modell“; 1.40: Ortsname bei Uhrzeiten aus `D.ort`, für Boston, sonst unverändert; 1.39: Seite springt beim Drehen an Zielzeit und Startzeit nicht mehr; 1.38: Höhenangaben mit dunklem Schein statt Kasten; 1.37: Höhenangaben auf Schildern lesbar, Straßennamen in eigener Zeile unter der km-Skala; 1.36: Gesamtstrecke unten mit feiner weißer Linie und Schalter farbig/einfarbig, die drei hellsten Bergab-Blau weniger türkis; 1.35: Farben fest (bergauf Rot bis Aubergine, bergab Blau), Dreieck unter der Skala, nur noch dunkel; 1.34: geschätzte Brücken schraffiert statt abgedunkelt; 1.33: Steigungszahl ohne Farbe; 1.32: Steigungszahl immer lesbar; 1.31: Schalter Blautöne bergab auto/tief/leicht; 1.30: Blauverlauf bergab dunkler beginnend, Ende Marineblau; 1.29: nur flach grün, bergab sieben Blautöne; 1.28: Zeiger als Dreieck über der Skala, Varianten 1–4 mit Grün und Blauverlauf bergab; 1.27: Farbvarianten A, 1–4 und Schalter für flach; 1.26: Farbwahl auch im Vollbild, Hilfslinien mindestens 18 px auseinander; 1.25: Farbvarianten A–E zum Testen unter der Legende; 1.24: Text über den Zwischenzeiten nennt auch die Kosten steiler Anstiege; 1.23: Höhenachse in gröberen Schritten bei großem Höhenbereich, hier ohne Wirkung), live unter https://luperttrading-lab.github.io/marathon-strecken/hamburg/.
 Auf dem iPhone wird nur noch die gemeinsame App „Marathon“ installiert (siehe „Mehrere Strecken“).
 
 Diese Notiz ist für die nächste Sitzung. Sie fasst zusammen, was in der Entstehungssitzung entschieden,
@@ -65,8 +65,15 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   Farbe zeigt (`gaugePos`, anteilig im Feld). Darüber stieß es ans Komma der Zahl (bis 1.34). Die große
   Steigungszahl ist ohne Farbe (seit 1.33): in Klassenfarbe verschwand Marineblau im Dunkeln.
 - **Gesamtstrecke unten** (seit 1.36): feine weiße Linie auf der Höhe (0,75 px, `--ink`), damit die Form auch über
-  Marineblau und Aubergine klar bleibt. In den Einstellungen umschaltbar farbig (Standard) / einfarbig (`OV_EIN`,
-  Speicherschlüssel `ov-einfarbig`).
+  Marineblau und Aubergine klar bleibt. Umschaltbar farbig (Standard) / einfarbig (`OV_EIN`, Speicherschlüssel
+  `ov-einfarbig`): seit 1.41 mit dem Kästchen rechts neben der Übersicht (Wunsch des Nutzers). Es zeigt den Zustand nach
+  dem Antippen: grau, solange sie bunt ist, in Regenbogenfarben, solange sie grau ist. Der Schalter in den Einstellungen
+  ist damit entfallen.
+- **Diagramm „So rechnet das Pace-Modell“** (seit 1.41, Einstellungen nach „Bergab-Gewinn“): Pace je Steigung von −10 bis
+  +10 % bei der eigenen Pace im Flachen, App (`paceFaktor`) gegen Labormodell (Minetti unverändert), graue Zone jenseits
+  von `BERGAB_GRENZE` (−4 %), Punkt an der Steigung der aktuellen Stelle. Der Text rechnet aus, wie viele km der Strecke
+  steiler bergab gehen und was die Grenze dort kostet (Boston 1,8 km / 7 s, New York 1,3 km / 3 s, Rennsteig 7,5 km / 70 s,
+  Messfenster 200 m). Die Einstellung „Bergab-Gewinn“ wiegt viel mehr: halb statt voll kostet in Boston 2:49 min.
 - Wasser/Verpflegung und Staffelwechsel standardmäßig **aus**, einschaltbar. Halbmarathon-Marke immer sichtbar.
 - Straßennamen seit 1.37 in eigener Zeile unter der km-Skala (vorher am Fuß der Fläche, wo Kurve und Farben sie auf
   flachen Stücken überdeckten, z. B. New York km 22–23), aktuelle Straße blau. Welche Namen gezeigt werden, entscheidet `roadLabels` einmal je

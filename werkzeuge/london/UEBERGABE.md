@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil London-Marathon
 
-Stand 28.10.2026, App-Version **1.0** (Erstausgabe), live unter https://luperttrading-lab.github.io/marathon-strecken/london/.
+Stand 28.10.2026, App-Version **1.1** (1.1: Kästchen bunt/grau neben der Gesamtstrecke, Diagramm „So rechnet das Pace-Modell“; 1.0: Erstausgabe), live unter https://luperttrading-lab.github.io/marathon-strecken/london/.
 
 Die App ist eine Kopie der Boston-App (Stand 1.0) mit eigenen Daten, Texten und Speicherschlüsseln (`ldn-…`), ohne eigenes
 Manifest und Symbol. Alle Entscheidungen zur Bedienung und zum Aussehen stehen in

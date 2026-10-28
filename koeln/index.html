@@ -134,6 +134,16 @@ canvas { display: block; width: 100%; }
 #main:active { cursor: grabbing; }
 #main:focus-visible { box-shadow: inset 0 0 0 2px var(--blue); }
 #overview { height: 64px; touch-action: none; cursor: pointer; }
+/* Kästchen rechts neben der Gesamtstrecke (seit Hamburg 1.41): zeigt, wie sie nach dem Antippen aussieht, grau oder in
+   Regenbogenfarben; die Übersicht hat rechts 14 px Rand, das Kästchen rückt mit −6 px heran */
+.ovrow { display: flex; align-items: stretch; }
+.ovrow #overview { flex: 1 1 0; min-width: 0; width: 0; }   /* Breite aus dem Platz neben dem Kästchen, nicht aus der Pixelgröße */
+.ovfarbe { flex: none; width: 36px; min-height: 0; margin: 0 4px 0 -6px; padding: 0 0 12px; border: 0; border-radius: 0; background: none; display: grid; place-items: center; }
+.ovfarbe i { display: block; width: 18px; height: 18px; border-radius: 4px; background: #3d5266; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3); }
+.ovfarbe[aria-pressed="true"] i { background: linear-gradient(135deg, #143790, #2b94f4 22%, #4caf63 40%, #efd760 56%, #f39136 70%, #f5493e 84%, #922e4e); }
+.ovfarbe:focus-visible { outline: none; }
+.ovfarbe:focus-visible i { outline: 2px solid var(--blue); outline-offset: 2px; }
+#pace-chart { height: 210px; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: var(--muted); }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
 input[type="range"] { width: 100%; accent-color: var(--blue); margin: 0; }
@@ -294,7 +304,8 @@ body.run .close { flex: none; }
 .vdrum .cap { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); z-index: 3; font: 600 10px/1 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); pointer-events: none; }
 body.run .close { margin-left: auto; min-height: 32px; padding: 4px 11px; }
 body.run #main { flex: 1; height: auto; min-height: 90px; }
-body.run #overview { flex: none; height: 52px; }
+body.run #overview { height: 52px; }
+body.run .ovrow { flex: none; }   /* die Zeile mit Übersicht und Kästchen, nicht die Übersicht selbst, ist im Vollbild fest */
 body.run .transport { flex: none; padding-inline: 10px; }
 body.run .transport { flex-wrap: nowrap; }
 body.run .transport button { min-height: 40px; padding: 6px 6px; min-width: 0; flex: 1 1 auto; }
@@ -370,7 +381,7 @@ body.run .close { border-color: var(--edge); }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Generali Köln Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.19</button></span>
+    <span class="eyebrow">Generali Köln Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.20</button></span>
     <h1>Steigungsprofil zum Durchwischen</h1>
     <p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>
   </header>
@@ -378,7 +389,7 @@ body.run .close { border-color: var(--edge); }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.19</button>
+    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.20</button>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -428,7 +439,10 @@ body.run .close { border-color: var(--edge); }
       <span class="hint" id="exag">Seitlich wischen zum Laufen</span>
       <div class="legend" id="legend"></div>
     </div>
-    <canvas id="overview" aria-label="Ganze Strecke. Antippen springt an die Stelle."></canvas>
+    <div class="ovrow">
+      <canvas id="overview" aria-label="Ganze Strecke. Antippen springt an die Stelle."></canvas>
+      <button type="button" class="ovfarbe" id="ov-farbe" aria-pressed="false"><i aria-hidden="true"></i></button>
+    </div>
     <div class="row posrow"><input type="range" id="pos" min="0" max="42195" step="10" value="0" aria-label="Position auf der Strecke in Metern"></div>
     <div class="transport">
       <button type="button" id="b-0" aria-label="Zurück zum Start"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x="2.5" y="3" width="2" height="10" rx="0.6" fill="currentColor"/><path d="M13.5 3.2v9.6L5.8 8z" fill="currentColor"/></svg></button>
@@ -514,6 +528,11 @@ body.run .close { border-color: var(--edge); }
       <span class="note">Pace-Modell: Energiekosten des Laufens nach Steigung (Minetti u. a. 2002). Bei gleicher Leistung wird man bergauf langsamer und bergab schneller. Ob du den Bergab-Gewinn wirklich mitnimmst, ist eine Annahme, deshalb kannst du sie hier wählen. Voreinstellung: halb.</span>
     </div>
     <div class="setting">
+      <div class="head"><span class="lbl">So rechnet das Pace-Modell</span><span class="note" id="pk-out"></span></div>
+      <canvas id="pace-chart" aria-label="Diagramm: Pace je Steigung in der App und im Labormodell"></canvas>
+      <span class="note" id="pk-note"></span>
+    </div>
+    <div class="setting">
       <div class="head"><span class="lbl">Zeitraffer beim Laufen</span></div>
       <span class="note" id="speed-note"></span>
     </div>
@@ -522,13 +541,6 @@ body.run .close { border-color: var(--edge); }
         <div class="seg" role="group" aria-label="Wasser und Verpflegung">
           <button type="button" id="vp-0" data-vp="0">aus</button>
           <button type="button" id="vp-1" data-vp="1">ein</button>
-        </div></div>
-      </div>
-    <div class="setting">
-      <div class="head"><span class="lbl">Gesamtstrecke unten</span>
-        <div class="seg" role="group" aria-label="Farben der Gesamtstrecke">
-          <button type="button" id="ov-0" data-ov="0">farbig</button>
-          <button type="button" id="ov-1" data-ov="1">einfarbig</button>
         </div></div>
       </div>
     <div class="setting" hidden>
@@ -649,15 +661,16 @@ const minetti = i => 155.4 * i ** 5 - 30.4 * i ** 4 - 43.3 * i ** 3 + 46.3 * i *
 // Sekunden je Höhenmeter bei 15 km/h an einer Steigung i (Bruch): an sanften Anstiegen S.secHm, steiler mehr (Minetti ist konvex)
 const kostHm = i => S.secHm / 0.24 / (19.5 / 3.6) * (minetti(i) / 3.6 - 1) / i * 0.24;
 let P = null;
+// Pace-Faktor an einer Steigung gi (Bruch; 1 = flach): Minetti-Kurve auf die eingestellten Kosten je Höhenmeter skaliert
+// (Minetti: 19,5/3,6 = 5,42 flache Meter je Höhenmeter); bergab zählt der Gewinn mit S.down und wächst nur bis BERGAB_GRENZE,
+// steiler bringt nichts mehr (Annahme der App: dort bremst man). grenze = -1 rechnet ohne Grenze (Vergleich im Diagramm).
+const BERGAB_GRENZE = -0.04;
+const paceFaktor = (gi, grenze = BERGAB_GRENZE) => { const sc = S.secHm / 0.24 / (19.5 / 3.6);
+  return gi >= 0 ? 1 + sc * (minetti(gi) / 3.6 - 1) : 1 - S.down * sc * (1 - minetti(Math.max(gi, grenze, -0.2)) / 3.6); };
 // Pace-Faktor je Messpunkt (1 = flach) und die damit gewichtete Strecke in Metern
 function paceRatio() {
   const g = WIN[S.win].g, ratio = new Float64Array(N);
-  for (let i = 0; i < N; i++) {
-    // Minetti-Kurve auf die eingestellten Kosten je Höhenmeter skaliert (Minetti: 19,5/3,6 = 5,42 flache Meter je Höhenmeter);
-    // bergab wächst der Gewinn nur bis −4 %, steiler bringt nicht mehr
-    const gi = g[i] / 100, sc = S.secHm / 0.24 / (19.5 / 3.6);
-    ratio[i] = gi >= 0 ? 1 + sc * (minetti(gi) / 3.6 - 1) : 1 - S.down * sc * (1 - minetti(Math.max(gi, -0.04)) / 3.6);
-  }
+  for (let i = 0; i < N; i++) ratio[i] = paceFaktor(g[i] / 100);
   let sum = 0; for (let i = 1; i < N; i++) sum += (ratio[i - 1] + ratio[i]) / 2 * STEP;
   return { ratio, sum };
 }
@@ -941,9 +954,58 @@ function drawOverview() {
   c.strokeStyle = COL["--blue"]; c.lineWidth = 2; c.beginPath(); c.moveTo(X(S.pos), 0); c.lineTo(X(S.pos), pad + ph + 2); c.stroke();
   // km-Beschriftung
   c.fillStyle = COL["--muted"]; c.font = "500 10.5px " + getComputedStyle(document.body).fontFamily; c.textAlign = "center"; c.textBaseline = "top";
-  for (let k = 0; k <= 40; k += 5) c.fillText(k, X(k * 1000), h - 11);
+  const wEnde = c.measureText("42,2").width;   // „40“ entfällt, wenn es an „42,2“ stößt (schmale Übersicht neben dem Kästchen)
+  for (let k = 0; k <= 40; k += 5) { if (X(L) - X(k * 1000) < (wEnde + c.measureText(String(k)).width) / 2 + 4) continue; c.fillText(k, X(k * 1000), h - 11); }
   c.fillText("42,2", X(L), h - 11);
   for (const mk of D.marks) if ((mk.c === "relay" && S.relay) || mk.c === "half") { c.fillStyle = COL[MARK_STYLE[mk.c]]; c.fillRect(X(mk.k) - 1, pad + ph, 2, 4); }
+}
+
+// Pace je Steigung (seit Hamburg 1.41), bei den Einstellungen, die sie verändern: durchgezogen die App (paceFaktor mit den
+// eingestellten Kosten und dem Bergab-Gewinn), gestrichelt das Labormodell (Minetti unverändert, voller Gewinn), grau die
+// Zone jenseits von BERGAB_GRENZE, in der bergab nichts mehr dazukommt; der Punkt ist die Steigung an der aktuellen Stelle.
+const pk = $("pace-chart"), pkctx = pk.getContext("2d");
+function drawPaceChart() {
+  const { w, h, dpr } = sizeCanvas(pk); if (!w) return; const c = pkctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+  const G0 = -10, G1 = 10, p0 = P.p0, app = g => paceFaktor(g / 100) * p0, lab = g => minetti(g / 100) / 3.6 * p0;
+  const gs = []; for (let g = G0; g <= G1 + 1e-9; g += 0.25) gs.push(g);
+  const vs = gs.flatMap(g => [app(g), lab(g)]), y0 = Math.floor(Math.min(...vs) / 30) * 30, y1 = Math.ceil(Math.max(...vs) / 30) * 30;
+  const L0 = 40, R0 = 42, T0 = 8, B0 = 20;   // Ränder: Pace links, Kurvennamen rechts, Steigung unten
+  const X = g => L0 + (g - G0) / (G1 - G0) * (w - L0 - R0), Y = v => T0 + (y1 - v) / (y1 - y0) * (h - T0 - B0);
+  const font = getComputedStyle(document.body).fontFamily; c.font = "500 10.5px " + font;
+  const gr = BERGAB_GRENZE * 100;
+  c.fillStyle = COL["--ink"]; c.globalAlpha = 0.07; c.fillRect(X(G0), T0, X(gr) - X(G0), h - T0 - B0); c.globalAlpha = 1;
+  const ys = (y1 - y0) / 30 > 7 ? 60 : 30;
+  c.strokeStyle = COL["--grid"]; c.lineWidth = 1; c.fillStyle = COL["--muted"]; c.textAlign = "right"; c.textBaseline = "middle";
+  for (let v = Math.ceil(y0 / ys) * ys; v <= y1; v += ys) { const y = Math.round(Y(v)) + 0.5; c.beginPath(); c.moveTo(L0, y); c.lineTo(w - R0, y); c.stroke(); c.fillText(mss(v), L0 - 6, y); }
+  c.textAlign = "center"; c.textBaseline = "top";
+  for (let g = G0; g <= G1; g += 5) { const x = Math.round(X(g)) + 0.5; c.beginPath(); c.moveTo(x, T0); c.lineTo(x, h - B0); c.stroke(); c.fillText((g > 0 ? "+" : g < 0 ? "−" : "") + Math.abs(g) + " %", x, h - B0 + 5); }
+  c.textAlign = "left"; c.textBaseline = "top"; c.fillText("ab " + nf(gr, 0).replace("-", "−") + " %", X(G0) + 5, T0 + 4); c.fillText("kein Gewinn", X(G0) + 5, T0 + 17); c.fillText("mehr", X(G0) + 5, T0 + 30);
+  const kurve = (f, farbe, breite, strich) => { c.strokeStyle = farbe; c.lineWidth = breite; c.setLineDash(strich); c.lineJoin = "round"; c.beginPath();
+    gs.forEach((g, k) => k ? c.lineTo(X(g), Y(f(g))) : c.moveTo(X(g), Y(f(g)))); c.stroke(); c.setLineDash([]); };
+  kurve(lab, COL["--muted"], 1.5, [5, 4]); kurve(app, COL["--blue"], 2.25, []);
+  // Namen rechts an den Kurvenenden, nicht übereinander
+  let ya = Y(app(G1)), yl = Y(lab(G1)); if (Math.abs(ya - yl) < 13) { const m = (ya + yl) / 2, s = ya < yl ? -1 : 1; ya = m + s * 6.5; yl = m - s * 6.5; }
+  c.textBaseline = "middle"; c.font = "600 11px " + font; c.fillStyle = COL["--blue"]; c.fillText("App", w - R0 + 5, ya);
+  c.font = "500 10.5px " + font; c.fillStyle = COL["--muted"]; c.fillText("Labor", w - R0 + 5, yl);
+  // Steigung an der aktuellen Stelle
+  const gh = clamp(valAt(WIN[S.win].g, S.pos), G0, G1), xh = X(gh), yh = Y(app(gh));
+  c.fillStyle = COL["--ink"]; c.strokeStyle = COL["--surface"]; c.lineWidth = 2; c.beginPath(); c.arc(xh, yh, 4.5, 0, 2 * Math.PI); c.fill(); c.stroke();
+  c.fillStyle = COL["--ink"]; c.font = "600 11px " + font; c.textAlign = xh > w - R0 - 30 ? "right" : "left"; c.textBaseline = "bottom";
+  c.fillText("hier", xh + (c.textAlign === "left" ? 7 : -7), yh - 4);
+}
+// Text zum Diagramm: Zahlen für die eingestellte Pace und was die Grenze auf dieser Strecke ausmacht
+function paceChartNote() {
+  const p0 = P.p0, at = g => paceFaktor(g / 100) * p0, g = WIN[S.win].g, gr = BERGAB_GRENZE * 100;
+  let steil = 0, ohne = 0;
+  for (let i = 1; i < N; i++) { const gi = (g[i - 1] + g[i]) / 2 / 100; if (gi * 100 < gr) { steil += STEP; ohne += (paceFaktor(gi) - paceFaktor(gi, -1)) * STEP / 1000 * p0; } }
+  const gew = S.down === 1 ? "ganz" : S.down === 0.5 ? "zur Hälfte" : "gar nicht";
+  $("pk-out").textContent = "flach " + mss(p0) + " /km";
+  $("pk-note").textContent = "Durchgezogen die App mit deinen Einstellungen, gestrichelt das Labormodell (Minetti u. a. 2002, unverändert). Bergauf: +5 % "
+    + mss(at(5)) + " /km (" + secs(at(5) - p0) + "), +10 % " + mss(at(10)) + " /km (" + secs(at(10) - p0) + "). Bergab zählt der Gewinn " + gew
+    + (S.down ? " und wächst nur bis " + nf(gr, 0).replace("-", "−") + " % Gefälle: dort " + mss(at(gr)) + " /km (" + secs(at(gr) - p0) + "), steiler nicht schneller. Die Grenze ist eine Annahme der App: Steiler bergab muss man bremsen, und Oberschenkel und Knie fangen jeden Schritt ab; das Labor misst nur den Energieverbrauch. "
+      + (steil >= 50 ? "Auf dieser Strecke sind " + nf(steil / 1000, steil < 1000 ? 2 : 1) + " km steiler als " + nf(gr, 0).replace("-", "−") + " % (Messfenster " + (S.win === 1000 ? "1 km" : S.win + " m") + ")" + (Math.round(ohne) >= 1 ? "; ohne Grenze wärst du dort " + Math.round(ohne) + " s schneller." : "; die Grenze kostet dort weniger als 1 s.") : "Auf dieser Strecke ist kein Stück steiler als " + nf(gr, 0).replace("-", "−") + " % (Messfenster " + (S.win === 1000 ? "1 km" : S.win + " m") + "), die Grenze spielt hier keine Rolle.")
+      : ", bergab rechnet die App wie flach.");
 }
 
 function updateReadout() {
@@ -1113,14 +1175,16 @@ function renderSettings() {
   for (const b of document.querySelectorAll("[data-dir]")) b.setAttribute("aria-pressed", b.dataset.dir === S.dir);
   for (const b of document.querySelectorAll("[data-sort]")) b.setAttribute("aria-pressed", b.dataset.sort === S.sort);
   for (const b of document.querySelectorAll("[data-vp]")) b.setAttribute("aria-pressed", (b.dataset.vp === "1") === S.vp);
-  for (const b of document.querySelectorAll("[data-ov]")) b.setAttribute("aria-pressed", (b.dataset.ov === "1") === S.ovEin);
+  const ovf = $("ov-farbe"); ovf.setAttribute("aria-pressed", S.ovEin);
+  ovf.setAttribute("aria-label", S.ovEin ? "Gesamtstrecke wieder in Steigungsfarben" : "Gesamtstrecke grau"); ovf.title = ovf.getAttribute("aria-label");
   for (const b of document.querySelectorAll("[data-relay]")) b.setAttribute("aria-pressed", (b.dataset.relay === "1") === S.relay);
   for (const b of document.querySelectorAll("[data-split]")) b.setAttribute("aria-pressed", b.dataset.split === S.split);
   $("goal-out").textContent = hms(S.goal);
   $("goal-note").textContent = "Gleichmäßige Anstrengung über die ganze Strecke: im Flachen " + mss(P.p0) + " /km. Insgesamt kosten die Steigungen " + secs(S.goal - P.p0 * L / 1000) + " gegenüber einer flachen Strecke.";
   const perHm = P.p0 * (S.secHm / 0.24) / 1000;
   $("hm-out").textContent = nf(S.secHm, 1) + " s";
-  $("hm-note").textContent = "Das entspricht " + nf(S.secHm / 0.24, 1) + " m flacher Strecke je Höhenmeter. Bei deiner Pace (" + mss(P.p0) + " /km im Flachen) kostet 1 Höhenmeter bergauf " + nf(perHm, 1) + " s und bringt bergab " + nf(perHm * S.down, 1) + " s. Zum Vergleich: Das Labormodell von Minetti entspricht 1,3 s bei 15 km/h. Steilere Anstiege kosten wie im Labormodell überproportional mehr. Bergab wächst der Gewinn nur bis −4 % Gefälle, steiler bringt nichts zusätzlich.";
+  $("hm-note").textContent = "Das entspricht " + nf(S.secHm / 0.24, 1) + " m flacher Strecke je Höhenmeter. Bei deiner Pace (" + mss(P.p0) + " /km im Flachen) kostet 1 Höhenmeter bergauf " + nf(perHm, 1) + " s und bringt bergab " + nf(perHm * S.down, 1) + " s. Zum Vergleich: Das Labormodell von Minetti entspricht 1,3 s bei 15 km/h. Steilere Anstiege kosten wie im Labormodell überproportional mehr (Diagramm unten).";
+  paceChartNote();
   $("speed-note").textContent = "Mit ×" + S.speed + " dauert der ganze Lauf " + mss(S.goal / S.speed) + " min. Der Läufer wird bergauf langsamer, wie im Pace-Modell. Einstellen im Vollbild mit dem rechten Drehrad über dem Profil.";
 }
 
@@ -1129,7 +1193,7 @@ function recompute() { buildPace(); buildRamps(); renderSettings(); renderRamps(
 function setPos(x) { const vorher = S.pos; S.pos = clamp(x, 0, L); if (vorher < L - 1 && S.pos >= L - 1) zielFeier(); dirty = true; }
 function frame() {
   if (dirty) {
-    dirty = false; drawMain(); drawOverview(); updateReadout(); markRampRows(); markSplitRows(); drawPage();
+    dirty = false; drawMain(); drawOverview(); drawPaceChart(); updateReadout(); markRampRows(); markSplitRows(); drawPage();
   }
   requestAnimationFrame(frame);
 }
@@ -1209,7 +1273,7 @@ document.querySelectorAll("[data-speed]").forEach(b => b.addEventListener("click
 document.querySelectorAll("[data-dir]").forEach(b => b.addEventListener("click", () => { S.dir = b.dataset.dir; renderSettings(); renderRamps(); }));
 document.querySelectorAll("[data-sort]").forEach(b => b.addEventListener("click", () => { S.sort = b.dataset.sort; renderSettings(); renderRamps(); }));
 document.querySelectorAll("[data-vp]").forEach(b => b.addEventListener("click", () => { S.vp = b.dataset.vp === "1"; store.set("vp", S.vp); renderSettings(); dirty = true; }));
-document.querySelectorAll("[data-ov]").forEach(b => b.addEventListener("click", () => { S.ovEin = b.dataset.ov === "1"; store.set("ov-einfarbig", S.ovEin); renderSettings(); dirty = true; }));
+$("ov-farbe").addEventListener("click", () => { S.ovEin = !S.ovEin; store.set("ov-einfarbig", S.ovEin); renderSettings(); dirty = true; });
 document.querySelectorAll("[data-relay]").forEach(b => b.addEventListener("click", () => { S.relay = b.dataset.relay === "1"; store.set("relay", S.relay); renderSettings(); dirty = true; }));
 document.querySelectorAll("[data-split]").forEach(b => b.addEventListener("click", () => { S.split = b.dataset.split; store.set("split", S.split); renderSettings(); renderSplits(); }));
 const pad2 = v => String(v).padStart(2, "0");
@@ -1498,7 +1562,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.19';
+const APP_VERSION = '1.20';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
