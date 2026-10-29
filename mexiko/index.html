@@ -1,0 +1,1813 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Marathon">
+<meta name="theme-color" content="#0b141c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#cdd5dc" media="(prefers-color-scheme: light)">
+<script>
+/* Hell/Dunkel: eigene Wahl (mex-theme) vor dem ersten Zeichnen setzen, sonst blitzt kurz die Systemdarstellung auf */
+const THEME_BG = { light: "#cdd5dc", dark: "#0b141c" };
+function applyTheme(t) {
+  const r = document.documentElement;
+  if (t) r.dataset.theme = t; else delete r.dataset.theme;
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.content = THEME_BG[t || (m.media.includes("dark") ? "dark" : "light")]; });
+}
+// gemeinsam für alle Strecken und die Startseite (marathon-theme); der alte Schlüssel gilt nur noch als Rückfall
+// nur noch dunkel (seit Hamburg 1.35): der helle Modus ist abgeschaltet, eine frühere Wahl zählt nicht mehr
+applyTheme("dark");
+</script>
+<meta name="description" content="Steigungsprofil des Mexiko-Stadt-Marathons: Höhe, Steigung, Pace-Modell und Karte.">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="icon" href="../icon-192.png" type="image/png">
+<style>
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; } img { max-width: 100%; } [hidden] { display: none !important; }
+/* Versionsnummer: gepunktet unterstrichen, damit man sieht, dass man tippen kann */
+.ver { font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; background: none; border: 0; padding: 0; min-height: 0; text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; }
+/* Update-Banner: liegt über der Seite (fixed), schiebt nichts, blendet weich ein */
+.update { position: fixed; left: 12px; right: 12px; top: max(env(safe-area-inset-top), 12px); z-index: 60; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: #34c759; color: #06240e; padding: 12px 14px; border-radius: 14px; font: 600 15px/1.3 system-ui, -apple-system, sans-serif; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  opacity: 0; transition: opacity 0.35s ease; pointer-events: none; }
+.update.an { opacity: 1; pointer-events: auto; }
+.update[hidden] { display: none; }
+.update.info { background: #2d2d33; color: #f2f2f7; font-weight: 500; }
+.update .update-btn { flex: none; min-height: 36px; padding: 8px 14px; font-size: 15px; background: #06240e; color: #fff; border: 0; border-radius: 10px; }
+@media (prefers-reduced-motion: reduce) { .update { transition: none; } }
+</style>
+<title>Steigungsprofil Mexiko-Stadt-Marathon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: ein Instrumentenpult in einer Spalte – Anzeige, wischbarer Läuferblick, ganze Strecke, Einstellungen, Rampenliste */
+:root {
+  --bg: #cdd5dc;           /* gedämpft: reines Weiß blendete, 1.6 war noch zu hell */
+  --surface: #e2e7eb;
+  --ink: #102130;
+  --muted: #4f5f6c;
+  --rule: #bcc7d1;
+  --grid: rgba(16, 33, 48, 0.09);
+  --blue: #1b5bd0;          /* die blaue Linie auf dem Asphalt */
+  --blue-soft: rgba(27, 91, 208, 0.12);
+  --g-d3: #0d6680;
+  --g-d2: #3a94ad;
+  --g-d1: #95c9d6;
+  --g-0:  #9ba7b2;          /* flach; heller ging im Kartengrund und im Profil unter */
+  --g-u1: #f0c060;
+  --g-u2: #e5833a;
+  --g-u3: #c3352a;
+  --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b141c; --surface: #121f2a; --ink: #e5ecf1; --muted: #93a3b0; --rule: #22364a;
+    --grid: rgba(229, 236, 241, 0.08); --blue: #6a9cff; --blue-soft: rgba(106, 156, 255, 0.16);
+    --g-d3: #2398bb; --g-d2: #4cb3cc; --g-d1: #86bfcc; --g-0: #44566a; --g-u1: #e3b553; --g-u2: #ee8b45; --g-u3: #f05a4b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b141c; --surface: #121f2a; --ink: #e5ecf1; --muted: #93a3b0; --rule: #22364a;
+  --grid: rgba(229, 236, 241, 0.08); --blue: #6a9cff; --blue-soft: rgba(106, 156, 255, 0.16);
+  --g-d3: #2398bb; --g-d2: #4cb3cc; --g-d1: #86bfcc; --g-0: #44566a; --g-u1: #e3b553; --g-u2: #ee8b45; --g-u3: #f05a4b;
+  color-scheme: dark;
+}
+html, body { background: var(--bg); color: var(--ink); }
+body { font-family: var(--font-body); font-size: 15px; line-height: 1.45; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+.wrap {
+  max-width: 760px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px 40px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.num { font-variant-numeric: tabular-nums; }
+header.top { display: flex; flex-direction: column; gap: 2px; }
+.back { display: block; width: max-content; margin-bottom: 4px; padding: 4px 0; font: 600 13px/1.2 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
+.eyebrow { font-family: var(--font-display); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); }
+h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1.05; text-wrap: balance; }
+.sub { color: var(--muted); font-size: 14px; margin: 2px 0 0; }
+
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); }
+
+/* Anzeige */
+.readout { padding: 14px 14px 12px; display: grid; gap: 10px; }
+.big { display: grid; grid-template-columns: 1fr 1.25fr 1fr; gap: 8px; align-items: end; }
+.big > div { min-width: 0; }
+.lbl { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.val { font-family: var(--font-display); font-weight: 700; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.val small { font-size: 16px; font-weight: 600; color: var(--muted); margin-left: 2px; }
+.grade-val { font-size: 44px; }
+.gauge { position: relative; height: 8px; border-radius: 4px; margin-top: 6px; display: grid; grid-template-columns: repeat(7, 1fr); overflow: hidden; }
+.gauge span:nth-child(1) { background: var(--g-d3); } .gauge span:nth-child(2) { background: var(--g-d2); }
+.gauge span:nth-child(3) { background: var(--g-d1); } .gauge span:nth-child(4) { background: var(--g-0); }
+.gauge span:nth-child(5) { background: var(--g-u1); } .gauge span:nth-child(6) { background: var(--g-u2); }
+.gauge span:nth-child(7) { background: var(--g-u3); }
+.gauge-wrap { position: relative; padding-bottom: 12px; }
+/* Zeiger: schmales Dreieck unter der Skala, die Spitze zeigt nach oben auf die aktive Farbe (darüber stieß es ans Komma) */
+.needle { position: absolute; top: auto; bottom: 0; width: 10px; height: 11px; margin-left: -5px; background: var(--ink); clip-path: polygon(50% 0, 100% 100%, 0 100%); transition: left 0.08s linear; }
+.street { font-weight: 600; font-size: 15px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.street .q { color: var(--muted); font-weight: 400; margin-left: 6px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-top: 1px solid var(--rule); padding-top: 10px; }
+.stats > div { min-width: 0; }
+.stats .v { font-family: var(--font-display); font-weight: 600; font-size: clamp(15px, 4.6vw, 21px); line-height: 1.15; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stats .span2 { grid-column: span 2; }
+.stats .mini { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.35; }
+.stats .v .dn { color: var(--muted); font-weight: 500; }
+/* Pfeile als SVG mit fester Breite (seit Hamburg 1.45): Barlow hat keine Pfeile, iOS nahm eine breite Ersatzschrift, dreistellige
+   Werte endeten in „…“ */
+.pf { display: inline-block; width: 0.46em; height: 0.74em; margin-right: 0.1em; vertical-align: -0.04em; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.stats .v .dn .pf { margin-left: 0.12em; }
+.stats .v .klein { font-size: 0.72em; font-weight: 500; color: var(--muted); margin-right: 0.18em; }
+
+
+/* Läuferblick */
+.viewer { padding: 12px 0 12px; display: grid; gap: 8px; }
+.viewer .row { padding-inline: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; justify-content: space-between; }
+.vtitle { font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; }
+.hint { font-size: 12.5px; color: var(--muted); }
+canvas { display: block; width: 100%; }
+#main { height: 240px; touch-action: pan-y; cursor: grab; outline: none; }
+#main:active { cursor: grabbing; }
+#main:focus-visible { box-shadow: inset 0 0 0 2px var(--blue); }
+#overview { height: 64px; touch-action: none; cursor: pointer; }
+/* Kästchen rechts neben der Gesamtstrecke (seit Hamburg 1.41): zeigt, wie sie nach dem Antippen aussieht, grau oder in
+   Regenbogenfarben; die Übersicht hat rechts 14 px Rand, das Kästchen rückt mit −6 px heran */
+.ovrow { display: flex; align-items: stretch; }
+.ovrow #overview { flex: 1 1 0; min-width: 0; width: 0; }   /* Breite aus dem Platz neben dem Kästchen, nicht aus der Pixelgröße */
+.ovfarbe { flex: none; width: 36px; min-height: 0; margin: 0 4px 0 -6px; padding: 0 0 12px; border: 0; border-radius: 0; background: none; display: grid; place-items: center; }
+.ovfarbe i { display: block; width: 18px; height: 18px; border-radius: 4px; background: #3d5266; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3); }
+.ovfarbe[aria-pressed="true"] i { background: linear-gradient(135deg, #143790, #2b94f4 22%, #4caf63 40%, #efd760 56%, #f39136 70%, #f5493e 84%, #922e4e); }
+.ovfarbe:focus-visible { outline: none; }
+.ovfarbe:focus-visible i { outline: 2px solid var(--blue); outline-offset: 2px; }
+#pace-chart { height: 240px; touch-action: pan-y; cursor: crosshair; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+input[type="range"] { width: 100%; accent-color: var(--blue); margin: 0; }
+.transport { display: flex; gap: 6px; justify-content: center; flex-wrap: nowrap; }
+
+button, .seg button {
+  font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--edge);   /* seit 1.51 so hell wie die Räder (vorher --rule, zu blass) */
+  border-radius: 8px; padding: 7px 11px; cursor: pointer; min-height: 38px;
+}
+button:hover { border-color: var(--muted); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.transport button { font-family: var(--font-display); font-weight: 600; font-size: 15px; min-width: 0; flex: 1 1 auto; padding-inline: 6px; }
+#b-0 { flex: 0 0 38px; display: grid; place-items: center; }
+.transport button:disabled { opacity: 0.35; cursor: default; }
+#play { background: var(--blue); color: #fff; border-color: var(--blue); flex: 1.6 1 auto; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; min-height: 34px; padding: 5px 11px; font-size: 14px; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--blue); color: #fff; }
+
+/* Einstellungen */
+.settings { padding: 14px; display: grid; gap: 14px; }
+.setting { display: grid; gap: 6px; }
+.setting .head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.setting .note { font-size: 12.5px; color: var(--muted); }
+.setting .head .lbl { font-size: 15px; color: var(--ink); }
+.timepanel .colon.bei { font: 600 14px/1 var(--font-display); color: var(--muted); padding-bottom: calc((var(--wh) - 14px) / 2); }
+.setting .bahn-kopf { margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+/* Info-Knopf (i) und kleines Fenster dazu; ohne Popover-Unterstützung (ältere Safari) per Klasse „offen“ */
+button.info { width: 32px; height: 32px; margin: -6px 0; padding: 0; border: 0; background: none; display: grid; place-items: center; color: var(--blue); }
+button.info span { width: 20px; height: 20px; border: 1.5px solid currentColor; border-radius: 50%; display: grid; place-items: center; font: italic 700 13px/1 Georgia, serif; }
+.pop { display: none; position: fixed; inset: 0; margin: auto; height: fit-content; width: min(320px, calc(100vw - 48px)); z-index: 1000;
+  padding: 16px; border: 1px solid var(--edge); border-radius: 14px; background: var(--surface); color: var(--ink); font-size: 14px; line-height: 1.45; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5); }
+.pop:popover-open { display: block; }
+.pop.offen { display: block; }
+.pop::backdrop { background: rgba(0, 0, 0, 0.45); }
+.pop > b { font-family: var(--font-display); font-size: 16px; }
+.pop p { margin: 8px 0 0; color: var(--muted); }
+.pop button { margin-top: 12px; width: 100%; }
+.bahn { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+.bahn > span, .bahn > b { display: flex; align-items: center; padding: 7px 0; border-top: 1px solid var(--edge); }
+.bahn > span { font-size: 15px; }
+.bahn > b { justify-content: flex-end; padding-left: 12px; font: 700 22px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.goal { font-family: var(--font-display); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
+
+/* Rampen */
+.ramps { padding: 14px 0 6px; display: grid; gap: 10px; }
+.ramps .row { padding-inline: 14px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; }
+.ramps h2, .source h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 20px; }
+.rule-note { padding-inline: 14px; font-size: 12.5px; color: var(--muted); margin: 0; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+th { text-align: right; font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+td { text-align: right; padding: 8px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; padding-left: 14px; }
+th:last-child, td:last-child { padding-right: 14px; }
+tbody tr { cursor: pointer; }
+tbody tr:hover, tbody tr:focus-visible { background: var(--blue-soft); outline: none; }
+tr.here { background: var(--blue-soft); }
+tr.hm-zeile td { color: var(--blue); font-weight: 600; }
+tr.hm-zeile .hm-lbl { text-align: left; font-family: var(--font-display); letter-spacing: 0.04em; text-transform: uppercase; font-size: 13px; }
+.sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; }
+.where { color: var(--muted); font-size: 12.5px; display: block; white-space: normal; max-width: 15em; }
+
+/* Quelle */
+.source { padding: 14px; display: grid; gap: 8px; font-size: 14px; }
+.source p, .source ul { margin: 0; max-width: 68ch; }
+.source ul { padding-left: 18px; display: grid; gap: 4px; }
+.source a { color: var(--blue); }
+.warn { border-left: 3px solid var(--g-u2); padding-left: 10px; }
+
+@media (max-width: 520px) {
+  .val { font-size: 28px; } .grade-val { font-size: 36px; }
+  #main { height: 220px; }
+  .big { grid-template-columns: 1fr 1.3fr 0.9fr; }
+  table { font-size: 13px; }
+  th, td { padding: 7px 4px; }
+  th { font-size: 11px; letter-spacing: 0.03em; }
+  th:first-child, td:first-child { padding-left: 12px; }
+  th:last-child, td:last-child { padding-right: 12px; }
+  .where { max-width: 8.5em; font-size: 12px; }
+  .sw { margin-right: 4px; }
+}
+/* Drehräder (wie im Wein-Temperaturplaner): natives Scrollen mit Einrasten, --row muss zu ROW im Skript passen */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.timepanel { --row: 30px; --wh: 90px; display: grid; grid-template-columns: minmax(0, 76px) auto minmax(0, 76px) auto minmax(0, 76px); justify-content: start; align-items: end; gap: 6px; }
+.timepanel.two { grid-template-columns: minmax(0, 76px) auto minmax(0, 76px); }
+.band-row { justify-content: flex-start !important; }
+.mini-note { flex: 1 1 180px; font-size: 12.5px; color: var(--muted); }
+.plan-start { align-items: end !important; justify-content: flex-start !important; gap: 14px !important; }
+/* Startwellen (seit Hamburg 1.46): ein Knopf je Welle setzt die Startzeit, darunter die Quelle */
+.wellen { display: flex; flex-wrap: wrap; gap: 6px; padding-inline: 14px; }
+.wellen button { min-height: 0; padding: 6px 10px; text-align: left; font: 600 14px/1.2 var(--font-display); letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+.wellen button small { display: block; font: 500 11.5px/1.25 var(--font-body); color: var(--muted); letter-spacing: 0; }
+.wellen button[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: #fff; }
+.wellen button[aria-pressed="true"] small { color: rgba(255, 255, 255, 0.85); }
+#plan th.ort, #plan td.ort { text-align: left; white-space: normal; }
+#plan td.ort .q { color: var(--muted); }
+#plan-live { background: var(--blue); color: #fff; border-color: var(--blue); }
+.timepanel.one { grid-template-columns: minmax(0, 96px); }
+.timepanel .colon { font: 700 22px/1 var(--font-display); padding-bottom: calc((var(--wh) - 22px) / 2); }
+.wcol { display: grid; gap: 4px; min-width: 0; }
+.wcol .wlab { font: 600 11px/1.2 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: center; }
+.wbox { position: relative; }
+.wheel { position: relative; height: var(--wh); overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior: contain; border-radius: 10px; background: var(--bg); border: 1px solid var(--edge); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.wheel::-webkit-scrollbar { display: none; }
+.wheel:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.wheel .pad { height: calc((var(--wh) - var(--row)) / 2); }
+.wheel .wi { height: var(--row); display: grid; place-items: center; scroll-snap-align: center; font: 500 14px/1 var(--font-display); font-variant-numeric: tabular-nums; color: var(--muted); opacity: 0.9; cursor: pointer; }
+.wheel .wi.above { place-items: end center; padding-bottom: 4px; }
+.wheel .wi.below { place-items: start center; padding-top: 4px; }
+.wheel .wi.sel { color: var(--ink); opacity: 1; font-weight: 700; font-size: 24px; }
+.wbox::after { content: ""; position: absolute; left: 0; right: 0; top: calc((var(--wh) - var(--row)) / 2); height: var(--row); border-block: 1.5px solid var(--blue); pointer-events: none; }
+.hm-methods { display: grid; gap: 6px; }
+.hm-methods table { max-width: 420px; }
+.hm-methods td:first-child, .hm-methods th:first-child { padding-left: 0; white-space: normal; }
+
+/* Zwischenzeiten */
+td.sp, th.sp { text-align: center; padding-left: 4px; padding-right: 4px; }
+.spark { width: 58px; height: 22px; display: inline-block; vertical-align: middle; }
+tfoot td { font-weight: 600; border-bottom: 0; border-top: 2px solid var(--rule); }
+
+/* Wischbare Seiten unter der ersten Zeile: Zahlen, Karte, Fotos, Sehenswertes */
+.street-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.street-row .street { flex: 1 1 auto; }
+.dots { display: flex; flex: none; }
+.dots button { width: 18px; height: 22px; min-height: 0; padding: 0; border: 0; background: none; display: grid; place-items: center; border-radius: 0; }
+.dots button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--edge); box-sizing: border-box; }
+.dots button[aria-selected="true"]::before { background: var(--blue); border-color: var(--blue); }
+.pager { --rpad: 14px; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; margin-inline: calc(-1 * var(--rpad)); }
+.pager::-webkit-scrollbar { display: none; }
+body.run .pager { --rpad: 12px; }
+.page { flex: 0 0 100%; box-sizing: border-box; min-width: 0; padding-inline: var(--rpad); scroll-snap-align: start; scroll-snap-stop: always; display: grid; gap: 10px; align-content: start; position: relative; }
+body.run .page { gap: 6px; }
+.page-map canvas { position: absolute; top: 6px; left: var(--rpad); width: calc(100% - 2 * var(--rpad)); height: calc(100% - 6px); border-radius: 8px; touch-action: pan-x; }
+.mapctl { position: absolute; top: 12px; right: calc(var(--rpad) + 6px); display: grid; gap: 6px; }
+.mapctl button { width: 32px; height: 32px; min-height: 0; padding: 0; font: 600 18px/1 var(--font-display); background: var(--surface); border-color: var(--edge); }
+.credit { position: absolute; right: calc(var(--rpad) + 4px); bottom: 2px; font-size: 9.5px; color: var(--muted); background: var(--surface); padding: 0 4px; border-radius: 3px; opacity: 0.85; }
+
+/* Laufmodus: Anzeige und Läuferblick füllen genau einen Bildschirm */
+.stage { display: contents; }
+.run-only { display: none !important; }
+body.run { overflow: hidden; }
+body.run .run-only { display: inline-flex !important; }
+body.run .norm-only { display: none !important; }
+body.run .stage {
+  display: flex; flex-direction: column; gap: 8px;
+  position: fixed; inset: 0; z-index: 30; background: var(--bg);
+  padding-top: max(8px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(10px, env(safe-area-inset-left, 0px));
+  padding-right: max(10px, env(safe-area-inset-right, 0px));
+}
+body.run .readout { flex: none; padding: 9px 12px; gap: 6px; }
+body.run .val { font-size: 24px; }
+body.run .grade-val { font-size: 30px; }
+body.run .lbl { font-size: 10.5px; }
+body.run .gauge { height: 6px; margin-top: 4px; }
+body.run .gauge-wrap { padding-bottom: 10px; }
+body.run .needle { width: 8px; height: 9px; margin-left: -4px; }
+body.run .street { font-size: 14px; }
+body.run .stats { gap: 6px; padding-top: 6px; }
+body.run .stats .v { font-size: 16px; }
+body.run .stats .mini { font-size: 12px; }
+body.run .viewer { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 6px; padding: 8px 0; }
+body.run .vtitle, body.run .hintrow, body.run .posrow { display: none; }
+body.run .vhead { padding-inline: 10px; justify-content: flex-start; gap: 6px; }
+body.run .vhead .seg button { min-height: 32px; padding: 4px 9px; font-size: 13px; }
+body.run .vhead { flex-wrap: nowrap; }
+body.run .vhead .vdrum { flex: 1 1 0; min-width: 0; max-width: none; }
+body.run .vdrum.run-only { display: block !important; }
+body.run .close { flex: none; }
+/* Kopfzeilen-Drehräder: senkrecht wie die Zielzeit-Räder, drei Zeilen, Zahlen auf einem Zylinder */
+.vdrum { --rh: 22px; --vh: 52px; --capw: 0px; position: relative; flex: 1 1 150px; min-width: 120px; max-width: 220px; }
+.vdrum .vw { width: 100%; box-sizing: border-box; height: var(--vh); overflow-y: auto; overflow-x: hidden; scroll-snap-type: y mandatory; overscroll-behavior: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-y; border: 1px solid var(--edge); border-radius: 8px; background: var(--surface); box-shadow: inset 0 7px 6px -5px rgba(0, 0, 0, 0.28), inset 0 -7px 6px -5px rgba(0, 0, 0, 0.28); }
+.vdrum .vw::-webkit-scrollbar { display: none; }
+.vdrum .vw:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.vdrum .vpad { height: calc((var(--vh) - var(--rh)) / 2); }
+.vdrum .vi { height: var(--rh); padding-left: var(--capw); display: grid; place-items: center; scroll-snap-align: center; font: 500 14px/1 var(--font-display); font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; cursor: pointer; will-change: transform, opacity; }
+.vdrum .vi.sel { font-weight: 700; font-size: 18px; }
+.vdrum .vi small { font-size: 10px; font-weight: 600; margin-left: 2px; color: var(--muted); }
+.vdrum::after { content: ""; position: absolute; left: 5px; right: 5px; top: calc((var(--vh) - var(--rh)) / 2); height: var(--rh); border-block: 1.5px solid var(--blue); pointer-events: none; z-index: 2; }
+.vdrum::before { content: ""; position: absolute; inset: 1px; border-radius: 7px; z-index: 1; pointer-events: none; background: linear-gradient(180deg, var(--surface) 0%, transparent 12%, transparent 88%, var(--surface) 100%); }
+.vdrum .cap { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); z-index: 3; font: 600 10px/1 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); pointer-events: none; }
+body.run .close { margin-left: auto; min-height: 32px; padding: 4px 11px; }
+body.run #main { flex: 1; height: auto; min-height: 90px; }
+body.run #overview { height: 52px; }
+body.run .ovrow { flex: none; }   /* die Zeile mit Übersicht und Kästchen, nicht die Übersicht selbst, ist im Vollbild fest */
+body.run .transport { flex: none; padding-inline: 10px; }
+body.run .transport { flex-wrap: nowrap; }
+body.run .transport button { min-height: 40px; padding: 6px 6px; min-width: 0; flex: 1 1 auto; }
+body.run #play { flex: 1.6 1 auto; min-width: 0; }
+@media (prefers-reduced-motion: reduce) { .needle { transition: none; } }
+:root { --edge: #9aabba; --sun: var(--ink); --moon: var(--edge); --map-tint: #c3cdd5; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --edge: #4a6580; --sun: var(--edge); --moon: var(--ink); --map-tint: rgba(255, 255, 255, 0.13); } }
+:root[data-theme="dark"] { --edge: #4a6580; --sun: var(--edge); --moon: var(--ink); --map-tint: rgba(255, 255, 255, 0.13); }
+/* Ecken der Anzeige: Hell/Dunkel links, Versionsnummer rechts (nur Vollbild). Liegen absolut im Leerraum über
+   „Kilometer“ und „Höhe“ und schieben nichts. */
+.readout { position: relative; }
+.corner { position: absolute; top: 10px; z-index: 2; display: flex; align-items: center; gap: 6px; height: 26px; min-height: 0; padding: 0 9px; background: none; border: 0; border-radius: 6px; color: var(--muted); font: 600 11px/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; }
+.corner.back { left: 6px; padding: 0 7px; color: var(--blue); }
+.corner.l { left: 36px; }
+.corner.r { right: 6px; }
+body.run .corner { top: 3px; }
+body.run .corner.back { left: 3px; }
+body.run .corner.l { left: 33px; }
+body.run .corner.r { right: 3px; }
+.corner svg { width: 15px; height: 15px; display: block; }
+.corner .sun { color: var(--sun); }
+.corner .moon { color: var(--moon); }
+/* Kartengröße: Stufe 0 wie bisher, die Zahlenseite gibt die Höhe vor. Ab Stufe 1 setzt das Skript die Höhe beider
+   Seiten (--pg), die Zahlenseite verteilt ihre Zeilen und bekommt größere Zahlen. */
+body.run .pager { height: var(--pg, auto); }
+body.run[data-gr="1"] .page:not(.page-map), body.run[data-gr="2"] .page:not(.page-map) { align-content: space-evenly; }
+body.run[data-gr="1"] .stats .v { font-size: 19px; }
+body.run[data-gr="1"] .stats .mini { font-size: 13px; }
+body.run[data-gr="2"] .stats .v { font-size: 22px; }
+body.run[data-gr="2"] .stats .mini { font-size: 14px; }
+body.run[data-gr="2"] .stats .lbl { font-size: 11.5px; }
+#map-size { justify-content: center; align-items: center; }
+/* Zieleinlauf: Karte mit Zielband über allem, Konfetti dahinter; liegt fest über der Seite und schiebt nichts */
+.ziel { position: fixed; inset: 0; z-index: 55; display: grid; place-items: center; padding: 24px; background: rgba(0, 0, 0, 0.5); opacity: 0; transition: opacity 0.3s ease; }
+.ziel.an { opacity: 1; }
+#konfetti { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.ziel-karte { position: relative; width: min(340px, 100%); background: var(--surface); border-radius: 16px; overflow: hidden; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45); transform: scale(0.85); transition: transform 0.45s cubic-bezier(0.2, 1.4, 0.4, 1); }
+.ziel.an .ziel-karte { transform: scale(1); }
+.ziel-band { height: 20px; background: repeating-conic-gradient(var(--ink) 0 25%, var(--surface) 0 50%) 0 0 / 20px 20px; }
+.ziel-titel { margin-top: 18px; font: 700 68px/1 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; background: linear-gradient(90deg, var(--g-u1), var(--g-u2), var(--g-u3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.ziel-sub { margin-top: 6px; color: var(--muted); font-size: 14px; }
+.ziel-werte { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 18px 14px 4px; }
+.ziel-werte .v { font: 700 22px/1.15 var(--font-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ziel-satz { padding: 14px 16px 0; font-size: 16px; }
+.ziel-satz b { font: 700 21px/1 var(--font-display); color: var(--g-u3); white-space: nowrap; }
+.ziel-hint { padding: 12px 0 14px; color: var(--muted); font-size: 12px; }
+@media (prefers-reduced-motion: reduce) { .ziel, .ziel-karte { transition: none; } }
+body.run .close { border-color: var(--edge); }
+/* Menü-Knopf (seit Hamburg 1.47): blau gefüllt mit Beschriftung; das schmale ☰ davor sah man kaum */
+body.run .close { background: var(--blue); border-color: var(--blue); color: #fff; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 4px 12px; font: 600 11px/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; }
+body.run .close svg { width: 20px; height: 20px; }
+/* „Vollbild“ in der normalen Ansicht wie „Menü“ im Vollbild (seit 1.51) */
+#run-open { background: var(--blue); border-color: var(--blue); color: #fff; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 48px; padding: 4px 12px; font: 600 11px/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; }
+#run-open svg { width: 20px; height: 20px; }
+/* Aufklappbare Abschnitte unter dem Läuferblick (seit 1.47): Kopf mit Titel und Inhaltsangabe, Inhalt in .klapp-inhalt */
+.klapp { padding: 0 !important; display: block !important; overflow-anchor: none; }   /* sonst hält Safari beim Aufklappen die Abschnitte darunter fest */
+.klapp-kopf { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 3px 12px; width: 100%; min-height: 60px; padding: 12px 14px; margin: 0; border: 0; border-radius: var(--radius); background: none; text-align: left; color: var(--ink); }
+.klapp-kopf .kt { font: 700 20px/1.1 var(--font-display); }
+.klapp-kopf .kh { grid-column: 1; font-size: 13px; line-height: 1.35; color: var(--muted); }
+.klapp-kopf svg { grid-column: 2; grid-row: 1 / span 2; width: 20px; height: 20px; color: var(--blue); transition: transform 0.2s; }
+.klapp-kopf[aria-expanded="true"] svg { transform: rotate(180deg); }
+.klapp-kopf[aria-expanded="true"] .kh { display: none; }
+/* Offen bleibt der Kopf beim Scrollen oben stehen (seit 1.50): Zuklappen geht von überall, danach steht der Kopf an derselben
+   Stelle und darunter folgen die übrigen Abschnitte wie vorher */
+.klapp-kopf[aria-expanded="true"] { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 4; min-height: 52px; background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; box-shadow: 0 10px 12px -14px rgba(0, 0, 0, 0.7); }
+.ramps > .klapp-inhalt { display: grid; gap: 10px; padding: 0 0 6px; }
+.settings > .klapp-inhalt { display: grid; gap: 14px; padding: 0 14px 14px; }
+.source > .klapp-inhalt { display: grid; gap: 8px; padding: 0 14px 14px; }
+.klapp-inhalt > .row > h2, .klapp-inhalt > h2 { display: none; }
+@media (prefers-reduced-motion: reduce) { .klapp-kopf svg { transition: none; } }
+</style>
+
+</head>
+<body>
+<div class="update" id="update" hidden role="status" aria-live="polite">
+  <span id="update-text"></span>
+  <button type="button" class="update-btn" id="update-go">Jetzt laden</button>
+</div>
+<div class="ziel" id="ziel" hidden role="dialog" aria-label="Im Ziel">
+  <canvas id="konfetti" aria-hidden="true"></canvas>
+  <div class="ziel-karte">
+    <div class="ziel-band" aria-hidden="true"></div>
+    <div class="ziel-titel">Ziel</div>
+    <div class="ziel-sub" id="z-sub">42,195 km</div>
+    <div class="ziel-werte">
+      <div><div class="lbl">Zielzeit</div><div class="v" id="z-zeit">–</div></div>
+      <div><div class="lbl">Bergauf</div><div class="v" id="z-auf">–</div></div>
+      <div><div class="lbl">Bergab</div><div class="v" id="z-ab">–</div></div>
+    </div>
+    <div class="ziel-satz" id="z-satz"></div>
+    <div class="ziel-hint">Antippen zum Schließen</div>
+    <div class="ziel-band" aria-hidden="true"></div>
+  </div>
+</div>
+<div class="wrap">
+  <header class="top">
+    <a class="back" href="../">‹ Alle Strecken</a>
+    <span class="eyebrow">Maratón de la Ciudad de México Telcel · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.0</button></span>
+    <h1>Steigungsprofil zum Durchwischen</h1>
+    <p class="sub">Amtliches Laser-Höhenmodell des INEGI (5-m-Raster) entlang der Strecke 2026, nach dem Plan des Veranstalters auf OpenStreetMap nachgezeichnet, alle 10 m ausgewertet.</p>
+  </header>
+
+  <div class="stage" id="stage">
+  <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
+    <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.0</button>
+    <div class="big">
+      <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
+      <div>
+        <div class="lbl" id="r-glbl">Steigung · 200 m</div>
+        <div class="val grade-val" id="r-grade">0,0 %</div>
+        <div class="gauge-wrap"><div class="gauge" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="needle" id="needle"></div></div>
+      </div>
+      <div><div class="lbl">Höhe</div><div class="val" id="r-h">0<small>m</small></div></div>
+    </div>
+    <div class="street-row"><div class="street"><span id="r-street">–</span><span class="q" id="r-quarter"></span></div>
+      <div class="dots" id="dots" role="tablist" aria-label="Anzeige wählen"><button type="button" role="tab" data-go="0" aria-label="Zahlen"></button><button type="button" role="tab" data-go="1" aria-label="Karte"></button></div></div>
+    <div class="pager" id="pager">
+      <div class="page">
+        <div class="stats">
+          <div><div class="lbl">Bisher</div><div class="v" id="r-done">0 <span class="dn">0</span></div></div>
+          <div><div class="lbl">Noch</div><div class="v" id="r-left">0 <span class="dn">0</span></div></div>
+          <div><div class="lbl">Ganze Strecke</div><div class="v" id="r-total">0 <span class="dn">0</span></div></div>
+        </div>
+        <div class="stats">
+          <div><div class="lbl">Pace hier</div><div class="v" id="r-pace">–</div></div>
+          <div><div class="lbl">Zwischenzeit</div><div class="v" id="r-split">–</div></div>
+          <div><div class="lbl">Steigung kostet</div><div class="v" id="r-bal">–</div></div>
+        </div>
+        <div class="stats">
+          <div><div class="lbl">Aktuelle Rampe</div><div class="v" id="r-cur">–</div><div class="mini" id="r-cur2">gerade keine</div></div>
+          <div class="span2"><div class="lbl">Nächster Anstieg</div><div class="v" id="r-nxt">–</div><div class="mini" id="r-nxt2">–</div></div>
+        </div>
+      </div>
+      <div class="page page-map">
+        <canvas id="map" aria-label="Karte mit der Strecke und deiner Position"></canvas>
+        <div class="mapctl"><button type="button" id="map-in" aria-label="Karte vergrößern">+</button><button type="button" id="map-out" aria-label="Karte verkleinern">−</button><button type="button" class="run-only" id="map-size" aria-label="Karte größer oder kleiner stellen">&#x2195;&#xFE0E;</button></div>
+        <span class="credit map-credit">© OpenStreetMap-Mitwirkende</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel viewer" aria-label="Läuferblick">
+    <div class="row vhead">
+      <span class="vtitle">Läuferblick</span>
+      <div id="zoom-wheel"></div>
+      <div id="speed-wheel" class="run-only"></div>
+      <button type="button" class="run-only close" id="run-close" aria-label="Menü: Zwischenzeiten, Zuschauer, Einstellungen, Rampen, Quellen"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Menü</button>
+      <button type="button" class="norm-only" id="run-open"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8V3h5M17 8V3h-5M3 12v5h5M17 12v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Vollbild</button>
+    </div>
+    <canvas id="main" tabindex="0" aria-label="Höhenprofil um die aktuelle Stelle. Seitlich wischen oder Pfeiltasten zum Bewegen."></canvas>
+    <div class="row hintrow">
+      <span class="hint" id="exag">Seitlich wischen zum Laufen</span>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="ovrow">
+      <canvas id="overview" aria-label="Ganze Strecke. Antippen springt an die Stelle."></canvas>
+      <button type="button" class="ovfarbe" id="ov-farbe" aria-pressed="false"><i aria-hidden="true"></i></button>
+    </div>
+    <div class="row posrow"><input type="range" id="pos" min="0" max="42195" step="10" value="0" aria-label="Position auf der Strecke in Metern"></div>
+    <div class="transport">
+      <button type="button" id="b-0" aria-label="Zurück zum Start"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x="2.5" y="3" width="2" height="10" rx="0.6" fill="currentColor"/><path d="M13.5 3.2v9.6L5.8 8z" fill="currentColor"/></svg></button>
+      <button type="button" id="b-k" aria-label="1 Kilometer zurück">−1 km</button>
+      <button type="button" id="b-h" aria-label="100 Meter zurück">−100</button>
+      <button type="button" id="play">&#x25B6;&#xFE0E; Laufen</button>
+      <button type="button" id="f-h" aria-label="100 Meter vor">+100</button>
+      <button type="button" id="f-k" aria-label="1 Kilometer vor">+1 km</button>
+    </div>
+  </section>
+
+  </div>
+
+  <section class="panel ramps klapp" id="splits" aria-label="Zwischenzeiten" data-k="splits" data-t="Zwischenzeiten" data-h="je km, je 5 km oder Hälften · Pace-Band als Bild">
+    <div class="row">
+      <h2>Zwischenzeiten</h2>
+      <div class="seg" role="group" aria-label="Abschnitte">
+        <button type="button" id="sp-km" data-split="km">je km</button>
+        <button type="button" id="sp-five" data-split="five">je 5 km</button>
+        <button type="button" id="sp-ten" data-split="ten">je 10 km</button>
+        <button type="button" id="sp-hm" data-split="hm">Hälften</button>
+      </div>
+    </div>
+    <p class="rule-note" id="split-note"></p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>km</th><th class="sp">Profil</th><th>↑ m</th><th>↓ m</th><th>±</th><th>Zeit</th><th>Gesamt</th></tr></thead>
+        <tbody id="split-body"></tbody>
+        <tfoot id="split-foot"></tfoot>
+      </table>
+    </div>
+    <div class="row band-row"><button type="button" id="band">Pace-Band als Bild</button><span class="mini-note">Zeit nach jedem km mit Steigung, für den Sperrbildschirm oder zum Ausdrucken.</span></div>
+  </section>
+
+  <section class="panel ramps klapp" id="plan" aria-label="Für Zuschauer" data-k="plan" data-t="Für Zuschauer" data-h="Startzeit und Welle, Uhrzeit an jeder 5-km-Marke, Plan teilen, Live nach Plan">
+    <div class="row">
+      <h2>Für Zuschauer</h2>
+      <button type="button" id="plan-share">Plan teilen</button>
+    </div>
+    <p class="rule-note" id="plan-note"></p>
+    <div class="row plan-start">
+      <span class="lbl">Deine Startzeit</span>
+      <div class="timepanel two" id="start-wheels"><div class="wcol" id="ws-h"></div><span class="colon" aria-hidden="true">:</span><div class="wcol" id="ws-m"></div></div>
+    </div>
+    <div class="wellen" id="wellen" role="group" aria-label="Startwelle wählen" hidden></div>
+    <p class="rule-note" id="wellen-note" hidden></p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>km</th><th class="ort">Wo</th><th>Uhrzeit</th></tr></thead>
+        <tbody id="plan-body"></tbody>
+      </table>
+    </div>
+    <div class="row band-row"><button type="button" id="plan-live">Live nach Plan</button><span class="mini-note">Im Vollbild läuft der Punkt dann mit der Uhr: so sehen Zuschauer, wo du laut Plan gerade bist.</span></div>
+  </section>
+
+  <section class="panel settings klapp" id="einstellungen" aria-label="Einstellungen" data-k="settings" data-t="Einstellungen" data-h="Zielzeit, Messfenster, Kosten je Höhenmeter, Pace-Modell, Anzeige">
+    <div class="setting">
+      <div class="head"><span class="lbl">Messfenster der Steigung</span>
+        <div class="seg" role="group" aria-label="Messfenster">
+          <button type="button" id="w-50" data-win="50">50 m</button>
+          <button type="button" id="w-100" data-win="100">100 m</button>
+          <button type="button" id="w-200" data-win="200">200 m</button>
+          <button type="button" id="w-1000" data-win="1000">1 km</button>
+        </div></div>
+      <span class="note">Die Steigung an jeder Stelle ist der Höhenunterschied über ein Stück dieser Länge, die Stelle in der Mitte. Kurze Fenster zeigen kurze Rampen wie Brückenauffahrten und Unterführungen, lange mitteln sie weg: Über 1 km, bei 4:00/km rund vier Minuten, bleiben nur die langen Anstiege. Das Fenster bestimmt die Anzeige: Steigung, Farben, Höhenmeter und Rampen. Über dieselbe Länge ist „Pace hier“ gemittelt, weil niemand sein Tempo an jeder kurzen Welle anpasst. Zielzeit und Zwischenzeiten rechnen immer mit 100 m, damit kurze Wellen mitkosten. Standard 200 m, weil die Anzeige dann ruhig bleibt.</span>
+    </div>
+    <div class="setting">
+      <div class="head"><span class="lbl">Zielzeit</span><span class="goal" id="goal-out">–</span></div>
+      <div class="timepanel" id="goal-wheels">
+        <div class="wcol" id="wg-h"></div><span class="colon" aria-hidden="true">:</span><div class="wcol" id="wg-m"></div><span class="colon" aria-hidden="true">:</span><div class="wcol" id="wg-s"></div>
+      </div>
+      <span class="note" id="goal-note">Gleichmäßige Anstrengung: im Flachen 4:58 /km.</span>
+      <div class="bahn-kopf"><span class="lbl" id="bahn-titel">Ohne Höhenmeter entspricht das</span><button type="button" class="info" popovertarget="bahn-info" aria-label="Erklärung zu den Zeiten ohne Höhenmeter"><span aria-hidden="true">i</span></button></div>
+      <div class="bahn" id="bahn"><span>Flacher Marathon</span><b id="bahn-m">–</b><span>Flacher Halbmarathon</span><b id="bahn-21">–</b><span>10 000 m auf der Bahn</span><b id="bahn-10">–</b><span>5000 m auf der Bahn</span><b id="bahn-5">–</b></div>
+      <div class="pop" id="bahn-info" popover role="dialog" aria-label="Ohne Höhenmeter"><b>Ohne Höhenmeter</b><p>Dieselbe Anstrengung wie deine Zielzeit auf dieser Strecke, aber ganz flach.</p><p>Halbmarathon, 10 000 m und 5000 m nach der Faustregel Marathon = 10 km × 4,667 (Riegel, Exponent 1,07). Für viele Freizeitläufer ist sie zu optimistisch.</p><p id="bahn-lage" hidden></p><button type="button" popovertarget="bahn-info" popovertargetaction="hide">Schließen</button></div>
+    </div>
+    <div class="setting">
+      <div class="head"><span class="lbl">Kosten je Höhenmeter</span><span class="goal" id="hm-out">1,0 s</span></div>
+      <div class="timepanel two" id="hm-wheel"><div class="wcol" id="wk-hm"></div><span class="colon bei" aria-hidden="true">bei</span><div class="wcol" id="wk-ref"></div></div>
+      <span class="note" id="hm-note"></span>
+    </div>
+    <div class="setting">
+      <div class="head"><span class="lbl">So rechnet das Pace-Modell</span><span class="note" id="pk-out"></span></div>
+      <span class="note">Bergauf die Energiekosten des Laufens nach Steigung (Minetti u. a. 2002). Bergab bringt ein Höhenmeter die Hälfte dessen, was er bergauf kostet, weil man bergab nicht voll ins Rollen kommt. Steiler als −8 % kein weiterer Gewinn, weil man bremsen muss.</span>
+      <canvas id="pace-chart" aria-label="Diagramm: Pace je Steigung, Antippen zeigt die Pace bei dieser Steigung"></canvas>
+      <span class="note" id="pk-note"></span>
+    </div>
+    <div class="setting">
+      <div class="head"><span class="lbl">Zeitraffer beim Laufen</span></div>
+      <span class="note" id="speed-note"></span>
+    </div>
+    <div class="setting">
+      <div class="head"><span class="lbl">Wasser und Verpflegung im Profil</span>
+        <div class="seg" role="group" aria-label="Wasser und Verpflegung">
+          <button type="button" id="vp-0" data-vp="0">aus</button>
+          <button type="button" id="vp-1" data-vp="1">ein</button>
+        </div></div>
+      </div>
+    <div class="setting" hidden>
+      <div class="head"><span class="lbl">Staffelwechsel im Profil</span>
+        <div class="seg" role="group" aria-label="Staffelwechsel">
+          <button type="button" id="rl-0" data-relay="0">aus</button>
+          <button type="button" id="rl-1" data-relay="1">ein</button>
+        </div></div>
+      <span class="note">Die Halbmarathon-Marke bleibt immer sichtbar.</span>
+    </div>
+  </section>
+
+  <section class="panel ramps klapp" id="rampen" aria-label="Rampen" data-k="ramps" data-t="Rampen" data-h="Anstiege und Gefälle mit Länge, Höhe, Steigung und Zeit">
+    <div class="row">
+      <h2>Rampen</h2>
+      <div class="seg" role="group" aria-label="Richtung">
+        <button type="button" id="t-up" data-dir="up">Anstiege</button>
+        <button type="button" id="t-down" data-dir="down">Gefälle</button>
+      </div>
+      <div class="seg" role="group" aria-label="Sortierung">
+        <button type="button" id="o-km" data-sort="km">nach km</button>
+        <button type="button" id="o-steep" data-sort="steep">steilste zuerst</button>
+      </div>
+    </div>
+    <p class="rule-note" id="rule-note"></p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>km · Ort</th><th>Länge</th><th>Höhe</th><th>Ø</th><th>max</th><th>Zeit</th></tr></thead>
+        <tbody id="ramp-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel source klapp" id="quellen" aria-label="Datengrundlage" data-k="source" data-t="Woher die Zahlen kommen" data-h="Strecke, Höhenmodell, Brücken und Tunnel, Höhenmeter je Messart">
+    <h2>Woher die Zahlen kommen</h2>
+    <ul>
+      <li><b>Strecke:</b> Linie nach dem Streckenplan 2026 des Veranstalters (<a href="https://maraton.cdmx.gob.mx/" target="_blank" rel="noopener">Maratón de la Ciudad de México</a>; der Plan erschien als Bild in der Presse, z. B. bei <a href="https://dondeir.com/noticias/maraton-cdmx-2026-ruta-horarios-calles-cerradas-y-alternativas-viales/2026/08/" target="_blank" rel="noopener">Dónde Ir</a>) und der veröffentlichten Straßenfolge auf den Straßen von OpenStreetMap nachgezeichnet; eine GPX-Datei gibt es nur angemeldet in Garmin Connect. Vom Estadio Olímpico Universitario in Ciudad Universitaria auf der Avenida Insurgentes Sur 10,5 km nach Norden und um die Glorieta de los Insurgentes, über die Avenida Oaxaca und die Fuente de Cibeles zum Parque España, auf der Avenida Nuevo León bis Citlaltépetl (Wendepunkt), über Sonora, Chapultepec und Florencia zum Ángel de la Independencia, auf dem Paseo de la Reforma in den Bosque de Chapultepec (Gran Avenida um den Hügel des Castillo, Calzada Chivatito), auf der Reforma bis Monte Elbruz (Wendepunkt beim Halbmarathon), durch Polanco (um den Parque Lincoln, Presidente Masaryk bis Sudermann und zurück, Moliere, Ferrocarril de Cuernavaca am Museo Soumaya, Ejército Nacional, Thiers, Darwin), über Rubén Darío und die Calzada Mahatma Gandhi zurück auf die Reforma, einmal um das Monumento a la Revolución, auf der Reforma bis zur Glorieta Simón Bolívar (Wendepunkt) und über Avenida Juárez, Madero, Bolívar, República de El Salvador und 20 de Noviembre zum Ziel vor dem Fahnenmast auf dem Zócalo. Kilometer stückweise über die Kilometermarken des Plans alle 5 km geeicht (Linie 43,93 km, entlang der Straßenmitte), dazwischen auf etwa 100 m genau. Getränke laut Plan: Wasser (Agua Skarch) bei 2,5, 7,5 … 37,5 km, Electrolit an jeder 5-km-Marke.</li>
+      <li><b>Höhe:</b> Digitales Geländemodell des INEGI (<a href="https://www.inegi.org.mx/app/geo2/elevacionesmex/" target="_blank" rel="noopener">Continuo de Elevaciones Mexicano</a>): 5-m-Raster „Alta Resolución LiDAR“ aus einer Laserbefliegung von 2007, alle 10 m abgelesen; Höhen über dem Meer (NAVD88). Die neueren Ausgaben des INEGI (5 m 2017/18, 1,5 m 2020) stammen aus Satelliten-Stereobildern und liegen unter den Bäumen des Bosque de Chapultepec bis 15 m daneben. Quelle: INEGI.</li>
+      <li><b>Brücken:</b> Ein Geländemodell kennt keine Brücken und misst darunter den Boden. Wo OpenStreetMap eine Brücke kennt und das Modell darunter abfällt oder buckelt, ist die Fahrbahn zwischen den Rampen gerade gezogen und im Läuferblick gestrichelt: <span id="bridges"></span>. An der Überführung über die Avenida San Jerónimo misst das Modell auch unter der nördlichen Rampe; die Fahrbahn ist bis zu ihrem Ende gerade gezogen. Die Insurgentes über dem Viaducto Miguel Alemán (km 7,7), die Reforma über dem Circuito Interior (km 16,9 und 34,2) und die Brücke der Ejército Nacional (km 29,4) misst das Modell selbst.</li>
+      <li><b>Glättung:</b> Gleitender Median über 30 m gegen Ausreißer am Straßenrand. Die Steigung ist der Höhenunterschied über das gewählte Messfenster.</li>
+      <li><b>Karte:</b> © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende (ODbL). Die Kartenbilder stammen von tile.openstreetmap.org und sind für den dunklen Grund umgefärbt.</li>
+      <li><b>Straßennamen:</b> © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende; Straßen aus den Wegen unter der Linie, spanische Namen wie in OpenStreetMap. Colonias über die Adresssuche von OpenStreetMap (Nominatim), die Sektionen von Polanco zusammengefasst.</li>
+    </ul>
+    <div class="hm-methods">
+      <p><b>Höhenmeter je nach Messart:</b> Einen einzigen richtigen Wert gibt es nicht. Höhenmeter sind die Summe aller Stücke bergauf, und je feiner man misst, desto mehr kleine Wellen zählen mit. Fett ist die Messart, die gerade eingestellt ist.</p>
+      <div class="table-wrap"><table><thead><tr><th>Messart</th><th>↑ m</th></tr></thead><tbody id="hm-methods"></tbody></table></div>
+      <p>Ohne jede Glättung, Punkt für Punkt alle 10 m, ergeben die Rohdaten 227 m. Zum Vergleich mit anderen Marathons passt am ehesten „ab 1 m“, weil GPS-Uhren ähnlich zählen. Zeiten rechnen immer mit 100 m, das Messfenster ändert nur die Anzeige.</p>
+    </div>
+    <p class="warn" id="img-note"></p>
+  </section>
+</div>
+
+<script>
+const D = {"wellen":{"q":"Startzeiten 2026 laut Ausschreibung des Veranstalters (Rollstühle und Sehbehinderte 5:45, Elite Frauen 5:50, Elite Männer mit Block A). Den Block weist die Anmeldung zu; für 2027 noch nicht veröffentlicht.","w":[["Block A",360,"mit Elite Männer"],["Block B",375,""],["Block C",390,""]]},"tz":"America/Mexico_City","ort":"Mexiko-Stadt","ortKurz":" Mexiko-Stadt","termine":["2026-08-30","2027-08-29?"],"start":360,"len":42195.0,"step":10,"h":[228484,228485,228487,228488,228489,228490,228492,228493,228494,228495,228496,228498,228499,228500,228501,228503,228504,228505,228506,228508,228509,228510,228516,228521,228533,228537,228549,228560,228578,228597,228610,228628,228634,228659,228680,228686,228707,228719,228735,228758,228769,228778,228788,228791,228792,228800,228800,228785,228763,228741,228719,228696,228674,228652,228630,228608,228586,228564,228542,228519,228497,228475,228453,228431,228409,228387,228365,228343,228320,228298,228276,228254,228232,228210,228188,228166,228143,228121,228113,228113,228120,228120,228126,228129,228129,228126,228118,228105,228097,228096,228086,228078,228076,228069,228061,228046,228032,228024,228010,227991,227976,227965,227936,227929,227902,227882,227871,227848,227825,227817,227777,227765,227753,227732,227712,227690,227667,227657,227645,227632,227613,227584,227569,227560,227542,227527,227507,227481,227469,227449,227425,227414,227396,227371,227354,227329,227320,227320,227301,227298,227290,227279,227278,227277,227270,227269,227266,227255,227255,227250,227240,227238,227233,227208,227175,227155,227115,227086,227052,227012,226985,226945,226928,226893,226866,226834,226816,226787,226757,226728,226697,226662,226640,226620,226597,226564,226534,226517,226506,226503,226503,226503,226504,226504,226491,226491,226491,226480,226480,226481,226481,226475,226473,226470,226465,226460,226452,226448,226448,226448,226447,226443,226442,226432,226422,226419,226419,226418,226414,226408,226408,226414,226415,226421,226423,226428,226428,226429,226429,226447,226452,226452,226452,226444,226439,226438,226435,226432,226420,226405,226405,226405,226387,226372,226367,226358,226348,226342,226336,226325,226324,226308,226306,226298,226295,226283,226275,226275,226271,226259,226259,226261,226266,226266,226267,226269,226269,226270,226276,226277,226285,226285,226280,226280,226282,226282,226282,226282,226282,226282,226282,226286,226296,226304,226311,226318,226321,226339,226345,226357,226365,226372,226382,226400,226412,226416,226425,226432,226435,226435,226435,226442,226444,226449,226449,226449,226449,226451,226451,226451,226453,226457,226459,226462,226470,226470,226472,226473,226473,226470,226469,226469,226469,226470,226470,226466,226466,226466,226467,226467,226464,226464,226464,226457,226452,226449,226446,226433,226415,226409,226395,226384,226380,226368,226354,226354,226362,226362,226343,226336,226331,226318,226313,226308,226296,226296,226285,226278,226257,226250,226239,226225,226210,226199,226188,226183,226172,226162,226147,226138,226123,226112,226101,226094,226091,226068,226057,226048,226045,226037,226018,226007,226003,225981,225975,225965,225949,225935,225933,225925,225913,225899,225888,225881,225871,225863,225857,225844,225832,225826,225825,225819,225818,225813,225817,225817,225817,225828,225829,225837,225855,225888,225913,225917,225913,225911,225903,225891,225865,225839,225802,225756,225719,225688,225662,225643,225615,225597,225570,225542,225532,225518,225509,225491,225488,225486,225478,225471,225468,225463,225448,225438,225427,225415,225401,225395,225391,225389,225384,225372,225359,225353,225341,225341,225341,225321,225318,225308,225308,225301,225301,225301,225279,225279,225279,225278,225278,225270,225268,225268,225273,225273,225264,225264,225264,225248,225248,225247,225247,225247,225247,225225,225210,225207,225183,225177,225171,225165,225165,225165,225157,225157,225154,225154,225154,225155,225153,225155,225154,225154,225145,225140,225140,225138,225133,225133,225143,225143,225143,225145,225145,225131,225128,225122,225119,225110,225102,225090,225078,225074,225072,225063,225063,225058,225057,225051,225051,225051,225045,225045,225045,225044,225035,225028,225023,225027,225027,225027,225018,225016,225008,225008,225011,225016,225020,225024,225037,225055,225059,225086,225086,225088,225084,225078,225076,225064,225057,225054,225048,225044,225032,225032,225027,225024,225023,225017,225017,225017,225017,225016,225014,225005,224999,224997,224997,224986,224982,224982,224982,224982,224978,224978,224978,224967,224957,224949,224944,224942,224938,224930,224925,224925,224921,224919,224917,224909,224901,224901,224901,224894,224894,224894,224888,224888,224890,224890,224884,224876,224876,224871,224871,224871,224872,224872,224872,224872,224871,224869,224859,224859,224867,224867,224858,224848,224834,224827,224803,224793,224787,224784,224774,224767,224762,224754,224744,224732,224724,224712,224705,224699,224688,224683,224674,224671,224657,224651,224642,224635,224613,224584,224579,224576,224558,224549,224533,224518,224499,224497,224484,224478,224469,224453,224446,224443,224420,224412,224409,224401,224393,224371,224347,224338,224333,224321,224316,224307,224303,224289,224273,224271,224235,224229,224216,224216,224216,224207,224197,224193,224173,224168,224164,224160,224149,224160,224149,224155,224154,224154,224140,224133,224133,224131,224128,224120,224118,224114,224104,224097,224082,224076,224073,224073,224070,224054,224049,224041,224036,224033,224027,224025,224017,224017,224011,224007,224007,223999,223989,223988,223984,223966,223955,223951,223938,223932,223925,223912,223888,223877,223875,223854,223854,223859,223861,223869,223871,223871,223859,223851,223851,223834,223823,223821,223810,223799,223797,223797,223796,223796,223796,223798,223798,223785,223780,223771,223754,223753,223747,223747,223752,223759,223767,223797,223834,223871,223903,223943,223987,224024,224076,224124,224151,224164,224164,224164,224137,224135,224111,224087,224011,223944,223889,223834,223781,223731,223681,223667,223636,223604,223594,223582,223564,223544,223535,223516,223508,223498,223489,223485,223466,223465,223463,223459,223448,223435,223425,223425,223425,223413,223410,223408,223408,223397,223397,223419,223419,223419,223400,223373,223373,223379,223379,223383,223389,223397,223398,223399,223409,223405,223406,223406,223406,223395,223391,223387,223382,223380,223378,223371,223371,223371,223376,223376,223376,223376,223365,223358,223357,223343,223336,223324,223309,223303,223300,223294,223286,223291,223291,223291,223267,223267,223266,223265,223247,223246,223246,223243,223243,223238,223238,223237,223223,223223,223209,223209,223209,223206,223199,223186,223180,223175,223173,223169,223157,223157,223157,223142,223141,223137,223134,223114,223108,223093,223091,223091,223108,223108,223097,223085,223080,223076,223070,223060,223060,223065,223075,223075,223071,223062,223060,223060,223063,223067,223067,223067,223070,223074,223079,223079,223069,223067,223065,223065,223065,223068,223069,223071,223084,223095,223095,223091,223075,223075,223077,223081,223081,223073,223070,223061,223061,223067,223070,223073,223082,223098,223108,223108,223105,223105,223105,223106,223104,223094,223083,223083,223091,223106,223121,223129,223129,223111,223104,223102,223093,223079,223069,223064,223049,223049,223055,223055,223033,223031,223029,223029,223023,223012,223012,223012,223008,223007,222992,222992,222997,223003,223006,223006,223015,223018,223017,223017,223009,222980,222977,222974,222969,222960,222955,222948,222955,222947,222946,222946,222961,222968,222975,222975,222968,222957,222955,222957,222961,222970,222995,222996,223003,223017,223018,223039,223056,223059,223059,223051,223033,223014,223002,222999,222979,222974,222974,222974,222965,222965,222962,222943,222943,222952,222966,223026,223071,223073,223076,223078,223081,223083,223086,223089,223091,223094,223096,223099,223101,223104,223106,223109,223111,223114,223116,223119,223122,223124,223127,223129,223132,223134,223137,223139,223142,223144,223147,223150,223152,223155,223157,223160,223162,223165,223165,223107,223043,223010,222984,222984,222984,222976,222964,222962,222962,222968,222985,222985,222997,222997,222989,222982,222982,222998,223004,223005,223005,223027,223052,223069,223075,223075,223074,223065,223054,223042,223034,223033,223033,223033,223033,223035,223021,223018,223018,223019,223020,223024,223024,223024,223028,223042,223042,223033,223032,223021,223020,223020,223023,223026,223031,223047,223052,223052,223065,223073,223073,223064,223064,223073,223077,223087,223087,223089,223089,223095,223100,223100,223100,223098,223098,223102,223106,223109,223109,223099,223099,223113,223117,223116,223117,223119,223121,223133,223144,223153,223159,223165,223173,223173,223173,223167,223171,223171,223177,223192,223201,223201,223192,223192,223186,223185,223183,223182,223183,223180,223182,223182,223182,223182,223177,223176,223176,223187,223201,223202,223215,223222,223226,223226,223223,223222,223205,223200,223195,223195,223189,223187,223187,223185,223188,223188,223192,223204,223212,223215,223222,223237,223238,223243,223243,223241,223239,223217,223215,223206,223202,223200,223202,223204,223208,223210,223221,223223,223233,223237,223250,223250,223253,223245,223227,223227,223229,223237,223240,223245,223256,223257,223267,223277,223290,223315,223316,223324,223327,223330,223330,223330,223313,223313,223334,223339,223339,223339,223334,223323,223296,223296,223336,223336,223325,223324,223324,223313,223301,223301,223304,223318,223318,223305,223305,223304,223315,223305,223308,223305,223300,223296,223292,223290,223287,223287,223290,223301,223301,223280,223261,223261,223258,223261,223261,223269,223269,223261,223250,223250,223250,223247,223241,223241,223245,223245,223245,223244,223243,223243,223243,223252,223259,223252,223247,223243,223243,223243,223229,223217,223213,223210,223206,223203,223203,223202,223202,223202,223199,223199,223196,223196,223189,223186,223181,223181,223181,223180,223168,223168,223176,223179,223188,223194,223196,223203,223209,223223,223223,223227,223227,223224,223214,223201,223198,223181,223173,223173,223180,223181,223181,223181,223183,223183,223182,223182,223182,223182,223187,223208,223208,223200,223195,223191,223191,223191,223178,223160,223155,223143,223140,223140,223141,223141,223155,223155,223155,223156,223156,223162,223162,223165,223168,223189,223193,223209,223225,223243,223245,223246,223246,223239,223236,223218,223218,223220,223229,223230,223235,223238,223240,223243,223248,223248,223247,223243,223231,223227,223227,223233,223238,223245,223254,223248,223258,223262,223265,223273,223278,223284,223285,223285,223306,223336,223336,223316,223295,223287,223286,223280,223272,223261,223261,223258,223243,223243,223243,223240,223231,223231,223229,223229,223225,223220,223218,223218,223224,223224,223216,223216,223217,223217,223217,223209,223194,223194,223190,223190,223189,223173,223172,223172,223165,223160,223160,223160,223157,223149,223149,223153,223156,223153,223149,223136,223145,223141,223141,223133,223133,223134,223139,223139,223139,223139,223139,223139,223139,223139,223141,223152,223152,223150,223149,223149,223151,223152,223151,223152,223150,223144,223127,223124,223121,223119,223119,223102,223092,223092,223098,223100,223100,223087,223082,223083,223083,223089,223089,223089,223099,223099,223092,223074,223074,223080,223080,223082,223082,223086,223088,223103,223115,223127,223130,223131,223131,223134,223134,223124,223124,223124,223136,223147,223163,223171,223179,223197,223216,223227,223229,223235,223243,223259,223262,223264,223264,223266,223267,223273,223281,223281,223270,223257,223254,223238,223238,223239,223255,223255,223260,223260,223262,223264,223284,223285,223294,223299,223302,223302,223308,223310,223310,223310,223319,223322,223319,223316,223316,223318,223318,223318,223318,223330,223335,223330,223333,223330,223333,223338,223352,223353,223363,223369,223372,223372,223370,223369,223369,223369,223378,223378,223369,223364,223362,223362,223365,223369,223371,223380,223402,223402,223402,223406,223406,223404,223404,223410,223420,223422,223425,223431,223433,223443,223443,223447,223459,223462,223466,223473,223473,223473,223482,223485,223493,223496,223497,223508,223520,223533,223545,223548,223553,223553,223553,223562,223575,223588,223592,223596,223605,223619,223634,223640,223656,223679,223698,223709,223736,223766,223804,223844,223887,223916,223922,223944,223961,223961,223955,223948,223945,223940,223921,223916,223916,223912,223912,223913,223925,223927,223933,223936,223938,223940,223958,223958,223950,223950,223960,223965,223982,223985,223987,223988,224003,224022,224046,224053,224057,224060,224060,224049,224049,224043,224043,224043,224047,224049,224051,224063,224067,224075,224087,224108,224131,224141,224149,224156,224156,224152,224144,224133,224118,224108,224096,224074,224046,224002,223965,223938,223889,223833,223781,223753,223750,223749,223749,223754,223775,223803,223823,223825,223825,223798,223784,223769,223763,223761,223763,223758,223750,223748,223727,223727,223726,223729,223731,223740,223742,223742,223742,223749,223752,223766,223767,223769,223771,223776,223781,223781,223781,223791,223783,223794,223810,223832,223848,223871,223895,223905,223923,223925,223926,223926,223926,223928,223929,223934,223935,223935,223929,223915,223915,223924,223925,223925,223925,223925,223927,223937,223938,223946,223953,223962,223969,223972,223974,223981,223986,223990,223999,224004,224008,224016,224025,224029,224031,224033,224047,224057,224067,224076,224080,224086,224090,224096,224108,224123,224129,224131,224147,224164,224175,224187,224193,224196,224198,224213,224238,224258,224263,224281,224289,224304,224304,224328,224345,224355,224374,224388,224395,224418,224443,224453,224461,224471,224490,224506,224521,224542,224550,224558,224573,224585,224595,224613,224617,224643,224661,224681,224691,224694,224711,224746,224756,224756,224749,224737,224728,224721,224709,224707,224695,224689,224687,224679,224677,224675,224664,224663,224655,224655,224650,224650,224641,224633,224633,224643,224643,224641,224637,224637,224638,224641,224644,224644,224644,224644,224641,224638,224633,224632,224632,224633,224633,224633,224633,224633,224634,224634,224641,224642,224648,224658,224669,224674,224686,224702,224718,224736,224750,224764,224777,224794,224805,224816,224832,224838,224861,224866,224869,224885,224893,224893,224900,224922,224932,224966,224991,225017,225041,225079,225086,225086,225081,225081,225079,225077,225074,225077,225077,225077,225066,225051,225051,225053,225053,225052,225052,225056,225056,225048,225047,225043,225037,225037,225041,225041,225039,225039,225042,225046,225048,225049,225048,225045,225045,225031,225018,225018,225016,224997,224997,225004,225018,225018,225012,225003,225003,225008,225008,225009,225020,225024,225024,225032,225042,225039,225041,225041,225054,225073,225083,225095,225100,225103,225109,225109,225128,225135,225140,225156,225161,225167,225174,225175,225187,225191,225200,225213,225221,225230,225239,225248,225254,225275,225287,225289,225305,225317,225326,225338,225347,225348,225369,225380,225389,225410,225418,225430,225439,225453,225481,225493,225494,225524,225526,225547,225584,225597,225609,225625,225639,225655,225657,225663,225670,225673,225673,225684,225686,225688,225688,225693,225698,225720,225722,225722,225731,225734,225745,225756,225777,225810,225842,225882,225942,226011,226057,226057,226053,226042,225996,225970,225939,225877,225842,225806,225767,225741,225741,225739,225737,225723,225717,225717,225718,225718,225718,225708,225702,225701,225698,225698,225697,225692,225680,225659,225631,225615,225605,225598,225594,225584,225545,225545,225545,225561,225564,225564,225563,225506,225466,225431,225405,225402,225379,225364,225344,225323,225301,225300,225293,225286,225278,225272,225270,225262,225259,225257,225257,225244,225244,225247,225271,225271,225287,225306,225316,225329,225338,225345,225346,225370,225400,225401,225422,225428,225435,225444,225451,225468,225483,225494,225509,225512,225522,225539,225555,225559,225572,225579,225579,225582,225573,225573,225562,225550,225550,225547,225547,225539,225537,225522,225502,225501,225500,225480,225467,225451,225435,225432,225421,225394,225389,225377,225351,225339,225333,225318,225306,225300,225287,225284,225278,225275,225272,225266,225255,225246,225243,225242,225242,225246,225255,225262,225263,225266,225272,225273,225273,225272,225266,225256,225243,225243,225238,225234,225227,225219,225213,225202,225194,225178,225178,225178,225178,225189,225190,225190,225180,225175,225172,225162,225157,225157,225154,225145,225129,225122,225117,225112,225099,225090,225079,225077,225070,225061,225049,225044,225037,225036,225032,225021,225009,224993,224986,224980,224973,224965,224956,224949,224935,224935,224927,224918,224909,224905,224905,224907,224913,224913,224906,224892,224888,224869,224846,224827,224813,224805,224794,224778,224770,224759,224751,224743,224731,224722,224701,224693,224685,224669,224658,224652,224642,224633,224632,224622,224613,224608,224597,224597,224589,224576,224566,224546,224544,224536,224536,224537,224537,224524,224518,224515,224501,224496,224493,224493,224493,224488,224474,224470,224459,224448,224448,224448,224445,224428,224426,224424,224424,224424,224423,224423,224413,224407,224407,224406,224405,224405,224406,224412,224417,224417,224399,224399,224411,224420,224427,224427,224446,224448,224446,224445,224445,224450,224456,224456,224483,224483,224487,224487,224495,224495,224495,224503,224509,224517,224523,224535,224544,224544,224536,224536,224553,224562,224565,224589,224600,224602,224610,224624,224628,224634,224639,224641,224651,224660,224685,224698,224706,224706,224716,224722,224739,224739,224748,224760,224776,224789,224790,224804,224822,224836,224857,224881,224890,224900,224903,224909,224917,224917,224904,224904,224910,224911,224919,224922,224926,224949,224962,224968,224981,224991,224995,224999,225016,225031,225036,225047,225052,225055,225068,225070,225070,225078,225103,225109,225109,225121,225124,225125,225138,225146,225148,225156,225165,225174,225176,225180,225180,225194,225194,225183,225183,225184,225184,225185,225185,225209,225210,225213,225223,225228,225228,225228,225238,225243,225250,225273,225273,225272,225272,225285,225296,225310,225328,225346,225360,225360,225369,225379,225385,225407,225419,225435,225451,225471,225471,225471,225497,225511,225516,225543,225565,225571,225575,225583,225602,225630,225638,225657,225663,225670,225670,225674,225675,225682,225691,225696,225699,225710,225729,225753,225772,225796,225804,225806,225808,225808,225806,225806,225811,225813,225815,225816,225816,225815,225812,225811,225811,225811,225814,225815,225817,225820,225821,225823,225827,225827,225826,225826,225826,225812,225808,225805,225797,225797,225802,225802,225798,225793,225787,225787,225787,225796,225796,225796,225794,225784,225763,225754,225736,225720,225714,225707,225694,225671,225656,225652,225639,225628,225613,225601,225587,225568,225559,225545,225526,225525,225519,225514,225514,225506,225503,225503,225505,225505,225499,225495,225495,225525,225528,225531,225531,225534,225534,225549,225590,225594,225622,225622,225603,225603,225607,225614,225652,225665,225693,225720,225726,225727,225735,225761,225774,225788,225800,225812,225817,225831,225847,225860,225871,225883,225884,225896,225896,225907,225923,225961,225997,226030,226070,226109,226137,226155,226181,226187,226197,226206,226197,226185,226169,226156,226139,226132,226100,226083,226066,226044,226028,226011,225988,225967,225956,225950,225934,225921,225914,225904,225899,225899,225888,225869,225843,225823,225792,225777,225765,225754,225739,225731,225719,225702,225690,225677,225660,225647,225625,225624,225621,225609,225607,225607,225606,225605,225601,225600,225586,225576,225564,225558,225538,225536,225525,225513,225501,225475,225454,225449,225449,225451,225451,225436,225420,225420,225431,225436,225436,225436,225437,225442,225450,225453,225456,225462,225471,225473,225483,225486,225495,225503,225508,225510,225510,225510,225506,225506,225505,225490,225474,225462,225462,225461,225461,225454,225422,225318,225318,225355,225378,225363,225366,225363,225352,225326,225326,225338,225338,225324,225311,225302,225295,225280,225262,225253,225247,225225,225220,225205,225180,225176,225165,225158,225155,225150,225124,225118,225108,225099,225091,225072,225058,225049,225045,225033,225025,225003,224994,224979,224977,224965,224945,224943,224942,224938,224934,224926,224916,224912,224907,224904,224903,224899,224890,224880,224875,224868,224865,224859,224859,224850,224847,224837,224835,224818,224816,224814,224811,224811,224810,224810,224810,224801,224796,224796,224796,224796,224792,224781,224778,224778,224775,224774,224774,224763,224763,224763,224750,224740,224736,224734,224717,224706,224701,224701,224699,224699,224690,224689,224673,224651,224645,224640,224636,224631,224626,224621,224617,224607,224605,224604,224603,224601,224597,224593,224591,224590,224587,224585,224583,224583,224575,224575,224568,224568,224564,224564,224563,224563,224550,224549,224543,224533,224532,224519,224508,224508,224511,224526,224547,224547,224519,224491,224491,224491,224492,224499,224499,224501,224501,224502,224510,224524,224539,224540,224547,224552,224553,224553,224558,224573,224573,224564,224561,224544,224512,224512,224513,224526,224526,224495,224489,224479,224447,224447,224467,224503,224503,224471,224451,224430,224414,224412,224406,224406,224400,224398,224386,224383,224383,224378,224373,224372,224372,224367,224363,224358,224358,224358,224342,224336,224334,224330,224330,224330,224325,224315,224307,224305,224300,224292,224287,224287,224278,224266,224250,224247,224239,224239,224220,224204,224200,224200,224199,224199,224198,224198,224196,224180,224180,224176,224170,224160,224159,224149,224145,224143,224136,224135,224135,224125,224125,224125,224120,224114,224112,224112,224114,224114,224114,224115,224115,224106,224092,224078,224071,224053,224041,224041,224047,224047,224033,224031,224031,224036,224036,224027,224027,224037,224037,224021,224014,224013,224011,224008,224006,224005,224002,223993,223991,223988,223988,223988,223983,223977,223974,223974,223975,223981,223981,223977,223976,223976,223976,223976,223976,223974,223978,223979,223980,223983,223987,223987,224001,224001,223998,223998,223998,224002,224003,224004,224010,224026,224046,224065,224065,224056,224056,224056,224060,224064,224064,224064,224064,224072,224080,224084,224094,224098,224110,224116,224116,224120,224124,224134,224134,224134,224134,224142,224156,224159,224169,224186,224206,224223,224225,224228,224251,224264,224291,224309,224335,224357,224368,224373,224368,224354,224351,224351,224355,224373,224381,224391,224391,224395,224396,224407,224409,224413,224414,224425,224428,224433,224428,224431,224425,224431,224427,224427,224427,224443,224455,224460,224460,224460,224460,224461,224462,224465,224479,224480,224491,224506,224510,224511,224513,224524,224524,224516,224500,224485,224484,224483,224464,224464,224457,224458,224458,224459,224466,224470,224475,224476,224476,224478,224482,224485,224485,224485,224485,224491,224499,224499,224500,224500,224503,224517,224529,224529,224523,224502,224495,224482,224479,224477,224454,224442,224433,224427,224427,224430,224445,224446,224455,224463,224468,224469,224482,224488,224493,224509,224520,224524,224532,224535,224542,224556,224571,224572,224577,224593,224595,224609,224610,224622,224629,224635,224636,224649,224652,224661,224663,224667,224672,224684,224695,224710,224718,224719,224725,224733,224738,224746,224755,224767,224771,224772,224776,224790,224797,224808,224819,224826,224839,224847,224848,224853,224867,224886,224888,224895,224895,224883,224868,224866,224863,224848,224841,224840,224830,224824,224813,224812,224811,224790,224788,224786,224784,224764,224754,224753,224739,224732,224732,224731,224719,224714,224701,224690,224680,224665,224647,224639,224639,224627,224622,224620,224618,224618,224598,224580,224579,224556,224551,224550,224547,224530,224512,224499,224498,224483,224482,224475,224475,224469,224455,224430,224427,224414,224414,224411,224394,224372,224364,224362,224351,224331,224323,224316,224306,224301,224277,224261,224260,224252,224244,224234,224217,224200,224174,224166,224165,224162,224157,224136,224123,224109,224108,224107,224090,224076,224066,224060,224055,224041,224035,224035,224035,224035,224026,224017,224008,223998,223998,223998,223992,223973,223972,223953,223940,223935,223934,223934,223924,223916,223911,223908,223908,223908,223908,223908,223911,223914,223919,223944,223948,223948,223947,223940,223937,223914,223880,223855,223806,223773,223736,223711,223697,223680,223660,223637,223633,223624,223616,223601,223591,223589,223585,223570,223562,223562,223562,223562,223550,223531,223531,223533,223537,223537,223529,223505,223505,223505,223488,223485,223475,223461,223459,223456,223456,223448,223447,223447,223446,223442,223437,223426,223422,223422,223422,223422,223415,223399,223395,223387,223349,223342,223345,223343,223345,223346,223346,223338,223328,223315,223315,223319,223319,223315,223305,223305,223301,223301,223301,223306,223306,223304,223304,223306,223307,223313,223315,223315,223322,223325,223322,223306,223305,223302,223289,223286,223280,223272,223270,223267,223269,223269,223277,223281,223281,223275,223264,223262,223244,223244,223233,223231,223220,223214,223214,223221,223229,223232,223232,223228,223222,223215,223213,223195,223193,223191,223191,223198,223199,223201,223207,223217,223217,223195,223195,223198,223198,223192,223192,223192,223195,223201,223210,223217,223231,223251,223251,223246,223229,223214,223214,223223,223223,223207,223198,223198,223202,223202,223197,223182,223172,223169,223160,223160,223160,223166,223181,223184,223181,223175,223170,223170,223170,223164,223158,223155,223155,223159,223162,223164,223176,223191,223200,223203,223202,223203,223202,223178,223162,223153,223153,223153,223139,223109,223095,223086,223086,223093,223102,223108,223110,223110,223104,223104,223111,223119,223125,223125,223123,223122,223122,223121,223119,223116,223113,223113,223110,223102,223090,223083,223078,223069,223066,223058,223049,223043,223038,223030,223026,223023,223021,223019,223016,223010,223010,223012,223012,223010,223009,223005,223005,223001,222997,222996,222994,222993,222985,222978,222975,222970,222968,222963,222957,222950,222947,222947,222949,222949,222949,222943,222943,222953,222954,222954,222962,222966,222966,222966,222956,222948,222948,222945,222945,222954,222961,222961,222961,222965,222965,222958,222954,222952,222949,222944,222929,222919,222913,222913,222905,222904,222902,222891,222891,222897,222920,222939,222964,222978,222979,222979,222975,222966,222966,222973,222980,222980,222978,222978,222976,222976,222975,222953,222950,222949,222949,222953,222953,222953,222945,222945,222946,222948,222966,222971,222971,222971,222974,222980,222980,222976,222971,222971,222971,222975,222975,222975,222955,222936,222917,222917,222912,222906,222894,222879,222879,222884,222885,222885,222884,222882,222882,222884,222884,222883,222874,222870,222870,222870,222877,222879,222886,222886,222882,222881,222876,222873,222870,222865,222862,222857,222857,222860,222860,222858,222855,222843,222829,222815,222811,222811,222798,222789,222789,222792,222800,222808,222818,222825,222836,222841,222841,222841,222841,222852,222864,222877,222894,222905,222914,222914,222914,222910,222901,222890,222875,222875,222875,222876,222877,222877,222877,222877,222876,222873,222872,222866,222864,222864,222873,222885,222899,222921,222943,222961,222977,222983,222986,222990,222990,222990,222988,222982,222969,222960,222940,222927,222909,222897,222871,222859,222854,222851,222849,222849,222853,222853,222852,222838,222822,222807,222801,222796,222796,222796,222794,222791,222791,222791,222791,222793,222794,222797,222810,222813,222816,222816,222817,222817,222811,222811,222811,222830,222846,222846,222833,222819,222808,222808,222812,222826,222826,222825,222808,222808,222807,222807,222802,222799,222796,222796,222796,222802,222802,222802,222797,222795,222791,222791,222799,222800,222804,222806,222806,222815,222824,222829,222829,222829,222829,222826,222826,222839,222842,222843,222875,222898,222900,222916,222944,222958,222974,222981,222982,222982,222981,222974,222974,222971,222958,222937,222912,222901,222884,222875,222861,222859,222859,222868,222875,222878,222885,222885,222885,222885,222885,222882,222881,222881,222881,222886,222892,222897,222897,222897,222894,222891,222871,222846,222835,222834,222835,222838,222838,222832,222832,222836,222846,222859,222866,222883,222885,222894,222899,222901,222901,222902,222902,222901,222900,222898,222892,222883,222874,222874,222882,222889,222889,222867,222856,222843,222843,222850,222850,222850,222846,222841,222838,222837,222833,222833,222832,222832,222832,222830,222826,222814,222810,222802,222791,222791,222792,222804,222806,222817,222824,222824,222822,222809,222793,222783,222783,222785,222785,222776,222767,222758,222748,222741,222737,222737,222740,222740,222731,222724,222712,222708,222705,222702,222702,222711,222724,222740,222759,222781,222795,222807,222830,222847,222861,222877,222877,222862,222859,222859,222862,222867,222870,222870,222846,222823,222815,222790,222782,222782,222777,222777,222776,222777,222776,222774,222764,222758,222757,222753,222753,222753,222753,222742,222742,222734,222717,222705,222698,222688,222676,222674,222670,222670,222670,222662,222651,222645,222640,222635,222635,222639,222641,222643,222648,222654,222657,222663,222663,222656,222654,222651,222654,222657,222661,222667,222674,222683,222683,222683,222698,222698,222692,222692,222694,222694,222694,222697,222709,222723,222732,222735,222740,222743,222749,222760,222760,222745,222740,222727,222720,222720,222720,222712,222712,222721,222731,222748,222765,222779,222787,222805,222821,222825,222825,222821,222813,222804,222784,222759,222734,222714,222692,222691,222678,222678,222687,222687,222689,222699,222703,222704,222713,222731,222752,222782,222791,222795,222795,222811,222828,222837,222840,222840,222830,222825,222823,222807,222811,222811,222813,222814,222815,222827,222827,222818,222816,222813,222813,222808,222806,222805,222796,222780,222771,222753,222726,222726,222748,222764,222777,222783,222790,222790,222786],"streets":[[0,"Avenida Insurgentes Sur","Ciudad Universitaria"],[150,"Avenida Insurgentes Sur","Copilco El Bajo"],[1210,"Avenida Insurgentes Sur","San Ángel"],[2080,"Avenida Insurgentes Sur","Guadalupe Chimalistac"],[2560,"Avenida Insurgentes Sur","Florida"],[3430,"Avenida Insurgentes Sur","Crédito Constructor"],[4000,"Avenida Insurgentes Sur","Actipan"],[4680,"Avenida Insurgentes Sur","Extremadura Insurgentes"],[5470,"Avenida Insurgentes Sur","Insurgentes San Borja"],[6570,"Avenida Insurgentes Sur","Nápoles"],[7280,"Avenida Insurgentes Sur","Del Valle"],[7680,"Avenida Insurgentes Sur","Roma Sur"],[8990,"Avenida Insurgentes Sur","Roma Norte"],[10390,"Glorieta de los Insurgentes","Roma Norte"],[10750,"Avenida Oaxaca","Roma Norte"],[11140,"Plaza de Madrid","Roma Norte"],[11270,"Avenida Oaxaca","Roma Norte"],[11850,"Avenida Nuevo León","Condesa"],[12200,"Avenida Nuevo León","Hipódromo"],[13400,"Avenida Nuevo León","Condesa"],[13710,"Avenida Sonora","Roma Norte"],[14410,"Avenida Chapultepec","Roma Norte"],[15290,"Calle Florencia","Juárez"],[15700,"Paseo de la Reforma","Cuauhtémoc"],[16940,"Paseo de la Reforma","Bosque de Chapultepec"],[17200,"Andador Avenida Gandhi","Bosque de Chapultepec"],[17440,"Peatonal Avenida Heroico Colegio Militar","Bosque de Chapultepec"],[17670,"Gran Avenida","Bosque de Chapultepec"],[19470,"Avenida Heroico Colegio Militar","Bosque de Chapultepec"],[19800,"Calzada Chivatito","Bosque de Chapultepec"],[20290,"Paseo de la Reforma","Polanco"],[21520,"Calle Julio Verne","Polanco"],[21770,"Avenida Luis Gonzaga Urbina","Polanco"],[22080,"Calle Edgar Allan Poe","Polanco"],[22160,"Avenida Emilio Castelar","Polanco"],[22380,"Calle Anatole France","Polanco"],[22570,"Avenida Presidente Masaryk","Polanco"],[25610,"Avenida Moliere","Polanco"],[26330,"Avenida Ejército Nacional Mexicano","Granada"],[26880,"Avenida Ferrocarril de Cuernavaca","Granada"],[27070,"Boulevard Miguel de Cervantes Saavedra","Granada"],[27460,"Prolongación Moliere","Granada"],[27730,"Avenida Ejército Nacional Mexicano","Polanco"],[29510,"Avenida Ejército Nacional Mexicano","Anzures"],[29710,"Avenida Thiers","Anzures"],[30780,"Calle Darwin","Anzures"],[31420,"Avenida Campos Elíseos","Polanco"],[31840,"Calle Rubén Darío","Polanco"],[32150,"Calle Schiller","Bosque de Chapultepec"],[32260,"Calzada Mahatma Gandhi","Bosque de Chapultepec"],[32890,"Paseo de la Reforma","Bosque de Chapultepec"],[34440,"Paseo de la Reforma","Juárez"],[36780,"Calle Ignacio Ramírez","Tabacalera"],[37110,"Plaza de la República","Tabacalera"],[37640,"Avenida de la República","Tabacalera"],[38040,"Paseo de la Reforma","Tabacalera"],[38380,"Paseo de la Reforma","Guerrero"],[39340,"Paseo de la Reforma","Tabacalera"],[39720,"Avenida Juárez","Centro"],[40650,"Calle Francisco I. Madero","Centro"],[40910,"Calle Simón Bolívar","Centro"],[41330,"Calle República de El Salvador","Centro"],[41830,"Avenida 20 de Noviembre","Centro"],[42110,"Plaza de la Constitución","Centro"]],"marks":[{"k":2500,"s":"Wasser","c":"water","n":"Wasser km 2,5 (Agua Skarch)"},{"k":5000,"s":"Electrolit","c":"water","n":"Electrolit km 5"},{"k":7500,"s":"Wasser","c":"water","n":"Wasser km 7,5 (Agua Skarch)"},{"k":10000,"s":"Electrolit","c":"water","n":"Electrolit km 10"},{"k":12500,"s":"Wasser","c":"water","n":"Wasser km 12,5 (Agua Skarch)"},{"k":15000,"s":"Electrolit","c":"water","n":"Electrolit km 15"},{"k":17500,"s":"Wasser","c":"water","n":"Wasser km 17,5 (Agua Skarch)"},{"k":20000,"s":"Electrolit","c":"water","n":"Electrolit km 20"},{"k":21098,"s":"Halbmarathon","c":"half","n":"Halbmarathon"},{"k":22500,"s":"Wasser","c":"water","n":"Wasser km 22,5 (Agua Skarch)"},{"k":25000,"s":"Electrolit","c":"water","n":"Electrolit km 25"},{"k":27500,"s":"Wasser","c":"water","n":"Wasser km 27,5 (Agua Skarch)"},{"k":30000,"s":"Electrolit","c":"water","n":"Electrolit km 30"},{"k":32500,"s":"Wasser","c":"water","n":"Wasser km 32,5 (Agua Skarch)"},{"k":35000,"s":"Electrolit","c":"water","n":"Electrolit km 35"},{"k":37500,"s":"Wasser","c":"water","n":"Wasser km 37,5 (Agua Skarch)"},{"k":40000,"s":"Electrolit","c":"water","n":"Electrolit km 40"}],"bridges":[{"a":0,"b":212,"name":"Insurgentes Sur am Estadio Olímpico","kind":"Brücke"},{"a":462,"b":771,"name":"Insurgentes Sur über die Avenida San Jerónimo","kind":"Brücke"},{"a":10377,"b":10763,"name":"Glorieta de los Insurgentes","kind":"Brücke"}],"lage":2240,"route":{"step":50,"lat0":19.3,"lon0":-99.2,"pts":[[3138,1048],[3185,1042],[3231,1036],[3278,1031],[3324,1025],[3371,1019],[3418,1016],[3464,1014],[3511,1012],[3558,1009],[3605,1004],[3651,997],[3698,991],[3744,986],[3791,981],[3837,975],[3884,966],[3930,961],[3976,968],[4021,983],[4065,1000],[4109,1017],[4153,1034],[4197,1050],[4241,1067],[4285,1084],[4330,1100],[4374,1117],[4418,1134],[4462,1150],[4506,1167],[4550,1184],[4594,1201],[4638,1218],[4682,1234],[4726,1252],[4771,1268],[4816,1282],[4860,1297],[4905,1311],[4950,1325],[4995,1340],[5040,1355],[5084,1369],[5129,1384],[5174,1399],[5219,1413],[5264,1427],[5309,1441],[5354,1456],[5398,1470],[5443,1484],[5488,1499],[5533,1513],[5578,1528],[5623,1542],[5667,1557],[5712,1571],[5757,1586],[5802,1601],[5847,1615],[5891,1630],[5936,1644],[5981,1659],[6026,1674],[6071,1688],[6115,1703],[6160,1717],[6205,1731],[6250,1746],[6295,1761],[6339,1775],[6384,1790],[6429,1804],[6474,1819],[6519,1834],[6563,1848],[6608,1863],[6653,1878],[6698,1892],[6742,1907],[6787,1921],[6832,1936],[6877,1950],[6922,1964],[6967,1979],[7012,1993],[7056,2008],[7101,2022],[7146,2037],[7191,2051],[7236,2066],[7280,2081],[7325,2095],[7370,2110],[7415,2125],[7459,2139],[7504,2154],[7549,2169],[7594,2182],[7639,2196],[7682,2210],[7725,2224],[7768,2238],[7811,2252],[7854,2265],[7897,2279],[7939,2294],[7982,2308],[8025,2322],[8068,2335],[8111,2349],[8154,2363],[8197,2377],[8240,2391],[8282,2406],[8325,2420],[8368,2433],[8411,2447],[8454,2461],[8497,2475],[8540,2488],[8583,2502],[8626,2516],[8669,2530],[8712,2544],[8755,2558],[8798,2572],[8840,2586],[8883,2600],[8926,2614],[8969,2628],[9012,2642],[9055,2656],[9098,2669],[9141,2683],[9184,2697],[9227,2711],[9270,2724],[9313,2738],[9356,2752],[9398,2766],[9441,2780],[9484,2794],[9527,2808],[9570,2822],[9613,2836],[9656,2850],[9699,2864],[9742,2878],[9785,2892],[9827,2906],[9870,2920],[9913,2934],[9956,2948],[9999,2962],[10042,2976],[10085,2990],[10128,3004],[10171,3018],[10214,3032],[10256,3045],[10299,3060],[10342,3074],[10385,3087],[10428,3101],[10471,3115],[10514,3129],[10557,3143],[10599,3158],[10642,3172],[10685,3186],[10728,3199],[10771,3213],[10814,3227],[10857,3241],[10900,3255],[10943,3269],[10986,3283],[11028,3297],[11071,3311],[11114,3325],[11157,3339],[11200,3353],[11243,3367],[11286,3381],[11329,3395],[11372,3409],[11414,3423],[11457,3437],[11500,3451],[11543,3465],[11586,3479],[11629,3493],[11672,3507],[11715,3520],[11758,3532],[11802,3544],[11845,3557],[11888,3569],[11932,3582],[11979,3596],[12026,3610],[12073,3624],[12121,3638],[12168,3652],[12216,3666],[12263,3679],[12304,3702],[12322,3749],[12367,3766],[12411,3747],[12429,3712],[12416,3663],[12375,3636],[12329,3650],[12291,3621],[12253,3587],[12216,3554],[12178,3520],[12141,3487],[12104,3453],[12067,3419],[12042,3381],[12028,3335],[11983,3327],[11944,3310],[11907,3276],[11870,3242],[11833,3209],[11794,3176],[11757,3143],[11719,3109],[11682,3076],[11645,3042],[11637,2991],[11616,2972],[11589,3001],[11556,2977],[11515,2949],[11473,2922],[11430,2896],[11390,2867],[11359,2828],[11313,2826],[11267,2807],[11222,2788],[11176,2770],[11130,2750],[11085,2730],[11039,2712],[10991,2721],[10943,2733],[10895,2745],[10847,2756],[10799,2766],[10760,2783],[10801,2777],[10849,2767],[10897,2756],[10945,2746],[10993,2735],[11041,2729],[11087,2747],[11133,2766],[11179,2785],[11224,2806],[11269,2826],[11314,2847],[11360,2865],[11406,2884],[11449,2907],[11492,2934],[11533,2961],[11574,2990],[11594,3003],[11634,2973],[11674,2942],[11714,2912],[11753,2881],[11792,2850],[11832,2819],[11871,2787],[11910,2757],[11950,2726],[11990,2696],[12029,2665],[12069,2634],[12109,2604],[12124,2643],[12135,2693],[12147,2743],[12158,2794],[12169,2844],[12180,2895],[12192,2945],[12203,2995],[12214,3046],[12225,3096],[12236,3147],[12247,3197],[12257,3244],[12267,3291],[12278,3338],[12289,3385],[12297,3432],[12333,3420],[12373,3398],[12414,3377],[12455,3355],[12495,3333],[12536,3312],[12577,3290],[12617,3268],[12655,3246],[12667,3202],[12677,3168],[12656,3125],[12636,3082],[12615,3039],[12595,2996],[12574,2953],[12554,2910],[12534,2867],[12538,2824],[12504,2801],[12483,2758],[12463,2715],[12442,2672],[12422,2629],[12402,2586],[12381,2543],[12361,2500],[12344,2456],[12340,2408],[12344,2360],[12351,2313],[12359,2265],[12367,2218],[12375,2171],[12383,2123],[12390,2076],[12397,2028],[12405,1981],[12386,1953],[12341,1945],[12296,1943],[12251,1949],[12209,1968],[12175,1999],[12146,2036],[12114,2070],[12076,2093],[12031,2087],[11991,2064],[11952,2040],[11912,2017],[11872,1994],[11831,1972],[11791,1949],[11756,1919],[11736,1877],[11734,1829],[11733,1781],[11723,1734],[11702,1691],[11679,1650],[11659,1607],[11644,1561],[11633,1515],[11627,1467],[11629,1419],[11633,1371],[11639,1324],[11649,1277],[11659,1230],[11672,1184],[11686,1138],[11702,1093],[11720,1049],[11745,1009],[11780,978],[11820,955],[11863,941],[11909,935],[11954,937],[11999,947],[12040,966],[12076,996],[12105,1033],[12133,1012],[12139,968],[12130,921],[12121,874],[12113,826],[12104,779],[12101,738],[12146,745],[12191,752],[12236,760],[12281,768],[12330,776],[12379,783],[12428,791],[12477,798],[12526,806],[12568,802],[12590,771],[12598,719],[12606,667],[12613,615],[12621,564],[12629,512],[12637,460],[12645,409],[12652,357],[12660,305],[12668,253],[12676,202],[12684,150],[12692,98],[12700,47],[12708,-5],[12696,-40],[12690,-3],[12682,48],[12675,100],[12667,152],[12659,203],[12653,252],[12665,275],[12698,264],[12747,268],[12796,276],[12845,285],[12894,294],[12920,268],[12927,216],[12934,164],[12942,112],[12949,61],[12956,9],[12980,-20],[13030,-13],[13030,30],[13023,82],[13016,134],[13007,185],[13024,218],[13073,225],[13122,233],[13171,242],[13169,276],[13164,328],[13160,380],[13156,433],[13151,485],[13147,537],[13144,589],[13144,641],[13146,694],[13148,746],[13149,798],[13149,851],[13145,896],[13146,947],[13145,999],[13144,1052],[13143,1104],[13142,1156],[13141,1209],[13140,1261],[13139,1314],[13138,1366],[13136,1418],[13135,1471],[13134,1523],[13133,1575],[13142,1543],[13143,1490],[13144,1438],[13145,1386],[13146,1333],[13147,1281],[13148,1229],[13149,1176],[13150,1124],[13151,1072],[13152,1019],[13154,967],[13155,915],[13162,871],[13157,820],[13157,768],[13156,716],[13154,663],[13153,611],[13154,559],[13158,506],[13163,454],[13167,402],[13171,354],[13175,305],[13179,257],[13183,208],[13187,160],[13192,111],[13196,63],[13200,14],[13205,-34],[13209,-83],[13214,-131],[13219,-178],[13260,-177],[13306,-169],[13352,-162],[13397,-155],[13441,-142],[13486,-142],[13532,-135],[13578,-127],[13623,-119],[13669,-111],[13714,-103],[13760,-95],[13805,-88],[13827,-86],[13849,-111],[13852,-159],[13854,-208],[13855,-257],[13858,-305],[13860,-354],[13862,-403],[13864,-451],[13867,-500],[13869,-548],[13871,-596],[13893,-561],[13931,-534],[13965,-501],[13997,-467],[14012,-424],[14010,-376],[14008,-327],[14007,-279],[14006,-230],[14010,-182],[14024,-135],[14043,-92],[14033,-88],[13987,-90],[13941,-93],[13895,-95],[13849,-97],[13822,-77],[13820,-28],[13819,20],[13817,69],[13815,118],[13813,166],[13811,215],[13808,263],[13806,312],[13804,361],[13801,409],[13799,458],[13797,506],[13794,555],[13791,604],[13788,652],[13786,701],[13784,749],[13782,798],[13780,847],[13778,895],[13777,944],[13775,992],[13773,1041],[13771,1090],[13769,1138],[13767,1187],[13768,1235],[13770,1284],[13768,1332],[13766,1381],[13763,1429],[13760,1478],[13757,1527],[13756,1575],[13752,1623],[13733,1668],[13703,1705],[13673,1741],[13642,1777],[13611,1813],[13581,1850],[13550,1886],[13520,1923],[13490,1960],[13459,1996],[13429,2034],[13398,2071],[13367,2108],[13336,2145],[13305,2182],[13274,2218],[13243,2255],[13211,2292],[13180,2329],[13148,2365],[13116,2400],[13084,2436],[13052,2473],[13021,2509],[12991,2548],[12968,2542],[12956,2495],[12953,2446],[12949,2397],[12946,2348],[12953,2300],[12967,2253],[12982,2206],[12968,2159],[12952,2113],[12935,2067],[12914,2025],[12873,2003],[12848,1988],[12816,1954],[12812,1906],[12837,1866],[12879,1844],[12921,1822],[12952,1785],[12970,1748],[12969,1708],[12949,1663],[12929,1619],[12910,1574],[12890,1529],[12870,1484],[12849,1445],[12810,1469],[12783,1508],[12767,1475],[12748,1430],[12729,1385],[12708,1341],[12694,1294],[12681,1246],[12669,1199],[12657,1151],[12642,1104],[12625,1058],[12601,1016],[12567,984],[12540,985],[12533,1034],[12525,1082],[12518,1131],[12510,1180],[12503,1228],[12495,1277],[12488,1326],[12480,1374],[12473,1423],[12465,1472],[12458,1520],[12450,1569],[12443,1618],[12436,1666],[12428,1715],[12421,1764],[12414,1813],[12406,1861],[12398,1910],[12391,1959],[12383,2007],[12376,2056],[12369,2105],[12362,2154],[12355,2202],[12349,2251],[12342,2300],[12335,2349],[12329,2398],[12325,2447],[12320,2496],[12331,2542],[12352,2587],[12373,2631],[12394,2675],[12414,2719],[12435,2763],[12456,2808],[12463,2856],[12493,2892],[12516,2934],[12537,2979],[12558,3023],[12579,3067],[12600,3112],[12621,3156],[12623,3201],[12618,3250],[12639,3293],[12679,3317],[12712,3349],[12732,3393],[12753,3438],[12774,3482],[12795,3527],[12816,3571],[12828,3617],[12838,3664],[12874,3694],[12896,3738],[12917,3782],[12938,3827],[12959,3871],[12979,3915],[13000,3960],[13022,4003],[13061,4029],[13085,4069],[13099,4116],[13127,4155],[13150,4198],[13170,4243],[13191,4287],[13212,4331],[13233,4376],[13254,4420],[13275,4465],[13305,4480],[13345,4500],[13378,4529],[13413,4546],[13459,4554],[13506,4561],[13550,4567],[13560,4521],[13567,4472],[13596,4439],[13642,4442],[13682,4465],[13680,4514],[13673,4562],[13666,4611],[13659,4660],[13634,4697],[13594,4707],[13587,4756],[13580,4805],[13573,4854],[13566,4903],[13562,4952],[13569,5001],[13560,5027],[13548,5064],[13576,5103],[13605,5142],[13631,5183],[13658,5224],[13685,5264],[13712,5305],[13740,5344],[13772,5381],[13804,5417],[13836,5453],[13869,5489],[13901,5524],[13934,5560],[13966,5596],[13996,5634],[14026,5639],[14045,5649],[14008,5619],[13975,5585],[13942,5549],[13910,5513],[13878,5477],[13845,5441],[13812,5406],[13780,5370],[13748,5333],[13721,5293],[13693,5253],[13667,5212],[13640,5172],[13614,5130],[13592,5086],[13573,5041],[13541,5044],[13537,5093],[13536,5142],[13531,5192],[13526,5241],[13521,5290],[13517,5339],[13511,5389],[13503,5437],[13494,5486],[13486,5535],[13478,5584],[13470,5633],[13462,5681],[13453,5730],[13445,5779],[13437,5828],[13430,5877],[13415,5915],[13406,5962],[13399,6011],[13392,6060],[13385,6109],[13378,6158],[13339,6162],[13292,6156],[13246,6149],[13199,6142],[13152,6135],[13106,6128],[13059,6121],[13013,6114],[12991,6143],[12984,6192],[12978,6241],[12971,6290],[12964,6339],[12958,6388],[12951,6437],[12945,6486],[12938,6536],[12931,6585],[12941,6620],[12988,6627],[13035,6634],[13081,6640],[13128,6647],[13174,6653],[13220,6667],[13260,6680]]},"tiles":{"11":{"x0":116992,"y0":232704,"chunks":[[0,0,1024,1024,"z11-0-0"],[1024,0,512,1024,"z11-1-0"],[0,1024,1024,256,"z11-0-1"],[1024,1024,512,256,"z11-1-1"]]},"12":{"x0":235008,"y0":466176,"chunks":[[0,0,1024,1024,"z12-0-0"]]},"13":{"x0":470272,"y0":932608,"chunks":[[0,0,1024,1024,"z13-0-0"],[1024,0,256,1024,"z13-1-0"],[0,1024,1024,512,"z13-0-1"]]},"14":{"x0":941056,"y0":1865728,"chunks":[[0,0,1024,1024,"z14-0-0"],[1024,0,512,1024,"z14-1-0"],[0,1024,1024,1024,"z14-0-1"],[0,2048,1024,256,"z14-0-2"]]},"15":{"x0":1882368,"y0":3731968,"chunks":[[0,0,1024,1024,"z15-0-0"],[1024,0,1024,1024,"z15-1-0"],[2048,0,256,1024,"z15-2-0"],[0,1024,1024,1024,"z15-0-1"],[1024,1024,1024,1024,"z15-1-1"],[0,2048,1024,1024,"z15-0-2"],[1024,2048,1024,1024,"z15-1-2"],[0,3072,1024,512,"z15-0-3"]]}},"imgNote":"<b>Abgleich:</b> Start auf der Brücke der Insurgentes Sur am Estadio Olímpico auf 2285 m, höchster Punkt 2288 m an der Überführung über die Avenida San Jerónimo (km 0,5). Auf der Insurgentes Sur geht es gleichmäßig 55 m hinunter bis zur Glorieta de los Insurgentes (2231 m, km 10,5), einzige Welle ist die Rampe über den Viaducto Miguel Alemán (km 7,7, +4 m). Durch Roma und Condesa bleibt es flach. Ab dem Ángel steigt die Strecke sanft über Reforma und Bosque de Chapultepec bis 2261 m an der Wende Monte Elbruz (km 21,1); in Polanco folgen die Senke an der Wende Sudermann (2244 m, km 23,9), der höchste Punkt der zweiten Hälfte an der Ferrocarril de Cuernavaca am Museo Soumaya (2262 m, km 26,9), über Ejército Nacional und Thiers hinab auf 2240 m (km 30,7) und über Rubén Darío und Gandhi wieder auf 2249 m (km 32,9). Danach geht es auf der Reforma 21 m hinunter ins Centro; tiefster Punkt 2226 m in der Calle Simón Bolívar (km 41,1), Ziel auf dem Zócalo auf 2228 m (Höhen über dem Meer). Mit 200-m-Messfenster ergeben sich 88 Höhenmeter bergauf und 145 bergab. Das Höhenbild im Plan des Veranstalters zeigt dieselben Wellen an denselben Kilometern, in Chapultepec und Polanco aber 10 bis 20 m höher, vermutlich über Bäumen und Häusern gemessen. <b>Geschätzt</b> (gestrichelt) sind die Brücke der Insurgentes am Start, die Überführung über die Avenida San Jerónimo mit ihrer Rampe und die Glorieta de los Insurgentes. <b>Kilometer:</b> stückweise über die Kilometermarken des Plans geeicht; die acht Getränkestellen dazwischen liegen danach höchstens 100 m neben ihrer Angabe. Die Höhenlage um 2240 m (weniger Sauerstoff) macht jeden Kilometer langsamer; das rechnet das Pace-Modell nicht mit."};
+
+const L = D.len, STEP = D.step, N = D.h.length;
+const H = Float64Array.from(D.h, v => v / 100);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const hAt = x => { const t = clamp(x, 0, (N - 1) * STEP) / STEP; const i = Math.min(N - 2, Math.floor(t)); const f = t - i; return H[i] * (1 - f) + H[i + 1] * f; };
+
+const nf = (v, d) => v.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const sgn = (v, d) => { const r = Number(v.toFixed(d)); return (r > 0 ? "+" : r < 0 ? "−" : "±") + nf(Math.abs(r), d); };
+const hms = s => { s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h + ":" + String(m).padStart(2, "0") + ":" + String(x).padStart(2, "0"); };
+const mss = s => { s = Math.round(s); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+// m:ss,hh für die Pace im Flachen (seit 1.63): ein fester Wert, der flache Marathon steht sekundengenau, 1 s auf 42,195 km = 0,024 s/km
+const mss2 = s => { const c = Math.round(s * 100), m = Math.floor(c / 6000), r = c - m * 6000; return m + ":" + String(Math.floor(r / 100)).padStart(2, "0") + "," + String(r % 100).padStart(2, "0"); };
+const secs = s => { const r = Math.round(s); return (r > 0 ? "+" : r < 0 ? "−" : "±") + Math.abs(r) + " s"; };
+
+/* Farbklassen der Steigung in % (fest seit Hamburg 1.35, davor Testvarianten). Gespiegelte Grenzen ±0,5 / 1,5 / 3 / 4,5 /
+   6 / 8 / 10. Flach grün; bergab sieben Blautöne von Himmelblau bis Marineblau, die dunkler werden (die drei hellsten seit
+   Hamburg 1.36 weniger türkis); bergauf gelb, orange,
+   dann Rot über Bordeaux bis Aubergine. Nur für den dunklen Grund gewählt (einen hellen gibt es seit 1.35 nicht mehr). */
+const CLASS_EDGES = [-10, -8, -6, -4.5, -3, -1.5, -0.5, 0.5, 1.5, 3, 4.5, 6, 8, 10];
+const CLASS_TXT = ["≤ −10 %", "−10 bis −8", "−8 bis −6", "−6 bis −4,5", "−4,5 bis −3", "−3 bis −1,5", "−1,5 bis −0,5", "flach ±0,5",
+  "0,5 bis 1,5", "1,5 bis 3", "3 bis 4,5", "4,5 bis 6", "6 bis 8", "8 bis 10", "≥ 10 %"];
+const CLASS_FARBE = ["#102673", "#143790", "#0e4bab", "#0563c0", "#2279db", "#2b94f4", "#54b3fd", "#4caf63",
+  "#efd760", "#f39136", "#f5493e", "#d9353c", "#b72d41", "#922e4e", "#672f6b"];
+const CLASS_TOK = CLASS_FARBE.map((_, k) => "k" + k);
+const cls = g => { let c = 0; while (c < CLASS_EDGES.length && g >= CLASS_EDGES[c]) c++; return c; };
+let COL = {};
+function readColors() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const t of ["--bg", "--surface", "--ink", "--muted", "--rule", "--grid", "--blue", "--blue-soft", "--map-tint", "--g-u1", "--g-u2", "--g-u3"]) COL[t] = cs.getPropertyValue(t).trim();
+  CLASS_FARBE.forEach((c, k) => { COL["k" + k] = c; });
+  renderGauge();
+}
+// Skala über der Steigung: ein Feld je Farbklasse; die Nadel steht innerhalb ihres Feldes anteilig zwischen den Grenzen
+function renderGauge() {
+  const g = document.querySelector(".gauge"); g.style.gridTemplateColumns = "repeat(" + CLASS_TOK.length + ", 1fr)";
+  g.replaceChildren(...CLASS_TOK.map(t => { const s = document.createElement("span"); s.style.background = COL[t]; return s; }));
+}
+function gaugePos(g) {
+  const e = CLASS_EDGES, n = e.length + 1, c = cls(g);
+  const a = c === 0 ? 2 * e[0] - e[1] : e[c - 1], b = c === n - 1 ? 2 * e[n - 2] - e[n - 3] : e[c];
+  return (c + Math.min(1, Math.max(0, (g - a) / (b - a)))) / n;
+}
+
+/* Kennzahlen je Messfenster */
+const CUM = new Float64Array(N); // Integral der Höhe (Trapez) für gleitende Mittel
+for (let i = 1; i < N; i++) CUM[i] = CUM[i - 1] + (H[i - 1] + H[i]) / 2 * STEP;
+const cumAt = x => { const t = clamp(x, 0, (N - 1) * STEP) / STEP; const i = Math.min(N - 2, Math.floor(t)); const f = t - i; return CUM[i] + (H[i] + (H[i] + (H[i + 1] - H[i]) * f)) / 2 * f * STEP; };
+const WIN = {};
+function buildWindow(w) {
+  const g = new Float64Array(N), up = new Float64Array(N), dn = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    const x = i * STEP, a = clamp(x - w / 2, 0, L), b = clamp(x + w / 2, 0, L);
+    g[i] = b > a ? (hAt(b) - hAt(a)) / (b - a) * 100 : 0;
+  }
+  for (let i = 1; i < N; i++) {
+    const dh = (g[i - 1] + g[i]) / 2 / 100 * STEP;
+    up[i] = up[i - 1] + Math.max(0, dh); dn[i] = dn[i - 1] + Math.max(0, -dh);
+  }
+  WIN[w] = { g, up, dn };
+}
+[50, 100, 200, 1000].forEach(buildWindow);
+const valAt = (arr, x) => { const t = clamp(x, 0, (N - 1) * STEP) / STEP; const i = Math.min(N - 2, Math.floor(t)); const f = t - i; return arr[i] * (1 - f) + arr[i + 1] * f; };
+
+/* Pace-Modell: Energiekosten Laufen nach Minetti et al. 2002, J/(kg·m), i = Steigung als Bruch */
+const minetti = i => 155.4 * i ** 5 - 30.4 * i ** 4 - 43.3 * i ** 3 + 46.3 * i ** 2 + 19.5 * i + 3.6;
+// Sekunden je Höhenmeter bei 4:00 /km an einer Steigung i (Bruch): an sanften Anstiegen S.secHm, steiler mehr (Minetti ist konvex)
+const kostHm = i => S.secHm / 0.24 / (19.5 / 3.6) * (minetti(i) / 3.6 - 1) / i * 0.24;
+let P = null;
+// Pace-Faktor an einer Steigung gi (Bruch; 1 = flach). Bergauf die Minetti-Kurve, skaliert auf die eingestellten Kosten je
+// Höhenmeter (Minetti: 19,5/3,6 = 5,42 flache Meter je Höhenmeter). Bergab seit Hamburg 1.44 eine U-Kurve, abgestimmt im
+// Pace-Kurven-Simulator an Felddaten aus 20 belgischen Trailrennen (Jidovtseff und De Cock 2026) und Stravas
+// Herzfrequenzmodell: bei „halb“ anfangs die halbe Bergauf-Steigung, am schnellsten bei BERGAB.xm % (BERGAB.gm % schneller
+// als flach, kubisch), steiler kein weiterer Gewinn (seit 1.58 auf Wunsch des Nutzers statt des U-Asts, der bei −16 %
+// wieder flach erreichte: Labor und Feld liegen dort weit auseinander, auf Straßenmarathons kommt es nicht vor).
+// Bergab fest „halb“ (S.down = 0,5, Schalter seit 1.58 entfernt). Auf ±BERGAB.w %
+// rundet ein Übergang den Knick bei 0 ab (Steigung dort: Mittel beider Seiten). Alles skaliert mit den Kosten je Höhenmeter.
+const BERGAB = { r: 0.5, w: 1, xm: -8, gm: 12 }, UNSICHER = -8;   // steiler als UNSICHER %: kein weiterer Gewinn
+const pfAuf = x => S.secHm / 0.24 / (19.5 / 3.6) * (minetti(x / 100) / 3.6 - 1);       // x in % (≥ 0), Faktor − 1
+function pfAb(x) {                                                                       // x in % (< 0), Faktor − 1 bei „halb“
+  const B = BERGAB, k = S.secHm, s0 = B.r * k / 24, tief = B.gm / 100 * k, h = -B.xm;
+  if (x >= B.xm) { const t = (x - B.xm) / h; return -tief * (2 * t ** 3 - 3 * t ** 2 + 1) + s0 * h * (t ** 3 - t ** 2); }
+  return -tief;   // steiler: kein weiterer Gewinn, Übergang bei xm ohne Knick (Steigung dort 0)
+}
+function paceFaktor(gi) {
+  const x = gi * 100, d = S.down * 2, w = d ? BERGAB.w : 0, unten = xx => d * pfAb(xx);
+  if (Math.abs(x) < w) {   // Hermite-Stück auf [−w, 0] bzw. [0, w]
+    const e = 1e-3, sm = (S.secHm / 24 + d * BERGAB.r * S.secHm / 24) / 2;
+    const [a, ya, ma, yb, mb] = x >= 0 ? [0, 0, sm, pfAuf(w), (pfAuf(w + e) - pfAuf(w - e)) / (2 * e)]
+      : [-w, unten(-w), (unten(-w + e) - unten(-w - e)) / (2 * e), 0, sm];
+    const t = (x - a) / w;
+    return 1 + (2 * t ** 3 - 3 * t ** 2 + 1) * ya + (t ** 3 - 2 * t ** 2 + t) * w * ma + (-2 * t ** 3 + 3 * t ** 2) * yb + (t ** 3 - t ** 2) * w * mb;
+  }
+  return 1 + (x >= 0 ? pfAuf(x) : unten(x));
+}
+// Pace und Zeiten rechnen immer mit 100 m (seit 1.54), damit kurze Wellen mitkosten; das Messfenster ändert nur die Anzeige
+const RECHEN = 100;
+// Pace-Faktor je Messpunkt (1 = flach) und die damit gewichtete Strecke in Metern
+function paceRatio() {
+  const g = WIN[RECHEN].g, ratio = new Float64Array(N);
+  for (let i = 0; i < N; i++) ratio[i] = paceFaktor(g[i] / 100);
+  let sum = 0; for (let i = 1; i < N; i++) sum += (ratio[i - 1] + ratio[i]) / 2 * STEP;
+  return { ratio, sum };
+}
+function buildPace() {
+  const { ratio, sum } = paceRatio(), t = new Float64Array(N);
+  const p0 = S.goal / (sum / 1000) ; // s/km im Flachen bei gleicher Anstrengung
+  for (let i = 1; i < N; i++) t[i] = t[i - 1] + (ratio[i - 1] + ratio[i]) / 2 * STEP / 1000 * p0;
+  const scale = S.goal / valAt(t, L); for (let i = 0; i < N; i++) t[i] *= scale;
+  P = { ratio, t, p0: p0 * scale };
+  glaettePace();
+}
+// „Pace hier“: Pace-Faktor gemittelt über das Messfenster, aus der Zeit für das Stück um die Stelle.
+// So schnell passt niemand sein Tempo an; das Mittel lässt die Summe gleich, Zielzeit und Zwischenzeiten bleiben exakt.
+function glaettePace() {
+  const h = S.win / 2, glatt = new Float64Array(N);
+  for (let i = 0; i < N; i++) { const a = Math.max(0, i * STEP - h), b = Math.min(L, i * STEP + h); glatt[i] = (valAt(P.t, b) - valAt(P.t, a)) / ((b - a) / 1000 * P.p0); }
+  P.glatt = glatt;
+}
+
+/* Rampen: zusammenhängende Abschnitte jenseits einer Schwelle, Lücken < 60 m überbrückt, mind. 2 m Höhe */
+const RAMP_TH = { 50: 2.0, 100: 1.5, 200: 1.0, 1000: 0.5 };
+let RAMPS = [];
+function buildRamps() {
+  const g = WIN[S.win].g, th = RAMP_TH[S.win], out = [];
+  for (const dir of [1, -1]) {
+    let i = 0;
+    while (i < N) {
+      if (g[i] * dir < th) { i++; continue; }
+      let j = i;
+      while (j + 1 < N) {
+        if (g[j + 1] * dir >= th) { j++; continue; }
+        let k = j + 1; while (k < N && g[k] * dir < th && (k - j) * STEP < 60) k++;
+        if (k < N && g[k] * dir >= th && (k - j) * STEP < 60) { j = k; continue; }
+        break;
+      }
+      const a = i * STEP, b = Math.min(j * STEP, L), rise = (WIN[S.win].up[j] - WIN[S.win].up[i]) - (WIN[S.win].dn[j] - WIN[S.win].dn[i]);
+      if (Math.abs(rise) >= 2 && b > a) {
+        let mx = 0; for (let k = i; k <= j; k++) if (g[k] * dir > mx) mx = g[k] * dir;
+        let cost = 0; for (let k = i + 1; k <= j; k++) cost += ((P.ratio[k - 1] + P.ratio[k]) / 2 - 1) * STEP / 1000 * P.p0;
+        out.push({ dir, a, b, len: b - a, rise, avg: rise / (b - a) * 100, max: mx * dir, cost });
+      }
+      i = j + 1;
+    }
+  }
+  RAMPS = out;
+}
+
+/* Straßen und Punkte */
+const streetAt = x => { let s = D.streets[0]; for (const e of D.streets) { if (e[0] <= x) s = e; else break; } return s; };
+/* Straßennamen fürs Profil: Abschnitte unter 250 m (Messraster 150 m) dem Vorgänger zuschlagen, gleiche Namen zusammenfassen */
+const SHORT = {};
+const ROADS = (() => {
+  const out = [];
+  D.streets.forEach((e, i) => { const len = (i + 1 < D.streets.length ? D.streets[i + 1][0] : L) - e[0], name = SHORT[e[1]] || e[1];
+    if (out.length && (len < 250 || out[out.length - 1].name === name)) return; out.push({ a: e[0], name }); });
+  out.forEach((r, i) => { r.b = i + 1 < out.length ? out[i + 1].a : L; });
+  return out;
+})();
+
+/* Zustand */
+const store = { get(k, d) { try { const v = localStorage.getItem("mex-" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem("mex-" + k, JSON.stringify(v)); } catch (e) {} } };
+// Jeder Start vom Home-Bildschirm beginnt bei km 0. Nur der Neustart nach einem Update behält die Stelle (einmalig, sessionStorage)
+const posNachUpdate = (() => { try { const v = sessionStorage.getItem("mex-pos"); sessionStorage.removeItem("mex-pos"); return v === null ? 0 : (+v || 0); } catch (_) { return 0; } })();
+const S = { pos: posNachUpdate, start: clamp(Math.round(store.get("start", D.start)) || D.start, 0, 1439), live: false, win: store.get("win", 200), zoom: store.get("zoom", 5000), goal: store.get("goal-v2", null), down: 0.5, speed: store.get("speed", 200), vp: store.get("vp", false), relay: store.get("relay", false), secRef: store.get("sechm", 1.0), ref: store.get("sechm-pace", 240), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
+if (![50, 100, 200, 1000].includes(S.win)) S.win = 200;
+// Kosten je Höhenmeter: eingegeben bei der Bezugs-Pace S.ref (Standard 4:00 /km), gerechnet wird intern mit S.secHm bei 4:00 /km
+if (!(S.ref >= 180 && S.ref <= 420)) S.ref = 240;
+S.ref = Math.round(S.ref / 5) * 5; S.secHm = S.secRef * 240 / S.ref;
+S.zoom = (S.zoom >= 500 && S.zoom <= 10000) ? Math.round(S.zoom / 500) * 500 : 5000;
+const SPEEDS = [1, 50, 100, 120, 140, 160, 180, 200, 300, 400, 500, 600, 700, 800, 900, 1000];   // ×1 = Echtzeit
+if (!SPEEDS.includes(S.speed)) S.speed = 200;
+S.ovEin = store.get("ov-einfarbig", false) === true;   // Gesamtstrecke unten einfarbig statt in Steigungsfarben
+// Geteilter Plan (Link aus „Plan teilen“): Ziel- und Startzeit nur für diesen Besuch, nichts wird gespeichert
+const GAST = (() => { const q = new URLSearchParams(location.search), z = /^(\d):(\d\d):(\d\d)$/.exec(q.get("ziel") || ""), s = /^(\d{1,2}):(\d\d)$/.exec(q.get("start") || "");
+  return z && s ? { goal: +z[1] * 3600 + +z[2] * 60 + +z[3], start: clamp(+s[1] * 60 + +s[2], 0, 1439) } : null; })();
+if (GAST) { S.goal = GAST.goal; S.start = GAST.start; }
+// Voreinstellung: genau 4:00 /km im Flachen; die Zielzeit enthält dann, was das Höhenprofil kostet (je Strecke verschieden)
+if (typeof S.goal !== "number" || !(S.goal > 0)) {
+  const { ratio } = paceRatio(), c = new Float64Array(N);   // gewichtete Meter bis genau 42 195 m (das Raster reicht 5 m weiter)
+  for (let i = 1; i < N; i++) c[i] = c[i - 1] + (ratio[i - 1] + ratio[i]) / 2 * STEP;
+  S.goal = Math.round(240 * valAt(c, L) / 1000);
+}
+
+const $ = id => document.getElementById(id);
+const main = $("main"), ov = $("overview"), mctx = main.getContext("2d"), octx = ov.getContext("2d");
+let dirty = true;
+const YMIN = Math.floor((Math.min(...H) - 2) / 5) * 5, YMAX = Math.ceil((Math.max(...H) + 4) / 5) * 5;
+
+function sizeCanvas(c) {
+  const r = c.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 3);
+  const w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
+  if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+  return { w: r.width, h: r.height, dpr };
+}
+
+const MARK_STYLE = { relay: "--blue", food: "--muted", water: "--muted", half: "--ink", finish: "--ink" };
+// Start und Ziel nur im Profil: Start wie die Halbmarathon-Marke, das Ziel als karierte Zielflagge
+const MARKS_MAIN = [{ k: 0, c: "half", s: "Start" }, ...D.marks, { k: L, c: "finish", s: "Ziel" }];
+// Welche Straßennamen ins Profil passen: einmal je Maßstab über die ganze Strecke entschieden (Name passt in seine Straße,
+// höchstens 24 px darüber hinaus, und stößt nicht an den vorigen Namen)
+let roadLab = { key: "", set: null };
+function roadLabels(c, mpp) {
+  const key = c.font + "|" + mpp.toFixed(5) + "|" + (document.fonts ? document.fonts.status : "");
+  if (roadLab.key !== key) {
+    const set = new Set(); let right = -1e9;
+    for (const r of ROADS) {
+      const tw = c.measureText(r.name).width, tx = r.a / mpp + 4;
+      if ((r.b - r.a) / mpp + 24 >= tw + 4 && tx >= right + 8) { set.add(r); right = tx + tw; }
+    }
+    roadLab = { key, set };
+  }
+  return roadLab.set;
+}
+// Ziffern beim Zeichnen ins Canvas in gleich breiten Zellen (wie tabular-nums im Text), sonst wackelt eine laufende Zahl
+// je nachdem, welche Ziffern gerade dran sind (eine 1 ist schmaler als eine 0)
+const tabZelle = (c, ch, dw) => /\d/.test(ch) ? dw : c.measureText(ch).width;
+const tabZiffer = c => Math.max(...[..."0123456789"].map(d => c.measureText(d).width));
+const tabBreite = (c, s) => { const dw = tabZiffer(c); return [...s].reduce((a, ch) => a + tabZelle(c, ch, dw), 0); };
+function tabText(c, s, x, y, align) {   // align "right": x ist der rechte Rand, "left": der linke
+  const dw = tabZiffer(c); let p = align === "right" ? x - tabBreite(c, s) : x; c.textAlign = "center";
+  for (const ch of s) { const cw = tabZelle(c, ch, dw); c.fillText(ch, p + cw / 2, y); p += cw; }
+}
+// Maße des Felds oben rechts im Profil (Uhrzeit, Pace); auch die Beschriftungen der Marken weichen ihm aus
+function feldMass(c) {
+  const fd = getComputedStyle(document.body).getPropertyValue("--font-display"), sU = " Uhr" + UHR_ZUSATZ;
+  c.save(); c.font = "600 15px " + fd;
+  const wU = tabBreite(c, "00:00"), wP = tabBreite(c, "0:00");
+  c.font = "500 12px " + fd;
+  const wS = c.measureText(sU).width, wD = Math.max(tabBreite(c, "+188 s"), tabBreite(c, "−188 s")), wL = S.live ? 12 : 0;
+  c.restore();
+  return { fd, sU, wU, wP, wS, wD, wL, bw: 8 + wL + wU + wS + 12 + wP + 5 + wD + 8 };
+}
+// Höhenangaben auf der Fläche: helle Schrift mit dunklem Schein nach unten und feiner Kontur, sonst ist sie auf hellen
+// Steigungsfarben kaum lesbar (seit Hamburg 1.38; 1.37 hatte ein Schild, das wirkte zu kastig). x linker Rand der Schrift,
+// y ihre Mitte; die Schrift muss vorher gesetzt sein. Schein und Versatz rechnen in Gerätepixeln, daher × Skalierung.
+function textSchein(c, text, x, y) {
+  const k = c.getTransform().a;
+  c.save(); c.textAlign = "left"; c.textBaseline = "middle"; c.lineJoin = "round";
+  c.shadowColor = "rgba(0, 0, 0, 0.9)"; c.shadowBlur = 4 * k; c.shadowOffsetY = k;
+  c.lineWidth = 1.4; c.strokeStyle = "rgba(11, 20, 28, 0.85)"; c.strokeText(text, x, y + 0.5);
+  c.shadowColor = "transparent"; c.fillStyle = "#bcc7d0"; c.fillText(text, x, y + 0.5); c.restore();
+}
+function drawMain() {
+  const { w, h, dpr } = sizeCanvas(main); const c = mctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+  // Straßennamen in eigener Zeile unter der km-Skala; unter 180 px Höhe (große Kartenstufen) entfällt sie, die Kurve braucht den Platz
+  const namen = h >= 180;
+  const padT = (S.vp || S.relay) ? 34 : 22, padB = namen ? 40 : 26, ph = h - padT - padB; // ohne Wasser und Staffel reicht Platz für die Halbmarathon-Marke
+  const x0 = S.pos - S.zoom / 2, mpp = S.zoom / w;
+  const X = x => (x - x0) / mpp, Y = v => padT + (YMAX - v) / (YMAX - YMIN) * ph;
+  // Höhenraster
+  c.font = "500 11px " + getComputedStyle(document.body).fontFamily; c.textBaseline = "middle";
+  // Hilfslinien: nach Höhenbereich (höchstens ~8) und mindestens 18 px auseinander, sonst überlappen die Beschriftungen
+  const yr = YMAX - YMIN, gmin = yr > 200 ? 50 : yr > 100 ? 25 : yr > 30 ? 10 : 5, gstep = [5, 10, 25, 50, 100].find(s => s >= gmin && ph * s / yr >= 18) || 100;
+  for (let v = Math.ceil(YMIN / gstep) * gstep; v <= YMAX; v += gstep) {
+    c.strokeStyle = COL["--grid"]; c.lineWidth = 1; c.beginPath(); c.moveTo(0, Math.round(Y(v)) + 0.5); c.lineTo(w, Math.round(Y(v)) + 0.5); c.stroke();
+  }
+  // Fläche nach Steigungsklasse
+  const g = WIN[S.win].g;
+  const i0 = Math.max(0, Math.floor(x0 / STEP) - 1), i1 = Math.min(N - 1, Math.ceil((x0 + S.zoom) / STEP) + 1);
+  const paths = CLASS_TOK.map(() => new Path2D());
+  for (let i = i0; i < i1; i++) {
+    const xa = X(i * STEP), xb = X(Math.min((i + 1) * STEP, L)); if (i * STEP >= L) break;
+    const p = paths[cls((g[i] + g[i + 1]) / 2)];
+    p.moveTo(xa, Y(H[i])); p.lineTo(xb + 0.6, Y(i + 1 < N ? hAt((i + 1) * STEP) : H[i])); p.lineTo(xb + 0.6, h - padB); p.lineTo(xa, h - padB); p.closePath();
+  }
+  paths.forEach((p, k) => { c.fillStyle = COL[CLASS_TOK[k]]; c.fill(p); });
+  // Profillinie
+  c.strokeStyle = COL["--ink"]; c.lineWidth = 1.6; c.lineJoin = "round"; c.beginPath();
+  for (let i = i0; i <= i1; i++) { const xx = Math.min(i * STEP, L); const px = X(xx), py = Y(hAt(xx)); i === i0 ? c.moveTo(px, py) : c.lineTo(px, py); if (xx >= L) break; }
+  c.stroke();
+  // interpolierte Abschnitte (Brücken, Tunnel)
+  c.font = "500 11px " + getComputedStyle(document.body).fontFamily; c.textAlign = "center"; c.textBaseline = "bottom";
+  let brRechts = -1e9;   // rechter Rand der letzten Beschriftung: dicht folgende Brücken bekommen keine zweite
+  for (const br of D.bridges) {
+    if (br.b < x0 || br.a > x0 + S.zoom) continue;
+    const xa = X(br.a), xb = X(br.b);
+    // geschätzt: schraffiert statt abgedunkelt, sonst sähe das Stück aus wie die dunklen Farben für steil bergab
+    const ya = Y(hAt(br.a)), yb = Y(hAt(br.b)), yt = Math.min(ya, yb), yu = h - padB;
+    c.save(); c.beginPath(); c.moveTo(xa, ya + 2); c.lineTo(xb, yb + 2); c.lineTo(xb, yu); c.lineTo(xa, yu); c.closePath(); c.clip();
+    c.strokeStyle = COL["--surface"]; c.globalAlpha = 0.7; c.lineWidth = 2; c.beginPath();
+    for (let s = xa - (yu - yt); s < xb; s += 7) { c.moveTo(s, yu); c.lineTo(s + (yu - yt), yt); }
+    c.stroke(); c.restore();
+    c.strokeStyle = COL["--surface"]; c.lineWidth = 3; c.beginPath(); c.moveTo(xa, Y(hAt(br.a))); c.lineTo(xb, Y(hAt(br.b))); c.stroke();
+    c.strokeStyle = COL["--ink"]; c.lineWidth = 1.6; c.setLineDash([4, 4]); c.beginPath(); c.moveTo(xa, Y(hAt(br.a))); c.lineTo(xb, Y(hAt(br.b))); c.stroke(); c.setLineDash([]);
+    const lab = br.kind === "Brücke" ? "Brücke" : br.kind + ", geschätzt";
+    // über der Kurve auf freiem Grund (seit Hamburg 1.37): in der Fläche war es auf den Farben kaum lesbar und verdeckte die Schraffur
+    const tw = c.measureText(lab).width, mx = clamp((Math.max(xa, 0) + Math.min(xb, w)) / 2, tw / 2 + 4, w - tw / 2 - 4);   // im Bild, nie angeschnitten
+    if ((xb - xa > tw + 6 || S.zoom <= 2000) && mx - tw / 2 > brRechts + 6) { c.fillStyle = COL["--muted"]; c.fillText(lab, mx, Math.max(yt - 6, 14)); brRechts = mx + tw / 2; }
+  }
+  // außerhalb der Strecke abdunkeln
+  c.fillStyle = COL["--bg"];
+  if (x0 < 0) c.fillRect(0, 0, X(0), h);
+  if (x0 + S.zoom > L) c.fillRect(X(L), 0, w - X(L), h);
+  // Distanzskala
+  c.strokeStyle = COL["--rule"]; c.beginPath(); c.moveTo(0, h - padB + 0.5); c.lineTo(w, h - padB + 0.5); c.stroke();
+  const minor = S.zoom <= 600 ? 50 : S.zoom <= 2500 ? 100 : S.zoom <= 6500 ? 500 : 1000, major = S.zoom <= 600 ? 100 : S.zoom <= 6500 ? 1000 : 2000;
+  c.textAlign = "center"; c.textBaseline = "top";
+  for (let m = Math.ceil(Math.max(0, x0) / minor) * minor; m <= Math.min(L, x0 + S.zoom); m += minor) {
+    const isMaj = m % major === 0, xx = Math.round(X(m)) + 0.5;
+    c.strokeStyle = isMaj ? COL["--muted"] : COL["--rule"]; c.beginPath(); c.moveTo(xx, h - padB); c.lineTo(xx, h - padB + (isMaj ? 6 : 3)); c.stroke();
+    if (isMaj) { c.fillStyle = COL["--muted"]; c.fillText(major >= 1000 ? "km " + m / 1000 : nf(m / 1000, 1), xx, h - padB + 8); }
+  }
+  // Straßennamen in eigener Zeile unter der km-Skala (seit Hamburg 1.37; vorher am Fuß der Fläche, wo Kurve und Farben sie auf
+  // flachen Stücken überdeckten), die aktuelle ist blau. Welche Namen Platz haben, hängt nur vom Maßstab ab (roadLabels),
+  // nicht von der Position: so springt beim Laufen nichts. Ein Name bleibt am linken Rand stehen, bis das Ende seiner Straße
+  // ihn hinausschiebt. Kurze Striche trennen die Straßen, aber nie durch einen Namen (kurze Straßen ohne Platz für ihren Namen).
+  if (namen) {
+    c.font = "600 11.5px " + getComputedStyle(document.documentElement).getPropertyValue("--font-display"); c.textAlign = "left"; c.textBaseline = "bottom";
+    const yb = h - 3, here = ROADS.find(r => S.pos >= r.a && S.pos < r.b), shown = roadLabels(c, mpp), lab = [];
+    for (const r of ROADS) {
+      if (r.b < x0 || r.a > x0 + S.zoom || !shown.has(r)) continue;
+      const tw = c.measureText(r.name).width, tx = Math.round(Math.max(X(r.a) + 4, Math.min(4, X(r.b) - tw - 6)) * dpr) / dpr;
+      lab.push({ r, tx, tw });
+    }
+    c.strokeStyle = COL["--muted"]; c.globalAlpha = 0.45; c.lineWidth = 1; c.beginPath();
+    for (const r of ROADS) {
+      const xs = Math.round(X(r.a)) + 0.5;
+      if (xs <= 0 || xs >= w || lab.some(l => xs > l.tx - 2 && xs < l.tx + l.tw + 3)) continue;
+      c.moveTo(xs, yb - 12); c.lineTo(xs, yb);
+    }
+    c.stroke(); c.globalAlpha = 1;
+    for (const { r, tx } of lab) { c.fillStyle = r === here ? COL["--blue"] : COL["--ink"]; c.fillText(r.name, tx, yb); }
+  }
+  // Markierungen
+  c.textBaseline = "top"; c.font = "600 11px " + getComputedStyle(document.body).fontFamily;
+  let lastLabelRight = -1e9; const feldX = w - 6 - feldMass(c).bw, markBox = [];
+  for (const mk of MARKS_MAIN) {
+    if (mk.k < x0 - 50 || mk.k > x0 + S.zoom + 50) continue;
+    if (!S.vp && (mk.c === "food" || mk.c === "water")) continue;
+    if (!S.relay && mk.c === "relay") continue;
+    const xx = Math.round(X(mk.k)) + 0.5;
+    if (mk.c === "finish") { for (let y = 18, j = 0; y < h - padB; y += 5, j++) for (let i = 0; i < 2; i++) { c.fillStyle = COL[(i + j) % 2 ? "--surface" : "--ink"]; c.fillRect(Math.round(X(mk.k)) + i * 5, y, 5, Math.min(5, h - padB - y)); } }
+    else { c.strokeStyle = COL[MARK_STYLE[mk.c]]; c.setLineDash([3, 3]); c.lineWidth = 1; c.beginPath(); c.moveTo(xx, 18); c.lineTo(xx, h - padB); c.stroke(); c.setLineDash([]); }
+    const tw = c.measureText(mk.s).width; let tx = clamp(xx - tw / 2, 2, Math.min(w - tw - 2, feldX - 6 - tw));   // weicht dem Feld oben rechts aus
+    if (tx > lastLabelRight + 4) { c.fillStyle = COL[MARK_STYLE[mk.c]]; c.textAlign = "left"; c.fillText(mk.s, tx, 4); lastLabelRight = tx + tw; markBox.push([tx, tx + tw]); }
+  }
+  // Höhenbeschriftung, nach den Markierungen: ein Wert, der oben in deren Beschriftung liefe (z. B. „Halbmarathon“), entfällt
+  c.font = "500 11px " + getComputedStyle(document.body).fontFamily;
+  for (let v = Math.ceil(YMIN / gstep) * gstep; v <= YMAX; v += gstep) {
+    if (Y(v) <= padT - 4 || Y(v) >= h - padB - 6) continue;
+    const y = Y(v) - 9, tw = c.measureText(v + " m").width;
+    if (y - 8 < 17 && markBox.some(([a, b]) => a < tw + 12 && b > 0)) continue;
+    textSchein(c, v + " m", 6, y);
+  }
+  // Läufer
+  const cx = Math.round(w / 2) + 0.5, cy = Y(hAt(S.pos));
+  c.strokeStyle = COL["--blue"]; c.lineWidth = 2; c.beginPath(); c.moveTo(cx, padT - 6); c.lineTo(cx, h - padB); c.stroke();
+  c.fillStyle = COL["--surface"]; c.beginPath(); c.arc(cx, cy, 7, 0, Math.PI * 2); c.fill();
+  c.fillStyle = COL["--blue"]; c.beginPath(); c.arc(cx, cy, 5, 0, Math.PI * 2); c.fill();
+  // Klein oben rechts (im Vollbild steht oben meist die Karte statt der Werte): Uhrzeit an dieser Stelle (Startzeit + Plan,
+  // bei „Live nach Plan“ mit rotem Punkt die Uhr an der Strecke), dann Pace hier und Abweichung zur Pace im Flachen.
+  // Feste Spalten, damit beim Abspielen nichts hin und her springt
+  { const pace = P.p0 * valAt(P.glatt, S.pos), { fd, sU, wU, wP, wS, wD, wL, bw } = feldMass(c);
+    const uz = S.live ? ortsZeit().s / 60 : S.start + valAt(P.t, S.pos) / 60;
+    c.save(); c.textBaseline = "middle";
+    const bh = 20, bx = w - 6 - bw, by = 2, r = 6;
+    c.fillStyle = COL["--surface"]; c.globalAlpha = 1; c.beginPath();   // deckend: Beschriftungen wie „Ziel“ scheinen sonst durch
+    c.moveTo(bx + r, by); c.arcTo(bx + bw, by, bx + bw, by + bh, r); c.arcTo(bx + bw, by + bh, bx, by + bh, r); c.arcTo(bx, by + bh, bx, by, r); c.arcTo(bx, by, bx + bw, by, r);
+    c.fill(); c.globalAlpha = 1;
+    const my = by + bh / 2 + 1; let x = bx + 8;
+    if (S.live) { c.fillStyle = COL["--g-u3"]; c.beginPath(); c.arc(x + 4, by + bh / 2, 4, 0, Math.PI * 2); c.fill(); x += wL; }
+    c.font = "600 15px " + fd; c.fillStyle = COL["--ink"]; tabText(c, uhr(uz), x + wU, my, "right"); x += wU;
+    c.font = "500 12px " + fd; c.fillStyle = COL["--muted"]; c.textAlign = "left"; c.fillText(sU, x, my); x += wS + 12;
+    c.font = "600 15px " + fd; c.fillStyle = COL["--ink"]; tabText(c, mss(pace), x + wP, my, "right");
+    c.font = "500 12px " + fd; c.fillStyle = COL["--muted"]; tabText(c, secs(pace - P.p0), x + wP + 5, my, "left");
+    c.restore(); }
+  // Überhöhung
+  const ex = (S.zoom / w) / ((YMAX - YMIN) / ph);
+  $("exag").textContent = "Seitlich wischen · Höhe " + Math.round(ex) + "-fach überhöht";
+}
+
+const OV_EIN = "#3d5266";   // Füllung der Gesamtstrecke, wenn „einfarbig“ gewählt ist
+function drawOverview() {
+  const { w, h, dpr } = sizeCanvas(ov); const c = octx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+  const pad = 4, ph = h - 2 * pad - 12;
+  const X = x => 14 + x / L * (w - 28), Y = v => pad + (YMAX - v) / (YMAX - YMIN) * ph;
+  const g = WIN[S.win].g, paths = CLASS_TOK.map(() => new Path2D());
+  const stepPx = Math.max(1, Math.round(L / (w - 28) / STEP));
+  for (let i = 0; i < N - 1; i += stepPx) {
+    const j = Math.min(N - 1, i + stepPx); let gs = 0; for (let k = i; k < j; k++) gs += g[k]; gs /= (j - i);
+    const p = paths[cls(gs)], xa = X(i * STEP), xb = X(Math.min(j * STEP, L));
+    p.moveTo(xa, Y(H[i])); p.lineTo(xb + 0.5, Y(H[j])); p.lineTo(xb + 0.5, pad + ph); p.lineTo(xa, pad + ph); p.closePath();
+  }
+  paths.forEach((p, k) => { c.fillStyle = S.ovEin ? OV_EIN : COL[CLASS_TOK[k]]; c.fill(p); });
+  // Fenster
+  const a = X(clamp(S.pos - S.zoom / 2, 0, L)), b = X(clamp(S.pos + S.zoom / 2, 0, L));
+  c.fillStyle = COL["--blue-soft"]; c.fillRect(a, 0, Math.max(2, b - a), pad + ph);
+  // feine weiße Linie auf der Höhe (seit Hamburg 1.36): die Form bleibt auch über dunklen Farben klar
+  c.strokeStyle = COL["--ink"]; c.lineWidth = 0.75; c.lineJoin = "round"; c.beginPath(); c.moveTo(X(0), Y(H[0]));
+  for (let i = stepPx; i < N - 1; i += stepPx) c.lineTo(X(i * STEP), Y(H[i]));
+  c.lineTo(X(L), Y(H[N - 1])); c.stroke();
+  c.strokeStyle = COL["--blue"]; c.lineWidth = 2; c.beginPath(); c.moveTo(X(S.pos), 0); c.lineTo(X(S.pos), pad + ph + 2); c.stroke();
+  // km-Beschriftung
+  c.fillStyle = COL["--muted"]; c.font = "500 10.5px " + getComputedStyle(document.body).fontFamily; c.textAlign = "center"; c.textBaseline = "top";
+  const wEnde = c.measureText("42,2").width;   // „40“ entfällt, wenn es an „42,2“ stößt (schmale Übersicht neben dem Kästchen)
+  for (let k = 0; k <= 40; k += 5) { if (X(L) - X(k * 1000) < (wEnde + c.measureText(String(k)).width) / 2 + 4) continue; c.fillText(k, X(k * 1000), h - 11); }
+  c.fillText("42,2", X(L), h - 11);
+  for (const mk of D.marks) if ((mk.c === "relay" && S.relay) || mk.c === "half") { c.fillStyle = COL[MARK_STYLE[mk.c]]; c.fillRect(X(mk.k) - 1, pad + ph, 2, 4); }
+}
+
+// Pace je Steigung (seit Hamburg 1.41, U-Kurve 1.44, flacher Auslauf und ohne Laborlinie seit 1.59) bei den Einstellungen,
+// die sie verändern; senkrechte Achse bei 0 %, der weiße Punkt ist der Flachpunkt (0 %, Pace im Flachen). Antippen oder
+// waagerecht Wischen setzt eine Markierung mit Steigung und Pace (PK.mark, stufenlos; Tippen daneben nimmt sie weg).
+const pk = $("pace-chart"), pkctx = pk.getContext("2d");
+const PK = { G0: -15, G1: 10, L0: 40, R0: 18, T0: 8, B0: 20, mark: null, zieh: false };
+function drawPaceChart() {
+  const { w, h, dpr } = sizeCanvas(pk); if (!w) return; const c = pkctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+  const { G0, G1, L0, R0, T0, B0 } = PK, p0 = P.p0, app = g => paceFaktor(g / 100) * p0;
+  const gs = []; for (let g = G0; g <= G1 + 1e-9; g += 0.25) gs.push(g);
+  const va = gs.map(app), y0 = Math.floor((Math.min(...va) - 10) / 30) * 30, y1 = Math.ceil(Math.max(...va) / 30) * 30;
+  const X = g => L0 + (g - G0) / (G1 - G0) * (w - L0 - R0), Y = v => T0 + (y1 - v) / (y1 - y0) * (h - T0 - B0);
+  const font = getComputedStyle(document.body).fontFamily; c.font = "500 10.5px " + font;
+  const ys = (y1 - y0) / 30 > 7 ? 60 : 30;
+  c.strokeStyle = COL["--grid"]; c.lineWidth = 1; c.fillStyle = COL["--muted"]; c.textAlign = "right"; c.textBaseline = "middle";
+  for (let v = Math.ceil(y0 / ys) * ys; v <= y1; v += ys) { const y = Math.round(Y(v)) + 0.5; c.beginPath(); c.moveTo(L0, y); c.lineTo(w - R0, y); c.stroke(); c.fillText(mss(v), L0 - 6, y); }
+  c.textAlign = "center"; c.textBaseline = "top";
+  for (let g = G0; g <= G1; g += 5) { const x = Math.round(X(g)) + 0.5; c.beginPath(); c.moveTo(x, T0); c.lineTo(x, h - B0); c.stroke(); c.fillText((g > 0 ? "+" : g < 0 ? "−" : "") + Math.abs(g) + " %", x, h - B0 + 5); }
+  // Achse bei 0 %
+  { const x = Math.round(X(0)) + 0.5; c.strokeStyle = COL["--muted"]; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, T0); c.lineTo(x, h - B0); c.stroke(); }
+  c.textAlign = "left"; c.textBaseline = "top"; c.fillStyle = COL["--muted"];
+  // unter dem Platz für die Markierung oben; links unten liegt immer das flache Kurvenstück, darüber ist frei
+  c.fillText("steiler als", X(G0) + 5, T0 + 34); c.fillText(nf(UNSICHER, 0).replace("-", "−") + " %:", X(G0) + 5, T0 + 47); c.fillText("kein Gewinn", X(G0) + 5, T0 + 60); c.fillText("mehr", X(G0) + 5, T0 + 73);
+  c.save(); c.beginPath(); c.rect(L0, T0, w - L0 - R0, h - T0 - B0); c.clip();
+  c.strokeStyle = COL["--blue"]; c.lineWidth = 2.25; c.lineJoin = "round"; c.beginPath();
+  gs.forEach((g, k) => k ? c.lineTo(X(g), Y(app(g))) : c.moveTo(X(g), Y(app(g)))); c.stroke(); c.restore();
+  // Flachpunkt: 0 % und die Pace im Flachen (die Kurve geht dort genau durch p0, seit 1.62 statt der aktuellen Stelle);
+  // Beschriftung links darüber, wo die Kurve nie verläuft
+  const xh = X(0), yh = Y(p0);
+  c.fillStyle = COL["--ink"]; c.strokeStyle = COL["--surface"]; c.lineWidth = 2; c.beginPath(); c.arc(xh, yh, 4.5, 0, 2 * Math.PI); c.fill(); c.stroke();
+  c.fillStyle = COL["--ink"]; c.font = "600 11px " + font; c.textAlign = "right"; c.textBaseline = "bottom";
+  c.fillText("0 % · " + mss2(p0) + " /km", xh - 7, yh - 5);
+  // Markierung beim Antippen: Strich, Punkt und oben Steigung · Pace (Abweichung)
+  if (PK.mark !== null) {
+    const gm = clamp(PK.mark, G0, G1), xm = Math.round(X(gm)) + 0.5, pm = app(gm), ym = Y(pm);
+    c.strokeStyle = COL["--ink"]; c.lineWidth = 1; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xm, T0); c.lineTo(xm, h - B0); c.stroke();
+    const yq = Math.round(ym) + 0.5; c.beginPath(); c.moveTo(L0, yq); c.lineTo(xm, yq); c.stroke(); c.setLineDash([]);   // waagerecht zur Pace-Achse
+    c.fillStyle = COL["--blue"]; c.strokeStyle = COL["--surface"]; c.lineWidth = 2; c.beginPath(); c.arc(xm, ym, 5, 0, 2 * Math.PI); c.fill(); c.stroke();
+    // feste Kästchenbreite und Ziffern in festen Zellen (tabText), damit beim Wischen nichts wackelt
+    const gz = Math.round(gm * 10) / 10, txt = (gz > 0 ? "+" : gz < 0 ? "−" : "±") + nf(Math.abs(gz), 1) + " %  ·  " + mss(pm) + " /km  (" + secs(pm - p0) + ")";
+    c.font = "600 12px " + font; const tw = tabBreite(c, "−00,0 %  ·  0:00 /km  (−000 s)") + 12, bx = clamp(xm - tw / 2, L0, w - R0 - tw);
+    c.fillStyle = COL["--surface"]; c.strokeStyle = COL["--ink"]; c.lineWidth = 1; c.beginPath(); if (c.roundRect) c.roundRect(bx, T0 + 2, tw, 20, 5); else c.rect(bx, T0 + 2, tw, 20); c.fill(); c.stroke();
+    c.fillStyle = COL["--ink"]; c.textBaseline = "middle"; tabText(c, txt, bx + 6, T0 + 12, "left");
+  }
+}
+// Antippen setzt die Markierung, waagerechtes Wischen zieht sie mit; senkrecht scrollt die Seite weiter (touch-action: pan-y)
+const pkSetze = e => { const r = pk.getBoundingClientRect(), g = PK.G0 + (e.clientX - r.left - PK.L0) / (r.width - PK.L0 - PK.R0) * (PK.G1 - PK.G0);
+  PK.mark = clamp(g, PK.G0, PK.G1); dirty = true; };
+pk.addEventListener("pointerdown", e => { PK.zieh = true; pkSetze(e); });
+pk.addEventListener("pointermove", e => { if (PK.zieh) pkSetze(e); });
+for (const ev of ["pointerup", "pointercancel", "pointerleave"]) pk.addEventListener(ev, () => { PK.zieh = false; });
+// Tippen außerhalb des Diagramms nimmt die Markierung weg (click, damit Scrollen sie stehen lässt)
+document.addEventListener("click", e => { if (PK.mark !== null && e.target !== pk) { PK.mark = null; dirty = true; } });
+// Text zum Diagramm: Zahlen für die eingestellte Pace und wie viel der Strecke steiler als UNSICHER bergab geht
+function paceChartNote() {
+  const p0 = P.p0, at = g => paceFaktor(g / 100) * p0, g = WIN[S.win].g, B = BERGAB, pc = v => nf(v, 0).replace("-", "−") + " %";
+  let steil = 0;
+  for (let i = 1; i < N; i++) if ((g[i - 1] + g[i]) / 2 < UNSICHER) steil += STEP;
+  const fenster = "Messfenster " + (S.win === 1000 ? "1 km" : S.win + " m");
+  $("pk-out").textContent = "flach " + mss2(p0) + " /km";
+  $("pk-note").textContent = "Antippen zeigt die Pace bei jeder Steigung, Tippen daneben nimmt die Markierung weg. Der weiße Punkt ist die Pace im Flachen. Bergauf: +5 % "
+    + mss(at(5)) + " /km (" + secs(at(5) - p0) + "), +10 % " + mss(at(10)) + " /km (" + secs(at(10) - p0) + "). "
+    + "Bergab: −4 % " + mss(at(-4)) + " /km (" + secs(at(-4) - p0) + "), am schnellsten ab " + pc(B.xm) + " mit " + mss(at(B.xm)) + " /km (" + secs(at(B.xm) - p0) + "). "
+    + "Steiler kein weiterer Gewinn: Im Labor sinkt der Energieverbrauch bis etwa −20 % weiter und erreicht erst bei etwa −40 % wieder den Wert im Flachen, im Rennen muss man aber bremsen. "
+    + "Felddaten aus 20 belgischen Trailrennen (Jidovtseff und De Cock 2026) zeigen das schnellste Tempo um −8 %. "
+    + (steil >= 50 ? "Auf dieser Strecke sind " + nf(steil / 1000, steil < 1000 ? 2 : 1) + " km so steil (" + fenster + ")." : "Auf dieser Strecke ist kein Stück so steil (" + fenster + ").");
+}
+
+// Pfeile für die Kennzahlen (viewBox 10 × 16, Strich in Textfarbe)
+const PF = d => '<svg class="pf" viewBox="0 0 10 16" aria-hidden="true"><path d="' + d + '"></path></svg>';
+const PF_AUF = PF("M5 15V2M1 6l4-4 4 4"), PF_AB = PF("M5 1v13M1 10l4 4 4-4"), PF_SAUF = PF("M1 15L9 3M3 3h6v6"), PF_SAB = PF("M1 1l8 12M9 7v6H3");
+const auf_ab = (a, b) => PF_AUF + Math.round(a) + ' <span class="dn">' + PF_AB + Math.round(b) + "</span>";
+// Passt ein Wert nicht in seine Spalte (Ersatzschrift, große Schriftstufe, schmales Gerät), wird er kleiner statt „…“.
+// Gemessen wird nur, wenn sich Textlänge, Schriftstufe oder Breite ändern.
+const passMerk = new WeakMap();
+function passend(el) {
+  const key = el.textContent.length + "|" + document.body.dataset.gr + "|" + document.body.classList.contains("run") + "|" + innerWidth;
+  if (passMerk.get(el) === key) return; passMerk.set(el, key);
+  el.style.fontSize = ""; let fs = parseFloat(getComputedStyle(el).fontSize);
+  while (el.scrollWidth > el.clientWidth + 0.5 && fs > 12) { fs -= 1; el.style.fontSize = fs + "px"; }
+}
+function updateReadout() {
+  const x = S.pos, W = WIN[S.win];
+  const g = valAt(W.g, x);
+  $("r-km").textContent = nf(x / 1000, 2);
+  $("r-glbl").textContent = "Steigung · " + (S.win === 1000 ? "1 km" : S.win + " m");
+  $("r-grade").textContent = sgn(g, 1) + " %";
+  $("needle").style.left = (gaugePos(g) * 100) + "%";
+  $("r-h").innerHTML = nf(hAt(x), 1) + "<small>m</small>";
+  const st = streetAt(x); $("r-street").textContent = st[1] || "–"; $("r-quarter").textContent = st[2] ? "· " + st[2] : "";
+  const up = valAt(W.up, x), dn = valAt(W.dn, x), UP = valAt(W.up, L), DN = valAt(W.dn, L);
+  $("r-done").innerHTML = auf_ab(up, dn); $("r-left").innerHTML = auf_ab(UP - up, DN - dn); $("r-total").innerHTML = auf_ab(UP, DN);
+  const pace = P.p0 * valAt(P.glatt, x);
+  $("r-pace").innerHTML = mss(pace) + ' <span class="dn">' + secs(pace - P.p0) + "</span>";
+  $("r-split").textContent = hms(valAt(P.t, x));
+  const flat = P.p0 * x / 1000; $("r-bal").textContent = secs(valAt(P.t, x) - flat) + " bisher";
+  // nächste Rampe
+  const inR = RAMPS.find(q => q.a <= x && q.b > x);
+  const nxt = RAMPS.filter(q => q.dir === 1 && q.a > x).sort((p, q) => p.a - q.a)[0];
+  if (inR) {
+    const rest = (valAt(W.up, inR.b) - valAt(W.up, x)) - (valAt(W.dn, inR.b) - valAt(W.dn, x));
+    $("r-cur").innerHTML = (inR.dir > 0 ? PF_SAUF : PF_SAB) + '<span class="klein">noch</span>' + Math.round(inR.b - x) + " m";
+    $("r-cur2").textContent = sgn(rest, 1) + " m · Ø " + sgn(inR.avg, 1) + " %";
+  } else { $("r-cur").textContent = "–"; $("r-cur2").textContent = "gerade keine"; }
+  if (nxt) {
+    $("r-nxt").textContent = "in " + nf((nxt.a - x) / 1000, 1) + " km";
+    $("r-nxt2").textContent = Math.round(nxt.len) + " m · +" + nf(nxt.rise, 1) + " m · Ø " + nf(nxt.avg, 1) + " % · " + streetAt(nxt.a)[1];
+  } else { $("r-nxt").textContent = "–"; $("r-nxt2").textContent = "keiner mehr bis ins Ziel"; }
+  for (const id of ["r-done", "r-left", "r-total", "r-pace", "r-bal", "r-cur", "r-nxt"]) passend($(id));
+  $("pos").value = Math.round(x / 10) * 10; $("b-0").disabled = x < 5;
+}
+
+function renderRamps() {
+  const th = RAMP_TH[S.win];
+  $("rule-note").textContent = "Rampe = zusammenhängender Abschnitt mit mindestens " + nf(th, 1) + " % Steigung bzw. Gefälle, gemessen über " + (S.win === 1000 ? "1 km" : S.win + " m") + ", und mindestens 2 m Höhenunterschied. Zeit = Mehr- oder Minderzeit gegenüber flach bei deiner Zielzeit. Antippen springt hin.";
+  let list = RAMPS.filter(q => q.dir === (S.dir === "up" ? 1 : -1));
+  list = S.sort === "km" ? list.sort((p, q) => p.a - q.a) : list.sort((p, q) => Math.abs(q.avg) - Math.abs(p.avg));
+  const tb = $("ramp-body"); tb.innerHTML = "";
+  if (!list.length) { const tr = document.createElement("tr"); tr.innerHTML = '<td colspan="6">Keine Rampe über der Schwelle. Kleineres Messfenster wählen.</td>'; tb.appendChild(tr); return; }
+  for (const q of list) {
+    const tr = document.createElement("tr"); tr.tabIndex = 0; tr.dataset.a = q.a; tr.dataset.b = q.b;
+    const color = COL[CLASS_TOK[cls(q.avg)]];
+    tr.innerHTML = '<td><span class="sw" style="background:' + color + '"></span>' + nf(q.a / 1000, 2) + "–" + nf(q.b / 1000, 2) + '<span class="where">' + (streetAt((q.a + q.b) / 2)[1] || "") + "</span></td>" +
+      "<td>" + Math.round(q.len) + " m</td><td>" + sgn(q.rise, 1) + " m</td><td>" + sgn(q.avg, 1) + " %</td><td>" + sgn(q.max, 1) + " %</td><td>" + secs(q.cost) + "</td>";
+    const go = () => { stop(); setPos(q.a + Math.min(q.len / 2, S.zoom / 4)); main.scrollIntoView({ behavior: "smooth", block: "center" }); };
+    tr.addEventListener("click", go); tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+    tb.appendChild(tr);
+  }
+  markRampRows();
+}
+function markRampRows() { for (const tr of $("ramp-body").children) { const a = +tr.dataset.a, b = +tr.dataset.b; tr.classList.toggle("here", S.pos >= a && S.pos < b); } }
+
+/* Höhenmeter je Messart; Hysterese zählt wie GPS-Uhren erst ab einer Mindesthöhe */
+function hystUp(th) { let base = H[0], tot = 0; for (let i = 1; i < N && i * STEP <= L; i++) { const v = H[i]; if (v - base >= th) { tot += v - base; base = v; } else if (base - v >= th) base = v; } return tot; }
+function renderHmMethods() {
+  const rows = [["Messfenster 50 m", valAt(WIN[50].up, L), 50], ["Messfenster 100 m", valAt(WIN[100].up, L), 100], ["Messfenster 200 m", valAt(WIN[200].up, L), 200], ["Messfenster 1 km", valAt(WIN[1000].up, L), 1000],
+    ["Wie GPS-Uhren: Anstieg zählt ab 0,5 m", hystUp(0.5)], ["… ab 1 m", hystUp(1)], ["… ab 3 m", hystUp(3)]];
+  $("hm-methods").innerHTML = rows.map(([t, v, w]) => "<tr" + (w === S.win ? ' style="font-weight:700"' : "") + "><td>" + t + "</td><td>" + Math.round(v) + "</td></tr>").join("");
+}
+
+/* Drehräder: Werte stehen bei loop 7-mal hintereinander, nach dem Drehen springt das Rad unsichtbar in die mittlere Kopie */
+const ROW = 30, REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function makeWheel(host, cfg) {
+  const RW = cfg.row || ROW;
+  const vals = []; for (let v = cfg.min; v <= cfg.max + 1e-9; v = Math.round((v + cfg.step) * 100) / 100) vals.push(v);
+  const NV = vals.length, COPIES = cfg.loop ? 7 : 1, BASE = cfg.loop ? 3 * NV : 0, val = j => vals[((j % NV) + NV) % NV];
+  const id = "wh-" + cfg.key;
+  host.innerHTML = '<div class="wlab" id="' + id + '-l">' + cfg.label + '</div><div class="wbox"><div class="wheel" id="' + id + '" role="spinbutton" tabindex="0" aria-labelledby="' + id + '-l" aria-valuemin="' + cfg.min + '" aria-valuemax="' + cfg.max + '"><div class="pad"></div>' +
+    Array.from({ length: NV * COPIES }, (_, j) => '<div class="wi" data-i="' + j + '" aria-hidden="true">' + cfg.fmt(val(j)) + "</div>").join("") + '<div class="pad"></div></div></div>' +
+    '<div class="sr-only"><button type="button" data-d="-1">' + cfg.label + ' verringern</button><button type="button" data-d="1">' + cfg.label + " erhöhen</button></div>";
+  const el = host.querySelector(".wheel"), items = [...el.querySelectorAll(".wi")];
+  let idx = -1, user = false, touched = false, t = null, rc = null, ce = null, aim = null, committed = null;
+  // Übernimmt den sichtbaren Wert genau einmal, wenn er sich gegenüber dem zuletzt gemeldeten geändert hat
+  const commit = () => { const v = val(idx); if (v !== committed) { committed = v; cfg.onChange(v); } };
+  const nearest = v => vals.reduce((b, x, i) => Math.abs(x - v) < Math.abs(vals[b] - v) ? i : b, 0);
+  function mark(i) {
+    if (i === idx) return; if (idx >= 0 && items[idx]) items[idx].classList.remove("sel");
+    for (const k of [idx - 1, idx + 1]) if (items[k]) items[k].classList.remove("above", "below");
+    idx = i; items[i].classList.add("sel"); if (items[i - 1]) items[i - 1].classList.add("above"); if (items[i + 1]) items[i + 1].classList.add("below");
+    el.setAttribute("aria-valuenow", val(i)); el.setAttribute("aria-valuetext", cfg.text ? cfg.text(val(i)) : cfg.fmt(val(i)));
+  }
+  const goto = (j, smooth) => { mark(j); if (smooth && !REDUCED) { aim = j; el.scrollTo({ top: j * RW, behavior: "smooth" }); } else { aim = null; el.scrollTop = j * RW; } };
+  function set(v, smooth) { touched = false; committed = vals[nearest(v)]; goto(BASE + nearest(v), smooth); }
+  const recenter = () => { if (!cfg.loop) return; const k = BASE + (((idx % NV) + NV) % NV); if (k !== idx) { el.scrollTop = k * RW; mark(k); } };
+  for (const ev of ["pointerdown", "touchstart", "wheel"]) el.addEventListener(ev, () => { user = true; touched = true; aim = null; }, { passive: true });
+  el.addEventListener("scroll", () => {
+    const i = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / RW)));
+    if (aim !== null && !user) { if (Math.abs(el.scrollTop - aim * RW) < 1) aim = null; clearTimeout(rc); rc = setTimeout(recenter, 400); return; }
+    aim = null;
+    if (i !== idx) { mark(i); if (user) commit(); }
+    // Nach Ausrollen und Einrasten (auf dem iPhone ohne Finger) den sichtbaren Wert übernehmen
+    clearTimeout(ce); ce = setTimeout(() => { if (!touched || aim !== null) return; mark(Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / RW)))); commit(); }, 160);
+    clearTimeout(t); t = setTimeout(() => { user = false; }, 300);
+    clearTimeout(rc); rc = setTimeout(recenter, 400);
+  }, { passive: true });
+  el.addEventListener("click", e => { const w = e.target.closest(".wi"); if (w) { const i = +w.dataset.i; user = false; goto(i, true); commit(); } });
+  const stepBy = d => { const i = cfg.loop ? idx + d : Math.max(0, Math.min(NV - 1, idx + d)); user = false; goto(Math.max(0, Math.min(items.length - 1, i)), true); commit(); };
+  el.addEventListener("keydown", e => {
+    const k = { ArrowUp: -1, ArrowDown: 1, PageUp: -5, PageDown: 5 }[e.key];
+    if (k) { e.preventDefault(); stepBy(k); } else if (e.key === "Home") { e.preventDefault(); set(vals[0], true); cfg.onChange(vals[0]); } else if (e.key === "End") { e.preventDefault(); set(vals[NV - 1], true); cfg.onChange(vals[NV - 1]); }
+  });
+  host.querySelectorAll(".sr-only button").forEach(b => b.onclick = () => stepBy(+b.dataset.d));
+  return { set, get value() { return val(idx); } };
+}
+
+/* Zwischenzeiten je km, je 5 km, Hälften */
+function splitSegs() {
+  const out = [];
+  if (S.split === "five") { for (let k = 0; k < 40; k += 5) out.push([k * 1000, (k + 5) * 1000, k + "–" + (k + 5)]); out.push([40000, L, "40–42,2"]); }
+  else if (S.split === "ten") { for (let k = 0; k < 40; k += 10) out.push([k * 1000, (k + 10) * 1000, k + "–" + (k + 10)]); out.push([40000, L, "40–42,2"]); }
+  else if (S.split === "hm") { out.push([0, L / 2, "1. Hälfte"]); out.push([L / 2, L, "2. Hälfte"]); }
+  else { for (let k = 0; k < 42; k++) out.push([k * 1000, (k + 1) * 1000, String(k + 1)]); out.push([42000, L, "42,2"]); }
+  return out;
+}
+const tfmt = s => s >= 3600 ? hms(s) : mss(s);
+const hmf = (v, sign) => { const r = Math.round(v); return r ? sign + r : "0"; };
+function drawSpark(cv, a, b, base, span) {
+  const { w, h, dpr } = sizeCanvas(cv); const c = cv.getContext("2d");
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+  const g = WIN[S.win].g, X = x => (x - a) / (b - a) * w, Y = v => h - 1 - (v - base) / span * (h - 3);
+  const per = Math.max(1, Math.ceil((b - a) / STEP / w));
+  for (let i = Math.floor(a / STEP); i * STEP < b; i += per) {
+    const x1 = Math.max(i * STEP, a), x2 = Math.min((i + per) * STEP, b);
+    let gs = 0, m = 0; for (let k = i; k < i + per && k < N; k++) { gs += g[k]; m++; }
+    c.fillStyle = COL[CLASS_TOK[cls(gs / m)]];
+    c.beginPath(); c.moveTo(X(x1), Y(hAt(x1))); c.lineTo(X(x2) + 0.5, Y(hAt(x2))); c.lineTo(X(x2) + 0.5, h); c.lineTo(X(x1), h); c.closePath(); c.fill();
+  }
+  c.strokeStyle = COL["--ink"]; c.lineWidth = 1; c.beginPath();
+  const dx = Math.max(STEP, (b - a) / w);
+  for (let x = a, first = true; x < b + dx; x += dx) { const xx = Math.min(x, b); first ? c.moveTo(X(xx), Y(hAt(xx))) : c.lineTo(X(xx), Y(hAt(xx))); first = false; }
+  c.stroke();
+}
+function renderSplits() {
+  const W = WIN[S.win], segs = splitSegs(), rows = [];
+  $("split-note").textContent = "Zeiten bei gleichmäßiger Anstrengung für " + hms(S.goal) + ", " + nf(S.secRef, 1) + " s je Höhenmeter bei " + mss(S.ref) + " /km an sanften Anstiegen, an steilen mehr (8 %: " + nf(kostHm(0.08) * S.ref / 240, 1) + " s), bergab die Hälfte, Zeiten mit 100 m Messfenster, damit kurze Wellen mitkosten. Höhenmeter und Steigung über " + (S.win === 1000 ? "1 km" : S.win + " m") + " gemessen. ± = Mehr- oder Minderzeit durch die Steigung gegenüber flach. Profile mit gemeinsamem Höhenmaßstab. Antippen springt hin.";
+  let span = 6;
+  for (const [a, b, lab] of segs) {
+    let mn = Infinity, mx = -Infinity;
+    for (let x = a; x <= b; x += STEP) { const v = hAt(x); if (v < mn) mn = v; if (v > mx) mx = v; }
+    span = Math.max(span, mx - mn);
+    const t = valAt(P.t, b) - valAt(P.t, a);
+    rows.push({ a, b, lab, mn, up: valAt(W.up, b) - valAt(W.up, a), dn: valAt(W.dn, b) - valAt(W.dn, a), t, eff: t - P.p0 * (b - a) / 1000, cum: valAt(P.t, b) });
+  }
+  const tb = $("split-body"); tb.innerHTML = "";
+  for (const r of rows) {
+    const tr = document.createElement("tr"); tr.tabIndex = 0; tr.dataset.a = r.a; tr.dataset.b = r.b;
+    tr.innerHTML = "<td>" + r.lab + '</td><td class="sp"><canvas class="spark" aria-hidden="true"></canvas></td><td>' + hmf(r.up, "+") + "</td><td>" + hmf(r.dn, "−") + "</td><td>" + secs(r.eff) + "</td><td>" + tfmt(r.t) + "</td><td>" + hms(r.cum) + "</td>";
+    const go = () => { stop(); setPos(r.a + 5); document.body.classList.add("run"); dirty = true; };
+    tr.addEventListener("click", go); tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+    tb.appendChild(tr);
+    drawSpark(tr.querySelector("canvas"), r.a, r.b, r.mn, span);
+    // Halbmarathon-Zeile zwischen den Abschnitten davor und danach (seit 1.52; bei „Hälften“ ist sie die Grenze selbst)
+    if (S.split !== "hm" && r.b <= L / 2 && (rows[rows.indexOf(r) + 1] || { b: 0 }).b > L / 2) {
+      const hm = document.createElement("tr"); hm.className = "hm-zeile"; hm.tabIndex = 0; hm.dataset.a = L / 2; hm.dataset.b = L / 2;
+      hm.innerHTML = '<td>21,1</td><td colspan="4" class="hm-lbl">Halbmarathon</td><td></td><td>' + hms(valAt(P.t, L / 2)) + "</td>";
+      const zuHM = () => { stop(); setPos(L / 2); document.body.classList.add("run"); dirty = true; };
+      hm.addEventListener("click", zuHM); hm.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); zuHM(); } });
+      tb.appendChild(hm);
+    }
+  }
+  $("split-foot").innerHTML = "<tr><td>Summe</td><td></td><td>" + hmf(valAt(W.up, L), "+") + "</td><td>" + hmf(valAt(W.dn, L), "−") + "</td><td>" + secs(S.goal - P.p0 * L / 1000) + "</td><td>" + hms(S.goal) + "</td><td></td></tr>";
+  markSplitRows();
+}
+function markSplitRows() { for (const tr of $("split-body").children) { const a = +tr.dataset.a, b = +tr.dataset.b; tr.classList.toggle("here", S.pos >= a && (S.pos < b || (b >= L && S.pos >= L))); } }
+
+function renderLegend() {
+  $("legend").innerHTML = CLASS_TXT.map((t, k) => '<span><i style="background:' + COL[CLASS_TOK[k]] + '"></i>' + t + "</span>").join("");
+}
+function renderSettings() {
+  for (const b of document.querySelectorAll("[data-zoom]")) b.setAttribute("aria-pressed", +b.dataset.zoom === S.zoom);
+  for (const b of document.querySelectorAll("[data-win]")) b.setAttribute("aria-pressed", +b.dataset.win === S.win);
+  for (const b of document.querySelectorAll("[data-speed]")) b.setAttribute("aria-pressed", +b.dataset.speed === S.speed);
+  for (const b of document.querySelectorAll("[data-dir]")) b.setAttribute("aria-pressed", b.dataset.dir === S.dir);
+  for (const b of document.querySelectorAll("[data-sort]")) b.setAttribute("aria-pressed", b.dataset.sort === S.sort);
+  for (const b of document.querySelectorAll("[data-vp]")) b.setAttribute("aria-pressed", (b.dataset.vp === "1") === S.vp);
+  const ovf = $("ov-farbe"); ovf.setAttribute("aria-pressed", S.ovEin);
+  ovf.setAttribute("aria-label", S.ovEin ? "Gesamtstrecke wieder in Steigungsfarben" : "Gesamtstrecke grau"); ovf.title = ovf.getAttribute("aria-label");
+  for (const b of document.querySelectorAll("[data-relay]")) b.setAttribute("aria-pressed", (b.dataset.relay === "1") === S.relay);
+  for (const b of document.querySelectorAll("[data-split]")) b.setAttribute("aria-pressed", b.dataset.split === S.split);
+  $("goal-out").textContent = hms(S.goal);
+  const flach = P.p0 * 42.195; // dieselbe Anstrengung auf einem flachen Marathon
+  $("goal-note").textContent = "Gleichmäßige Anstrengung über die ganze Strecke: auf flachen Stücken dieser Strecke " + mss2(P.p0) + " /km, im Schnitt " + mss2(S.goal / (L / 1000)) + " /km. Insgesamt kosten die Steigungen " + secs(S.goal - P.p0 * L / 1000) + " gegenüber einer flachen Strecke.";
+  // Bahnzeiten ohne Höhenmeter (seit 1.55): Faustregel Marathon = 10 km × 4,667, das ist Riegel mit Exponent 1,07
+  const BAHN = 4.667, k = Math.log(BAHN) / Math.log(42.195 / 10), t10 = flach / BAHN, t5 = t10 * Math.pow(0.5, k);
+  $("bahn-m").textContent = hms(flach); $("bahn-21").textContent = hms(flach / Math.pow(2, k)); $("bahn-10").textContent = mss(t10); $("bahn-5").textContent = mss(t5);
+  // Höhenlage (D.lage, m über dem Meer, nur wo es zählt: Mexiko-Stadt): die Zeiten gelten für diese Höhe, nicht für Meereshöhe
+  const lage = D.lage ? String(D.lage).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " m" : "";
+  $("bahn-titel").textContent = lage ? "Ohne Höhenmeter, in " + lage + " Höhe" : "Ohne Höhenmeter entspricht das";
+  $("bahn-lage").hidden = !lage;
+  if (lage) $("bahn-lage").textContent = "Diese Strecke liegt im Mittel auf " + lage + " Höhe. Alle Zeiten hier gelten für diese Höhe; auf Meereshöhe wärst du bei gleicher Anstrengung schneller.";
+  const perHm = P.p0 * (S.secHm / 0.24) / 1000;
+  $("hm-out").textContent = nf(S.secRef, 1) + " s";
+  $("hm-note").textContent = "Standard: 1,0 s bei 4:00 /km (Vierer-Schnitt). Wer seinen Wert für eine andere Pace kennt, stellt sie rechts ein. "
+    + (S.ref !== 240 ? "Deine Angabe entspricht " + nf(S.secHm, 2) + " s bei 4:00 /km. " : "") + "Das entspricht " + nf(S.secHm / 0.24, 1) + " m flacher Strecke je Höhenmeter. Bei deiner Pace (" + mss2(P.p0) + " /km im Flachen) kostet 1 Höhenmeter bergauf " + nf(perHm, 1) + " s und bringt bergab " + nf(perHm * S.down, 1) + " s. Zum Vergleich: Das Labormodell von Minetti entspricht 1,3 s bei 4:00 /km. Steilere Anstiege kosten wie im Labormodell überproportional mehr (Diagramm unten).";
+  paceChartNote();
+  const dauer = S.goal / S.speed;
+  $("speed-note").textContent = "Mit ×" + S.speed + " dauert der ganze Lauf " + (dauer >= 3600 ? hms(dauer) + " h" : mss(dauer) + " min") + (S.speed === 1 ? " (Echtzeit; läuft nur bei eingeschaltetem Bildschirm, zum Mitlaufen am Renntag „Live“ nehmen)" : "") + ". Der Läufer wird bergauf langsamer, wie im Pace-Modell. Einstellen im Vollbild mit dem rechten Drehrad über dem Profil.";
+}
+
+function recompute() { buildPace(); buildRamps(); renderSettings(); renderRamps(); renderSplits(); renderPlan(); renderHmMethods(); dirty = true; }
+
+function setPos(x) { const vorher = S.pos; S.pos = clamp(x, 0, L); if (vorher < L - 1 && S.pos >= L - 1) zielFeier(); dirty = true; }
+function frame() {
+  if (dirty) {
+    dirty = false; drawMain(); drawOverview(); drawPaceChart(); updateReadout(); markRampRows(); markSplitRows(); drawPage();
+  }
+  requestAnimationFrame(frame);
+}
+
+/* Live nach Plan: der Punkt steht, wo der Läufer bei seiner Zielzeit und Startzeit gerade ist */
+let liveT = null;
+const posAtTime = t => { if (t <= 0) return 0; if (t >= valAt(P.t, L)) return L; let a = 0, b = L; for (let k = 0; k < 40; k++) { const m = (a + b) / 2; if (valAt(P.t, m) < t) a = m; else b = m; } return (a + b) / 2; };
+function liveStep() {
+  const el = ortsZeit().s - S.start * 60;
+  setPos(posAtTime(el));
+  $("play").textContent = el < 0 ? "Start " + uhr(S.start) : "● Live";
+  if (el >= S.goal) stop();
+}
+function live() { stop(); S.live = true; document.body.classList.add("run"); liveStep(); liveT = setInterval(liveStep, 1000); dirty = true; }
+
+// Info-Fenster: ohne Popover-Unterstützung im Browser per Klasse „offen“
+if (!HTMLElement.prototype.hasOwnProperty("popover")) document.querySelectorAll("[popovertarget]").forEach(b => b.addEventListener("click", () => {
+  const p = $(b.getAttribute("popovertarget")); p.classList.toggle("offen", b.getAttribute("popovertargetaction") !== "hide" && !p.classList.contains("offen"));
+}));
+
+/* Abspielen */
+let lastT = 0;
+function tick(t) {
+  if (!S.playing) return;
+  const dt = lastT ? Math.min(0.1, (t - lastT) / 1000) : 0; lastT = t;
+  const pace = P.p0 * valAt(P.glatt, S.pos); // s pro km, gemittelt wie die Anzeige
+  setPos(S.pos + dt * S.speed / pace * 1000);
+  if (S.pos >= L) { stop(); return; }
+  requestAnimationFrame(tick);
+}
+function play() { if (S.pos >= L - 1) setPos(0); S.playing = true; lastT = 0; $("play").textContent = "❚❚ Pause"; inertiaV = 0; document.body.classList.add("run"); dirty = true; requestAnimationFrame(tick); }
+function stop() { S.playing = false; if (S.live) { S.live = false; clearInterval(liveT); } $("play").textContent = "▶︎ Laufen"; }
+$("play").addEventListener("click", () => S.playing || S.live ? stop() : play());
+$("run-close").addEventListener("click", () => { stop(); document.body.classList.remove("run"); dirty = true; requestAnimationFrame(() => syncGoalWheels()); $("splits").scrollIntoView({ block: "start" }); });
+$("run-open").addEventListener("click", () => { document.body.classList.add("run"); dirty = true; });
+// Der Pfeil oben links führt im Vollbild zurück in die normale Ansicht (seit 1.51), sonst zu allen Strecken
+const zurueck = document.querySelector(".corner.back");
+zurueck.addEventListener("click", e => {
+  if (!document.body.classList.contains("run")) return;
+  e.preventDefault(); stop(); document.body.classList.remove("run"); dirty = true;
+  requestAnimationFrame(() => { syncGoalWheels(); window.scrollTo(0, 0); });
+});
+new MutationObserver(() => zurueck.setAttribute("aria-label", document.body.classList.contains("run") ? "Vollbild verlassen" : "Alle Strecken"))
+  .observe(document.body, { attributes: true, attributeFilter: ["class"] });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && document.body.classList.contains("run")) $("run-close").click(); });
+
+/* Wischen mit Schwung */
+let drag = null, inertiaV = 0, inertiaT = 0;
+main.addEventListener("pointerdown", e => { stop(); inertiaV = 0; drag = { x: e.clientX, y: e.clientY, pos: S.pos, hist: [[performance.now(), e.clientX]], lock: null }; main.setPointerCapture(e.pointerId); });
+main.addEventListener("pointermove", e => {
+  if (!drag) return;
+  const mpp = S.zoom / main.getBoundingClientRect().width;
+  setPos(drag.pos - (e.clientX - drag.x) * mpp);
+  drag.hist.push([performance.now(), e.clientX]); if (drag.hist.length > 6) drag.hist.shift();
+});
+const endDrag = () => {
+  if (!drag) return;
+  const hst = drag.hist, a = hst[0], b = hst[hst.length - 1], dt = b[0] - a[0];
+  if (dt > 0 && performance.now() - b[0] < 80) { inertiaV = -(b[1] - a[1]) / dt * (S.zoom / main.getBoundingClientRect().width); inertiaT = 0; requestAnimationFrame(glide); }
+  drag = null;
+};
+main.addEventListener("pointerup", endDrag); main.addEventListener("pointercancel", () => { drag = null; });
+function glide(t) {
+  if (!inertiaV || drag || S.playing) return;
+  const dt = inertiaT ? t - inertiaT : 16; inertiaT = t;
+  setPos(S.pos + inertiaV * dt); inertiaV *= Math.pow(0.94, dt / 16);
+  if (Math.abs(inertiaV) * 16 < 0.3 || S.pos <= 0 || S.pos >= L) { inertiaV = 0; return; }
+  requestAnimationFrame(glide);
+}
+main.addEventListener("wheel", e => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { e.preventDefault(); stop(); setPos(S.pos + e.deltaX * S.zoom / main.getBoundingClientRect().width); } }, { passive: false });
+main.addEventListener("keydown", e => {
+  const big = e.shiftKey ? 1000 : 100;
+  if (e.key === "ArrowRight") { e.preventDefault(); stop(); setPos(S.pos + big); }
+  if (e.key === "ArrowLeft") { e.preventDefault(); stop(); setPos(S.pos - big); }
+  if (e.key === " ") { e.preventDefault(); S.playing ? stop() : play(); }
+});
+let ovDrag = false;
+const ovPos = e => { const r = ov.getBoundingClientRect(); setPos((e.clientX - r.left - 14) / (r.width - 28) * L); };
+ov.addEventListener("pointerdown", e => { stop(); ovDrag = true; ov.setPointerCapture(e.pointerId); ovPos(e); });
+ov.addEventListener("pointermove", e => { if (ovDrag) ovPos(e); });
+ov.addEventListener("pointerup", () => { ovDrag = false; }); ov.addEventListener("pointercancel", () => { ovDrag = false; });
+$("pos").addEventListener("input", e => { stop(); setPos(+e.target.value); });
+[["b-k", -1000], ["b-h", -100], ["f-h", 100], ["f-k", 1000]].forEach(([id, d]) => $(id).addEventListener("click", () => { stop(); setPos(S.pos + d); }));
+$("b-0").addEventListener("click", () => { stop(); setPos(0); });
+
+/* Einstellungen */
+document.querySelectorAll("[data-zoom]").forEach(b => b.addEventListener("click", () => { S.zoom = +b.dataset.zoom; store.set("zoom", S.zoom); renderSettings(); dirty = true; }));
+document.querySelectorAll("[data-win]").forEach(b => b.addEventListener("click", () => { S.win = +b.dataset.win; store.set("win", S.win); recompute(); }));
+document.querySelectorAll("[data-speed]").forEach(b => b.addEventListener("click", () => { S.speed = +b.dataset.speed; store.set("speed", S.speed); renderSettings(); }));
+document.querySelectorAll("[data-dir]").forEach(b => b.addEventListener("click", () => { S.dir = b.dataset.dir; renderSettings(); renderRamps(); }));
+document.querySelectorAll("[data-sort]").forEach(b => b.addEventListener("click", () => { S.sort = b.dataset.sort; renderSettings(); renderRamps(); }));
+document.querySelectorAll("[data-vp]").forEach(b => b.addEventListener("click", () => { S.vp = b.dataset.vp === "1"; store.set("vp", S.vp); renderSettings(); dirty = true; }));
+$("ov-farbe").addEventListener("click", () => { S.ovEin = !S.ovEin; store.set("ov-einfarbig", S.ovEin); renderSettings(); dirty = true; });
+document.querySelectorAll("[data-relay]").forEach(b => b.addEventListener("click", () => { S.relay = b.dataset.relay === "1"; store.set("relay", S.relay); renderSettings(); dirty = true; }));
+document.querySelectorAll("[data-split]").forEach(b => b.addEventListener("click", () => { S.split = b.dataset.split; store.set("split", S.split); renderSettings(); renderSplits(); }));
+const pad2 = v => String(v).padStart(2, "0");
+let goalT = null;
+// Beim Drehen kann Text über dem Rad umbrechen (z. B. „Bei Zielzeit 2:00:00 …“ unter „Für Zuschauer“) und die Seite
+// verschieben; Safari gleicht das nicht aus (keine Scroll-Verankerung). mitAnker hält das Rad unter dem Finger fest.
+const mitAnker = (el, fn) => { const a = el.getBoundingClientRect().top; fn(); const d = el.getBoundingClientRect().top - a; if (Math.abs(d) >= 0.5) scrollBy(0, d); };
+const setGoal = (h, m, s) => {
+  S.goal = h * 3600 + m * 60 + s; store.set("goal-v2", S.goal);
+  $("goal-out").textContent = hms(S.goal);
+  clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("goal-wheels"), recompute), 120);
+};
+const GW = {};
+GW.h = makeWheel($("wg-h"), { key: "gh", label: "Std", min: 1, max: 7, step: 1, fmt: v => String(v), text: v => v + " Stunden", onChange: v => setGoal(v, GW.m.value, GW.s.value) });
+GW.m = makeWheel($("wg-m"), { key: "gm", label: "Min", loop: true, min: 0, max: 59, step: 1, fmt: pad2, text: v => v + " Minuten", onChange: v => setGoal(GW.h.value, v, GW.s.value) });
+GW.s = makeWheel($("wg-s"), { key: "gs", label: "Sek", loop: true, min: 0, max: 59, step: 1, fmt: pad2, text: v => v + " Sekunden", onChange: v => setGoal(GW.h.value, GW.m.value, v) });
+/* Räder auf die Zielzeit stellen, auch wenn sie erst sichtbar werden (iOS setzt die Scrollposition verdeckter Räder nicht zuverlässig) */
+GW.k = makeWheel($("wk-hm"), { key: "khm", label: "Sekunden", min: 0.5, max: 2.0, step: 0.1, fmt: v => nf(v, 1), text: v => nf(v, 1) + " Sekunden je Höhenmeter",
+  onChange: v => { S.secRef = v; S.secHm = v * 240 / S.ref; store.set("sechm", v); $("hm-out").textContent = nf(v, 1) + " s"; clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("hm-wheel"), recompute), 120); } });
+GW.r = makeWheel($("wk-ref"), { key: "kref", label: "Pace /km", min: 180, max: 420, step: 5, fmt: v => mss(v), text: v => mss(v) + " pro Kilometer",
+  onChange: v => { S.ref = v; S.secHm = S.secRef * 240 / v; store.set("sechm-pace", v); clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("hm-wheel"), recompute), 120); } });
+/* Für Zuschauer: Startzeit, Uhrzeit an jeder 5-km-Marke, Link zum Teilen, Live nach Plan (Uhrzeiten in der Zeitzone der Strecke) */
+const TZ = D.tz || "Europe/Berlin";
+const uhr = min => { const m = Math.round(min); return Math.floor(m / 60) % 24 + ":" + String(m % 60).padStart(2, "0"); };
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
+const OZ = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+const ortsZeit = () => {   // Datum und Sekunden seit Mitternacht an der Strecke
+  const p = Object.fromEntries(OZ.formatToParts(new Date()).map(x => [x.type, x.value]));
+  return { tag: p.year + "-" + p.month + "-" + p.day, s: +p.hour * 3600 + +p.minute * 60 + +p.second };
+};
+const NAECHSTER = (() => { const heute = ortsZeit().tag; return (D.termine || []).find(t => t.replace("?", "") >= heute) || null; })();
+const RENNTAG = NAECHSTER && NAECHSTER.replace("?", ""), RT_SICHER = !!NAECHSTER && !NAECHSTER.endsWith("?");   // "?" = vom Veranstalter noch nicht bestätigt
+const tzOff = (tz, d) => { const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: tz, hourCycle: "h23", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric" }).formatToParts(d).map(x => [x.type, x.value])); return Math.round((Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute) - d.getTime()) / 60000); };
+const renntagText = () => { if (!RENNTAG) return ""; const [y, m, d] = RENNTAG.split("-").map(Number), t = new Date(y, m - 1, d); return ["So.", "Mo.", "Di.", "Mi.", "Do.", "Fr.", "Sa."][t.getDay()] + ", " + d + ". " + ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"][m - 1] + " " + y; };
+const zeitzoneText = () => {   // Unterschied zur Uhr des Betrachters am Renntag (Sommerzeit beachten)
+  const d = new Date((RENNTAG || ortsZeit().tag) + "T12:00:00Z"), diff = Math.round((-d.getTimezoneOffset() - tzOff(TZ, d)) / 60);
+  if (!diff) return "";
+  const ort = D.ort || (TZ === "America/New_York" ? "New York" : TZ.split("/")[1].replace("_", " "));
+  return "Uhrzeiten in Ortszeit " + ort + ", bei dir " + Math.abs(diff) + (Math.abs(diff) === 1 ? " Stunde " : " Stunden ") + (diff > 0 ? "später" : "früher") + ". ";
+};
+// Zusatz hinter der Uhrzeit im Profil, wenn der Betrachter in einer anderen Zeitzone ist (z. B. New York von Deutschland aus);
+// D.ort und D.ortKurz nennen den Ort, wenn die Zeitzone allein ihn nicht verrät (Boston liegt in America/New_York)
+const UHR_ZUSATZ = (() => { const d = new Date((RENNTAG || ortsZeit().tag) + "T12:00:00Z"); return Math.round((-d.getTimezoneOffset() - tzOff(TZ, d)) / 60) ? (D.ortKurz || (TZ === "America/New_York" ? " NY" : " Ortszeit")) : ""; })();
+function renderPlan() {
+  $("plan-note").textContent = "Bei Zielzeit " + hms(S.goal) + " und Start um " + uhr(S.start) + " Uhr" + (RENNTAG ? (RT_SICHER ? " am " : " voraussichtlich am ") + renntagText() : "") + ". " + zeitzoneText() + "Antippen springt an die Stelle.";
+  const pts = [[0, "Start"]]; for (let k = 5; k <= 40; k += 5) { pts.push([k * 1000, String(k)]); if (k === 20) pts.push([L / 2, "21,1"]); } pts.push([L, "Ziel"]);
+  const tb = $("plan-body"); tb.innerHTML = "";
+  for (const [x, lab] of pts) {
+    const st = streetAt(Math.min(x, L - 1)), tr = document.createElement("tr"); tr.tabIndex = 0;
+    tr.innerHTML = "<td>" + lab + '</td><td class="ort">' + esc(st[1] || "–") + (st[2] ? ' <span class="q">· ' + esc(st[2]) + "</span>" : "") + "</td><td>" + uhr(S.start + valAt(P.t, x) / 60) + "</td>";
+    const go = () => { stop(); setPos(Math.min(x, L - 2)); document.body.classList.add("run"); dirty = true; };
+    tr.addEventListener("click", go); tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+    tb.appendChild(tr);
+  }
+  markWellen();
+}
+const setStart = (h, m) => { S.start = h * 60 + m; store.set("start", S.start); mitAnker($("start-wheels"), renderPlan); };
+GW.sh = makeWheel($("ws-h"), { key: "sh", label: "Std", min: 5, max: 14, step: 1, fmt: v => String(v), text: v => v + " Uhr", onChange: v => setStart(v, GW.sm.value) });
+GW.sm = makeWheel($("ws-m"), { key: "sm", label: "Min", loop: true, min: 0, max: 59, step: 1, fmt: pad2, text: v => v + " Minuten", onChange: v => setStart(GW.sh.value, v) });
+// Startwellen: D.wellen = { q: Quelle und Hinweis, w: [[Name, Minuten ab Mitternacht, Blöcke oder „ca.“], …] }
+if (D.wellen) {
+  $("wellen-note").textContent = D.wellen.q; $("wellen-note").hidden = false;
+  const box = $("wellen"); box.hidden = !D.wellen.w.length;
+  for (const [n, t, info] of D.wellen.w) {
+    const b = document.createElement("button"); b.type = "button"; b.dataset.t = t;
+    b.innerHTML = esc(n) + " · " + (info === "ca." ? "ca. " : "") + uhr(t) + (info && info !== "ca." ? "<small>" + esc(info) + "</small>" : "");
+    b.addEventListener("click", () => { GW.sh.set(Math.floor(t / 60)); GW.sm.set(t % 60); setStart(Math.floor(t / 60), t % 60); });
+    box.appendChild(b);
+  }
+  markWellen();
+}
+// Gedrückt ist die Welle der eingestellten Zeit; passt keine, sagt der Hinweis das (z. B. von Hand gedreht oder aus älterer Version)
+function markWellen() {
+  let passt = false;
+  for (const b of document.querySelectorAll("#wellen button")) { const p = +b.dataset.t === S.start; b.setAttribute("aria-pressed", p); passt = passt || p; }
+  if (D.wellen && D.wellen.w.length) $("wellen-note").textContent = (passt ? "" : "Eingestellt ist " + uhr(S.start) + " Uhr, keine der Wellen: tippe auf deine. ") + D.wellen.q;
+}
+$("plan-share").addEventListener("click", () => {
+  const url = location.origin + location.pathname + "?ziel=" + hms(S.goal) + "&start=" + uhr(S.start);
+  const text = "Mein Marathon-Plan" + (RENNTAG ? " für " + (RT_SICHER ? "" : "ca. ") + renntagText() : "") + ": Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal) + ". Hier siehst du, wann ich wo bin:";
+  if (navigator.share) navigator.share({ title: document.title, text, url }).catch(() => {});
+  else if (navigator.clipboard) navigator.clipboard.writeText(text + " " + url).then(() => window.zeigeInfo && window.zeigeInfo("Link kopiert", 3), () => {});
+});
+$("plan-live").addEventListener("click", () => live());
+
+/* Pace-Band: Bild im Format des iPhone-Sperrbildschirms (oben bleibt Platz für die Uhr), Zeit nach jedem km mit Steigung */
+function paceBand() {
+  const W = 1170, HH = 2532, cv = document.createElement("canvas"); cv.width = W; cv.height = HH;
+  const c = cv.getContext("2d"), fd = getComputedStyle(document.body).getPropertyValue("--font-display");
+  c.fillStyle = "#0b141c"; c.fillRect(0, 0, W, HH);
+  const name = document.querySelector(".eyebrow").firstChild.textContent.split("·")[0].trim();
+  c.textBaseline = "alphabetic"; c.textAlign = "center";
+  c.fillStyle = "#6a9cff"; c.font = "600 40px " + fd; c.fillText(name.toUpperCase(), W / 2, 760);
+  c.fillStyle = "#ffffff"; c.font = "700 76px " + fd; c.fillText("Ziel " + hms(S.goal), W / 2, 845);
+  c.fillStyle = "#93a3b0"; c.font = "500 36px " + fd; c.fillText("Halbmarathon " + hms(valAt(P.t, L / 2)) + "  ·  im Flachen " + mss2(P.p0) + " /km", W / 2, 900);
+  const rows = []; for (let k = 1; k <= 42; k++) rows.push([String(k), k * 1000]); rows.push(["42,2", L]);
+  const top = 960, rh = 60, half = 22;
+  rows.forEach(([lab, x], i) => {
+    const col = i < half ? 0 : 1, j = col ? i - half : i, x0 = col * W / 2, y = top + j * rh;
+    const a = x === L ? 42000 : x - 1000, t = valAt(P.t, x) - valAt(P.t, a), eff = t - P.p0 * (x - a) / 1000;
+    if (j) { c.fillStyle = +lab % 5 === 1 ? "rgba(106,156,255,0.35)" : "rgba(255,255,255,0.08)"; c.fillRect(x0 + 30, y, W / 2 - 60, 2); }   // kräftiger nach jedem 5. km
+    const by = y + rh / 2 + 15;
+    c.textAlign = "left"; c.fillStyle = "#93a3b0"; c.font = "600 40px " + fd; c.fillText(lab, x0 + 40, by);
+    c.textAlign = "right"; c.fillStyle = "#ffffff"; c.font = "600 46px " + fd; c.fillText(hms(valAt(P.t, x)), x0 + 330, by);
+    c.fillStyle = "#c9d3db"; c.font = "500 38px " + fd; c.fillText(mss(t), x0 + 440, by);
+    const r = Math.round(eff); c.fillStyle = r >= 3 ? "#f0a35e" : r <= -3 ? "#6a9cff" : "#93a3b0"; c.font = "600 34px " + fd;
+    c.fillText(r > 0 ? "+" + r : r < 0 ? "−" + -r : "±0", x0 + 555, by);
+  });
+  c.textAlign = "center"; c.fillStyle = "#93a3b0"; c.font = "500 30px " + fd;
+  c.fillText("Gesamtzeit · Zeit für den km · Sekunden gegenüber flach", W / 2, top + half * rh + 50);
+  // synchron als Datei, damit das Teilen auf dem iPhone noch als Antwort auf den Tipp gilt
+  const data = cv.toDataURL("image/png"), bin = atob(data.split(",")[1]), arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  const file = new File([arr], "pace-band-" + location.pathname.split("/").filter(Boolean).pop() + "-" + hms(S.goal).replace(/:/g, "-") + ".png", { type: "image/png" });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) navigator.share({ files: [file] }).catch(() => {});
+  else { const a = document.createElement("a"); a.href = data; a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); }
+}
+$("band").addEventListener("click", paceBand);
+/* Kopfzeilen-Drehräder: übernehmen den Wert wie die Zielzeit-Räder erst nach Berührung und nach dem Einrasten */
+function makeDrum(host, cfg) {
+  const RH = 22, VH = 52;
+  host.classList.add("vdrum"); host.style.setProperty("--capw", cfg.capw + "px");
+  host.innerHTML = '<div class="vw" role="spinbutton" tabindex="0" aria-label="' + cfg.label + '"><div class="vpad"></div>' + cfg.values.map((v, j) => '<div class="vi" data-i="' + j + '" aria-hidden="true">' + cfg.fmt(v, false) + "</div>").join("") + '<div class="vpad"></div></div><span class="cap" aria-hidden="true">' + cfg.label + "</span>";
+  const el = host.querySelector(".vw"), items = [...el.querySelectorAll(".vi")], last = items.length - 1;
+  // Jede Zahl liegt auf einem Zylinder, der sich um die waagerechte Achse dreht: Lage y = R·sin(φ), Höhe cos(φ)
+  let raf = 0;
+  const render = () => { raf = 0; const R = 30, st = el.scrollTop; // fester Radius: Nachbarzahlen bleiben auf gleicher Höhe, der Rand schneidet sie knapp an
+    for (let j = 0; j < items.length; j++) { const d = j * RH - st, phi = d / R, it = items[j];
+      if (Math.abs(phi) >= Math.PI / 2) { it.style.opacity = "0"; continue; }
+      const s = Math.cos(phi); it.style.transform = "translateY(" + (R * Math.sin(phi) - d).toFixed(1) + "px) scale(" + (0.85 + 0.15 * s).toFixed(3) + "," + s.toFixed(3) + ")"; it.style.opacity = (0.25 + 0.75 * s * s).toFixed(2); } };
+  const queue = () => { if (!raf) raf = requestAnimationFrame(render); };
+  if ("ResizeObserver" in window) new ResizeObserver(queue).observe(el);
+  let idx = -1, user = false, touched = false, t = null, ce = null, committed = null;
+  const mark = i => { if (i === idx) return; if (idx >= 0) { items[idx].classList.remove("sel"); items[idx].innerHTML = cfg.fmt(cfg.values[idx], false); } idx = i; items[i].classList.add("sel"); items[i].innerHTML = cfg.fmt(cfg.values[i], true); el.setAttribute("aria-valuetext", cfg.text(cfg.values[i])); };
+  const commit = () => { const v = cfg.values[idx]; if (v !== committed) { committed = v; cfg.onChange(v); } };
+  const nearest = v => cfg.values.reduce((b, x, i) => Math.abs(x - v) < Math.abs(cfg.values[b] - v) ? i : b, 0);
+  const goto = (j, smooth) => { mark(j); if (smooth && !REDUCED) el.scrollTo({ top: j * RH, behavior: "smooth" }); else el.scrollTop = j * RH; queue(); };
+  const set = v => { touched = false; committed = cfg.values[nearest(v)]; goto(nearest(v), false); };
+  for (const ev of ["pointerdown", "touchstart", "wheel"]) el.addEventListener(ev, () => { user = true; touched = true; }, { passive: true });
+  el.addEventListener("scroll", () => {
+    queue();
+    const i = clamp(Math.round(el.scrollTop / RH), 0, last);
+    if (i !== idx) { mark(i); if (user) commit(); }
+    clearTimeout(t); t = setTimeout(() => { user = false; }, 300);
+    clearTimeout(ce); ce = setTimeout(() => { if (!touched) return; mark(clamp(Math.round(el.scrollTop / RH), 0, last)); commit(); }, 160);
+  }, { passive: true });
+  el.addEventListener("click", e => { const w = e.target.closest(".vi"); if (w) { goto(+w.dataset.i, true); commit(); } });
+  el.addEventListener("keydown", e => { const d = { ArrowUp: -1, ArrowDown: 1 }[e.key]; if (d) { e.preventDefault(); goto(clamp(idx + d, 0, last), true); commit(); } });
+  return { set, get value() { return cfg.values[idx]; } };
+}
+const kmTxt = v => nf(v / 1000, v % 1000 ? 1 : 0);
+const ZW = makeDrum($("zoom-wheel"), { label: "Ausschnitt", capw: 60, values: Array.from({ length: 20 }, (_, j) => (j + 1) * 500), fmt: (v, sel) => sel ? "<span>" + kmTxt(v) + "<small>km</small></span>" : kmTxt(v), text: v => kmTxt(v) + " Kilometer",
+  onChange: v => { S.zoom = v; store.set("zoom", v); dirty = true; } });
+const SW = makeDrum($("speed-wheel"), { label: "Tempo", capw: 38, values: SPEEDS, fmt: v => "×" + v, text: v => v === 1 ? "Echtzeit" : v + "-fach",
+  onChange: v => { S.speed = v; store.set("speed", v); renderSettings(); } });
+// Aufklappbare Abschnitte: Inhalt in .klapp-inhalt, Kopf als Knopf; zu beim ersten Besuch, danach wie zuletzt (store „klapp-…“).
+// Beim Öffnen Räder und Spark-Linien neu setzen, die im zugeklappten Zustand keine Größe hatten.
+for (const sec of document.querySelectorAll("section.klapp")) {
+  const inhalt = document.createElement("div"); inhalt.className = "klapp-inhalt"; inhalt.id = sec.id + "-inhalt";
+  while (sec.firstChild) inhalt.appendChild(sec.firstChild);
+  const kopf = document.createElement("button"); kopf.type = "button"; kopf.className = "klapp-kopf"; kopf.setAttribute("aria-controls", inhalt.id);
+  kopf.innerHTML = '<span class="kt">' + sec.dataset.t + '</span><span class="kh">' + sec.dataset.h + '</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  sec.append(kopf, inhalt);
+  const setze = auf => { kopf.setAttribute("aria-expanded", auf); inhalt.hidden = !auf; };
+  setze(!!store.get("klapp-" + sec.dataset.k, false));
+  // Der Kopf bleibt, wo er ist; der Inhalt geht nach unten auf. Verschiebt der Browser die Seite (sofort oder ein, zwei
+  // Bilder später), wird sie auf die alte Lage des Kopfs zurückgesetzt.
+  kopf.addEventListener("click", () => {
+    const auf = inhalt.hidden, vor = kopf.getBoundingClientRect().top;
+    const halte = () => { const d = kopf.getBoundingClientRect().top - vor; if (Math.abs(d) >= 0.5) scrollBy(0, d); };
+    setze(auf); store.set("klapp-" + sec.dataset.k, auf); halte();
+    requestAnimationFrame(() => { if (auf) { syncGoalWheels(); renderSplits(); dirty = true; } halte(); requestAnimationFrame(() => requestAnimationFrame(halte)); });
+  });
+}
+const syncGoalWheels = () => { ZW.set(S.zoom); SW.set(S.speed); const g = Math.round(S.goal); GW.h.set(Math.floor(g / 3600)); GW.m.set(Math.floor(g % 3600 / 60)); GW.s.set(g % 60); GW.k.set(S.secRef); GW.r.set(S.ref); GW.sh.set(Math.floor(S.start / 60)); GW.sm.set(S.start % 60); };
+requestAnimationFrame(syncGoalWheels);
+if ("IntersectionObserver" in window) new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) syncGoalWheels(); }).observe($("goal-wheels"));
+if ("IntersectionObserver" in window) new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) syncGoalWheels(); }).observe($("start-wheels"));
+
+/* Seiten unter der ersten Zeile: Zahlen, Karte, Fotos, Sehenswertes */
+const pager = $("pager"), dots = [...document.querySelectorAll("#dots button")];
+let page = clamp(store.get("page", 0), 0, 1);
+const setDots = () => dots.forEach((b, i) => b.setAttribute("aria-selected", String(i === page)));
+pager.addEventListener("scroll", () => { const p = clamp(Math.round(pager.scrollLeft / Math.max(1, pager.clientWidth)), 0, 1); if (p !== page) { page = p; setDots(); store.set("page", page); dirty = true; } }, { passive: true });
+dots.forEach(b => b.addEventListener("click", () => pager.scrollTo({ left: +b.dataset.go * pager.clientWidth, behavior: REDUCED ? "auto" : "smooth" })));
+if ("ResizeObserver" in window) new ResizeObserver(() => { pager.scrollLeft = page * pager.clientWidth; dirty = true; }).observe(pager);
+requestAnimationFrame(() => { pager.scrollLeft = page * pager.clientWidth; setDots(); });
+
+/* Karte: vorab gerenderte OpenStreetMap-Stücke in den Zoomstufen 12 bis 15, Strecke nach Steigung gefärbt, die Karte folgt dem Läufer */
+const RT = D.route, RP = RT.pts.map(([a, b]) => [RT.lat0 + a / 1e5, RT.lon0 + b / 1e5]), RK = RP.map((_, i) => Math.min(i * RT.step, L));
+const merc = (lat, lon, z) => { const n = 256 * 2 ** z, s = Math.sin(lat * Math.PI / 180); return [(lon + 180) / 360 * n, (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * n]; };
+const routeAt = x => { x = clamp(x, 0, L); const i = Math.min(RP.length - 2, Math.floor(x / RT.step)), f = (x - RK[i]) / ((RK[i + 1] - RK[i]) || 1); return [RP[i][0] + (RP[i + 1][0] - RP[i][0]) * f, RP[i][1] + (RP[i + 1][1] - RP[i][1]) * f]; };
+// Zoomstufe der Karte: null = Übersicht (ganze Strecke im Bild, die Karte folgt nicht dem Läufer), sonst Zoom, dem Läufer folgend.
+// Alte Einstellung "mapz": 11 war die Übersicht.
+let mapZ = (() => { const v = store.get("mapz-v2", null); if (v === "ov") return null; if (typeof v === "number" && v >= 8 && v <= 16) return v;
+  const alt = store.get("mapz", 14); return alt <= 11 ? null : clamp(alt, 12, 16); })();
+// Ausdehnung der Strecke in Zoomstufe 0 (Pixel); daraus Mitte und die Zoomstufe, bei der sie in die Karte passt (rechts Platz für die Knöpfe)
+const RB = (() => { const q = RP.map(([a, b]) => merc(a, b, 0)), xs = q.map(p => p[0]), ys = q.map(p => p[1]); return { x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys) }; })();
+const fitZ = (w, h) => Math.log2(Math.min((w - 70) / (RB.x1 - RB.x0), (h - 28) / (RB.y1 - RB.y0)));
+// Stufenleiter: Übersicht, Zwischenstufen bis 12, dann 12 bis 16. Zwischenstufen nur, wo die Übersicht weit weg ist,
+// gleichmäßig verteilt, so dass kein Schritt größer als Faktor 2 ist (New York 1–2, kompakte Strecken meist keine).
+const mapStufen = (w, h) => { const ov = fitZ(w, h), gap = 12 - ov, k = gap > 1 ? Math.ceil(gap) - 1 : 0, zw = [];
+  for (let i = 1; i <= k; i++) zw.push(Math.round((ov + gap * i / (k + 1)) * 100) / 100); return ["ov", ...zw, 12, 13, 14, 15, 16]; };
+const isDark = () => { const m = /^#?([0-9a-f]{6})$/i.exec(COL["--surface"] || ""); if (!m) return false; const v = parseInt(m[1], 16); return (0.299 * (v >> 16) + 0.587 * ((v >> 8) & 255) + 0.114 * (v & 255)) < 110; };
+const imgCache = {};
+const mapImg = name => { const key = "karte-dunkel-" + name + ".jpg"; let im = imgCache[key]; if (!im) { im = new Image(); im.onload = () => { dirty = true; }; im.src = key; imgCache[key] = im; } return im; };
+function drawMap() {
+  const cv = $("map"), { w, h, dpr } = sizeCanvas(cv); if (!w || !h) return; const c = cv.getContext("2d");
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.fillStyle = COL["--bg"]; c.fillRect(0, 0, w, h);
+  const ov = mapZ === null, fz = fitZ(w, h), z = ov ? fz : Math.max(mapZ, fz);   // nie weiter heraus als die Übersicht
+  const lvl = clamp(Math.floor(z), 11, 15), sc = 2 ** (z - lvl), T = D.tiles[lvl], [la, lo] = routeAt(S.pos), [rx, ry] = merc(la, lo, lvl);
+  const [cx, cy] = ov ? [(RB.x0 + RB.x1) / 2 * 2 ** lvl, (RB.y0 + RB.y1) / 2 * 2 ** lvl] : [rx, ry], mx = ov ? (w - 42) / 2 : w / 2;
+  const SX = gx => (gx - cx) * sc + mx, SY = gy => (gy - cy) * sc + h / 2;
+  c.imageSmoothingQuality = "high";
+  for (const [ox, oy, cw, ch, name] of T.chunks) {
+    const x = SX(T.x0 + ox), y = SY(T.y0 + oy), ww = cw * sc, hh = ch * sc;
+    if (x > w || y > h || x + ww < 0 || y + hh < 0) continue;
+    const im = mapImg(name); if (im.complete && im.naturalWidth) c.drawImage(im, x, y, ww, hh);
+  }
+  // Untergrund: dunkel etwas aufhellen (Straßen sonst kaum zu sehen), hell etwas abdunkeln (blendet sonst)
+  c.globalCompositeOperation = isDark() ? "screen" : "multiply"; c.fillStyle = COL["--map-tint"];
+  c.fillRect(0, 0, w, h); c.globalCompositeOperation = "source-over";
+  const g = WIN[S.win].g, P = RP.map(([a, b]) => { const [gx, gy] = merc(a, b, lvl); return [SX(gx), SY(gy)]; });
+  c.lineCap = "round"; c.lineJoin = "round"; c.strokeStyle = COL["--ink"]; c.lineWidth = 7; c.beginPath(); // Rand im Gegenton zur Karte, sonst gehen die flachen grauen Abschnitte unter
+  P.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.stroke();
+  const paths = CLASS_TOK.map(() => new Path2D());
+  for (let i = 0; i < P.length - 1; i++) { const p = paths[cls(valAt(g, (RK[i] + RK[i + 1]) / 2))]; p.moveTo(P[i][0], P[i][1]); p.lineTo(P[i + 1][0], P[i + 1][1]); }
+  c.lineWidth = 4.5; paths.forEach((p, k) => { c.strokeStyle = COL[CLASS_TOK[k]]; c.stroke(p); });
+  c.font = "700 11px " + getComputedStyle(document.documentElement).getPropertyValue("--font-display"); c.textAlign = "center"; c.textBaseline = "middle";
+  for (let km = 5; km <= 40; km += 5) {
+    const [a, b] = routeAt(km * 1000), [gx, gy] = merc(a, b, lvl), x = SX(gx), y = SY(gy);
+    if (x < -12 || y < -12 || x > w + 12 || y > h + 12) continue;
+    c.fillStyle = COL["--surface"]; c.beginPath(); c.arc(x, y, 9, 0, 2 * Math.PI); c.fill(); c.strokeStyle = COL["--edge"] || COL["--rule"]; c.lineWidth = 1; c.stroke();
+    c.fillStyle = COL["--ink"]; c.fillText(String(km), x, y + 0.5);
+  }
+  { // Ziel: kariertes Feld am Streckenende
+    const [a, b] = routeAt(L), [gx, gy] = merc(a, b, lvl), x = Math.round(SX(gx)) - 8, y = Math.round(SY(gy)) - 8;
+    for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { c.fillStyle = COL[(i + j) % 2 ? "--surface" : "--ink"]; c.fillRect(x + i * 4, y + j * 4, 4, 4); }
+    c.strokeStyle = COL["--surface"]; c.lineWidth = 1.5; c.strokeRect(x - 0.75, y - 0.75, 17.5, 17.5);
+  }
+  c.fillStyle = COL["--surface"]; c.beginPath(); c.arc(SX(rx), SY(ry), 8.5, 0, 2 * Math.PI); c.fill();
+  c.fillStyle = COL["--blue"]; c.beginPath(); c.arc(SX(rx), SY(ry), 6, 0, 2 * Math.PI); c.fill();
+}
+const zoomMap = d => {
+  const r = $("map").getBoundingClientRect(), L = mapStufen(r.width, r.height);
+  let i = 0; if (mapZ !== null) { i = 1; for (let k = 2; k < L.length; k++) if (Math.abs(L[k] - mapZ) < Math.abs(L[i] - mapZ)) i = k; }   // nächste Stufe
+  const j = clamp(i + d, 0, L.length - 1); mapZ = j === 0 ? null : L[j]; store.set("mapz-v2", mapZ === null ? "ov" : mapZ); dirty = true;
+};
+$("map-in").addEventListener("click", () => zoomMap(1)); $("map-out").addEventListener("click", () => zoomMap(-1));
+
+/* Zieleinlauf: Zielkarte mit den Werten der ganzen Strecke, dazu Konfetti in den Farben der Steigungsklassen */
+const zielEl = $("ziel"), konf = $("konfetti");
+function zielFeier() {
+  const T = valAt(P.t, L);
+  $("z-sub").textContent = "42,195 km · Ø " + mss(T / (L / 1000)) + " /km";
+  $("z-zeit").textContent = hms(T);
+  $("z-auf").textContent = "↑ " + Math.round(valAt(WIN[S.win].up, L)) + " m";
+  $("z-ab").textContent = "↓ " + Math.round(valAt(WIN[S.win].dn, L)) + " m";
+  const k = Math.round(T - P.p0 * L / 1000), dauer = a => a >= 60 ? mss(a) + " min" : a + " s";
+  $("z-satz").innerHTML = k >= 0 ? "Das Höhenprofil kostet <b>" + dauer(k) + "</b>." : "Das Höhenprofil spart <b>" + dauer(-k) + "</b>.";
+  zielEl.hidden = false; void zielEl.offsetWidth; zielEl.classList.add("an");
+  if (!REDUCED) konfetti();
+}
+zielEl.addEventListener("click", () => { zielEl.classList.remove("an"); setTimeout(() => { if (!zielEl.classList.contains("an")) zielEl.hidden = true; }, 320); });
+function konfetti() {
+  const { w, h, dpr } = sizeCanvas(konf), c = konf.getContext("2d"), farben = ["--g-u1", "--g-u2", "--g-u3", "--blue", "--g-d2", "--ink"].map(k => COL[k]);
+  const teile = Array.from({ length: 150 }, () => ({ x: w * Math.random(), y: -10 - h * 0.7 * Math.random(), vx: (Math.random() - 0.5) * 140, vy: 60 + 180 * Math.random(), r: 6.3 * Math.random(), vr: (Math.random() - 0.5) * 14, s: 6 + 5 * Math.random(), f: farben[Math.floor(Math.random() * farben.length)] }));
+  let t0 = 0;
+  const schritt = t => {
+    const dt = t0 ? Math.min(0.05, (t - t0) / 1000) : 0; t0 = t;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+    if (!zielEl.classList.contains("an")) return;
+    let unterwegs = 0;
+    for (const q of teile) {
+      q.vy = Math.min(q.vy + 300 * dt, 340); q.vx *= 1 - 0.8 * dt; q.x += q.vx * dt; q.y += q.vy * dt; q.r += q.vr * dt;
+      if (q.y < h + 20) unterwegs++;
+      c.save(); c.translate(q.x, q.y); c.rotate(q.r); c.scale(1, Math.cos(q.r * 1.7)); c.fillStyle = q.f; c.fillRect(-q.s / 2, -q.s / 4, q.s, q.s / 2); c.restore();
+    }
+    if (unterwegs) requestAnimationFrame(schritt);
+  };
+  requestAnimationFrame(schritt);
+}
+
+/* Kartengröße in drei Stufen (Höhe der Anzeige-Seiten, 0 = wie bisher); das Profil behält mindestens 120 px */
+const GR = [0, 230, 300], GR_MINPROF = 120;
+let gr = clamp(store.get("gr", 1), 0, GR.length - 1);
+function applyGr() {
+  if (!document.body.classList.contains("run")) return;
+  pager.style.removeProperty("--pg"); document.body.dataset.gr = 0;
+  let h = GR[gr];
+  if (h) { const nat = pager.offsetHeight; h = Math.max(nat, Math.min(h, nat + main.getBoundingClientRect().height - GR_MINPROF)); h = Math.round(h); pager.style.setProperty("--pg", h + "px"); }
+  document.body.dataset.gr = h >= 290 ? 2 : h >= 220 ? 1 : 0;
+  dirty = true;
+}
+// auf kleinen Bildschirmen landen große Stufen auf derselben Höhe: die überspringen, damit jeder Tipp etwas ändert
+$("map-size").addEventListener("click", () => {
+  const vorher = pager.style.getPropertyValue("--pg");
+  do { gr = (gr + 1) % GR.length; applyGr(); } while (gr && pager.style.getPropertyValue("--pg") === vorher);
+  store.set("gr", gr);
+});
+new MutationObserver(applyGr).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+window.addEventListener("resize", applyGr);
+
+function drawPage() { if (page === 1) drawMap(); }
+
+/* Theme-Wechsel */
+const retheme = () => { readColors(); renderLegend(); renderRamps(); renderSplits(); dirty = true; };
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", retheme);
+new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+window.addEventListener("resize", () => { dirty = true; });
+
+/* Texte zur Datengrundlage */
+// Tunnel einzeln mit Länge, Unterführungen, Brücken und Rampen gesammelt
+$("bridges").textContent = [["Tunnel", "Tunnel"], ["Unterführung", "Unterführungen"], ["Brücke", "Brücken"], ["Rampe", "Rampen"]].map(([kd, pl]) => {
+  const xs = D.bridges.filter(b => b.kind === kd); if (!xs.length) return "";
+  if (kd === "Tunnel") return xs.map(b => b.name + " (km " + nf(b.a / 1000, 2) + "–" + nf(b.b / 1000, 2) + ")").join("; ");
+  return xs.length + " " + (xs.length === 1 ? kd : pl) + ": " + xs.map(b => b.name + " (km " + nf(b.a / 1000, 1) + ")").join(", ");
+}).filter(Boolean).join("; ");
+$("img-note").innerHTML = D.imgNote;
+
+document.body.classList.add("run");
+readColors(); renderLegend(); recompute(); setPos(S.pos); requestAnimationFrame(frame);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { applyGr(); dirty = true; });
+</script>
+<script>
+if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
+</script>
+<script>
+const APP_VERSION = '1.0';
+/* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
+(() => {
+  const updateEl = document.getElementById("update");
+  let ausTimer = null, infoTimer = null, checking = false, announced = null;
+  const einblenden = () => { clearTimeout(ausTimer); updateEl.hidden = false; void updateEl.offsetWidth; updateEl.classList.add("an"); };
+  const ausblenden = () => { updateEl.classList.remove("an"); clearTimeout(ausTimer); ausTimer = setTimeout(() => { if (!updateEl.classList.contains("an")) updateEl.hidden = true; }, 380); };
+  const showInfo = (text, sekunden = 2) => {
+    updateEl.className = "update info"; document.getElementById("update-text").textContent = text;
+    document.getElementById("update-go").hidden = true; einblenden(); clearTimeout(infoTimer);
+    if (sekunden) infoTimer = setTimeout(() => { if (updateEl.classList.contains("info")) ausblenden(); }, sekunden * 1000);
+  };
+  window.zeigeInfo = showInfo;   // auch für „Link kopiert“
+  const zeigeBanner = text => { updateEl.className = "update"; document.getElementById("update-text").textContent = text; document.getElementById("update-go").hidden = false; einblenden(); };
+  // Stelle für den Neustart nach dem Update sichern (nur diese Sitzung); Einstellungen liegen schon im Speicher
+  const speichereAlles = () => { try { if (typeof S !== "undefined") sessionStorage.setItem("mex-pos", JSON.stringify(Math.round(S.pos))); } catch (_) {} };
+  updateEl.addEventListener("click", () => { if (updateEl.classList.contains("info")) ausblenden(); });
+  document.getElementById("update-go").addEventListener("click", () => { speichereAlles(); location.reload(); });
+
+  async function checkForUpdate(manual = false) {
+    if (checking) return;
+    if (!manual && document.visibilityState !== "visible") return;
+    if (!navigator.onLine) { if (manual) showInfo("Offline – Prüfung nicht möglich"); return; }
+    checking = true;
+    try {
+      const res = await fetch("version.json", { cache: "no-store" });
+      if (!res.ok) return;
+      const v = (await res.json()).version;
+      if (v && v !== APP_VERSION) announceUpdate(v, manual);
+      else if (manual) showInfo("Version " + APP_VERSION + " ist aktuell", 4);
+    } catch (_) { if (manual) showInfo("Prüfung fehlgeschlagen"); }
+    finally { checking = false; }
+  }
+  function announceUpdate(v, manual) {
+    if (announced === v && !manual) return;
+    announced = v; speichereAlles();
+    zeigeBanner("Neue Version " + v + " ist da");
+    // keine Eingabefelder; nur nicht mitten im Abspielen neu laden
+    const laeuft = typeof S !== "undefined" && S.playing;
+    if (manual || !laeuft) setTimeout(() => { speichereAlles(); location.reload(); }, manual ? 1500 : 3000);
+  }
+  window.addEventListener("pageshow", () => setTimeout(checkForUpdate, 800));
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") checkForUpdate(); });
+  document.querySelectorAll(".ver").forEach(b => { b.textContent = "v" + APP_VERSION; b.addEventListener("click", () => checkForUpdate(true)); });
+
+  // Nach einem Update einmal sagen, welche Fassung jetzt läuft (beim allerersten Start still)
+  let vorher = null;
+  try { vorher = localStorage.getItem("mex.gesehen"); } catch (_) {}
+  if (vorher !== APP_VERSION) {
+    try { localStorage.setItem("mex.gesehen", APP_VERSION); } catch (_) {}
+    if (vorher) setTimeout(() => showInfo("Version " + APP_VERSION + " ist geladen", 4), 400);
+  }
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+})();
+</script>
+</body>
+</html>
