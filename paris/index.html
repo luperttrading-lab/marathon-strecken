@@ -1048,7 +1048,7 @@ function drawOverview() {
 
 // Pace je Steigung (seit Hamburg 1.41, U-Kurve 1.44, flacher Auslauf und ohne Laborlinie seit 1.59) bei den Einstellungen,
 // die sie verändern; senkrechte Achse bei 0 %, der Punkt „hier“ ist die Steigung an der aktuellen Stelle. Antippen oder
-// waagerecht Wischen setzt eine Markierung mit Steigung und Pace (PK.mark, in 0,5-%-Schritten).
+// waagerecht Wischen setzt eine Markierung mit Steigung und Pace (PK.mark, stufenlos; Tippen daneben nimmt sie weg).
 const pk = $("pace-chart"), pkctx = pk.getContext("2d");
 const PK = { G0: -15, G1: 10, L0: 40, R0: 18, T0: 8, B0: 20, mark: null, zieh: false };
 function drawPaceChart() {
@@ -1075,26 +1075,29 @@ function drawPaceChart() {
   // Steigung an der aktuellen Stelle
   const gh = clamp(valAt(WIN[S.win].g, S.pos), G0, G1), xh = X(gh), yh = Y(app(gh));
   c.fillStyle = COL["--ink"]; c.strokeStyle = COL["--surface"]; c.lineWidth = 2; c.beginPath(); c.arc(xh, yh, 4.5, 0, 2 * Math.PI); c.fill(); c.stroke();
-  c.fillStyle = COL["--ink"]; c.font = "600 11px " + font; c.textAlign = xh > w - R0 - 30 ? "right" : "left"; c.textBaseline = "bottom";
-  c.fillText("hier", xh + (c.textAlign === "left" ? 7 : -7), yh - 4);
+  c.fillStyle = COL["--ink"]; c.font = "600 11px " + font; c.textAlign = xh > w - R0 - 80 ? "right" : "left"; c.textBaseline = "bottom";
+  c.fillText("hier · km " + nf(S.pos / 1000, 1), xh + (c.textAlign === "left" ? 7 : -7), yh - 4);
   // Markierung beim Antippen: Strich, Punkt und oben Steigung · Pace (Abweichung)
   if (PK.mark !== null) {
     const gm = clamp(PK.mark, G0, G1), xm = Math.round(X(gm)) + 0.5, pm = app(gm), ym = Y(pm);
     c.strokeStyle = COL["--ink"]; c.lineWidth = 1; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xm, T0); c.lineTo(xm, h - B0); c.stroke();
     const yq = Math.round(ym) + 0.5; c.beginPath(); c.moveTo(L0, yq); c.lineTo(xm, yq); c.stroke(); c.setLineDash([]);   // waagerecht zur Pace-Achse
     c.fillStyle = COL["--blue"]; c.strokeStyle = COL["--surface"]; c.lineWidth = 2; c.beginPath(); c.arc(xm, ym, 5, 0, 2 * Math.PI); c.fill(); c.stroke();
-    const txt = (gm > 0 ? "+" : gm < 0 ? "−" : "±") + nf(Math.abs(gm), gm % 1 ? 1 : 0) + " %  ·  " + mss(pm) + " /km  (" + secs(pm - p0) + ")";
-    c.font = "600 12px " + font; const tw = c.measureText(txt).width + 12, bx = clamp(xm - tw / 2, L0, w - R0 - tw);
+    // feste Kästchenbreite und Ziffern in festen Zellen (tabText), damit beim Wischen nichts wackelt
+    const gz = Math.round(gm * 10) / 10, txt = (gz > 0 ? "+" : gz < 0 ? "−" : "±") + nf(Math.abs(gz), 1) + " %  ·  " + mss(pm) + " /km  (" + secs(pm - p0) + ")";
+    c.font = "600 12px " + font; const tw = tabBreite(c, "−00,0 %  ·  0:00 /km  (−000 s)") + 12, bx = clamp(xm - tw / 2, L0, w - R0 - tw);
     c.fillStyle = COL["--surface"]; c.strokeStyle = COL["--ink"]; c.lineWidth = 1; c.beginPath(); if (c.roundRect) c.roundRect(bx, T0 + 2, tw, 20, 5); else c.rect(bx, T0 + 2, tw, 20); c.fill(); c.stroke();
-    c.fillStyle = COL["--ink"]; c.textAlign = "left"; c.textBaseline = "middle"; c.fillText(txt, bx + 6, T0 + 12);
+    c.fillStyle = COL["--ink"]; c.textBaseline = "middle"; tabText(c, txt, bx + 6, T0 + 12, "left");
   }
 }
 // Antippen setzt die Markierung, waagerechtes Wischen zieht sie mit; senkrecht scrollt die Seite weiter (touch-action: pan-y)
 const pkSetze = e => { const r = pk.getBoundingClientRect(), g = PK.G0 + (e.clientX - r.left - PK.L0) / (r.width - PK.L0 - PK.R0) * (PK.G1 - PK.G0);
-  PK.mark = clamp(Math.round(g * 2) / 2, PK.G0, PK.G1); dirty = true; };
+  PK.mark = clamp(g, PK.G0, PK.G1); dirty = true; };
 pk.addEventListener("pointerdown", e => { PK.zieh = true; pkSetze(e); });
 pk.addEventListener("pointermove", e => { if (PK.zieh) pkSetze(e); });
 for (const ev of ["pointerup", "pointercancel", "pointerleave"]) pk.addEventListener(ev, () => { PK.zieh = false; });
+// Tippen außerhalb des Diagramms nimmt die Markierung weg (click, damit Scrollen sie stehen lässt)
+document.addEventListener("click", e => { if (PK.mark !== null && e.target !== pk) { PK.mark = null; dirty = true; } });
 // Text zum Diagramm: Zahlen für die eingestellte Pace und wie viel der Strecke steiler als UNSICHER bergab geht
 function paceChartNote() {
   const p0 = P.p0, at = g => paceFaktor(g / 100) * p0, g = WIN[S.win].g, B = BERGAB, pc = v => nf(v, 0).replace("-", "−") + " %";
@@ -1102,7 +1105,7 @@ function paceChartNote() {
   for (let i = 1; i < N; i++) if ((g[i - 1] + g[i]) / 2 < UNSICHER) steil += STEP;
   const fenster = "Messfenster " + (S.win === 1000 ? "1 km" : S.win + " m");
   $("pk-out").textContent = "flach " + mss(p0) + " /km";
-  $("pk-note").textContent = "Antippen zeigt die Pace bei jeder Steigung. Bergauf: +5 % "
+  $("pk-note").textContent = "Antippen zeigt die Pace bei jeder Steigung, Tippen daneben nimmt die Markierung weg. Der weiße Punkt ist die Steigung an deiner aktuellen Stelle auf der Strecke. Bergauf: +5 % "
     + mss(at(5)) + " /km (" + secs(at(5) - p0) + "), +10 % " + mss(at(10)) + " /km (" + secs(at(10) - p0) + "). "
     + "Bergab: −4 % " + mss(at(-4)) + " /km (" + secs(at(-4) - p0) + "), am schnellsten ab " + pc(B.xm) + " mit " + mss(at(B.xm)) + " /km (" + secs(at(B.xm) - p0) + "). "
     + "Steiler kein weiterer Gewinn: Im Labor sinkt der Energieverbrauch bis etwa −20 % weiter und erreicht erst bei etwa −40 % wieder den Wert im Flachen, im Rennen muss man aber bremsen. "
@@ -1743,7 +1746,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.21';
+const APP_VERSION = '1.22';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
