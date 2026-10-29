@@ -656,6 +656,8 @@ const nf = (v, d) => v.toLocaleString("de-DE", { minimumFractionDigits: d, maxim
 const sgn = (v, d) => { const r = Number(v.toFixed(d)); return (r > 0 ? "+" : r < 0 ? "−" : "±") + nf(Math.abs(r), d); };
 const hms = s => { s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h + ":" + String(m).padStart(2, "0") + ":" + String(x).padStart(2, "0"); };
 const mss = s => { s = Math.round(s); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+// m:ss,hh für die Pace im Flachen (seit 1.63): ein fester Wert, der flache Marathon steht sekundengenau, 1 s auf 42,195 km = 0,024 s/km
+const mss2 = s => { const c = Math.round(s * 100), m = Math.floor(c / 6000), r = c - m * 6000; return m + ":" + String(Math.floor(r / 100)).padStart(2, "0") + "," + String(r % 100).padStart(2, "0"); };
 const secs = s => { const r = Math.round(s); return (r > 0 ? "+" : r < 0 ? "−" : "±") + Math.abs(r) + " s"; };
 
 /* Farbklassen der Steigung in % (fest seit Hamburg 1.35, davor Testvarianten). Gespiegelte Grenzen ±0,5 / 1,5 / 3 / 4,5 /
@@ -1077,7 +1079,7 @@ function drawPaceChart() {
   const xh = X(0), yh = Y(p0);
   c.fillStyle = COL["--ink"]; c.strokeStyle = COL["--surface"]; c.lineWidth = 2; c.beginPath(); c.arc(xh, yh, 4.5, 0, 2 * Math.PI); c.fill(); c.stroke();
   c.fillStyle = COL["--ink"]; c.font = "600 11px " + font; c.textAlign = "right"; c.textBaseline = "bottom";
-  c.fillText("0 % · " + mss(p0) + " /km", xh - 7, yh - 5);
+  c.fillText("0 % · " + mss2(p0) + " /km", xh - 7, yh - 5);
   // Markierung beim Antippen: Strich, Punkt und oben Steigung · Pace (Abweichung)
   if (PK.mark !== null) {
     const gm = clamp(PK.mark, G0, G1), xm = Math.round(X(gm)) + 0.5, pm = app(gm), ym = Y(pm);
@@ -1105,7 +1107,7 @@ function paceChartNote() {
   let steil = 0;
   for (let i = 1; i < N; i++) if ((g[i - 1] + g[i]) / 2 < UNSICHER) steil += STEP;
   const fenster = "Messfenster " + (S.win === 1000 ? "1 km" : S.win + " m");
-  $("pk-out").textContent = "flach " + mss(p0) + " /km";
+  $("pk-out").textContent = "flach " + mss2(p0) + " /km";
   $("pk-note").textContent = "Antippen zeigt die Pace bei jeder Steigung, Tippen daneben nimmt die Markierung weg. Der weiße Punkt ist die Pace im Flachen. Bergauf: +5 % "
     + mss(at(5)) + " /km (" + secs(at(5) - p0) + "), +10 % " + mss(at(10)) + " /km (" + secs(at(10) - p0) + "). "
     + "Bergab: −4 % " + mss(at(-4)) + " /km (" + secs(at(-4) - p0) + "), am schnellsten ab " + pc(B.xm) + " mit " + mss(at(B.xm)) + " /km (" + secs(at(B.xm) - p0) + "). "
@@ -1307,14 +1309,14 @@ function renderSettings() {
   for (const b of document.querySelectorAll("[data-split]")) b.setAttribute("aria-pressed", b.dataset.split === S.split);
   $("goal-out").textContent = hms(S.goal);
   const flach = P.p0 * 42.195; // dieselbe Anstrengung auf einem flachen Marathon
-  $("goal-note").textContent = "Gleichmäßige Anstrengung über die ganze Strecke: im Flachen " + mss(P.p0) + " /km. Insgesamt kosten die Steigungen " + secs(S.goal - P.p0 * L / 1000) + " gegenüber einer flachen Strecke.";
+  $("goal-note").textContent = "Gleichmäßige Anstrengung über die ganze Strecke: im Flachen " + mss2(P.p0) + " /km. Insgesamt kosten die Steigungen " + secs(S.goal - P.p0 * L / 1000) + " gegenüber einer flachen Strecke.";
   // Bahnzeiten ohne Höhenmeter (seit 1.55): Faustregel Marathon = 10 km × 4,667, das ist Riegel mit Exponent 1,07
   const BAHN = 4.667, k = Math.log(BAHN) / Math.log(42.195 / 10), t10 = flach / BAHN, t5 = t10 * Math.pow(0.5, k);
   $("bahn-m").textContent = hms(flach); $("bahn-21").textContent = hms(flach / Math.pow(2, k)); $("bahn-10").textContent = mss(t10); $("bahn-5").textContent = mss(t5);
   const perHm = P.p0 * (S.secHm / 0.24) / 1000;
   $("hm-out").textContent = nf(S.secRef, 1) + " s";
   $("hm-note").textContent = "Standard: 1,0 s bei 4:00 /km (Vierer-Schnitt). Wer seinen Wert für eine andere Pace kennt, stellt sie rechts ein. "
-    + (S.ref !== 240 ? "Deine Angabe entspricht " + nf(S.secHm, 2) + " s bei 4:00 /km. " : "") + "Das entspricht " + nf(S.secHm / 0.24, 1) + " m flacher Strecke je Höhenmeter. Bei deiner Pace (" + mss(P.p0) + " /km im Flachen) kostet 1 Höhenmeter bergauf " + nf(perHm, 1) + " s und bringt bergab " + nf(perHm * S.down, 1) + " s. Zum Vergleich: Das Labormodell von Minetti entspricht 1,3 s bei 4:00 /km. Steilere Anstiege kosten wie im Labormodell überproportional mehr (Diagramm unten).";
+    + (S.ref !== 240 ? "Deine Angabe entspricht " + nf(S.secHm, 2) + " s bei 4:00 /km. " : "") + "Das entspricht " + nf(S.secHm / 0.24, 1) + " m flacher Strecke je Höhenmeter. Bei deiner Pace (" + mss2(P.p0) + " /km im Flachen) kostet 1 Höhenmeter bergauf " + nf(perHm, 1) + " s und bringt bergab " + nf(perHm * S.down, 1) + " s. Zum Vergleich: Das Labormodell von Minetti entspricht 1,3 s bei 4:00 /km. Steilere Anstiege kosten wie im Labormodell überproportional mehr (Diagramm unten).";
   paceChartNote();
   const dauer = S.goal / S.speed;
   $("speed-note").textContent = "Mit ×" + S.speed + " dauert der ganze Lauf " + (dauer >= 3600 ? hms(dauer) + " h" : mss(dauer) + " min") + (S.speed === 1 ? " (Echtzeit; läuft nur bei eingeschaltetem Bildschirm, zum Mitlaufen am Renntag „Live“ nehmen)" : "") + ". Der Läufer wird bergauf langsamer, wie im Pace-Modell. Einstellen im Vollbild mit dem rechten Drehrad über dem Profil.";
@@ -1513,7 +1515,7 @@ function paceBand() {
   c.textBaseline = "alphabetic"; c.textAlign = "center";
   c.fillStyle = "#6a9cff"; c.font = "600 40px " + fd; c.fillText(name.toUpperCase(), W / 2, 760);
   c.fillStyle = "#ffffff"; c.font = "700 76px " + fd; c.fillText("Ziel " + hms(S.goal), W / 2, 845);
-  c.fillStyle = "#93a3b0"; c.font = "500 36px " + fd; c.fillText("Halbmarathon " + hms(valAt(P.t, L / 2)) + "  ·  im Flachen " + mss(P.p0) + " /km", W / 2, 900);
+  c.fillStyle = "#93a3b0"; c.font = "500 36px " + fd; c.fillText("Halbmarathon " + hms(valAt(P.t, L / 2)) + "  ·  im Flachen " + mss2(P.p0) + " /km", W / 2, 900);
   const rows = []; for (let k = 1; k <= 42; k++) rows.push([String(k), k * 1000]); rows.push(["42,2", L]);
   const top = 960, rh = 60, half = 22;
   rows.forEach(([lab, x], i) => {
@@ -1747,7 +1749,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.20';
+const APP_VERSION = '1.21';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
