@@ -551,7 +551,7 @@ body.run .close svg { width: 20px; height: 20px; }
     <div class="row band-row"><button type="button" id="plan-live">Live nach Plan</button><span class="mini-note">Im Vollbild läuft der Punkt dann mit der Uhr: so sehen Zuschauer, wo du laut Plan gerade bist.</span></div>
   </section>
 
-  <section class="panel settings klapp" id="einstellungen" aria-label="Einstellungen" data-k="settings" data-t="Einstellungen" data-h="Zielzeit, Messfenster, Kosten je Höhenmeter, Bergab, Pace-Modell, Anzeige">
+  <section class="panel settings klapp" id="einstellungen" aria-label="Einstellungen" data-k="settings" data-t="Einstellungen" data-h="Zielzeit, Messfenster, Kosten je Höhenmeter, Pace-Modell, Anzeige">
     <div class="setting">
       <div class="head"><span class="lbl">Messfenster der Steigung</span>
         <div class="seg" role="group" aria-label="Messfenster">
@@ -578,16 +578,8 @@ body.run .close svg { width: 20px; height: 20px; }
       <span class="note" id="hm-note"></span>
     </div>
     <div class="setting">
-      <div class="head"><span class="lbl">Bergab-Gewinn anrechnen</span>
-        <div class="seg" role="group" aria-label="Bergab-Gewinn">
-          <button type="button" id="d-100" data-down="1">voll</button>
-          <button type="button" id="d-50" data-down="0.5">halb</button>
-          <button type="button" id="d-0" data-down="0">gar nicht</button>
-        </div></div>
-      <span class="note">Pace-Modell: bergauf die Energiekosten des Laufens nach Steigung (Minetti u. a. 2002). Bergab bei „halb“ anfangs die Hälfte dessen, was dieselbe Steigung bergauf kostet, am schnellsten bei −8 %, steiler wieder langsamer, wie es Felddaten von Läufern zeigen. „Voll“ verdoppelt den Gewinn, „gar nicht“ rechnet bergab wie flach. Voreinstellung: halb.</span>
-    </div>
-    <div class="setting">
       <div class="head"><span class="lbl">So rechnet das Pace-Modell</span><span class="note" id="pk-out"></span></div>
+      <span class="note">Bergauf die Energiekosten des Laufens nach Steigung (Minetti u. a. 2002). Bergab bringt ein Höhenmeter die Hälfte dessen, was er bergauf kostet, weil man bergab nicht voll ins Rollen kommt. Steiler als −8 % kein weiterer Gewinn, weil man bremsen muss.</span>
       <canvas id="pace-chart" aria-label="Diagramm: Pace je Steigung in der App und im Labormodell"></canvas>
       <span class="note" id="pk-note"></span>
     </div>
@@ -724,15 +716,16 @@ let P = null;
 // Höhenmeter (Minetti: 19,5/3,6 = 5,42 flache Meter je Höhenmeter). Bergab seit Hamburg 1.44 eine U-Kurve, abgestimmt im
 // Pace-Kurven-Simulator an Felddaten aus 20 belgischen Trailrennen (Jidovtseff und De Cock 2026) und Stravas
 // Herzfrequenzmodell: bei „halb“ anfangs die halbe Bergauf-Steigung, am schnellsten bei BERGAB.xm % (BERGAB.gm % schneller
-// als flach, kubisch), bei BERGAB.x0 % wieder so schnell wie flach, steiler immer langsamer (Parabel und Kubik zu gleichen
-// Teilen, BERGAB.p). „voll“ verdoppelt die Abweichung vom Flachen, „gar nicht“ rechnet bergab wie flach. Auf ±BERGAB.w %
+// als flach, kubisch), steiler kein weiterer Gewinn (seit 1.58 auf Wunsch des Nutzers statt des U-Asts, der bei −16 %
+// wieder flach erreichte: Labor und Feld liegen dort weit auseinander, auf Straßenmarathons kommt es nicht vor).
+// Bergab fest „halb“ (S.down = 0,5, Schalter seit 1.58 entfernt). Auf ±BERGAB.w %
 // rundet ein Übergang den Knick bei 0 ab (Steigung dort: Mittel beider Seiten). Alles skaliert mit den Kosten je Höhenmeter.
-const BERGAB = { r: 0.5, w: 1, xm: -8, gm: 12, x0: -16, p: 0.5 }, UNSICHER = -8;   // steiler als UNSICHER %: Quellen weichen ab
+const BERGAB = { r: 0.5, w: 1, xm: -8, gm: 12 }, UNSICHER = -8;   // steiler als UNSICHER %: kein weiterer Gewinn
 const pfAuf = x => S.secHm / 0.24 / (19.5 / 3.6) * (minetti(x / 100) / 3.6 - 1);       // x in % (≥ 0), Faktor − 1
 function pfAb(x) {                                                                       // x in % (< 0), Faktor − 1 bei „halb“
-  const B = BERGAB, k = S.secHm, s0 = B.r * k / 24, tief = B.gm / 100 * k, h = -B.xm, L = B.xm - B.x0;
+  const B = BERGAB, k = S.secHm, s0 = B.r * k / 24, tief = B.gm / 100 * k, h = -B.xm;
   if (x >= B.xm) { const t = (x - B.xm) / h; return -tief * (2 * t ** 3 - 3 * t ** 2 + 1) + s0 * h * (t ** 3 - t ** 2); }
-  const u = (B.xm - x) / L; return -tief + tief * ((1 - B.p) * u * u + B.p * u ** 3);
+  return -tief;   // steiler: kein weiterer Gewinn, Übergang bei xm ohne Knick (Steigung dort 0)
 }
 function paceFaktor(gi) {
   const x = gi * 100, d = S.down * 2, w = d ? BERGAB.w : 0, unten = xx => d * pfAb(xx);
@@ -814,7 +807,7 @@ const ROADS = (() => {
 const store = { get(k, d) { try { const v = localStorage.getItem("oem-" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem("oem-" + k, JSON.stringify(v)); } catch (e) {} } };
 // Jeder Start vom Home-Bildschirm beginnt bei km 0. Nur der Neustart nach einem Update behält die Stelle (einmalig, sessionStorage)
 const posNachUpdate = (() => { try { const v = sessionStorage.getItem("oem-pos"); sessionStorage.removeItem("oem-pos"); return v === null ? 0 : (+v || 0); } catch (_) { return 0; } })();
-const S = { pos: posNachUpdate, start: clamp(Math.round(store.get("start", D.start)) || D.start, 0, 1439), live: false, win: store.get("win", 200), zoom: store.get("zoom", 5000), goal: store.get("goal-v2", null), down: store.get("down-v2", 0.5), speed: store.get("speed", 200), vp: store.get("vp", false), relay: store.get("relay", false), secRef: store.get("sechm", 1.0), ref: store.get("sechm-pace", 240), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
+const S = { pos: posNachUpdate, start: clamp(Math.round(store.get("start", D.start)) || D.start, 0, 1439), live: false, win: store.get("win", 200), zoom: store.get("zoom", 5000), goal: store.get("goal-v2", null), down: 0.5, speed: store.get("speed", 200), vp: store.get("vp", false), relay: store.get("relay", false), secRef: store.get("sechm", 1.0), ref: store.get("sechm-pace", 240), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
 if (![50, 100, 200, 1000].includes(S.win)) S.win = 200;
 // Kosten je Höhenmeter: eingegeben bei der Bezugs-Pace S.ref (Standard 4:00 /km), gerechnet wird intern mit S.secHm bei 4:00 /km
 if (!(S.ref >= 180 && S.ref <= 420)) S.ref = 240;
@@ -1073,7 +1066,7 @@ function drawPaceChart() {
   for (let v = Math.ceil(y0 / ys) * ys; v <= y1; v += ys) { const y = Math.round(Y(v)) + 0.5; c.beginPath(); c.moveTo(L0, y); c.lineTo(w - R0, y); c.stroke(); c.fillText(mss(v), L0 - 6, y); }
   c.textAlign = "center"; c.textBaseline = "top";
   for (let g = G0; g <= G1; g += 5) { const x = Math.round(X(g)) + 0.5; c.beginPath(); c.moveTo(x, T0); c.lineTo(x, h - B0); c.stroke(); c.fillText((g > 0 ? "+" : g < 0 ? "−" : "") + Math.abs(g) + " %", x, h - B0 + 5); }
-  c.textAlign = "left"; c.textBaseline = "top"; c.fillText("steiler als", X(G0) + 5, T0 + 4); c.fillText(nf(UNSICHER, 0).replace("-", "−") + " %:", X(G0) + 5, T0 + 17); c.fillText("unsicher", X(G0) + 5, T0 + 30);
+  c.textAlign = "left"; c.textBaseline = "top"; c.fillText("steiler als", X(G0) + 5, T0 + 4); c.fillText(nf(UNSICHER, 0).replace("-", "−") + " %:", X(G0) + 5, T0 + 17); c.fillText("kein Gewinn", X(G0) + 5, T0 + 30); c.fillText("mehr", X(G0) + 5, T0 + 43);
   const kurve = (f, farbe, breite, strich) => { c.strokeStyle = farbe; c.lineWidth = breite; c.setLineDash(strich); c.lineJoin = "round"; c.beginPath();
     gs.forEach((g, k) => k ? c.lineTo(X(g), Y(f(g))) : c.moveTo(X(g), Y(f(g)))); c.stroke(); c.setLineDash([]); };
   c.save(); c.beginPath(); c.rect(L0, T0, w - L0 - R0, h - T0 - B0); c.clip();
@@ -1097,12 +1090,10 @@ function paceChartNote() {
   $("pk-out").textContent = "flach " + mss(p0) + " /km";
   $("pk-note").textContent = "Durchgezogen die App mit deinen Einstellungen, gestrichelt das Labormodell (Minetti u. a. 2002, unverändert). Bergauf: +5 % "
     + mss(at(5)) + " /km (" + secs(at(5) - p0) + "), +10 % " + mss(at(10)) + " /km (" + secs(at(10) - p0) + "). "
-    + (S.down ? "Bergab" + (S.down === 1 ? " mit doppeltem Gewinn" : "") + ": −4 % " + mss(at(-4)) + " /km (" + secs(at(-4) - p0) + "), am schnellsten bei " + pc(B.xm) + " mit "
-      + mss(at(B.xm)) + " /km (" + secs(at(B.xm) - p0) + "), bei " + pc(B.x0) + " wieder so schnell wie flach, steiler langsamer (−20 %: " + mss(at(-20)) + " /km). "
-      + "Steil bergab muss man bremsen; so zeigen es Felddaten aus 20 belgischen Trailrennen (Jidovtseff und De Cock 2026) und Stravas Herzfrequenzmodell, das Labor misst nur den Energieverbrauch. "
-      + "Steiler als " + pc(UNSICHER) + " liegen diese Quellen auseinander, dort ist die Umrechnung unsicher (grau). "
-      + (steil >= 50 ? "Auf dieser Strecke sind " + nf(steil / 1000, steil < 1000 ? 2 : 1) + " km so steil (" + fenster + ")." : "Auf dieser Strecke ist kein Stück so steil (" + fenster + ").")
-      : "Bergab rechnet die App wie flach.");
+    + "Bergab: −4 % " + mss(at(-4)) + " /km (" + secs(at(-4) - p0) + "), am schnellsten ab " + pc(B.xm) + " mit " + mss(at(B.xm)) + " /km (" + secs(at(B.xm) - p0) + "). "
+    + "Steiler kein weiterer Gewinn (grau): Im Labor sinkt der Energieverbrauch bis etwa −20 % weiter und erreicht erst bei etwa −40 % wieder den Wert im Flachen, im Rennen muss man aber bremsen. "
+    + "Felddaten aus 20 belgischen Trailrennen (Jidovtseff und De Cock 2026) zeigen das schnellste Tempo um −8 %. "
+    + (steil >= 50 ? "Auf dieser Strecke sind " + nf(steil / 1000, steil < 1000 ? 2 : 1) + " km so steil (" + fenster + ")." : "Auf dieser Strecke ist kein Stück so steil (" + fenster + ").");
 }
 
 // Pfeile für die Kennzahlen (viewBox 10 × 16, Strich in Textfarbe)
@@ -1251,7 +1242,7 @@ function drawSpark(cv, a, b, base, span) {
 }
 function renderSplits() {
   const W = WIN[S.win], segs = splitSegs(), rows = [];
-  $("split-note").textContent = "Zeiten bei gleichmäßiger Anstrengung für " + hms(S.goal) + ", " + nf(S.secRef, 1) + " s je Höhenmeter bei " + mss(S.ref) + " /km an sanften Anstiegen, an steilen mehr (8 %: " + nf(kostHm(0.08) * S.ref / 240, 1) + " s), Bergab-Gewinn " + (S.down === 1 ? "voll" : S.down === 0.5 ? "halb" : "nicht") + " angerechnet, Zeiten mit 100 m Messfenster, damit kurze Wellen mitkosten. Höhenmeter und Steigung über " + (S.win === 1000 ? "1 km" : S.win + " m") + " gemessen. ± = Mehr- oder Minderzeit durch die Steigung gegenüber flach. Profile mit gemeinsamem Höhenmaßstab. Antippen springt hin.";
+  $("split-note").textContent = "Zeiten bei gleichmäßiger Anstrengung für " + hms(S.goal) + ", " + nf(S.secRef, 1) + " s je Höhenmeter bei " + mss(S.ref) + " /km an sanften Anstiegen, an steilen mehr (8 %: " + nf(kostHm(0.08) * S.ref / 240, 1) + " s), bergab die Hälfte, Zeiten mit 100 m Messfenster, damit kurze Wellen mitkosten. Höhenmeter und Steigung über " + (S.win === 1000 ? "1 km" : S.win + " m") + " gemessen. ± = Mehr- oder Minderzeit durch die Steigung gegenüber flach. Profile mit gemeinsamem Höhenmaßstab. Antippen springt hin.";
   let span = 6;
   for (const [a, b, lab] of segs) {
     let mn = Infinity, mx = -Infinity;
@@ -1288,7 +1279,6 @@ function renderLegend() {
 function renderSettings() {
   for (const b of document.querySelectorAll("[data-zoom]")) b.setAttribute("aria-pressed", +b.dataset.zoom === S.zoom);
   for (const b of document.querySelectorAll("[data-win]")) b.setAttribute("aria-pressed", +b.dataset.win === S.win);
-  for (const b of document.querySelectorAll("[data-down]")) b.setAttribute("aria-pressed", +b.dataset.down === S.down);
   for (const b of document.querySelectorAll("[data-speed]")) b.setAttribute("aria-pressed", +b.dataset.speed === S.speed);
   for (const b of document.querySelectorAll("[data-dir]")) b.setAttribute("aria-pressed", b.dataset.dir === S.dir);
   for (const b of document.querySelectorAll("[data-sort]")) b.setAttribute("aria-pressed", b.dataset.sort === S.sort);
@@ -1406,7 +1396,6 @@ $("b-0").addEventListener("click", () => { stop(); setPos(0); });
 /* Einstellungen */
 document.querySelectorAll("[data-zoom]").forEach(b => b.addEventListener("click", () => { S.zoom = +b.dataset.zoom; store.set("zoom", S.zoom); renderSettings(); dirty = true; }));
 document.querySelectorAll("[data-win]").forEach(b => b.addEventListener("click", () => { S.win = +b.dataset.win; store.set("win", S.win); recompute(); }));
-document.querySelectorAll("[data-down]").forEach(b => b.addEventListener("click", () => { S.down = +b.dataset.down; store.set("down-v2", S.down); recompute(); }));
 document.querySelectorAll("[data-speed]").forEach(b => b.addEventListener("click", () => { S.speed = +b.dataset.speed; store.set("speed", S.speed); renderSettings(); }));
 document.querySelectorAll("[data-dir]").forEach(b => b.addEventListener("click", () => { S.dir = b.dataset.dir; renderSettings(); renderRamps(); }));
 document.querySelectorAll("[data-sort]").forEach(b => b.addEventListener("click", () => { S.sort = b.dataset.sort; renderSettings(); renderRamps(); }));
@@ -1740,7 +1729,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.35';
+const APP_VERSION = '1.36';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
