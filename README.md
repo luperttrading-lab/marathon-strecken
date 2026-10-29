@@ -48,6 +48,12 @@ dann liegen alle Strecken in einer App.
   installiert so ebenfalls die ganze App.
 - Kartenzeile der Startseite: Höhenmeter bergauf und bergab mit 200-m-Fenster (Werte wie „Ganze Strecke“ in der App), Pfeile als
   gezeichnete Linien (`.pf`, SVG), nicht als Textzeichen ↑: das saß auf dem iPhone klein und tief (seit Startseite 1.16).
+- **Auswahl oben auf der Startseite** (seit 1.27): Suchfeld und Drehrad mit Knopf „Öffnen“. Die Suche filtert Liste und Rad
+  beim Tippen, in drei Stufen: Stadtname am Wortanfang („F“ → Frankfurt), sonst `data-such` an der Karte plus Veranstaltername
+  (weitere Namen, Land, Region, Sponsor: „USA“, „Cape Town“, „Dresden“, „TCS“; „Marathon“, „of“, „de“, „by“, „city“ zählen
+  nicht), sonst irgendwo im Kartentext. Umlaute egal („muen“, „koeln“). Enter öffnet den Treffer in der Radmitte. Das Rad ist
+  alphabetisch, steht auf der zuletzt geöffneten Strecke (`start.zuletzt`), Antippen einer Zeile dreht hin, Antippen der Mitte
+  öffnet. Neue Strecke: `data-such` an ihrer Karte ergänzen. Während man tippt, lädt ein Update nicht von selbst neu.
 - Hinweis-Kasten unter einer Karte (`div.hinweis` direkt nach dem `<a class="card">`, Überschrift in `.kopf`): seit Startseite 1.18
   für Paris (neuer Veranstalter ab 2027, neue Strecke erst Anfang 2027; die App zeigt den Kurs 2025). Entfernen bzw. neu
   schreiben, sobald die Strecke 2027 da ist.
