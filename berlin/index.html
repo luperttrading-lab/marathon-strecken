@@ -365,6 +365,22 @@ body.run[data-gr="2"] .stats .lbl { font-size: 11.5px; }
 .ziel-hint { padding: 12px 0 14px; color: var(--muted); font-size: 12px; }
 @media (prefers-reduced-motion: reduce) { .ziel, .ziel-karte { transition: none; } }
 body.run .close { border-color: var(--edge); }
+/* Menü-Knopf (seit Hamburg 1.47): blau gefüllt mit Beschriftung; das schmale ☰ davor sah man kaum */
+body.run .close { background: var(--blue); border-color: var(--blue); color: #fff; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 4px 12px; font: 600 11px/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; }
+body.run .close svg { width: 20px; height: 20px; }
+/* Aufklappbare Abschnitte unter dem Läuferblick (seit 1.47): Kopf mit Titel und Inhaltsangabe, Inhalt in .klapp-inhalt */
+.klapp { padding: 0 !important; display: block !important; }
+.klapp-kopf { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 3px 12px; width: 100%; min-height: 60px; padding: 12px 14px; margin: 0; border: 0; border-radius: var(--radius); background: none; text-align: left; color: var(--ink); }
+.klapp-kopf .kt { font: 700 20px/1.1 var(--font-display); }
+.klapp-kopf .kh { grid-column: 1; font-size: 13px; line-height: 1.35; color: var(--muted); }
+.klapp-kopf svg { grid-column: 2; grid-row: 1 / span 2; width: 20px; height: 20px; color: var(--blue); transition: transform 0.2s; }
+.klapp-kopf[aria-expanded="true"] svg { transform: rotate(180deg); }
+.klapp-kopf[aria-expanded="true"] .kh { display: none; }
+.ramps > .klapp-inhalt { display: grid; gap: 10px; padding: 0 0 6px; }
+.settings > .klapp-inhalt { display: grid; gap: 14px; padding: 0 14px 14px; }
+.source > .klapp-inhalt { display: grid; gap: 8px; padding: 0 14px 14px; }
+.klapp-inhalt > .row > h2, .klapp-inhalt > h2 { display: none; }
+@media (prefers-reduced-motion: reduce) { .klapp-kopf svg { transition: none; } }
 </style>
 
 </head>
@@ -442,7 +458,7 @@ body.run .close { border-color: var(--edge); }
       <span class="vtitle">Läuferblick</span>
       <div id="zoom-wheel"></div>
       <div id="speed-wheel" class="run-only"></div>
-      <button type="button" class="run-only close" id="run-close" aria-label="Einstellungen, Rampen und Quellen anzeigen">&#x2630;&#xFE0E;</button>
+      <button type="button" class="run-only close" id="run-close" aria-label="Menü: Zwischenzeiten, Zuschauer, Einstellungen, Rampen, Quellen"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Menü</button>
       <button type="button" class="norm-only" id="run-open">Vollbild</button>
     </div>
     <canvas id="main" tabindex="0" aria-label="Höhenprofil um die aktuelle Stelle. Seitlich wischen oder Pfeiltasten zum Bewegen."></canvas>
@@ -467,7 +483,7 @@ body.run .close { border-color: var(--edge); }
 
   </div>
 
-  <section class="panel ramps" id="splits" aria-label="Zwischenzeiten">
+  <section class="panel ramps klapp" id="splits" aria-label="Zwischenzeiten" data-k="splits" data-t="Zwischenzeiten" data-h="je km, je 5 km oder Hälften · Pace-Band als Bild">
     <div class="row">
       <h2>Zwischenzeiten</h2>
       <div class="seg" role="group" aria-label="Abschnitte">
@@ -487,7 +503,7 @@ body.run .close { border-color: var(--edge); }
     <div class="row band-row"><button type="button" id="band">Pace-Band als Bild</button><span class="mini-note">Zeit nach jedem km mit Steigung, für den Sperrbildschirm oder zum Ausdrucken.</span></div>
   </section>
 
-  <section class="panel ramps" id="plan" aria-label="Für Zuschauer">
+  <section class="panel ramps klapp" id="plan" aria-label="Für Zuschauer" data-k="plan" data-t="Für Zuschauer" data-h="Startzeit und Welle, Uhrzeit an jeder 5-km-Marke, Plan teilen, Live nach Plan">
     <div class="row">
       <h2>Für Zuschauer</h2>
       <button type="button" id="plan-share">Plan teilen</button>
@@ -508,7 +524,7 @@ body.run .close { border-color: var(--edge); }
     <div class="row band-row"><button type="button" id="plan-live">Live nach Plan</button><span class="mini-note">Im Vollbild läuft der Punkt dann mit der Uhr: so sehen Zuschauer, wo du laut Plan gerade bist.</span></div>
   </section>
 
-  <section class="panel settings" aria-label="Einstellungen">
+  <section class="panel settings klapp" id="einstellungen" aria-label="Einstellungen" data-k="settings" data-t="Einstellungen" data-h="Zielzeit, Messfenster, Kosten je Höhenmeter, Bergab, Pace-Modell, Anzeige">
     <div class="setting">
       <div class="head"><span class="lbl">Messfenster der Steigung</span>
         <div class="seg" role="group" aria-label="Messfenster">
@@ -566,7 +582,7 @@ body.run .close { border-color: var(--edge); }
     </div>
   </section>
 
-  <section class="panel ramps" aria-label="Rampen">
+  <section class="panel ramps klapp" id="rampen" aria-label="Rampen" data-k="ramps" data-t="Rampen" data-h="Anstiege und Gefälle mit Länge, Höhe, Steigung und Zeit">
     <div class="row">
       <h2>Rampen</h2>
       <div class="seg" role="group" aria-label="Richtung">
@@ -587,7 +603,7 @@ body.run .close { border-color: var(--edge); }
     </div>
   </section>
 
-  <section class="panel source" aria-label="Datengrundlage">
+  <section class="panel source klapp" id="quellen" aria-label="Datengrundlage" data-k="source" data-t="Woher die Zahlen kommen" data-h="Strecke, Höhenmodell, Brücken und Tunnel, Höhenmeter je Messart">
     <h2>Woher die Zahlen kommen</h2>
     <ul>
       <li><b>Strecke:</b> offizielle Ideallinie und die 42 Kilometerpunkte aus der Karte des Veranstalters (<a href="https://www.generali-berlin-marathon.com/das-rennen/strecken" target="_blank" rel="noopener">generali-berlin-marathon.com</a>, Kurs des BMW BERLIN-MARATHON 2026). Die gezeichnete Linie ist 0,2 % länger als die vermessene Strecke. Deshalb ist jeder Kilometer auf die offiziellen Kilometerpunkte geeicht.</li>
@@ -758,11 +774,11 @@ const ROADS = (() => {
 const store = { get(k, d) { try { const v = localStorage.getItem("bln-" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem("bln-" + k, JSON.stringify(v)); } catch (e) {} } };
 // Jeder Start vom Home-Bildschirm beginnt bei km 0. Nur der Neustart nach einem Update behält die Stelle (einmalig, sessionStorage)
 const posNachUpdate = (() => { try { const v = sessionStorage.getItem("bln-pos"); sessionStorage.removeItem("bln-pos"); return v === null ? 0 : (+v || 0); } catch (_) { return 0; } })();
-const S = { pos: posNachUpdate, start: clamp(Math.round(store.get("start", D.start)) || D.start, 0, 1439), live: false, win: store.get("win", 200), zoom: store.get("zoom", 2000), goal: store.get("goal-v2", null), down: store.get("down-v2", 0.5), speed: store.get("speed", 300), vp: store.get("vp", false), relay: store.get("relay", false), secHm: store.get("sechm", 1.0), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
+const S = { pos: posNachUpdate, start: clamp(Math.round(store.get("start", D.start)) || D.start, 0, 1439), live: false, win: store.get("win", 200), zoom: store.get("zoom", 5000), goal: store.get("goal-v2", null), down: store.get("down-v2", 0.5), speed: store.get("speed", 200), vp: store.get("vp", false), relay: store.get("relay", false), secHm: store.get("sechm", 1.0), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
 if (![10, 50, 200, 1000].includes(S.win)) S.win = 200;
-S.zoom = (S.zoom >= 500 && S.zoom <= 10000) ? Math.round(S.zoom / 500) * 500 : 2000;
+S.zoom = (S.zoom >= 500 && S.zoom <= 10000) ? Math.round(S.zoom / 500) * 500 : 5000;
 const SPEEDS = [1, 50, 100, 120, 140, 160, 180, 200, 300, 400, 500, 600, 700, 800, 900, 1000];   // ×1 = Echtzeit
-if (!SPEEDS.includes(S.speed)) S.speed = 300;
+if (!SPEEDS.includes(S.speed)) S.speed = 200;
 S.ovEin = store.get("ov-einfarbig", false) === true;   // Gesamtstrecke unten einfarbig statt in Steigungsfarben
 // Geteilter Plan (Link aus „Plan teilen“): Ziel- und Startzeit nur für diesen Besuch, nichts wird gespeichert
 const GAST = (() => { const q = new URLSearchParams(location.search), z = /^(\d):(\d\d):(\d\d)$/.exec(q.get("ziel") || ""), s = /^(\d{1,2}):(\d\d)$/.exec(q.get("start") || "");
@@ -1472,6 +1488,21 @@ const ZW = makeDrum($("zoom-wheel"), { label: "Ausschnitt", capw: 60, values: Ar
   onChange: v => { S.zoom = v; store.set("zoom", v); dirty = true; } });
 const SW = makeDrum($("speed-wheel"), { label: "Tempo", capw: 38, values: SPEEDS, fmt: v => "×" + v, text: v => v === 1 ? "Echtzeit" : v + "-fach",
   onChange: v => { S.speed = v; store.set("speed", v); renderSettings(); } });
+// Aufklappbare Abschnitte: Inhalt in .klapp-inhalt, Kopf als Knopf; zu beim ersten Besuch, danach wie zuletzt (store „klapp-…“).
+// Beim Öffnen Räder und Spark-Linien neu setzen, die im zugeklappten Zustand keine Größe hatten.
+for (const sec of document.querySelectorAll("section.klapp")) {
+  const inhalt = document.createElement("div"); inhalt.className = "klapp-inhalt"; inhalt.id = sec.id + "-inhalt";
+  while (sec.firstChild) inhalt.appendChild(sec.firstChild);
+  const kopf = document.createElement("button"); kopf.type = "button"; kopf.className = "klapp-kopf"; kopf.setAttribute("aria-controls", inhalt.id);
+  kopf.innerHTML = '<span class="kt">' + sec.dataset.t + '</span><span class="kh">' + sec.dataset.h + '</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  sec.append(kopf, inhalt);
+  const setze = auf => { kopf.setAttribute("aria-expanded", auf); inhalt.hidden = !auf; };
+  setze(!!store.get("klapp-" + sec.dataset.k, false));
+  kopf.addEventListener("click", () => {
+    const auf = inhalt.hidden; setze(auf); store.set("klapp-" + sec.dataset.k, auf);
+    if (auf) requestAnimationFrame(() => { syncGoalWheels(); renderSplits(); dirty = true; });
+  });
+}
 const syncGoalWheels = () => { ZW.set(S.zoom); SW.set(S.speed); const g = Math.round(S.goal); GW.h.set(Math.floor(g / 3600)); GW.m.set(Math.floor(g % 3600 / 60)); GW.s.set(g % 60); GW.k.set(S.secHm); GW.sh.set(Math.floor(S.start / 60)); GW.sm.set(S.start % 60); };
 requestAnimationFrame(syncGoalWheels);
 if ("IntersectionObserver" in window) new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) syncGoalWheels(); }).observe($("goal-wheels"));
@@ -1626,7 +1657,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.35';
+const APP_VERSION = '1.36';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
