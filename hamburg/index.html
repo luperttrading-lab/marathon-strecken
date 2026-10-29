@@ -122,6 +122,11 @@ h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 3
 .stats .span2 { grid-column: span 2; }
 .stats .mini { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.35; }
 .stats .v .dn { color: var(--muted); font-weight: 500; }
+/* Pfeile als SVG mit fester Breite (seit Hamburg 1.45): Barlow hat keine Pfeile, iOS nahm eine breite Ersatzschrift, dreistellige
+   Werte endeten in „…“ */
+.pf { display: inline-block; width: 0.46em; height: 0.74em; margin-right: 0.1em; vertical-align: -0.04em; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.stats .v .dn .pf { margin-left: 0.12em; }
+.stats .v .klein { font-size: 0.72em; font-weight: 500; color: var(--muted); margin-right: 0.18em; }
 
 
 /* Läuferblick */
@@ -404,9 +409,9 @@ body.run .close { border-color: var(--edge); }
     <div class="pager" id="pager">
       <div class="page">
         <div class="stats">
-          <div><div class="lbl">Bisher</div><div class="v" id="r-done">↑ 0 <span class="dn">↓ 0</span></div></div>
-          <div><div class="lbl">Noch</div><div class="v" id="r-left">↑ 0 <span class="dn">↓ 0</span></div></div>
-          <div><div class="lbl">Ganze Strecke</div><div class="v" id="r-total">↑ 0 <span class="dn">↓ 0</span></div></div>
+          <div><div class="lbl">Bisher</div><div class="v" id="r-done">0 <span class="dn">0</span></div></div>
+          <div><div class="lbl">Noch</div><div class="v" id="r-left">0 <span class="dn">0</span></div></div>
+          <div><div class="lbl">Ganze Strecke</div><div class="v" id="r-total">0 <span class="dn">0</span></div></div>
         </div>
         <div class="stats">
           <div><div class="lbl">Pace hier</div><div class="v" id="r-pace">–</div></div>
@@ -1033,6 +1038,19 @@ function paceChartNote() {
       : "Bergab rechnet die App wie flach.");
 }
 
+// Pfeile für die Kennzahlen (viewBox 10 × 16, Strich in Textfarbe)
+const PF = d => '<svg class="pf" viewBox="0 0 10 16" aria-hidden="true"><path d="' + d + '"></path></svg>';
+const PF_AUF = PF("M5 15V2M1 6l4-4 4 4"), PF_AB = PF("M5 1v13M1 10l4 4 4-4"), PF_SAUF = PF("M1 15L9 3M3 3h6v6"), PF_SAB = PF("M1 1l8 12M9 7v6H3");
+const auf_ab = (a, b) => PF_AUF + Math.round(a) + ' <span class="dn">' + PF_AB + Math.round(b) + "</span>";
+// Passt ein Wert nicht in seine Spalte (Ersatzschrift, große Schriftstufe, schmales Gerät), wird er kleiner statt „…“.
+// Gemessen wird nur, wenn sich Textlänge, Schriftstufe oder Breite ändern.
+const passMerk = new WeakMap();
+function passend(el) {
+  const key = el.textContent.length + "|" + document.body.dataset.gr + "|" + document.body.classList.contains("run") + "|" + innerWidth;
+  if (passMerk.get(el) === key) return; passMerk.set(el, key);
+  el.style.fontSize = ""; let fs = parseFloat(getComputedStyle(el).fontSize);
+  while (el.scrollWidth > el.clientWidth + 0.5 && fs > 12) { fs -= 1; el.style.fontSize = fs + "px"; }
+}
 function updateReadout() {
   const x = S.pos, W = WIN[S.win];
   const g = valAt(W.g, x);
@@ -1043,9 +1061,7 @@ function updateReadout() {
   $("r-h").innerHTML = nf(hAt(x), 1) + "<small>m</small>";
   const st = streetAt(x); $("r-street").textContent = st[1] || "–"; $("r-quarter").textContent = st[2] ? "· " + st[2] : "";
   const up = valAt(W.up, x), dn = valAt(W.dn, x), UP = valAt(W.up, L), DN = valAt(W.dn, L);
-  $("r-done").innerHTML = "↑ " + Math.round(up) + ' <span class="dn">↓ ' + Math.round(dn) + "</span>";
-  $("r-left").innerHTML = "↑ " + Math.round(UP - up) + ' <span class="dn">↓ ' + Math.round(DN - dn) + "</span>";
-  $("r-total").innerHTML = "↑ " + Math.round(UP) + ' <span class="dn">↓ ' + Math.round(DN) + "</span>";
+  $("r-done").innerHTML = auf_ab(up, dn); $("r-left").innerHTML = auf_ab(UP - up, DN - dn); $("r-total").innerHTML = auf_ab(UP, DN);
   const r = valAt(P.ratio, x), pace = P.p0 * r;
   $("r-pace").innerHTML = mss(pace) + ' <span class="dn">' + secs(pace - P.p0) + "</span>";
   $("r-split").textContent = hms(valAt(P.t, x));
@@ -1055,13 +1071,14 @@ function updateReadout() {
   const nxt = RAMPS.filter(q => q.dir === 1 && q.a > x).sort((p, q) => p.a - q.a)[0];
   if (inR) {
     const rest = (valAt(W.up, inR.b) - valAt(W.up, x)) - (valAt(W.dn, inR.b) - valAt(W.dn, x));
-    $("r-cur").textContent = (inR.dir > 0 ? "↗︎ " : "↘︎ ") + "noch " + Math.round(inR.b - x) + " m";
+    $("r-cur").innerHTML = (inR.dir > 0 ? PF_SAUF : PF_SAB) + '<span class="klein">noch</span>' + Math.round(inR.b - x) + " m";
     $("r-cur2").textContent = sgn(rest, 1) + " m · Ø " + sgn(inR.avg, 1) + " %";
   } else { $("r-cur").textContent = "–"; $("r-cur2").textContent = "gerade keine"; }
   if (nxt) {
     $("r-nxt").textContent = "in " + nf((nxt.a - x) / 1000, 1) + " km";
     $("r-nxt2").textContent = Math.round(nxt.len) + " m · +" + nf(nxt.rise, 1) + " m · Ø " + nf(nxt.avg, 1) + " % · " + streetAt(nxt.a)[1];
   } else { $("r-nxt").textContent = "–"; $("r-nxt2").textContent = "keiner mehr bis ins Ziel"; }
+  for (const id of ["r-done", "r-left", "r-total", "r-pace", "r-bal", "r-cur", "r-nxt"]) passend($(id));
   $("pos").value = Math.round(x / 10) * 10; $("b-0").disabled = x < 5;
 }
 
@@ -1588,7 +1605,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.44';
+const APP_VERSION = '1.45';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
