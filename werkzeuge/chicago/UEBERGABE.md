@@ -1,13 +1,13 @@
 # Übergabe: Steigungsprofil Chicago-Marathon
 
-Stand 28.10.2026, App-Version **1.5** (1.5: Pfeile in Bisher/Noch/Ganze Strecke und Rampe als Grafik, dreistellige Werte ohne „…“, zu breite Werte werden kleiner; 1.4: Bergab U-Kurve statt Grenze bei −4 %: am schnellsten bei −8 %, ab −16 % langsamer als flach, ohne Knick bei 0 %; 1.3: Tempo-Rad mit ×1 (Echtzeit), ×50 und ×100–×180 in 20er-Schritten; 1.2: Brücken-Beschriftungen überlappen nicht mehr; 1.1: Kästchen bunt/grau neben der Gesamtstrecke, Diagramm „So rechnet das Pace-Modell“; 1.0: Erstausgabe), live unter https://luperttrading-lab.github.io/marathon-strecken/chicago/.
+Stand 28.10.2026, App-Version **1.6** (1.6: Startwellen mit Uhrzeiten unter „Deine Startzeit“, Start 7:35 (Welle 1) statt 7:30 (Profis); 1.5: Pfeile in Bisher/Noch/Ganze Strecke und Rampe als Grafik, dreistellige Werte ohne „…“, zu breite Werte werden kleiner; 1.4: Bergab U-Kurve statt Grenze bei −4 %: am schnellsten bei −8 %, ab −16 % langsamer als flach, ohne Knick bei 0 %; 1.3: Tempo-Rad mit ×1 (Echtzeit), ×50 und ×100–×180 in 20er-Schritten; 1.2: Brücken-Beschriftungen überlappen nicht mehr; 1.1: Kästchen bunt/grau neben der Gesamtstrecke, Diagramm „So rechnet das Pace-Modell“; 1.0: Erstausgabe), live unter https://luperttrading-lab.github.io/marathon-strecken/chicago/.
 
 Die App ist eine Kopie der Boston-App (Stand 1.0) mit eigenen Daten, Texten und Speicherschlüsseln (`chi-…`), ohne eigenes
 Manifest und Symbol. Alle Entscheidungen zur Bedienung und zum Aussehen stehen in
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md). Änderungen am gemeinsamen Code in allen Apps nachziehen (README).
 
-49. Chicago Marathon am Sonntag, 10. Oktober 2027 (Bank of America, Pressemitteilung), Start 7:30 Uhr Ortszeit
-(`D.start` = 450, `D.tz` America/Chicago, `D.ortKurz` „ Chicago“). Start und Ziel im Grant Park am Columbus Drive.
+49. Chicago Marathon am Sonntag, 10. Oktober 2027 (Bank of America, Pressemitteilung), Start der Profis 7:30, Welle 1 7:35 Uhr Ortszeit
+(`D.start` = 455, `D.tz` America/Chicago, `D.ortKurz` „ Chicago“). Start und Ziel im Grant Park am Columbus Drive.
 
 ## Daten (`work/`, aus `work/` heraus starten; `../dl` und `../assets` bleiben lokal)
 

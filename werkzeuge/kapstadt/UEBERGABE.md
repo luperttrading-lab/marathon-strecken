@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Kapstadt-Marathon
 
-Stand 28.10.2026, App-Version **1.3** (1.3: Pfeile in Bisher/Noch/Ganze Strecke und Rampe als Grafik, dreistellige Werte ohne „…“, zu breite Werte werden kleiner; 1.2: Bergab U-Kurve statt Grenze bei −4 %: am schnellsten bei −8 %, ab −16 % langsamer als flach, ohne Knick bei 0 %; 1.1: Tempo-Rad mit ×1 (Echtzeit), ×50 und ×100–×180 in 20er-Schritten; 1.0: Erstausgabe), live unter https://luperttrading-lab.github.io/marathon-strecken/kapstadt/.
+Stand 28.10.2026, App-Version **1.4** (1.4: Startwellen mit Uhrzeiten unter „Deine Startzeit“, Start 8:10 (Welle 1) statt 8:00 (Elite); 1.3: Pfeile in Bisher/Noch/Ganze Strecke und Rampe als Grafik, dreistellige Werte ohne „…“, zu breite Werte werden kleiner; 1.2: Bergab U-Kurve statt Grenze bei −4 %: am schnellsten bei −8 %, ab −16 % langsamer als flach, ohne Knick bei 0 %; 1.1: Tempo-Rad mit ×1 (Echtzeit), ×50 und ×100–×180 in 20er-Schritten; 1.0: Erstausgabe), live unter https://luperttrading-lab.github.io/marathon-strecken/kapstadt/.
 
 Die App ist eine Kopie der Boston-App (Stand 1.2) mit eigenen Daten, Texten und Speicherschlüsseln (`cpt-…`), ohne eigenes
 Manifest und Symbol. Alle Entscheidungen zur Bedienung und zum Aussehen stehen in
@@ -8,7 +8,7 @@ Manifest und Symbol. Alle Entscheidungen zur Bedienung und zum Aussehen stehen i
 
 Sanlam Cape Town Marathon am Sonntag, 23. Mai 2027, erste Ausgabe als Abbott World Marathon Major (bestätigt am 10. Juni 2026
 nach dem Rennen vom 24. Mai 2026; das Rennen im Oktober 2025 fiel am Renntag wegen Sturm aus). Start 2026: Elite 8:00 Uhr
-(Rollstühle 7:50, Wellen bis 9:06), `D.start` = 480, `D.tz` Africa/Johannesburg, `D.ort` „Kapstadt“. Im Mai gilt in Deutschland
+(Rollstühle 7:50, Wellen bis 9:06), `D.start` = 490 (Welle 1 um 8:10, seit 1.4; Wellen in `D.wellen`), `D.tz` Africa/Johannesburg, `D.ort` „Kapstadt“. Im Mai gilt in Deutschland
 dieselbe Uhrzeit (UTC+2), die App zeigt deshalb keinen Zeitunterschied.
 
 ## Daten (`work/`, aus `work/` heraus starten; `../dl` und `../assets` bleiben lokal)

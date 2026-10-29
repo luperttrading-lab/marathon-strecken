@@ -1,13 +1,13 @@
 # Übergabe: Steigungsprofil Sydney-Marathon
 
-Stand 28.10.2026, App-Version **1.4** (1.4: Pfeile in Bisher/Noch/Ganze Strecke und Rampe als Grafik, dreistellige Werte ohne „…“, zu breite Werte werden kleiner; 1.3: Bergab U-Kurve statt Grenze bei −4 %: am schnellsten bei −8 %, ab −16 % langsamer als flach, ohne Knick bei 0 %; 1.2: Tempo-Rad mit ×1 (Echtzeit), ×50 und ×100–×180 in 20er-Schritten; 1.1: auf der Brücke stand in der Straßenleiste „Cahill Expressway“, jetzt „Harbour Bridge“; 1.0: Erstausgabe), live unter https://luperttrading-lab.github.io/marathon-strecken/sydney/.
+Stand 28.10.2026, App-Version **1.5** (1.5: Startwellen mit Uhrzeiten unter „Deine Startzeit“, Start 6:32 (Lila 1) statt 6:30; 1.4: Pfeile in Bisher/Noch/Ganze Strecke und Rampe als Grafik, dreistellige Werte ohne „…“, zu breite Werte werden kleiner; 1.3: Bergab U-Kurve statt Grenze bei −4 %: am schnellsten bei −8 %, ab −16 % langsamer als flach, ohne Knick bei 0 %; 1.2: Tempo-Rad mit ×1 (Echtzeit), ×50 und ×100–×180 in 20er-Schritten; 1.1: auf der Brücke stand in der Straßenleiste „Cahill Expressway“, jetzt „Harbour Bridge“; 1.0: Erstausgabe), live unter https://luperttrading-lab.github.io/marathon-strecken/sydney/.
 
 Die App ist eine Kopie der Boston-App (Stand 1.2) mit eigenen Daten, Texten und Speicherschlüsseln (`syd-…`), ohne eigenes
 Manifest und Symbol. Alle Entscheidungen zur Bedienung und zum Aussehen stehen in
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md). Änderungen am gemeinsamen Code in allen Apps nachziehen (README).
 
 TCS Sydney Marathon am Sonntag, 29. August 2027 (Seite des Veranstalters). Start der Läufer 6:30 Uhr (Rollstühle 6:15),
-`D.start` = 390, `D.tz` Australia/Sydney, `D.ortKurz` „ Sydney“. Von der Miller Street in North Sydney zum Opernhaus. Seit 2025
+`D.start` = 392 (Startgruppe Lila 1 um 6:32, seit 1.5; alle zwölf Gruppen in `D.wellen`), `D.tz` Australia/Sydney, `D.ortKurz` „ Sydney“. Von der Miller Street in North Sydney zum Opernhaus. Seit 2025
 Abbott World Marathon Major.
 
 ## Daten (`work/`, aus `work/` heraus starten; `../dl` und `../assets` bleiben lokal)

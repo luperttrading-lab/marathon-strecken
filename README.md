@@ -40,7 +40,7 @@ dann liegen alle Strecken in einer App.
   Veranstalter noch nicht bestätigt, angezeigt als „ca. 31. Oktober 2027“). Die Seite zeigt selbst den nächsten Termin ab heute
   mit Countdown; ist keiner mehr bekannt, nur den üblichen Monat (`data-monat`). Einmal im Jahr neue Termine nachtragen,
   **auch in jeder Strecke** in `D.termine` (gleiche Schreibweise, steuert „Live nach Plan“ am Renntag). Dort stehen außerdem
-  `D.tz` (Zeitzone der Uhrzeiten; `D.ort`/`D.ortKurz` nennen den Ort dazu, wenn die Zeitzone ihn nicht verrät, z. B. Boston) und `D.start` (Startzeit der ersten Welle in Minuten ab Mitternacht).
+  `D.tz` (Zeitzone der Uhrzeiten; `D.ort`/`D.ortKurz` nennen den Ort dazu, wenn die Zeitzone ihn nicht verrät, z. B. Boston) `D.start` (Startzeit der ersten Welle in Minuten ab Mitternacht) und `D.wellen` (Wellen mit Uhrzeit und Quelle, siehe Hamburg-Übergabe).
 - Neue Strecke: eigener Ordner neben den anderen, Karte auf der Startseite ergänzen. Reihenfolge: New York als Highlight oben
   (Klasse `card top`), danach London, Paris, Chicago, Sydney, Tokio, Boston und Kapstadt (nach Teilnehmerzahl), dann die deutschen Strecken alphabetisch. Alle Strecken liegen in **einer** App: installiert wird
   die Startseite, ihr Scope umfasst alle Unterordner. Die Strecken haben **kein eigenes Manifest und Symbol**, sie verweisen auf
