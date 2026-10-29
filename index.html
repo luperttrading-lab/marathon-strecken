@@ -79,7 +79,8 @@ h1 { margin: 4px 0 0; font: 700 34px/1.05 var(--font-display); font-size: clamp(
 .note { margin: 18px 0 0; color: var(--muted); font-size: 14px; }
 .note b { color: var(--ink); font-weight: 600; }
 footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
-/* Auswahl oben (seit 1.27): Suchfeld und Drehrad wie in den Apps, Mitte zwischen zwei blauen Linien */
+/* Auswahl oben (seit 1.27): Suchfeld und Drehrad wie in den Apps, Mitte zwischen zwei blauen Linien; seit 1.28 flacher:
+   Mitte groß, Nachbarn halb so hoch und dicht dran (Zeilenabstand 30 px, Rad 84 px) */
 .wahl { display: grid; gap: 10px; margin: 0 0 18px; }
 .suche { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 12px; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; }
 .suche:focus-within { border-color: var(--blue); }
@@ -87,14 +88,14 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
 .suche input { flex: 1; min-width: 0; height: 100%; padding: 0; background: none; border: 0; outline: none; color: var(--ink); font: 500 17px var(--font-body); -webkit-appearance: none; appearance: none; }   /* ab 16 px zoomt iOS nicht */
 .suche input::placeholder { color: var(--muted); }
 .rad-zeile { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
-.rad { position: relative; height: 120px; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+.rad { position: relative; height: 84px; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
 .rad-liste { height: 100%; overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior: contain; scrollbar-width: none; outline: none; }
 .rad-liste::-webkit-scrollbar { display: none; }
-.rad-liste .platz { height: 40px; }
-.rad-liste .rz { height: 40px; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; font: 600 19px/1 var(--font-display); color: var(--muted); cursor: pointer; user-select: none; -webkit-user-select: none; }
-.rad-liste .rz.mitte { color: var(--ink); font-size: 26px; font-weight: 700; }
-.rad-band { position: absolute; left: 0; right: 0; top: 40px; height: 40px; border-top: 1.5px solid var(--blue); border-bottom: 1.5px solid var(--blue); pointer-events: none; }
-.los { display: flex; align-items: center; justify-content: center; white-space: pre; height: 120px; padding: 0 20px; box-sizing: border-box; border-radius: 12px; background: var(--blue-fill); color: #fff; font: 700 22px/1 var(--font-display); letter-spacing: 0.02em; text-decoration: none; }
+.rad-liste .platz { height: 27px; }   /* (84 − 30) / 2: so steht Zeile i bei scrollTop = i · 30 in der Mitte */
+.rad-liste .rz { height: 30px; display: flex; align-items: center; justify-content: center; scroll-snap-align: center; font: 600 15px/1 var(--font-display); color: var(--muted); cursor: pointer; user-select: none; -webkit-user-select: none; }
+.rad-liste .rz.mitte { color: var(--ink); font-size: 28px; font-weight: 700; }
+.rad-band { position: absolute; left: 0; right: 0; top: 23px; height: 38px; border-top: 1.5px solid var(--blue); border-bottom: 1.5px solid var(--blue); pointer-events: none; }
+.los { display: flex; align-items: center; justify-content: center; white-space: pre; height: 84px; padding: 0 20px; box-sizing: border-box; border-radius: 12px; background: var(--blue-fill); color: #fff; font: 700 22px/1 var(--font-display); letter-spacing: 0.02em; text-decoration: none; }
 .los:active { transform: scale(0.98); }
 .los[aria-disabled="true"] { opacity: 0.35; pointer-events: none; }
 .leer { margin: 0; color: var(--muted); font-size: 15px; }
@@ -284,7 +285,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
     return [];
   };
   const suche = document.getElementById("suche"), rad = document.getElementById("rad"), los = document.getElementById("los"), leer = document.getElementById("leer");
-  const ROW = 40; let liste = [], wahl = 0;
+  const ROW = 30; let liste = [], wahl = 0;
   const zuletzt = (() => { try { return localStorage.getItem("start.zuletzt"); } catch (_) { return null; } })();
   const merke = href => { try { localStorage.setItem("start.zuletzt", href); } catch (_) {} };
   function setzeWahl(i) {
@@ -321,7 +322,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
   KARTEN.forEach(k => k.a.addEventListener("click", () => merke(k.href)));
   baueRad(zuletzt);
 })();
-const APP_VERSION = '1.27';
+const APP_VERSION = '1.28';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");

@@ -54,6 +54,7 @@ dann liegen alle Strecken in einer App.
   nicht), sonst irgendwo im Kartentext. Umlaute egal („muen“, „koeln“). Enter öffnet den Treffer in der Radmitte. Das Rad ist
   alphabetisch, steht auf der zuletzt geöffneten Strecke (`start.zuletzt`), Antippen einer Zeile dreht hin, Antippen der Mitte
   öffnet. Neue Strecke: `data-such` an ihrer Karte ergänzen. Während man tippt, lädt ein Update nicht von selbst neu.
+  Seit 1.28 flacher (Nutzer: zu prominent): Rad 84 px statt 120, Mittelzeile 28 px, Nachbarn 15 px im Abstand von 30 px.
 - Hinweis-Kasten unter einer Karte (`div.hinweis` direkt nach dem `<a class="card">`, Überschrift in `.kopf`): seit Startseite 1.18
   für Paris (neuer Veranstalter ab 2027, neue Strecke erst Anfang 2027; die App zeigt den Kurs 2025). Entfernen bzw. neu
   schreiben, sobald die Strecke 2027 da ist.
