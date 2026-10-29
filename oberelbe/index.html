@@ -176,7 +176,18 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--blue); outl
 .setting .note { font-size: 12.5px; color: var(--muted); }
 .setting .head .lbl { font-size: 15px; color: var(--ink); }
 .timepanel .colon.bei { font: 600 14px/1 var(--font-display); color: var(--muted); padding-bottom: calc((var(--wh) - 14px) / 2); }
-.setting .bahn-kopf { margin-top: 4px; }
+.setting .bahn-kopf { margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+/* Info-Knopf (i) und kleines Fenster dazu; ohne Popover-Unterstützung (ältere Safari) per Klasse „offen“ */
+button.info { width: 32px; height: 32px; margin: -6px 0; padding: 0; border: 0; background: none; display: grid; place-items: center; color: var(--blue); }
+button.info span { width: 20px; height: 20px; border: 1.5px solid currentColor; border-radius: 50%; display: grid; place-items: center; font: italic 700 13px/1 Georgia, serif; }
+.pop { display: none; position: fixed; inset: 0; margin: auto; height: fit-content; width: min(320px, calc(100vw - 48px)); z-index: 1000;
+  padding: 16px; border: 1px solid var(--edge); border-radius: 14px; background: var(--surface); color: var(--ink); font-size: 14px; line-height: 1.45; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5); }
+.pop:popover-open { display: block; }
+.pop.offen { display: block; }
+.pop::backdrop { background: rgba(0, 0, 0, 0.45); }
+.pop > b { font-family: var(--font-display); font-size: 16px; }
+.pop p { margin: 8px 0 0; color: var(--muted); }
+.pop button { margin-top: 12px; width: 100%; }
 .bahn { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
 .bahn > span, .bahn > b { display: flex; align-items: center; padding: 7px 0; border-top: 1px solid var(--edge); }
 .bahn > span { font-size: 15px; }
@@ -557,9 +568,9 @@ body.run .close svg { width: 20px; height: 20px; }
         <div class="wcol" id="wg-h"></div><span class="colon" aria-hidden="true">:</span><div class="wcol" id="wg-m"></div><span class="colon" aria-hidden="true">:</span><div class="wcol" id="wg-s"></div>
       </div>
       <span class="note" id="goal-note">Gleichmäßige Anstrengung: im Flachen 4:58 /km.</span>
-      <span class="lbl bahn-kopf">Ohne Höhenmeter entspricht das</span>
-      <div class="bahn" id="bahn"><span>Flacher Marathon</span><b id="bahn-m">–</b><span>10 000 m auf der Bahn</span><b id="bahn-10">–</b><span>5000 m auf der Bahn</span><b id="bahn-5">–</b></div>
-      <span class="note" id="bahn-note"></span>
+      <div class="bahn-kopf"><span class="lbl">Ohne Höhenmeter entspricht das</span><button type="button" class="info" popovertarget="bahn-info" aria-label="Erklärung zu den Zeiten ohne Höhenmeter"><span aria-hidden="true">i</span></button></div>
+      <div class="bahn" id="bahn"><span>Flacher Marathon</span><b id="bahn-m">–</b><span>Flacher Halbmarathon</span><b id="bahn-21">–</b><span>10 000 m auf der Bahn</span><b id="bahn-10">–</b><span>5000 m auf der Bahn</span><b id="bahn-5">–</b></div>
+      <div class="pop" id="bahn-info" popover role="dialog" aria-label="Ohne Höhenmeter"><b>Ohne Höhenmeter</b><p>Dieselbe Anstrengung wie deine Zielzeit auf dieser Strecke, aber ganz flach.</p><p>Halbmarathon, 10 000 m und 5000 m nach der Faustregel Marathon = 10 km × 4,667 (Riegel, Exponent 1,07). Für viele Freizeitläufer ist sie zu optimistisch.</p><button type="button" popovertarget="bahn-info" popovertargetaction="hide">Schließen</button></div>
     </div>
     <div class="setting">
       <div class="head"><span class="lbl">Kosten je Höhenmeter</span><span class="goal" id="hm-out">1,0 s</span></div>
@@ -1291,8 +1302,7 @@ function renderSettings() {
   $("goal-note").textContent = "Gleichmäßige Anstrengung über die ganze Strecke: im Flachen " + mss(P.p0) + " /km. Insgesamt kosten die Steigungen " + secs(S.goal - P.p0 * L / 1000) + " gegenüber einer flachen Strecke.";
   // Bahnzeiten ohne Höhenmeter (seit 1.55): Faustregel Marathon = 10 km × 4,667, das ist Riegel mit Exponent 1,07
   const BAHN = 4.667, k = Math.log(BAHN) / Math.log(42.195 / 10), t10 = flach / BAHN, t5 = t10 * Math.pow(0.5, k);
-  $("bahn-m").textContent = hms(flach); $("bahn-10").textContent = mss(t10); $("bahn-5").textContent = mss(t5);
-  $("bahn-note").textContent = "Gleiche Anstrengung ohne Höhenmeter. Bahnzeiten nach der Faustregel Marathon = 10 km × 4,667, das ist Riegels Formel mit Exponent 1,07. Für viele Freizeitläufer ist sie zu optimistisch: Sie brauchen für dieselbe Marathonzeit schnellere Bahnzeiten.";
+  $("bahn-m").textContent = hms(flach); $("bahn-21").textContent = hms(flach / Math.pow(2, k)); $("bahn-10").textContent = mss(t10); $("bahn-5").textContent = mss(t5);
   const perHm = P.p0 * (S.secHm / 0.24) / 1000;
   $("hm-out").textContent = nf(S.secRef, 1) + " s";
   $("hm-note").textContent = "Standard: 1,0 s bei 4:00 /km (Vierer-Schnitt). Wer seinen Wert für eine andere Pace kennt, stellt sie rechts ein. "
@@ -1322,6 +1332,11 @@ function liveStep() {
   if (el >= S.goal) stop();
 }
 function live() { stop(); S.live = true; document.body.classList.add("run"); liveStep(); liveT = setInterval(liveStep, 1000); dirty = true; }
+
+// Info-Fenster: ohne Popover-Unterstützung im Browser per Klasse „offen“
+if (!HTMLElement.prototype.hasOwnProperty("popover")) document.querySelectorAll("[popovertarget]").forEach(b => b.addEventListener("click", () => {
+  const p = $(b.getAttribute("popovertarget")); p.classList.toggle("offen", b.getAttribute("popovertargetaction") !== "hide" && !p.classList.contains("offen"));
+}));
 
 /* Abspielen */
 let lastT = 0;
@@ -1725,7 +1740,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.34';
+const APP_VERSION = '1.35';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
