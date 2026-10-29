@@ -537,12 +537,12 @@ body.run .close svg { width: 20px; height: 20px; }
     <div class="setting">
       <div class="head"><span class="lbl">Messfenster der Steigung</span>
         <div class="seg" role="group" aria-label="Messfenster">
-          <button type="button" id="w-10" data-win="10">10 m</button>
           <button type="button" id="w-50" data-win="50">50 m</button>
+          <button type="button" id="w-100" data-win="100">100 m</button>
           <button type="button" id="w-200" data-win="200">200 m</button>
           <button type="button" id="w-1000" data-win="1000">1 km</button>
         </div></div>
-      <span class="note">10 m ist der Abstand der Messpunkte. Die Höhen sind aber über 30 m gegen Ausreißer geglättet, deshalb zeigt 10 m kaum mehr als 50 m. 50 m zeigt kurze Spitzen wie Brückenrampen, 1 km zeigt, was über Minuten in den Beinen ankommt. Höhenmeter und Pace rechnen mit demselben Fenster.</span>
+      <span class="note">Die Steigung an jeder Stelle ist der Höhenunterschied über ein Stück dieser Länge, die Stelle in der Mitte. Kurze Fenster zeigen kurze Rampen wie Brückenauffahrten und Unterführungen, lange mitteln sie weg: Über 1 km, bei 4:00/km rund vier Minuten, bleiben nur die langen Anstiege. Das Fenster gilt für alles: Steigungsanzeige, Höhenmeter, Pace und Zeiten, Rampen. Standard 200 m, weil die Anzeige dann ruhig bleibt; lange Anstiege zählen bei jedem Fenster fast gleich.</span>
     </div>
     <div class="setting">
       <div class="head"><span class="lbl">Zielzeit</span><span class="goal" id="goal-out">–</span></div>
@@ -625,7 +625,7 @@ body.run .close svg { width: 20px; height: 20px; }
     <div class="hm-methods">
       <p><b>Höhenmeter je nach Messart:</b> Einen einzigen richtigen Wert gibt es nicht. Höhenmeter sind die Summe aller Stücke bergauf, und je feiner man misst, desto mehr kleine Wellen zählen mit. Fett ist die Messart, die gerade eingestellt ist.</p>
       <div class="table-wrap"><table><thead><tr><th>Messart</th><th>↑ m</th></tr></thead><tbody id="hm-methods"></tbody></table></div>
-      <p>Ohne jede Glättung, Punkt für Punkt alle 10 m, ergeben die Rohdaten 310 m. Zum Vergleich mit anderen Marathons passt am ehesten „ab 1 m“, weil GPS-Uhren ähnlich zählen. Für die Pace zählen 200 m bis 1 km.</p>
+      <p>Ohne jede Glättung, Punkt für Punkt alle 10 m, ergeben die Rohdaten 310 m. Zum Vergleich mit anderen Marathons passt am ehesten „ab 1 m“, weil GPS-Uhren ähnlich zählen. Pace und Zeiten rechnen mit dem eingestellten Messfenster.</p>
     </div>
     <p class="warn" id="img-note"></p>
   </section>
@@ -691,7 +691,7 @@ function buildWindow(w) {
   }
   WIN[w] = { g, up, dn };
 }
-[10, 50, 200, 1000].forEach(buildWindow);
+[50, 100, 200, 1000].forEach(buildWindow);
 const valAt = (arr, x) => { const t = clamp(x, 0, (N - 1) * STEP) / STEP; const i = Math.min(N - 2, Math.floor(t)); const f = t - i; return arr[i] * (1 - f) + arr[i + 1] * f; };
 
 /* Pace-Modell: Energiekosten Laufen nach Minetti et al. 2002, J/(kg·m), i = Steigung als Bruch */
@@ -740,7 +740,7 @@ function buildPace() {
 }
 
 /* Rampen: zusammenhängende Abschnitte jenseits einer Schwelle, Lücken < 60 m überbrückt, mind. 2 m Höhe */
-const RAMP_TH = { 10: 2.0, 50: 2.0, 200: 1.0, 1000: 0.5 };
+const RAMP_TH = { 50: 2.0, 100: 1.5, 200: 1.0, 1000: 0.5 };
 let RAMPS = [];
 function buildRamps() {
   const g = WIN[S.win].g, th = RAMP_TH[S.win], out = [];
@@ -784,7 +784,7 @@ const store = { get(k, d) { try { const v = localStorage.getItem("bos-" + k); re
 // Jeder Start vom Home-Bildschirm beginnt bei km 0. Nur der Neustart nach einem Update behält die Stelle (einmalig, sessionStorage)
 const posNachUpdate = (() => { try { const v = sessionStorage.getItem("bos-pos"); sessionStorage.removeItem("bos-pos"); return v === null ? 0 : (+v || 0); } catch (_) { return 0; } })();
 const S = { pos: posNachUpdate, start: clamp(Math.round(store.get("start", D.start)) || D.start, 0, 1439), live: false, win: store.get("win", 200), zoom: store.get("zoom", 5000), goal: store.get("goal-v2", null), down: store.get("down-v2", 0.5), speed: store.get("speed", 200), vp: store.get("vp", false), relay: store.get("relay", false), secHm: store.get("sechm", 1.0), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
-if (![10, 50, 200, 1000].includes(S.win)) S.win = 200;
+if (![50, 100, 200, 1000].includes(S.win)) S.win = 200;
 S.zoom = (S.zoom >= 500 && S.zoom <= 10000) ? Math.round(S.zoom / 500) * 500 : 5000;
 const SPEEDS = [1, 50, 100, 120, 140, 160, 180, 200, 300, 400, 500, 600, 700, 800, 900, 1000];   // ×1 = Echtzeit
 if (!SPEEDS.includes(S.speed)) S.speed = 200;
@@ -1138,7 +1138,7 @@ function markRampRows() { for (const tr of $("ramp-body").children) { const a = 
 /* Höhenmeter je Messart; Hysterese zählt wie GPS-Uhren erst ab einer Mindesthöhe */
 function hystUp(th) { let base = H[0], tot = 0; for (let i = 1; i < N && i * STEP <= L; i++) { const v = H[i]; if (v - base >= th) { tot += v - base; base = v; } else if (base - v >= th) base = v; } return tot; }
 function renderHmMethods() {
-  const rows = [["Messfenster 10 m", valAt(WIN[10].up, L), 10], ["Messfenster 50 m", valAt(WIN[50].up, L), 50], ["Messfenster 200 m", valAt(WIN[200].up, L), 200], ["Messfenster 1 km", valAt(WIN[1000].up, L), 1000],
+  const rows = [["Messfenster 50 m", valAt(WIN[50].up, L), 50], ["Messfenster 100 m", valAt(WIN[100].up, L), 100], ["Messfenster 200 m", valAt(WIN[200].up, L), 200], ["Messfenster 1 km", valAt(WIN[1000].up, L), 1000],
     ["Wie GPS-Uhren: Anstieg zählt ab 0,5 m", hystUp(0.5)], ["… ab 1 m", hystUp(1)], ["… ab 3 m", hystUp(3)]];
   $("hm-methods").innerHTML = rows.map(([t, v, w]) => "<tr" + (w === S.win ? ' style="font-weight:700"' : "") + "><td>" + t + "</td><td>" + Math.round(v) + "</td></tr>").join("");
 }
@@ -1694,7 +1694,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.12';
+const APP_VERSION = '1.13';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
