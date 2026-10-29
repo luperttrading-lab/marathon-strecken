@@ -542,7 +542,7 @@ body.run .close svg { width: 20px; height: 20px; }
           <button type="button" id="w-200" data-win="200">200 m</button>
           <button type="button" id="w-1000" data-win="1000">1 km</button>
         </div></div>
-      <span class="note">Die Steigung an jeder Stelle ist der Höhenunterschied über ein Stück dieser Länge, die Stelle in der Mitte. Kurze Fenster zeigen kurze Rampen wie Brückenauffahrten und Unterführungen, lange mitteln sie weg: Über 1 km, bei 4:00/km rund vier Minuten, bleiben nur die langen Anstiege. Das Fenster gilt für alles: Steigungsanzeige, Höhenmeter, Pace und Zeiten, Rampen. Standard 200 m, weil die Anzeige dann ruhig bleibt; lange Anstiege zählen bei jedem Fenster fast gleich.</span>
+      <span class="note">Die Steigung an jeder Stelle ist der Höhenunterschied über ein Stück dieser Länge, die Stelle in der Mitte. Kurze Fenster zeigen kurze Rampen wie Brückenauffahrten und Unterführungen, lange mitteln sie weg: Über 1 km, bei 4:00/km rund vier Minuten, bleiben nur die langen Anstiege. Das Fenster bestimmt die Anzeige: Steigung, Farben, Höhenmeter und Rampen. Über dieselbe Länge ist „Pace hier“ gemittelt, weil niemand sein Tempo an jeder kurzen Welle anpasst. Zielzeit und Zwischenzeiten rechnen immer mit 100 m, damit kurze Wellen mitkosten. Standard 200 m, weil die Anzeige dann ruhig bleibt.</span>
     </div>
     <div class="setting">
       <div class="head"><span class="lbl">Zielzeit</span><span class="goal" id="goal-out">–</span></div>
@@ -625,7 +625,7 @@ body.run .close svg { width: 20px; height: 20px; }
     <div class="hm-methods">
       <p><b>Höhenmeter je nach Messart:</b> Einen einzigen richtigen Wert gibt es nicht. Höhenmeter sind die Summe aller Stücke bergauf, und je feiner man misst, desto mehr kleine Wellen zählen mit. Fett ist die Messart, die gerade eingestellt ist.</p>
       <div class="table-wrap"><table><thead><tr><th>Messart</th><th>↑ m</th></tr></thead><tbody id="hm-methods"></tbody></table></div>
-      <p>Ohne jede Glättung, Punkt für Punkt alle 10 m, ergeben die Rohdaten 177 m. Zum Vergleich mit anderen Marathons passt am ehesten „ab 1 m“, weil GPS-Uhren ähnlich zählen. Pace und Zeiten rechnen mit dem eingestellten Messfenster.</p>
+      <p>Ohne jede Glättung, Punkt für Punkt alle 10 m, ergeben die Rohdaten 177 m. Zum Vergleich mit anderen Marathons passt am ehesten „ab 1 m“, weil GPS-Uhren ähnlich zählen. Zeiten rechnen immer mit 100 m, das Messfenster ändert nur die Anzeige.</p>
     </div>
     <p class="warn" id="img-note"></p>
   </section>
@@ -724,9 +724,11 @@ function paceFaktor(gi) {
   }
   return 1 + (x >= 0 ? pfAuf(x) : unten(x));
 }
+// Pace und Zeiten rechnen immer mit 100 m (seit 1.54), damit kurze Wellen mitkosten; das Messfenster ändert nur die Anzeige
+const RECHEN = 100;
 // Pace-Faktor je Messpunkt (1 = flach) und die damit gewichtete Strecke in Metern
 function paceRatio() {
-  const g = WIN[S.win].g, ratio = new Float64Array(N);
+  const g = WIN[RECHEN].g, ratio = new Float64Array(N);
   for (let i = 0; i < N; i++) ratio[i] = paceFaktor(g[i] / 100);
   let sum = 0; for (let i = 1; i < N; i++) sum += (ratio[i - 1] + ratio[i]) / 2 * STEP;
   return { ratio, sum };
@@ -737,6 +739,14 @@ function buildPace() {
   for (let i = 1; i < N; i++) t[i] = t[i - 1] + (ratio[i - 1] + ratio[i]) / 2 * STEP / 1000 * p0;
   const scale = S.goal / valAt(t, L); for (let i = 0; i < N; i++) t[i] *= scale;
   P = { ratio, t, p0: p0 * scale };
+  glaettePace();
+}
+// „Pace hier“: Pace-Faktor gemittelt über das Messfenster, aus der Zeit für das Stück um die Stelle.
+// So schnell passt niemand sein Tempo an; das Mittel lässt die Summe gleich, Zielzeit und Zwischenzeiten bleiben exakt.
+function glaettePace() {
+  const h = S.win / 2, glatt = new Float64Array(N);
+  for (let i = 0; i < N; i++) { const a = Math.max(0, i * STEP - h), b = Math.min(L, i * STEP + h); glatt[i] = (valAt(P.t, b) - valAt(P.t, a)) / ((b - a) / 1000 * P.p0); }
+  P.glatt = glatt;
 }
 
 /* Rampen: zusammenhängende Abschnitte jenseits einer Schwelle, Lücken < 60 m überbrückt, mind. 2 m Höhe */
@@ -970,7 +980,7 @@ function drawMain() {
   // Klein oben rechts (im Vollbild steht oben meist die Karte statt der Werte): Uhrzeit an dieser Stelle (Startzeit + Plan,
   // bei „Live nach Plan“ mit rotem Punkt die Uhr an der Strecke), dann Pace hier und Abweichung zur Pace im Flachen.
   // Feste Spalten, damit beim Abspielen nichts hin und her springt
-  { const pace = P.p0 * valAt(P.ratio, S.pos), { fd, sU, wU, wP, wS, wD, wL, bw } = feldMass(c);
+  { const pace = P.p0 * valAt(P.glatt, S.pos), { fd, sU, wU, wP, wS, wD, wL, bw } = feldMass(c);
     const uz = S.live ? ortsZeit().s / 60 : S.start + valAt(P.t, S.pos) / 60;
     c.save(); c.textBaseline = "middle";
     const bh = 20, bx = w - 6 - bw, by = 2, r = 6;
@@ -1095,7 +1105,7 @@ function updateReadout() {
   const st = streetAt(x); $("r-street").textContent = st[1] || "–"; $("r-quarter").textContent = st[2] ? "· " + st[2] : "";
   const up = valAt(W.up, x), dn = valAt(W.dn, x), UP = valAt(W.up, L), DN = valAt(W.dn, L);
   $("r-done").innerHTML = auf_ab(up, dn); $("r-left").innerHTML = auf_ab(UP - up, DN - dn); $("r-total").innerHTML = auf_ab(UP, DN);
-  const r = valAt(P.ratio, x), pace = P.p0 * r;
+  const pace = P.p0 * valAt(P.glatt, x);
   $("r-pace").innerHTML = mss(pace) + ' <span class="dn">' + secs(pace - P.p0) + "</span>";
   $("r-split").textContent = hms(valAt(P.t, x));
   const flat = P.p0 * x / 1000; $("r-bal").textContent = secs(valAt(P.t, x) - flat) + " bisher";
@@ -1217,7 +1227,7 @@ function drawSpark(cv, a, b, base, span) {
 }
 function renderSplits() {
   const W = WIN[S.win], segs = splitSegs(), rows = [];
-  $("split-note").textContent = "Zeiten bei gleichmäßiger Anstrengung für " + hms(S.goal) + ", " + nf(S.secHm, 1) + " s je Höhenmeter bei 15 km/h an sanften Anstiegen, an steilen mehr (8 %: " + nf(kostHm(0.08), 1) + " s), Bergab-Gewinn " + (S.down === 1 ? "voll" : S.down === 0.5 ? "halb" : "nicht") + " angerechnet. Höhenmeter und Steigung über " + (S.win === 1000 ? "1 km" : S.win + " m") + " gemessen. ± = Mehr- oder Minderzeit durch die Steigung gegenüber flach. Profile mit gemeinsamem Höhenmaßstab. Antippen springt hin.";
+  $("split-note").textContent = "Zeiten bei gleichmäßiger Anstrengung für " + hms(S.goal) + ", " + nf(S.secHm, 1) + " s je Höhenmeter bei 15 km/h an sanften Anstiegen, an steilen mehr (8 %: " + nf(kostHm(0.08), 1) + " s), Bergab-Gewinn " + (S.down === 1 ? "voll" : S.down === 0.5 ? "halb" : "nicht") + " angerechnet, Zeiten mit 100 m Messfenster, damit kurze Wellen mitkosten. Höhenmeter und Steigung über " + (S.win === 1000 ? "1 km" : S.win + " m") + " gemessen. ± = Mehr- oder Minderzeit durch die Steigung gegenüber flach. Profile mit gemeinsamem Höhenmaßstab. Antippen springt hin.";
   let span = 6;
   for (const [a, b, lab] of segs) {
     let mn = Infinity, mx = -Infinity;
@@ -1299,7 +1309,7 @@ let lastT = 0;
 function tick(t) {
   if (!S.playing) return;
   const dt = lastT ? Math.min(0.1, (t - lastT) / 1000) : 0; lastT = t;
-  const pace = P.p0 * valAt(P.ratio, S.pos); // s pro km
+  const pace = P.p0 * valAt(P.glatt, S.pos); // s pro km, gemittelt wie die Anzeige
   setPos(S.pos + dt * S.speed / pace * 1000);
   if (S.pos >= L) { stop(); return; }
   requestAnimationFrame(tick);
@@ -1694,7 +1704,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.11';
+const APP_VERSION = '1.12';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
