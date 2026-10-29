@@ -1046,7 +1046,7 @@ function drawOverview() {
 }
 
 // Pace je Steigung (seit Hamburg 1.41, U-Kurve 1.44, flacher Auslauf und ohne Laborlinie seit 1.59) bei den Einstellungen,
-// die sie verändern; senkrechte Achse bei 0 %, der Punkt „hier“ ist die Steigung an der aktuellen Stelle. Antippen oder
+// die sie verändern; senkrechte Achse bei 0 %, der weiße Punkt ist der Flachpunkt (0 %, Pace im Flachen). Antippen oder
 // waagerecht Wischen setzt eine Markierung mit Steigung und Pace (PK.mark, stufenlos; Tippen daneben nimmt sie weg).
 const pk = $("pace-chart"), pkctx = pk.getContext("2d");
 const PK = { G0: -15, G1: 10, L0: 40, R0: 18, T0: 8, B0: 20, mark: null, zieh: false };
@@ -1071,11 +1071,12 @@ function drawPaceChart() {
   c.save(); c.beginPath(); c.rect(L0, T0, w - L0 - R0, h - T0 - B0); c.clip();
   c.strokeStyle = COL["--blue"]; c.lineWidth = 2.25; c.lineJoin = "round"; c.beginPath();
   gs.forEach((g, k) => k ? c.lineTo(X(g), Y(app(g))) : c.moveTo(X(g), Y(app(g)))); c.stroke(); c.restore();
-  // Steigung an der aktuellen Stelle
-  const gh = clamp(valAt(WIN[S.win].g, S.pos), G0, G1), xh = X(gh), yh = Y(app(gh));
+  // Flachpunkt: 0 % und die Pace im Flachen (die Kurve geht dort genau durch p0, seit 1.62 statt der aktuellen Stelle);
+  // Beschriftung links darüber, wo die Kurve nie verläuft
+  const xh = X(0), yh = Y(p0);
   c.fillStyle = COL["--ink"]; c.strokeStyle = COL["--surface"]; c.lineWidth = 2; c.beginPath(); c.arc(xh, yh, 4.5, 0, 2 * Math.PI); c.fill(); c.stroke();
-  c.fillStyle = COL["--ink"]; c.font = "600 11px " + font; c.textAlign = xh > w - R0 - 80 ? "right" : "left"; c.textBaseline = "bottom";
-  c.fillText("hier · km " + nf(S.pos / 1000, 1), xh + (c.textAlign === "left" ? 7 : -7), yh - 4);
+  c.fillStyle = COL["--ink"]; c.font = "600 11px " + font; c.textAlign = "right"; c.textBaseline = "bottom";
+  c.fillText("0 % · " + mss(p0) + " /km", xh - 7, yh - 5);
   // Markierung beim Antippen: Strich, Punkt und oben Steigung · Pace (Abweichung)
   if (PK.mark !== null) {
     const gm = clamp(PK.mark, G0, G1), xm = Math.round(X(gm)) + 0.5, pm = app(gm), ym = Y(pm);
@@ -1104,7 +1105,7 @@ function paceChartNote() {
   for (let i = 1; i < N; i++) if ((g[i - 1] + g[i]) / 2 < UNSICHER) steil += STEP;
   const fenster = "Messfenster " + (S.win === 1000 ? "1 km" : S.win + " m");
   $("pk-out").textContent = "flach " + mss(p0) + " /km";
-  $("pk-note").textContent = "Antippen zeigt die Pace bei jeder Steigung, Tippen daneben nimmt die Markierung weg. Der weiße Punkt ist die Steigung an deiner aktuellen Stelle auf der Strecke. Bergauf: +5 % "
+  $("pk-note").textContent = "Antippen zeigt die Pace bei jeder Steigung, Tippen daneben nimmt die Markierung weg. Der weiße Punkt ist die Pace im Flachen. Bergauf: +5 % "
     + mss(at(5)) + " /km (" + secs(at(5) - p0) + "), +10 % " + mss(at(10)) + " /km (" + secs(at(10) - p0) + "). "
     + "Bergab: −4 % " + mss(at(-4)) + " /km (" + secs(at(-4) - p0) + "), am schnellsten ab " + pc(B.xm) + " mit " + mss(at(B.xm)) + " /km (" + secs(at(B.xm) - p0) + "). "
     + "Steiler kein weiterer Gewinn: Im Labor sinkt der Energieverbrauch bis etwa −20 % weiter und erreicht erst bei etwa −40 % wieder den Wert im Flachen, im Rennen muss man aber bremsen. "
@@ -1745,7 +1746,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.38';
+const APP_VERSION = '1.39';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
