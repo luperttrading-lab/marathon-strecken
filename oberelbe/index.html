@@ -174,6 +174,13 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--blue); outl
 .setting { display: grid; gap: 6px; }
 .setting .head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .setting .note { font-size: 12.5px; color: var(--muted); }
+.setting .head .lbl { font-size: 15px; color: var(--ink); }
+.timepanel .colon.bei { font: 600 14px/1 var(--font-display); color: var(--muted); padding-bottom: calc((var(--wh) - 14px) / 2); }
+.setting .bahn-kopf { margin-top: 4px; }
+.bahn { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+.bahn > span, .bahn > b { display: flex; align-items: center; padding: 7px 0; border-top: 1px solid var(--edge); }
+.bahn > span { font-size: 15px; }
+.bahn > b { justify-content: flex-end; padding-left: 12px; font: 700 22px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
 .goal { font-family: var(--font-display); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
 
 /* Rampen */
@@ -550,11 +557,13 @@ body.run .close svg { width: 20px; height: 20px; }
         <div class="wcol" id="wg-h"></div><span class="colon" aria-hidden="true">:</span><div class="wcol" id="wg-m"></div><span class="colon" aria-hidden="true">:</span><div class="wcol" id="wg-s"></div>
       </div>
       <span class="note" id="goal-note">Gleichmäßige Anstrengung: im Flachen 4:58 /km.</span>
+      <span class="lbl bahn-kopf">Ohne Höhenmeter entspricht das</span>
+      <div class="bahn" id="bahn"><span>Flacher Marathon</span><b id="bahn-m">–</b><span>10 000 m auf der Bahn</span><b id="bahn-10">–</b><span>5000 m auf der Bahn</span><b id="bahn-5">–</b></div>
       <span class="note" id="bahn-note"></span>
     </div>
     <div class="setting">
-      <div class="head"><span class="lbl">Kosten je Höhenmeter bei 15 km/h</span><span class="goal" id="hm-out">1,0 s</span></div>
-      <div class="timepanel one" id="hm-wheel"><div class="wcol" id="wk-hm"></div></div>
+      <div class="head"><span class="lbl">Kosten je Höhenmeter</span><span class="goal" id="hm-out">1,0 s</span></div>
+      <div class="timepanel two" id="hm-wheel"><div class="wcol" id="wk-hm"></div><span class="colon bei" aria-hidden="true">bei</span><div class="wcol" id="wk-ref"></div></div>
       <span class="note" id="hm-note"></span>
     </div>
     <div class="setting">
@@ -697,7 +706,7 @@ const valAt = (arr, x) => { const t = clamp(x, 0, (N - 1) * STEP) / STEP; const 
 
 /* Pace-Modell: Energiekosten Laufen nach Minetti et al. 2002, J/(kg·m), i = Steigung als Bruch */
 const minetti = i => 155.4 * i ** 5 - 30.4 * i ** 4 - 43.3 * i ** 3 + 46.3 * i ** 2 + 19.5 * i + 3.6;
-// Sekunden je Höhenmeter bei 15 km/h an einer Steigung i (Bruch): an sanften Anstiegen S.secHm, steiler mehr (Minetti ist konvex)
+// Sekunden je Höhenmeter bei 4:00 /km an einer Steigung i (Bruch): an sanften Anstiegen S.secHm, steiler mehr (Minetti ist konvex)
 const kostHm = i => S.secHm / 0.24 / (19.5 / 3.6) * (minetti(i) / 3.6 - 1) / i * 0.24;
 let P = null;
 // Pace-Faktor an einer Steigung gi (Bruch; 1 = flach). Bergauf die Minetti-Kurve, skaliert auf die eingestellten Kosten je
@@ -794,8 +803,11 @@ const ROADS = (() => {
 const store = { get(k, d) { try { const v = localStorage.getItem("oem-" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem("oem-" + k, JSON.stringify(v)); } catch (e) {} } };
 // Jeder Start vom Home-Bildschirm beginnt bei km 0. Nur der Neustart nach einem Update behält die Stelle (einmalig, sessionStorage)
 const posNachUpdate = (() => { try { const v = sessionStorage.getItem("oem-pos"); sessionStorage.removeItem("oem-pos"); return v === null ? 0 : (+v || 0); } catch (_) { return 0; } })();
-const S = { pos: posNachUpdate, start: clamp(Math.round(store.get("start", D.start)) || D.start, 0, 1439), live: false, win: store.get("win", 200), zoom: store.get("zoom", 5000), goal: store.get("goal-v2", null), down: store.get("down-v2", 0.5), speed: store.get("speed", 200), vp: store.get("vp", false), relay: store.get("relay", false), secHm: store.get("sechm", 1.0), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
+const S = { pos: posNachUpdate, start: clamp(Math.round(store.get("start", D.start)) || D.start, 0, 1439), live: false, win: store.get("win", 200), zoom: store.get("zoom", 5000), goal: store.get("goal-v2", null), down: store.get("down-v2", 0.5), speed: store.get("speed", 200), vp: store.get("vp", false), relay: store.get("relay", false), secRef: store.get("sechm", 1.0), ref: store.get("sechm-pace", 240), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
 if (![50, 100, 200, 1000].includes(S.win)) S.win = 200;
+// Kosten je Höhenmeter: eingegeben bei der Bezugs-Pace S.ref (Standard 4:00 /km), gerechnet wird intern mit S.secHm bei 4:00 /km
+if (!(S.ref >= 180 && S.ref <= 420)) S.ref = 240;
+S.ref = Math.round(S.ref / 5) * 5; S.secHm = S.secRef * 240 / S.ref;
 S.zoom = (S.zoom >= 500 && S.zoom <= 10000) ? Math.round(S.zoom / 500) * 500 : 5000;
 const SPEEDS = [1, 50, 100, 120, 140, 160, 180, 200, 300, 400, 500, 600, 700, 800, 900, 1000];   // ×1 = Echtzeit
 if (!SPEEDS.includes(S.speed)) S.speed = 200;
@@ -1228,7 +1240,7 @@ function drawSpark(cv, a, b, base, span) {
 }
 function renderSplits() {
   const W = WIN[S.win], segs = splitSegs(), rows = [];
-  $("split-note").textContent = "Zeiten bei gleichmäßiger Anstrengung für " + hms(S.goal) + ", " + nf(S.secHm, 1) + " s je Höhenmeter bei 15 km/h an sanften Anstiegen, an steilen mehr (8 %: " + nf(kostHm(0.08), 1) + " s), Bergab-Gewinn " + (S.down === 1 ? "voll" : S.down === 0.5 ? "halb" : "nicht") + " angerechnet, Zeiten mit 100 m Messfenster, damit kurze Wellen mitkosten. Höhenmeter und Steigung über " + (S.win === 1000 ? "1 km" : S.win + " m") + " gemessen. ± = Mehr- oder Minderzeit durch die Steigung gegenüber flach. Profile mit gemeinsamem Höhenmaßstab. Antippen springt hin.";
+  $("split-note").textContent = "Zeiten bei gleichmäßiger Anstrengung für " + hms(S.goal) + ", " + nf(S.secRef, 1) + " s je Höhenmeter bei " + mss(S.ref) + " /km an sanften Anstiegen, an steilen mehr (8 %: " + nf(kostHm(0.08) * S.ref / 240, 1) + " s), Bergab-Gewinn " + (S.down === 1 ? "voll" : S.down === 0.5 ? "halb" : "nicht") + " angerechnet, Zeiten mit 100 m Messfenster, damit kurze Wellen mitkosten. Höhenmeter und Steigung über " + (S.win === 1000 ? "1 km" : S.win + " m") + " gemessen. ± = Mehr- oder Minderzeit durch die Steigung gegenüber flach. Profile mit gemeinsamem Höhenmaßstab. Antippen springt hin.";
   let span = 6;
   for (const [a, b, lab] of segs) {
     let mn = Infinity, mx = -Infinity;
@@ -1276,13 +1288,15 @@ function renderSettings() {
   for (const b of document.querySelectorAll("[data-split]")) b.setAttribute("aria-pressed", b.dataset.split === S.split);
   $("goal-out").textContent = hms(S.goal);
   const flach = P.p0 * 42.195; // dieselbe Anstrengung auf einem flachen Marathon
-  $("goal-note").textContent = "Gleichmäßige Anstrengung über die ganze Strecke: im Flachen " + mss(P.p0) + " /km. Insgesamt kosten die Steigungen " + secs(S.goal - P.p0 * L / 1000) + " gegenüber einer flachen Strecke. Das entspricht einem flachen Marathon in " + hms(flach) + ".";
+  $("goal-note").textContent = "Gleichmäßige Anstrengung über die ganze Strecke: im Flachen " + mss(P.p0) + " /km. Insgesamt kosten die Steigungen " + secs(S.goal - P.p0 * L / 1000) + " gegenüber einer flachen Strecke.";
   // Bahnzeiten ohne Höhenmeter (seit 1.55): Faustregel Marathon = 10 km × 4,667, das ist Riegel mit Exponent 1,07
   const BAHN = 4.667, k = Math.log(BAHN) / Math.log(42.195 / 10), t10 = flach / BAHN, t5 = t10 * Math.pow(0.5, k);
-  $("bahn-note").innerHTML = "Auf der Bahn entspricht das <b>10\u202f000 m in " + mss(t10) + "</b> und <b>5000 m in " + mss(t5) + "</b>. Faustregel: Marathon = 10 km × 4,667, das ist Riegels Formel mit Exponent 1,07. Für viele Freizeitläufer ist sie zu optimistisch: Sie brauchen für dieselbe Marathonzeit schnellere Bahnzeiten.";
+  $("bahn-m").textContent = hms(flach); $("bahn-10").textContent = mss(t10); $("bahn-5").textContent = mss(t5);
+  $("bahn-note").textContent = "Gleiche Anstrengung ohne Höhenmeter. Bahnzeiten nach der Faustregel Marathon = 10 km × 4,667, das ist Riegels Formel mit Exponent 1,07. Für viele Freizeitläufer ist sie zu optimistisch: Sie brauchen für dieselbe Marathonzeit schnellere Bahnzeiten.";
   const perHm = P.p0 * (S.secHm / 0.24) / 1000;
-  $("hm-out").textContent = nf(S.secHm, 1) + " s";
-  $("hm-note").textContent = "Das entspricht " + nf(S.secHm / 0.24, 1) + " m flacher Strecke je Höhenmeter. Bei deiner Pace (" + mss(P.p0) + " /km im Flachen) kostet 1 Höhenmeter bergauf " + nf(perHm, 1) + " s und bringt bergab " + nf(perHm * S.down, 1) + " s. Zum Vergleich: Das Labormodell von Minetti entspricht 1,3 s bei 15 km/h. Steilere Anstiege kosten wie im Labormodell überproportional mehr (Diagramm unten).";
+  $("hm-out").textContent = nf(S.secRef, 1) + " s";
+  $("hm-note").textContent = "Standard: 1,0 s bei 4:00 /km (Vierer-Schnitt). Wer seinen Wert für eine andere Pace kennt, stellt sie rechts ein. "
+    + (S.ref !== 240 ? "Deine Angabe entspricht " + nf(S.secHm, 2) + " s bei 4:00 /km. " : "") + "Das entspricht " + nf(S.secHm / 0.24, 1) + " m flacher Strecke je Höhenmeter. Bei deiner Pace (" + mss(P.p0) + " /km im Flachen) kostet 1 Höhenmeter bergauf " + nf(perHm, 1) + " s und bringt bergab " + nf(perHm * S.down, 1) + " s. Zum Vergleich: Das Labormodell von Minetti entspricht 1,3 s bei 4:00 /km. Steilere Anstiege kosten wie im Labormodell überproportional mehr (Diagramm unten).";
   paceChartNote();
   const dauer = S.goal / S.speed;
   $("speed-note").textContent = "Mit ×" + S.speed + " dauert der ganze Lauf " + (dauer >= 3600 ? hms(dauer) + " h" : mss(dauer) + " min") + (S.speed === 1 ? " (Echtzeit; läuft nur bei eingeschaltetem Bildschirm, zum Mitlaufen am Renntag „Live“ nehmen)" : "") + ". Der Läufer wird bergauf langsamer, wie im Pace-Modell. Einstellen im Vollbild mit dem rechten Drehrad über dem Profil.";
@@ -1401,7 +1415,9 @@ GW.m = makeWheel($("wg-m"), { key: "gm", label: "Min", loop: true, min: 0, max: 
 GW.s = makeWheel($("wg-s"), { key: "gs", label: "Sek", loop: true, min: 0, max: 59, step: 1, fmt: pad2, text: v => v + " Sekunden", onChange: v => setGoal(GW.h.value, GW.m.value, v) });
 /* Räder auf die Zielzeit stellen, auch wenn sie erst sichtbar werden (iOS setzt die Scrollposition verdeckter Räder nicht zuverlässig) */
 GW.k = makeWheel($("wk-hm"), { key: "khm", label: "Sekunden", min: 0.5, max: 2.0, step: 0.1, fmt: v => nf(v, 1), text: v => nf(v, 1) + " Sekunden je Höhenmeter",
-  onChange: v => { S.secHm = v; store.set("sechm", v); $("hm-out").textContent = nf(v, 1) + " s"; clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("hm-wheel"), recompute), 120); } });
+  onChange: v => { S.secRef = v; S.secHm = v * 240 / S.ref; store.set("sechm", v); $("hm-out").textContent = nf(v, 1) + " s"; clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("hm-wheel"), recompute), 120); } });
+GW.r = makeWheel($("wk-ref"), { key: "kref", label: "Pace /km", min: 180, max: 420, step: 5, fmt: v => mss(v), text: v => mss(v) + " pro Kilometer",
+  onChange: v => { S.ref = v; S.secHm = S.secRef * 240 / v; store.set("sechm-pace", v); clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("hm-wheel"), recompute), 120); } });
 /* Für Zuschauer: Startzeit, Uhrzeit an jeder 5-km-Marke, Link zum Teilen, Live nach Plan (Uhrzeiten in der Zeitzone der Strecke) */
 const TZ = D.tz || "Europe/Berlin";
 const uhr = min => { const m = Math.round(min); return Math.floor(m / 60) % 24 + ":" + String(m % 60).padStart(2, "0"); };
@@ -1555,7 +1571,7 @@ for (const sec of document.querySelectorAll("section.klapp")) {
     requestAnimationFrame(() => { if (auf) { syncGoalWheels(); renderSplits(); dirty = true; } halte(); requestAnimationFrame(() => requestAnimationFrame(halte)); });
   });
 }
-const syncGoalWheels = () => { ZW.set(S.zoom); SW.set(S.speed); const g = Math.round(S.goal); GW.h.set(Math.floor(g / 3600)); GW.m.set(Math.floor(g % 3600 / 60)); GW.s.set(g % 60); GW.k.set(S.secHm); GW.sh.set(Math.floor(S.start / 60)); GW.sm.set(S.start % 60); };
+const syncGoalWheels = () => { ZW.set(S.zoom); SW.set(S.speed); const g = Math.round(S.goal); GW.h.set(Math.floor(g / 3600)); GW.m.set(Math.floor(g % 3600 / 60)); GW.s.set(g % 60); GW.k.set(S.secRef); GW.r.set(S.ref); GW.sh.set(Math.floor(S.start / 60)); GW.sm.set(S.start % 60); };
 requestAnimationFrame(syncGoalWheels);
 if ("IntersectionObserver" in window) new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) syncGoalWheels(); }).observe($("goal-wheels"));
 if ("IntersectionObserver" in window) new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) syncGoalWheels(); }).observe($("start-wheels"));
@@ -1709,7 +1725,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.33';
+const APP_VERSION = '1.34';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
