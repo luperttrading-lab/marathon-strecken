@@ -88,6 +88,10 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   Maßstab über die ganze Strecke, nie je Position: sonst springen sie beim Abspielen (so bis 1.8). Ein Name bleibt am
   linken Rand stehen, bis das Ende seiner Straße ihn hinausschiebt. Ist das Profil unter 180 px hoch (Kartengröße-Stufen 2 und 3,
   kleine iPhones schon ab Stufe 1), entfällt die Zeile, damit die Kurve den Platz behält (seit 1.3, Wunsch des Nutzers).
+- **Startzeit Hamburg** (`D.start` = 510, 8:30 Uhr): Seit der 40. Ausgabe 2026 startet der Marathon eine Stunde früher als bis
+  2025 (9:30), in zwei Wellen an Karolinenstraße und Bei den Kirchhöfen; der Halbmarathon läuft nachmittags um 14:00 (Mitteilung
+  des Veranstalters vom 30.04.2025, haspa-marathon-hamburg.de, „Save the date“). Uhrzeit der zweiten Welle nicht veröffentlicht;
+  für 2027 (25.04., `D.termine`) beim Veranstalter prüfen, sobald der Zeitplan steht.
 - **Für Zuschauer** (seit 1.19, Abschnitt unter den Zwischenzeiten): Startzeit mit zwei Rädern (`start`, Minuten ab
   Mitternacht, Voreinstellung `D.start`), Uhrzeit an Start, jeder 5-km-Marke, 21,1 und Ziel mit Straße. „Plan teilen“
   schickt `…/<strecke>/?ziel=3:45:00&start=9:35`; der Link übernimmt beides nur für den Besuch (nichts gespeichert) und
