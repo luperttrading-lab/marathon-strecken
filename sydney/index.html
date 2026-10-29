@@ -148,7 +148,7 @@ canvas { display: block; width: 100%; }
 .ovfarbe[aria-pressed="true"] i { background: linear-gradient(135deg, #143790, #2b94f4 22%, #4caf63 40%, #efd760 56%, #f39136 70%, #f5493e 84%, #922e4e); }
 .ovfarbe:focus-visible { outline: none; }
 .ovfarbe:focus-visible i { outline: 2px solid var(--blue); outline-offset: 2px; }
-#pace-chart { height: 240px; }
+#pace-chart { height: 240px; touch-action: pan-y; cursor: crosshair; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: var(--muted); }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
 input[type="range"] { width: 100%; accent-color: var(--blue); margin: 0; }
@@ -580,7 +580,7 @@ body.run .close svg { width: 20px; height: 20px; }
     <div class="setting">
       <div class="head"><span class="lbl">So rechnet das Pace-Modell</span><span class="note" id="pk-out"></span></div>
       <span class="note">Bergauf die Energiekosten des Laufens nach Steigung (Minetti u. a. 2002). Bergab bringt ein Höhenmeter die Hälfte dessen, was er bergauf kostet, weil man bergab nicht voll ins Rollen kommt. Steiler als −8 % kein weiterer Gewinn, weil man bremsen muss.</span>
-      <canvas id="pace-chart" aria-label="Diagramm: Pace je Steigung in der App und im Labormodell"></canvas>
+      <canvas id="pace-chart" aria-label="Diagramm: Pace je Steigung, Antippen zeigt die Pace bei dieser Steigung"></canvas>
       <span class="note" id="pk-note"></span>
     </div>
     <div class="setting">
@@ -1046,41 +1046,54 @@ function drawOverview() {
   for (const mk of D.marks) if ((mk.c === "relay" && S.relay) || mk.c === "half") { c.fillStyle = COL[MARK_STYLE[mk.c]]; c.fillRect(X(mk.k) - 1, pad + ph, 2, 4); }
 }
 
-// Pace je Steigung (seit Hamburg 1.41, U-Kurve seit 1.44), bei den Einstellungen, die sie verändern: durchgezogen die App
-// (paceFaktor mit den eingestellten Kosten und dem Bergab-Gewinn), gestrichelt das Labormodell (Minetti unverändert, voller
-// Gewinn, unten abgeschnitten), grau die Zone steiler als UNSICHER, in der die Quellen auseinanderliegen; der Punkt ist die
-// Steigung an der aktuellen Stelle.
+// Pace je Steigung (seit Hamburg 1.41, U-Kurve 1.44, flacher Auslauf und ohne Laborlinie seit 1.59) bei den Einstellungen,
+// die sie verändern; senkrechte Achse bei 0 %, der Punkt „hier“ ist die Steigung an der aktuellen Stelle. Antippen oder
+// waagerecht Wischen setzt eine Markierung mit Steigung und Pace (PK.mark, in 0,5-%-Schritten).
 const pk = $("pace-chart"), pkctx = pk.getContext("2d");
+const PK = { G0: -15, G1: 10, L0: 40, R0: 18, T0: 8, B0: 20, mark: null, zieh: false };
 function drawPaceChart() {
   const { w, h, dpr } = sizeCanvas(pk); if (!w) return; const c = pkctx;
   c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
-  const G0 = -20, G1 = 10, p0 = P.p0, app = g => paceFaktor(g / 100) * p0, lab = g => minetti(g / 100) / 3.6 * p0;
+  const { G0, G1, L0, R0, T0, B0 } = PK, p0 = P.p0, app = g => paceFaktor(g / 100) * p0;
   const gs = []; for (let g = G0; g <= G1 + 1e-9; g += 0.25) gs.push(g);
-  const va = gs.map(app), y0 = Math.floor((Math.min(...va) - 10) / 30) * 30, y1 = Math.ceil(Math.max(...va, lab(G1)) / 30) * 30;
-  const L0 = 40, R0 = 42, T0 = 8, B0 = 20;   // Ränder: Pace links, Kurvennamen rechts, Steigung unten
+  const va = gs.map(app), y0 = Math.floor((Math.min(...va) - 10) / 30) * 30, y1 = Math.ceil(Math.max(...va) / 30) * 30;
   const X = g => L0 + (g - G0) / (G1 - G0) * (w - L0 - R0), Y = v => T0 + (y1 - v) / (y1 - y0) * (h - T0 - B0);
   const font = getComputedStyle(document.body).fontFamily; c.font = "500 10.5px " + font;
-  c.fillStyle = COL["--ink"]; c.globalAlpha = 0.07; c.fillRect(X(G0), T0, X(UNSICHER) - X(G0), h - T0 - B0); c.globalAlpha = 1;
   const ys = (y1 - y0) / 30 > 7 ? 60 : 30;
   c.strokeStyle = COL["--grid"]; c.lineWidth = 1; c.fillStyle = COL["--muted"]; c.textAlign = "right"; c.textBaseline = "middle";
   for (let v = Math.ceil(y0 / ys) * ys; v <= y1; v += ys) { const y = Math.round(Y(v)) + 0.5; c.beginPath(); c.moveTo(L0, y); c.lineTo(w - R0, y); c.stroke(); c.fillText(mss(v), L0 - 6, y); }
   c.textAlign = "center"; c.textBaseline = "top";
   for (let g = G0; g <= G1; g += 5) { const x = Math.round(X(g)) + 0.5; c.beginPath(); c.moveTo(x, T0); c.lineTo(x, h - B0); c.stroke(); c.fillText((g > 0 ? "+" : g < 0 ? "−" : "") + Math.abs(g) + " %", x, h - B0 + 5); }
-  c.textAlign = "left"; c.textBaseline = "top"; c.fillText("steiler als", X(G0) + 5, T0 + 4); c.fillText(nf(UNSICHER, 0).replace("-", "−") + " %:", X(G0) + 5, T0 + 17); c.fillText("kein Gewinn", X(G0) + 5, T0 + 30); c.fillText("mehr", X(G0) + 5, T0 + 43);
-  const kurve = (f, farbe, breite, strich) => { c.strokeStyle = farbe; c.lineWidth = breite; c.setLineDash(strich); c.lineJoin = "round"; c.beginPath();
-    gs.forEach((g, k) => k ? c.lineTo(X(g), Y(f(g))) : c.moveTo(X(g), Y(f(g)))); c.stroke(); c.setLineDash([]); };
+  // Achse bei 0 %
+  { const x = Math.round(X(0)) + 0.5; c.strokeStyle = COL["--muted"]; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, T0); c.lineTo(x, h - B0); c.stroke(); }
+  c.textAlign = "left"; c.textBaseline = "top"; c.fillStyle = COL["--muted"];
+  // unter dem Platz für die Markierung oben; links unten liegt immer das flache Kurvenstück, darüber ist frei
+  c.fillText("steiler als", X(G0) + 5, T0 + 34); c.fillText(nf(UNSICHER, 0).replace("-", "−") + " %:", X(G0) + 5, T0 + 47); c.fillText("kein Gewinn", X(G0) + 5, T0 + 60); c.fillText("mehr", X(G0) + 5, T0 + 73);
   c.save(); c.beginPath(); c.rect(L0, T0, w - L0 - R0, h - T0 - B0); c.clip();
-  kurve(lab, COL["--muted"], 1.5, [5, 4]); kurve(app, COL["--blue"], 2.25, []); c.restore();
-  // Namen rechts an den Kurvenenden, nicht übereinander
-  let ya = Y(app(G1)), yl = Y(lab(G1)); if (Math.abs(ya - yl) < 13) { const m = (ya + yl) / 2, s = ya < yl ? -1 : 1; ya = m + s * 6.5; yl = m - s * 6.5; }
-  c.textBaseline = "middle"; c.font = "600 11px " + font; c.fillStyle = COL["--blue"]; c.fillText("App", w - R0 + 5, ya);
-  c.font = "500 10.5px " + font; c.fillStyle = COL["--muted"]; c.fillText("Labor", w - R0 + 5, yl);
+  c.strokeStyle = COL["--blue"]; c.lineWidth = 2.25; c.lineJoin = "round"; c.beginPath();
+  gs.forEach((g, k) => k ? c.lineTo(X(g), Y(app(g))) : c.moveTo(X(g), Y(app(g)))); c.stroke(); c.restore();
   // Steigung an der aktuellen Stelle
   const gh = clamp(valAt(WIN[S.win].g, S.pos), G0, G1), xh = X(gh), yh = Y(app(gh));
   c.fillStyle = COL["--ink"]; c.strokeStyle = COL["--surface"]; c.lineWidth = 2; c.beginPath(); c.arc(xh, yh, 4.5, 0, 2 * Math.PI); c.fill(); c.stroke();
   c.fillStyle = COL["--ink"]; c.font = "600 11px " + font; c.textAlign = xh > w - R0 - 30 ? "right" : "left"; c.textBaseline = "bottom";
   c.fillText("hier", xh + (c.textAlign === "left" ? 7 : -7), yh - 4);
+  // Markierung beim Antippen: Strich, Punkt und oben Steigung · Pace (Abweichung)
+  if (PK.mark !== null) {
+    const gm = clamp(PK.mark, G0, G1), xm = Math.round(X(gm)) + 0.5, pm = app(gm), ym = Y(pm);
+    c.strokeStyle = COL["--ink"]; c.lineWidth = 1; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xm, T0); c.lineTo(xm, h - B0); c.stroke(); c.setLineDash([]);
+    c.fillStyle = COL["--blue"]; c.strokeStyle = COL["--surface"]; c.lineWidth = 2; c.beginPath(); c.arc(xm, ym, 5, 0, 2 * Math.PI); c.fill(); c.stroke();
+    const txt = (gm > 0 ? "+" : gm < 0 ? "−" : "±") + nf(Math.abs(gm), gm % 1 ? 1 : 0) + " %  ·  " + mss(pm) + " /km  (" + secs(pm - p0) + ")";
+    c.font = "600 12px " + font; const tw = c.measureText(txt).width + 12, bx = clamp(xm - tw / 2, L0, w - R0 - tw);
+    c.fillStyle = COL["--surface"]; c.strokeStyle = COL["--ink"]; c.lineWidth = 1; c.beginPath(); if (c.roundRect) c.roundRect(bx, T0 + 2, tw, 20, 5); else c.rect(bx, T0 + 2, tw, 20); c.fill(); c.stroke();
+    c.fillStyle = COL["--ink"]; c.textAlign = "left"; c.textBaseline = "middle"; c.fillText(txt, bx + 6, T0 + 12);
+  }
 }
+// Antippen setzt die Markierung, waagerechtes Wischen zieht sie mit; senkrecht scrollt die Seite weiter (touch-action: pan-y)
+const pkSetze = e => { const r = pk.getBoundingClientRect(), g = PK.G0 + (e.clientX - r.left - PK.L0) / (r.width - PK.L0 - PK.R0) * (PK.G1 - PK.G0);
+  PK.mark = clamp(Math.round(g * 2) / 2, PK.G0, PK.G1); dirty = true; };
+pk.addEventListener("pointerdown", e => { PK.zieh = true; pkSetze(e); });
+pk.addEventListener("pointermove", e => { if (PK.zieh) pkSetze(e); });
+for (const ev of ["pointerup", "pointercancel", "pointerleave"]) pk.addEventListener(ev, () => { PK.zieh = false; });
 // Text zum Diagramm: Zahlen für die eingestellte Pace und wie viel der Strecke steiler als UNSICHER bergab geht
 function paceChartNote() {
   const p0 = P.p0, at = g => paceFaktor(g / 100) * p0, g = WIN[S.win].g, B = BERGAB, pc = v => nf(v, 0).replace("-", "−") + " %";
@@ -1088,10 +1101,10 @@ function paceChartNote() {
   for (let i = 1; i < N; i++) if ((g[i - 1] + g[i]) / 2 < UNSICHER) steil += STEP;
   const fenster = "Messfenster " + (S.win === 1000 ? "1 km" : S.win + " m");
   $("pk-out").textContent = "flach " + mss(p0) + " /km";
-  $("pk-note").textContent = "Durchgezogen die App mit deinen Einstellungen, gestrichelt das Labormodell (Minetti u. a. 2002, unverändert). Bergauf: +5 % "
+  $("pk-note").textContent = "Antippen zeigt die Pace bei jeder Steigung. Bergauf: +5 % "
     + mss(at(5)) + " /km (" + secs(at(5) - p0) + "), +10 % " + mss(at(10)) + " /km (" + secs(at(10) - p0) + "). "
     + "Bergab: −4 % " + mss(at(-4)) + " /km (" + secs(at(-4) - p0) + "), am schnellsten ab " + pc(B.xm) + " mit " + mss(at(B.xm)) + " /km (" + secs(at(B.xm) - p0) + "). "
-    + "Steiler kein weiterer Gewinn (grau): Im Labor sinkt der Energieverbrauch bis etwa −20 % weiter und erreicht erst bei etwa −40 % wieder den Wert im Flachen, im Rennen muss man aber bremsen. "
+    + "Steiler kein weiterer Gewinn: Im Labor sinkt der Energieverbrauch bis etwa −20 % weiter und erreicht erst bei etwa −40 % wieder den Wert im Flachen, im Rennen muss man aber bremsen. "
     + "Felddaten aus 20 belgischen Trailrennen (Jidovtseff und De Cock 2026) zeigen das schnellste Tempo um −8 %. "
     + (steil >= 50 ? "Auf dieser Strecke sind " + nf(steil / 1000, steil < 1000 ? 2 : 1) + " km so steil (" + fenster + ")." : "Auf dieser Strecke ist kein Stück so steil (" + fenster + ").");
 }
@@ -1729,7 +1742,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.17';
+const APP_VERSION = '1.18';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
