@@ -376,6 +376,9 @@ body.run .close svg { width: 20px; height: 20px; }
 .klapp-kopf svg { grid-column: 2; grid-row: 1 / span 2; width: 20px; height: 20px; color: var(--blue); transition: transform 0.2s; }
 .klapp-kopf[aria-expanded="true"] svg { transform: rotate(180deg); }
 .klapp-kopf[aria-expanded="true"] .kh { display: none; }
+/* Offen bleibt der Kopf beim Scrollen oben stehen (seit 1.50): Zuklappen geht von überall, danach steht der Kopf an derselben
+   Stelle und darunter folgen die übrigen Abschnitte wie vorher */
+.klapp-kopf[aria-expanded="true"] { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 4; min-height: 52px; background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; box-shadow: 0 10px 12px -14px rgba(0, 0, 0, 0.7); }
 .ramps > .klapp-inhalt { display: grid; gap: 10px; padding: 0 0 6px; }
 .settings > .klapp-inhalt { display: grid; gap: 14px; padding: 0 14px 14px; }
 .source > .klapp-inhalt { display: grid; gap: 8px; padding: 0 14px 14px; }
@@ -1667,7 +1670,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.40';
+const APP_VERSION = '1.41';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
