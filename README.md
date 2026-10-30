@@ -31,6 +31,9 @@ dann liegen alle Strecken in einer App.
 | Oberelbe (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/oberelbe/ | [`oberelbe/`](oberelbe/) | [`werkzeuge/oberelbe/`](werkzeuge/oberelbe/UEBERGABE.md) |
 | Rennsteiglauf-Marathon (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/rennsteig/ | [`rennsteig/`](rennsteig/) | [`werkzeuge/rennsteig/`](werkzeuge/rennsteig/UEBERGABE.md) |
 
+Das Pace-Modell (1,0 s je Höhenmeter bei 4:00 /km, bergab die Hälfte) ist an 3 Mio. echten Zwischenzeiten geprüft:
+[`werkzeuge/eichung/`](werkzeuge/eichung/README.md) (30.10.2026).
+
 ## Regeln für Änderungen
 
 - Gearbeitet wird direkt in `<strecke>/index.html` bzw. `index.html` (Startseite). Die Skripte unter `werkzeuge/` sind nur die Herkunft.
