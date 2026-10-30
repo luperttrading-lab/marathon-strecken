@@ -196,6 +196,8 @@ button.info span { width: 20px; height: 20px; border: 1.5px solid currentColor; 
 .bahn.steig > span, .bahn.steig > b { border-bottom: 1px solid var(--edge); }   /* Steigungskosten unter der Zielzeit, seit Hamburg 1.67 */
 .bahn.steig + .bahn.steig > span, .bahn.steig + .bahn.steig > b { border-top: 0; }   /* Mauer-Zeile direkt darunter (D.mauer) */
 .bahn .spaet { color: var(--g-u3); }   /* Tor zur Mauer verpasst (D.tor) */
+.mauer-empf { display: flex; align-items: center; justify-content: space-between; gap: 10px; }   /* Empfehlung und Knopf unter den Mauer-Rädern */
+.mauer-empf button { flex: none; }
 .goal { font-family: var(--font-display); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
 
 /* Rampen */
@@ -581,7 +583,8 @@ body.run .close svg { width: 20px; height: 20px; }
     </div>
     <div class="setting" id="mauer-set" hidden>
       <div class="head"><span class="lbl">Zeit auf der Mauer</span><span class="goal" id="mauer-out">–</span></div>
-      <div class="timepanel one" id="mauer-wheel"><div class="wcol" id="wm-min"></div></div>
+      <div class="timepanel two" id="mauer-wheel"><div class="wcol" id="wm-1"></div><span class="colon bei" aria-hidden="true">+</span><div class="wcol" id="wm-2"></div></div>
+      <div class="mauer-empf"><span class="note" id="mauer-empf-text"></span><button type="button" id="mauer-empf" hidden>Empfehlung</button></div>
       <span class="note" id="mauer-note"></span>
       <div class="bahn steig" id="tor-zeile" hidden><span id="tor-lbl">Am Tor zur Mauer</span><b id="tor-uhr">–</b></div>
       <span class="note" id="tor-note" hidden></span>
@@ -838,12 +841,16 @@ const posNachUpdate = (() => { try { const v = sessionStorage.getItem("ffm-pos")
 const S = { pos: posNachUpdate, start: clamp(Math.round(store.get("start", D.start)) || D.start, 0, 1439), live: false, win: store.get("win", 200), zoom: store.get("zoom", 5000), goal: store.get("goal-v2", null), down: 0.5, speed: store.get("speed", 200), vp: store.get("vp", false), relay: store.get("relay", false), secRef: store.get("sechm", 1.0), ref: store.get("sechm-pace", 240), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
 if (![50, 100, 200, 1000].includes(S.win)) S.win = 200;
 S.meer = store.get("meer", false) === true;   // Tabelle „Ohne Höhenmeter“ auf Meereshöhe umgerechnet (nur bei D.lage)
-// Mauer (D.mauer = [[von, bis, Name, Anteil], …] in Streckenmetern, seit Hamburg 1.68, bisher Great Wall): auf Mauer und Treppen
-// wird gegangen, gestiegen und gewartet; dort zählen feste Minuten (S.mauerMin, alle Durchgänge zusammen) statt des Steigungsmodells,
-// aufgeteilt nach dem Anteil (gemessene Minuten je Durchgang, ohne Angabe gleich)
-const MAUER = D.mauer || [], MAUER_ANTEIL = MAUER.map(m => m[3] || 1), MAUER_SUMME = MAUER_ANTEIL.reduce((s, v) => s + v, 0);
-S.mauerMin = clamp(Math.round(store.get("mauer-min", D.mauerMin || 60)) || 60, 10, 240);
-const mauerMin = k => S.mauerMin * MAUER_ANTEIL[k] / MAUER_SUMME;   // Minuten für Durchgang k
+// Mauer (D.mauer = [[von, bis, Name, Minuten], …] in Streckenmetern, seit Hamburg 1.68, bisher Great Wall): auf Mauer und Treppen
+// wird gegangen, gestiegen und gewartet; dort zählen feste Minuten je Durchgang statt des Steigungsmodells. Seit 1.69 je Durchgang
+// ein Rad. Ohne eigenes Drehen gilt die Empfehlung für die Zielzeit: D.mauerEmpf = [[Minuten bei 5 h, je Stunde mehr], …]
+// (Great Wall: Zwischenzeiten 2026), sonst der vierte Wert in D.mauer
+const MAUER = D.mauer || [];
+S.mauerAuto = store.get("mauer-auto", true) !== false;
+S.mauerEigen = MAUER.map((m, k) => clamp(Math.round(store.get("mauer-min-" + (k + 1), 0)) || 0, 0, 180));
+const mauerEmpf = k => { const e = D.mauerEmpf && D.mauerEmpf[k], T = S.goal > 0 ? S.goal / 3600 : 5; return clamp(Math.round(e ? e[0] + e[1] * (T - 5) : MAUER[k][3] || 30), 10, 180); };
+const mauerMin = k => S.mauerAuto || !S.mauerEigen[k] ? mauerEmpf(k) : S.mauerEigen[k];   // Minuten für Durchgang k
+const mauerSumme = () => MAUER.reduce((s, m, k) => s + mauerMin(k), 0);
 // Kosten je Höhenmeter: eingegeben bei der Bezugs-Pace S.ref (Standard 4:00 /km), gerechnet wird intern mit S.secHm bei 4:00 /km
 if (!(S.ref >= 180 && S.ref <= 420)) S.ref = 240;
 S.ref = Math.round(S.ref / 5) * 5; S.secHm = S.secRef * 240 / S.ref;
@@ -857,9 +864,12 @@ const GAST = (() => { const q = new URLSearchParams(location.search), z = /^(\d)
 if (GAST) { S.goal = GAST.goal; S.start = GAST.start; }
 // Voreinstellung: genau 4:00 /km im Flachen; die Zielzeit enthält dann, was das Höhenprofil kostet (je Strecke verschieden)
 if (typeof S.goal !== "number" || !(S.goal > 0)) {
-  const { ratio } = paceRatio(), mz = mauerZeit(), c = new Float64Array(N);   // gewichtete Meter bis genau 42 195 m (das Raster reicht 5 m weiter)
-  for (let i = 1; i < N; i++) c[i] = c[i - 1] + (mz[i] ? mz[i] / 0.24 : (ratio[i - 1] + ratio[i]) / 2 * STEP);   // Mauer: ihre Minuten als Meter zu 4:00 /km
-  S.goal = Math.round(240 * valAt(c, L) / 1000);
+  S.goal = D.ziel || 0;   // D.ziel: eigene Voreinstellung in s, wo 4:00 /km im Flachen keine sinnvolle Zielzeit ergibt (Great Wall: 5:00:00)
+  if (!D.ziel) for (let r = 0; r < (MAUER.length ? 5 : 1); r++) {   // Mauer: Empfehlung hängt an der Zielzeit, ein paar Runden bis beides passt
+    const { ratio } = paceRatio(), mz = mauerZeit(), c = new Float64Array(N);   // gewichtete Meter bis genau 42 195 m (das Raster reicht 5 m weiter)
+    for (let i = 1; i < N; i++) c[i] = c[i - 1] + (mz[i] ? mz[i] / 0.24 : (ratio[i - 1] + ratio[i]) / 2 * STEP);   // Mauer: ihre Minuten als Meter zu 4:00 /km
+    S.goal = Math.round(240 * valAt(c, L) / 1000);
+  }
 }
 
 const $ = id => document.getElementById(id);
@@ -1384,10 +1394,15 @@ function renderMauer(lang, plus) {
   const n = MAUER.length, km = v => nf(v / 1000, 1);
   $("mauer-zeile").hidden = $("mauer-set").hidden = false;
   $("goal-mauer").textContent = (plus < 0 ? "−" : "+") + mss(Math.abs(plus)) + " min";
-  $("mauer-out").textContent = S.mauerMin + " min";
+  $("mauer-out").textContent = mauerSumme() + " min";
+  if (GW.m1 && S.mauerAuto) { GW.m1.set(mauerMin(0)); if (n > 1) GW.m2.set(mauerMin(1)); }   // eigene Werte stehen schon auf den Rädern
+  $("wm-2").hidden = $("wm-2").previousElementSibling.hidden = n < 2;
+  const empf = MAUER.map((m, k) => mauerEmpf(k)).join(" + ") + " min", eigen = !S.mauerAuto && MAUER.some((m, k) => mauerMin(k) !== mauerEmpf(k));
+  $("mauer-empf-text").textContent = D.mauerEmpf ? (eigen ? "Deine Zeiten. Empfehlung für " + hms(S.goal) + ": " + empf + "." : "Empfehlung für " + hms(S.goal) + ", folgt deiner Zielzeit, bis du selbst drehst.") : "";
+  $("mauer-empf").hidden = !(D.mauerEmpf && eigen);
   $("mauer-note").textContent = "Die Strecke führt " + (n === 2 ? "zweimal" : n + "-mal") + " über die Mauer: " + MAUER.map(m => "km " + km(m[0]) + "–" + km(m[1])).join(" und ")
-    + ", zusammen " + km(lang) + " km auf Mauer und Treppen. Dort wird gegangen, gestiegen und gewartet; deshalb zählt hier deine Zeit statt des Steigungsmodells: "
-    + MAUER.map((m, k) => (k + 1) + ". Durchgang " + Math.round(mauerMin(k)) + " min").join(", ") + ". " + (D.mauerQ ? D.mauerQ + " " : "")
+    + ", zusammen " + km(lang) + " km auf Mauer und Treppen. Dort wird gegangen, gestiegen und gewartet; deshalb zählt hier deine Zeit statt des Steigungsmodells. "
+    + (D.mauerQ ? D.mauerQ + " " : "")
     + "Der Rest der Zielzeit verteilt sich wie überall nach Steigung: auf flachen Stücken " + mss2(P.p0) + " /km. Die Mauer kostet damit " + mss(Math.abs(plus)) + " min "
     + (plus >= 0 ? "mehr" : "weniger") + ", als dieselben " + km(lang) + " km flach zu laufen.";
   renderTor();
@@ -1522,8 +1537,17 @@ GW.s = makeWheel($("wg-s"), { key: "gs", label: "Sek", loop: true, min: 0, max: 
 /* Räder auf die Zielzeit stellen, auch wenn sie erst sichtbar werden (iOS setzt die Scrollposition verdeckter Räder nicht zuverlässig) */
 GW.k = makeWheel($("wk-hm"), { key: "khm", label: "Sekunden", min: 0.5, max: 2.0, step: 0.1, fmt: v => nf(v, 1), text: v => nf(v, 1) + " Sekunden je Höhenmeter",
   onChange: v => { S.secRef = v; S.secHm = v * 240 / S.ref; store.set("sechm", v); $("hm-out").textContent = nf(v, 1) + " s"; clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("hm-wheel"), recompute), 120); } });
-GW.mz = makeWheel($("wm-min"), { key: "mzm", label: "Minuten", min: 10, max: 240, step: 1, fmt: v => String(v), text: v => v + " Minuten auf der Mauer",
-  onChange: v => { S.mauerMin = v; store.set("mauer-min", v); $("mauer-out").textContent = v + " min"; clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("mauer-wheel"), recompute), 120); } });
+// Mauer je Durchgang: wer dreht, legt beide Werte fest (der andere bleibt, wie er gerade steht); „Empfehlung“ folgt wieder der Zielzeit
+const setMauer = (k, v) => {
+  const w = MAUER.map((m, j) => j === k ? v : mauerMin(j));
+  S.mauerAuto = false; store.set("mauer-auto", false);
+  w.forEach((x, j) => { S.mauerEigen[j] = x; store.set("mauer-min-" + (j + 1), x); });
+  $("mauer-out").textContent = mauerSumme() + " min";
+  clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("mauer-wheel"), recompute), 120);
+};
+GW.m1 = makeWheel($("wm-1"), { key: "mz1", label: "1. Mal", min: 10, max: 180, step: 1, fmt: v => String(v), text: v => v + " Minuten beim ersten Mal", onChange: v => setMauer(0, v) });
+GW.m2 = makeWheel($("wm-2"), { key: "mz2", label: "2. Mal", min: 10, max: 180, step: 1, fmt: v => String(v), text: v => v + " Minuten beim zweiten Mal", onChange: v => setMauer(1, v) });
+$("mauer-empf").addEventListener("click", () => { S.mauerAuto = true; store.set("mauer-auto", true); mitAnker($("mauer-wheel"), recompute); });
 GW.r = makeWheel($("wk-ref"), { key: "kref", label: "Pace /km", min: 180, max: 420, step: 5, fmt: v => mss(v), text: v => mss(v) + " pro Kilometer",
   onChange: v => { S.ref = v; S.secHm = S.secRef * 240 / v; store.set("sechm-pace", v); clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("hm-wheel"), recompute), 120); } });
 /* Für Zuschauer: Startzeit, Uhrzeit an jeder 5-km-Marke, Link zum Teilen, Live nach Plan (Uhrzeiten in der Zeitzone der Strecke) */
@@ -1680,7 +1704,7 @@ for (const sec of document.querySelectorAll("section.klapp")) {
     requestAnimationFrame(() => { if (auf) { syncGoalWheels(); renderSplits(); dirty = true; } halte(); requestAnimationFrame(() => requestAnimationFrame(halte)); });
   });
 }
-const syncGoalWheels = () => { ZW.set(S.zoom); SW.set(S.speed); const g = Math.round(S.goal); GW.h.set(Math.floor(g / 3600)); GW.m.set(Math.floor(g % 3600 / 60)); GW.s.set(g % 60); GW.k.set(S.secRef); GW.r.set(S.ref); GW.mz.set(S.mauerMin); GW.sh.set(Math.floor(S.start / 60)); GW.sm.set(S.start % 60); };
+const syncGoalWheels = () => { ZW.set(S.zoom); SW.set(S.speed); const g = Math.round(S.goal); GW.h.set(Math.floor(g / 3600)); GW.m.set(Math.floor(g % 3600 / 60)); GW.s.set(g % 60); GW.k.set(S.secRef); GW.r.set(S.ref); if (MAUER.length) { GW.m1.set(mauerMin(0)); if (MAUER.length > 1) GW.m2.set(mauerMin(1)); } GW.sh.set(Math.floor(S.start / 60)); GW.sm.set(S.start % 60); };
 requestAnimationFrame(syncGoalWheels);
 if ("IntersectionObserver" in window) new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) syncGoalWheels(); }).observe($("goal-wheels"));
 if ("IntersectionObserver" in window) new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) syncGoalWheels(); }).observe($("start-wheels"));
@@ -1835,7 +1859,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.59';
+const APP_VERSION = '1.60';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");

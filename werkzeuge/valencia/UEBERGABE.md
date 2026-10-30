@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Valencia-Marathon
 
-Stand 29.10.2026, App-Version **1.4** (1.4: Mauer-Zeit und Tor-Rechner für Strecken mit `D.mauer`, sonst unverändert; 1.3: Steigungskosten als große Zeile unter der Zielzeit; 1.2: Umschalter Höhe/Meereshöhe für die Tabelle „Ohne Höhenmeter“, nur bei `D.lage`; 1.1: Feld `D.lage` für hoch gelegene Strecken: Tabelle „Ohne Höhenmeter“ nennt dann die Höhe; 1.0: erste Fassung). Adresse nach dem Hochladen:
+Stand 29.10.2026, App-Version **1.5** (1.5: Mauer je Durchgang ein Rad mit Empfehlung nach Zielzeit, nur bei `D.mauer`; 1.4: Mauer-Zeit und Tor-Rechner für Strecken mit `D.mauer`, sonst unverändert; 1.3: Steigungskosten als große Zeile unter der Zielzeit; 1.2: Umschalter Höhe/Meereshöhe für die Tabelle „Ohne Höhenmeter“, nur bei `D.lage`; 1.1: Feld `D.lage` für hoch gelegene Strecken: Tabelle „Ohne Höhenmeter“ nennt dann die Höhe; 1.0: erste Fassung). Adresse nach dem Hochladen:
 https://luperttrading-lab.github.io/marathon-strecken/valencia/.
 
 Die App ist eine Kopie der Tokio-App (Stand 1.22, aktueller gemeinsamer Code) mit eigenen Daten, Texten und

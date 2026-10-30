@@ -24,13 +24,22 @@ WELLEN = {"q": "Wellen 2026 laut Runners Guide des Veranstalters, Marathon und H
           "w": [["Welle 1", 450, "rosa"], ["Welle 2", 460, "gelb"], ["Welle 3", 470, "blau"]]}
 data = {"wellen": WELLEN, "tz": "Asia/Shanghai", "ort": "Huangyaguan", "ortKurz": " Peking", "termine": ["2027-05-15"], "start": 450}
 data.update(json.load(open("data.json"))); data["route"] = json.load(open("route50.json"))
-# Zeit auf der Mauer (seit gemeinsamem Code 1.68 alle Durchgänge zusammen): Standard = Summe der Mediane bei 4:45–5:15 Zielzeit,
-# aufgeteilt nach diesen Medianen (vierter Wert in D.mauer); der zweite Durchgang dauert fast doppelt so lange wie der erste
-mz = json.load(open("mauer.json")); data["mauerMin"] = round(mz["median1"] + mz["median2"])
+# Zeit auf der Mauer je Durchgang (gemeinsamer Code seit 1.69: ein Rad je Durchgang, ohne eigenes Drehen die Empfehlung für die
+# Zielzeit): D.mauerEmpf = [[Minuten bei 5 h, je Stunde mehr], …] aus der Geraden durch alle Läufer 2026 (mauer.py); vierter Wert in
+# D.mauer = Median bei 4:45–5:15 (nur Rückfall); D.mauerQ erklärt, warum die Durchgänge verschieden lang dauern
+mz = json.load(open("mauer.json")); G = {g["ziel"]: g for g in mz["gruppen"]}
 data["mauer"] = [m[:3] + [mz["median" + str(k + 1)]] for k, m in enumerate(data["mauer"])]
-data["mauerQ"] = ("Aufgeteilt wie bei den Läufern 2026 mit 4:45 bis 5:15 Zielzeit (Median aus den Zwischenzeiten des Zeitnehmers: "
-                  + str(mz["median1"]).replace(".", ",") + " und " + str(mz["median2"]).replace(".", ",") + " min); langsamere brauchen "
-                  "vor allem beim zweiten Mal mehr, etwa 12 min je Stunde Zielzeit.")
+data["ziel"] = 5 * 3600   # Voreinstellung 5:00:00: 4:00 /km im Flachen ergäbe 3:22, schneller als der Sieger 2024 (3:43:32); die Empfehlung gilt um 5 h
+data["mauerEmpf"] = [[mz["Mauer 1"]["bei5h"], mz["Mauer 1"]["jeStunde"]], [mz["Mauer 2"]["bei5h"], mz["Mauer 2"]["jeStunde"]]]
+schnell, langsam = G["4–4.5 h"], G["7–7.5 h"]
+mi = lambda v: str(round(v))
+data["mauerQ"] = ("Warum zwei verschiedene Zeiten: Beim 1. Mal sind Marathon und Halbmarathon aller drei Wellen zugleich auf der Mauer, die Treppen "
+                  "sind schmal, überholen geht kaum. Deshalb brauchten 2026 fast alle ähnlich lange: " + mi(schnell["mauer1"][1]) + " min, wer in 4 bis "
+                  "4½ h ins Ziel kam, " + mi(langsam["mauer1"][1]) + " min bei 7 bis 7½ h. Das 2. Mal führt nach 35 km den Goat Track hinauf, das Feld "
+                  "hat sich verteilt: Jetzt zählt die eigene Form, " + mi(schnell["mauer2"][1]) + " gegen " + mi(langsam["mauer2"][1]) + " min. Die "
+                  "Empfehlung folgt den Zwischenzeiten 2026 (" + str(sum(g["n"] for g in mz["gruppen"])) + " Läufer, Mediane): je Stunde Zielzeit "
+                  + mi(mz["Mauer 1"]["jeStunde"]) + " min mehr beim 1. Mal und " + mi(mz["Mauer 2"]["jeStunde"]) + " min mehr beim 2. Mal; "
+                  "unter 4 h gab es keine Daten.")
 tm = json.load(open("tilemeta.json")); data["tiles"] = {z: tm[z] for z in sorted((k for k in tm if k.isdigit()), key=int)}
 data["imgNote"] = open("imgnote.html", encoding="utf-8").read().strip()
 m = re.search(r'^const D = \{.*\};$', t, re.M); t = t[:m.start()] + "const D = " + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";" + t[m.end():]
@@ -72,4 +81,4 @@ sw = sw.replace('const CACHE = "tyo-marathon-profil";', 'const CACHE = "gwm-mara
 sw = re.sub(r"const KARTE = \[.*?\];", "const KARTE = " + json.dumps(["./" + f for f in maps]).replace('","', '", "') + ";", sw, flags=re.S)
 assert "tyo" not in sw
 open(OUT + "sw.js", "w", encoding="utf-8").write(sw)
-print("greatwall/ geschrieben:", len(maps), "Kartenstücke, index.html", len(t) // 1024, "KB, D.mauerMin", data["mauerMin"])
+print("greatwall/ geschrieben:", len(maps), "Kartenstücke, index.html", len(t) // 1024, "KB, D.mauerEmpf", data["mauerEmpf"])
