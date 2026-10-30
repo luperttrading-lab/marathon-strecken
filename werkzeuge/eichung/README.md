@@ -29,8 +29,8 @@ Faktor 1 heißt: das App-Modell stimmt. Bereiche: 95 % aus Bootstrap über ganze
   Zeit, als gleiche Anstrengung kosten würde. Für das Ziel der App (Plan bei gleichmäßiger Anstrengung) sind die Werte eher
   eine Untergrenze.
 
-**Folgerung (Empfehlung, Nutzer hat am 30.10.2026 nicht anders entschieden):** Die App bleibt bei 1,0 s und „bergab die
-Hälfte“. 0,87 statt 1,0 hieße bei 4:00 Zielzeit: Berlin 46 → 40 s, Boston 124 → 108 s, New York 229 → 199 s, Rennsteig
+**Entscheidung des Nutzers (30.10.2026):** Die App bleibt bei 1,0 s und „bergab die Hälfte“. Der Rechner plant eine
+Bestzeit, und dafür zählt gleichmäßige Anstrengung, nicht das typische Überziehen am Berg; die Spanne 0,8–1,15 schließt 1,0 ein. 0,87 statt 1,0 hieße bei 4:00 Zielzeit: Berlin 46 → 40 s, Boston 124 → 108 s, New York 229 → 199 s, Rennsteig
 662 → 580 s Steigungskosten (`steigungskosten_vergleich.js`).
 
 ## Daten
