@@ -10,8 +10,8 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
 - **Gemeinsamer Kern statt 21 Kopien**, spätestens vor App Nr. 25: Heute trifft jede Änderung 21 Dateien, und alle Apps
   zeigen eine Update-Meldung, auch wenn sich nur eine Strecke ändert (am 30.10.2026 dreimal nur wegen Great Wall). Risiko:
   Der Offline-Speicher (Service Worker) muss dafür einmal umgebaut werden.
-- **Weitere Strecken aus dem Angebot von interAir:** Wien, Stockholm; Médoc und Beaujolais nachrangig (dort läuft kaum
-  jemand auf Zeit).
+- **Weitere Strecken aus dem Angebot von interAir:** Stockholm; Médoc und Beaujolais nachrangig (dort läuft kaum jemand
+  auf Zeit). Athen und Wien sind seit 30.10.2026 gebaut.
 
 ## Eichung
 

@@ -1,0 +1,454 @@
+{
+"km": [
+[
+1,
+997.6,
+3.3
+],
+[
+2,
+1995.2,
+5.5
+],
+[
+3,
+3024.2,
+5.4
+],
+[
+4,
+4029.7,
+5.3
+],
+[
+5,
+5041.4,
+11.6
+],
+[
+6,
+6047.2,
+5.5
+],
+[
+7,
+7062.3,
+9.7
+],
+[
+8,
+8061.7,
+1.1
+],
+[
+9,
+9076.7,
+4.3
+],
+[
+10,
+10073.0,
+0.1
+],
+[
+11,
+11086.3,
+1.2
+],
+[
+12,
+12090.5,
+0.1
+],
+[
+13,
+13099.6,
+3.9
+],
+[
+14,
+14112.5,
+12.2
+],
+[
+15,
+15114.4,
+0.1
+],
+[
+16,
+16129.3,
+7.2
+],
+[
+17,
+17132.5,
+3.4
+],
+[
+18,
+18133.3,
+0.3
+],
+[
+19,
+19143.6,
+1.2
+],
+[
+20,
+20145.3,
+1.6
+],
+[
+21,
+21166.0,
+0.2
+],
+[
+22,
+22168.8,
+2.8
+],
+[
+23,
+23194.6,
+11.8
+],
+[
+24,
+24202.6,
+2.6
+],
+[
+25,
+25210.2,
+1.1
+],
+[
+26,
+26219.7,
+0.1
+],
+[
+27,
+27268.5,
+7.8
+],
+[
+28,
+28233.2,
+0.0
+],
+[
+29,
+29241.7,
+0.0
+],
+[
+30,
+30247.9,
+2.4
+],
+[
+31,
+31264.2,
+11.8
+],
+[
+32,
+32258.4,
+0.0
+],
+[
+33,
+33299.8,
+0.9
+],
+[
+34,
+34291.9,
+1.1
+],
+[
+35,
+35301.3,
+12.2
+],
+[
+36,
+36306.1,
+0.1
+],
+[
+37,
+37322.1,
+0.4
+],
+[
+38,
+38325.8,
+3.2
+],
+[
+39,
+39356.4,
+0.4
+],
+[
+40,
+40369.2,
+0.1
+],
+[
+41,
+41384.1,
+0.1
+],
+[
+42,
+42397.3,
+0.4
+]
+],
+"punkte": [
+[
+3.9,
+3953.4,
+8.3,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"3,9 km / 28,5 km Kaiserallee / Konstantineck"
+],
+[
+4.8,
+4831.8,
+7.9,
+"Verpflegstelle MUSIK/Refreshment station",
+"4,8 km / 29,8 km Meiereistraße / Stadion (vor Einfahrt Stadionparkplatz)"
+],
+[
+6.5,
+6624.3,
+11.1,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"6,5 / 36,5 km Schüttelstraße 101 / Lukschgasse"
+],
+[
+7.4,
+7526.8,
+4.8,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"7,4 km Schüttelstraße 33"
+],
+[
+9.5,
+9515.0,
+12.6,
+"Verpflegstelle MUSIK/Refreshment station",
+"9,5 Stubenring zwischen Oskar-Kokoschka-Platz und Falkestraße"
+],
+[
+10.5,
+10590.0,
+21.6,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"10,5 km / 40,8 km Kärnter Ring 16 / Dumbastraße"
+],
+[
+11.7,
+11825.2,
+6.5,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"11,7 km Linke Wienzeile 38 / Köstlergasse"
+],
+[
+12.5,
+12612.0,
+5.7,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"12,5 km Linke Wienzeile 106 / Hofmühlgasse"
+],
+[
+13.1,
+13196.8,
+8.8,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"13,1 km Linke Wienzeile 150 / Brückengasse"
+],
+[
+15.0,
+15150.3,
+10.1,
+"Verpflegstelle MUSIC/Refreshment station",
+"15 km Linke Wienzeile / vor ASBÖ Zentrale (Pillergasse)"
+],
+[
+15.5,
+15645.0,
+13.6,
+"Powerade Staffelmarathon Ü1 / Powerade Relay Marathon Ü1",
+"Übergabestelle"
+],
+[
+15.5,
+15673.8,
+7.7,
+"Staffel V-Stelle/Raffel Refreshment point",
+"15,5 km Linke Wien Zeile / Schönbrunn Verpflegstellen / Erfrischungsstellen für Staffelmarathon Teilnehmer*innen: (AUSSCHLIESSLICH für Staffelmarathon Teilnehmer*innen)"
+],
+[
+17.8,
+17907.4,
+17.2,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"17,8 km äußere Mariahilferstrasse 154 / Rosinagasse"
+],
+[
+19.6,
+19803.0,
+6.3,
+"Verpflegstelle/Refreshment station",
+"19,6 km innere Mariahilferstraße, zwischen Stiftgasse & Karl-Schweighofer-Gasse"
+],
+[
+21.8,
+21905.9,
+16.2,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"21,8 km Universitätsstraße"
+],
+[
+23.5,
+23680.2,
+16.3,
+"Powerade Staffelmarathon Ü2 / Powerade Relay Marathon Ü2",
+"KM 23,5 Roßauer Lände Übergabestelle"
+],
+[
+23.5,
+23833.9,
+8.9,
+"Staffel V-Stelle/Raffel Refreshment point",
+"KM 23,5 Roßauer Lände / Ecke Stroheckgasse Verpflegstellen / Erfrischungsstellen für Staffelmarathon Teilnehmer*innen: (AUSSCHLIESSLICH für Staffelmarathon Teilnehmer*innen)"
+],
+[
+23.7,
+24022.0,
+4.1,
+"Besetzte Wasserstelle/staffed water point",
+"23,7 km Alserbachstraße"
+],
+[
+24.8,
+24943.3,
+8.1,
+"Verpflegstelle MUSIK/Refreshment station",
+"24,8 km Obere Donaustrasse Nr. 43"
+],
+[
+26.1,
+26333.1,
+8.9,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"26,1 km Untere Donaustrasse 17 / Aspernbrückengasse"
+],
+[
+27.2,
+27414.9,
+1.7,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"27,2 km Praterstern / Eingangs Prater Hauptallee"
+],
+[
+28.5,
+28698.4,
+23.0,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"3,9 km / 28,5 km Kaiserallee / Konstantineck"
+],
+[
+29.8,
+29576.5,
+4.2,
+"Verpflegstelle MUSIK/Refreshment station",
+"4,8 km / 29,8 km Meiereistraße / Stadion (vor Einfahrt Stadionparkplatz)"
+],
+[
+30.5,
+30578.8,
+31.4,
+"Powerade Staffelmarathon Ü3 / Powerade Relay Marathon",
+"Übergabestelle"
+],
+[
+30.5,
+30681.9,
+32.4,
+"Staffel V-Stelle/Raffel Refreshment point",
+"30,5 km Meiereistrasse / Stadionbadparkplatz Verpflegstellen / Erfrischungsstellen für Staffelmarathon Teilnehmer*innen: (AUSSCHLIESSLICH für Staffelmarathon Teilnehmer*innen)"
+],
+[
+31.4,
+31667.4,
+9.0,
+"Besetzte Wasserstelle/staffed water point",
+"31,4 km Prater Hauptallee / Tangentenbrücke"
+],
+[
+33.5,
+33861.3,
+7.3,
+"ESN Gel Verpflegstelle/Refreshment station",
+"KM 33,5 offizieller VCM Energy Gel Partner"
+],
+[
+34.0,
+34321.9,
+10.4,
+"Verpflegstelle/Refreshment station",
+"34 km Prater Hauptallee / unter der Tangente"
+],
+[
+36.5,
+36857.4,
+11.1,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"6,5 / 36,5 km Schüttelstraße 101 / Lukschgasse"
+],
+[
+37.4,
+38033.9,
+7.9,
+"Unbsetzte Wasserstelle /unstaffed water point",
+"37,4 km Rustenschacherallee 10 / Josef-Gall-Gasse"
+],
+[
+38.6,
+38957.1,
+6.0,
+"Besetzte Wasserstelle/staffed water point",
+"38,6 km Radetzkystraße/Radetzkyplatz"
+],
+[
+39.6,
+40044.1,
+10.6,
+"Verpflegstelle MUSIK/Refreshment station",
+"39,6 Weichkirchnerstraße / Höhe MAK"
+],
+[
+40.8,
+40960.7,
+16.3,
+"Unbesetzte Wasserstelle/unstaffed water point",
+"10,5 km / 40,8 km Kärnter Ring 16 / Dumbastraße"
+],
+[
+42.195,
+42592.9,
+168.0,
+"Verpflegstelle/Refreshment station",
+"42,195 km Ziel: Rathausplatz, Universitätsring"
+]
+]
+}
