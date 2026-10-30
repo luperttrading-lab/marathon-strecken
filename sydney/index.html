@@ -177,6 +177,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--blue); outl
 .setting .head .lbl { font-size: 15px; color: var(--ink); }
 .timepanel .colon.bei { font: 600 14px/1 var(--font-display); color: var(--muted); padding-bottom: calc((var(--wh) - 14px) / 2); }
 .setting .bahn-kopf { margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+.setting .bahn-seg { justify-self: start; }
 /* Info-Knopf (i) und kleines Fenster dazu; ohne Popover-Unterstützung (ältere Safari) per Klasse „offen“ */
 button.info { width: 32px; height: 32px; margin: -6px 0; padding: 0; border: 0; background: none; display: grid; place-items: center; color: var(--blue); }
 button.info span { width: 20px; height: 20px; border: 1.5px solid currentColor; border-radius: 50%; display: grid; place-items: center; font: italic 700 13px/1 Georgia, serif; }
@@ -569,6 +570,7 @@ body.run .close svg { width: 20px; height: 20px; }
       </div>
       <span class="note" id="goal-note">Gleichmäßige Anstrengung: im Flachen 4:58 /km.</span>
       <div class="bahn-kopf"><span class="lbl" id="bahn-titel">Ohne Höhenmeter entspricht das</span><button type="button" class="info" popovertarget="bahn-info" aria-label="Erklärung zu den Zeiten ohne Höhenmeter"><span aria-hidden="true">i</span></button></div>
+      <div class="seg bahn-seg" id="bahn-seg" role="group" aria-label="Zeiten umrechnen" hidden><button type="button" data-meer="0">in der Höhe</button><button type="button" data-meer="1">auf Meereshöhe</button></div>
       <div class="bahn" id="bahn"><span>Flacher Marathon</span><b id="bahn-m">–</b><span>Flacher Halbmarathon</span><b id="bahn-21">–</b><span>10 000 m auf der Bahn</span><b id="bahn-10">–</b><span>5000 m auf der Bahn</span><b id="bahn-5">–</b></div>
       <div class="pop" id="bahn-info" popover role="dialog" aria-label="Ohne Höhenmeter"><b>Ohne Höhenmeter</b><p>Dieselbe Anstrengung wie deine Zielzeit auf dieser Strecke, aber ganz flach.</p><p>Halbmarathon, 10 000 m und 5000 m nach der Faustregel Marathon = 10 km × 4,667 (Riegel, Exponent 1,07). Für viele Freizeitläufer ist sie zu optimistisch.</p><p id="bahn-lage" hidden></p><button type="button" popovertarget="bahn-info" popovertargetaction="hide">Schließen</button></div>
     </div>
@@ -811,6 +813,7 @@ const store = { get(k, d) { try { const v = localStorage.getItem("syd-" + k); re
 const posNachUpdate = (() => { try { const v = sessionStorage.getItem("syd-pos"); sessionStorage.removeItem("syd-pos"); return v === null ? 0 : (+v || 0); } catch (_) { return 0; } })();
 const S = { pos: posNachUpdate, start: clamp(Math.round(store.get("start", D.start)) || D.start, 0, 1439), live: false, win: store.get("win", 200), zoom: store.get("zoom", 5000), goal: store.get("goal-v2", null), down: 0.5, speed: store.get("speed", 200), vp: store.get("vp", false), relay: store.get("relay", false), secRef: store.get("sechm", 1.0), ref: store.get("sechm-pace", 240), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
 if (![50, 100, 200, 1000].includes(S.win)) S.win = 200;
+S.meer = store.get("meer", false) === true;   // Tabelle „Ohne Höhenmeter“ auf Meereshöhe umgerechnet (nur bei D.lage)
 // Kosten je Höhenmeter: eingegeben bei der Bezugs-Pace S.ref (Standard 4:00 /km), gerechnet wird intern mit S.secHm bei 4:00 /km
 if (!(S.ref >= 180 && S.ref <= 420)) S.ref = 240;
 S.ref = Math.round(S.ref / 5) * 5; S.secHm = S.secRef * 240 / S.ref;
@@ -1312,12 +1315,17 @@ function renderSettings() {
   $("goal-note").textContent = "Gleichmäßige Anstrengung über die ganze Strecke: auf flachen Stücken dieser Strecke " + mss2(P.p0) + " /km, im Schnitt " + mss2(S.goal / (L / 1000)) + " /km. Insgesamt kosten die Steigungen " + secs(S.goal - P.p0 * L / 1000) + " gegenüber einer flachen Strecke.";
   // Bahnzeiten ohne Höhenmeter (seit 1.55): Faustregel Marathon = 10 km × 4,667, das ist Riegel mit Exponent 1,07
   const BAHN = 4.667, k = Math.log(BAHN) / Math.log(42.195 / 10), t10 = flach / BAHN, t5 = t10 * Math.pow(0.5, k);
-  $("bahn-m").textContent = hms(flach); $("bahn-21").textContent = hms(flach / Math.pow(2, k)); $("bahn-10").textContent = mss(t10); $("bahn-5").textContent = mss(t5);
-  // Höhenlage (D.lage, m über dem Meer, nur wo es zählt: Mexiko-Stadt): die Zeiten gelten für diese Höhe, nicht für Meereshöhe
-  const lage = D.lage ? String(D.lage).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " m" : "";
-  $("bahn-titel").textContent = lage ? "Ohne Höhenmeter, in " + lage + " Höhe" : "Ohne Höhenmeter entspricht das";
-  $("bahn-lage").hidden = !lage;
-  if (lage) $("bahn-lage").textContent = "Diese Strecke liegt im Mittel auf " + lage + " Höhe. Alle Zeiten hier gelten für diese Höhe; auf Meereshöhe wärst du bei gleicher Anstrengung schneller.";
+  // Höhenlage (D.lage, m über dem Meer, nur wo es zählt: Mexiko-Stadt): die Zeiten gelten für diese Höhe. Der Umschalter
+  // rechnet auf Meereshöhe um, mit 6,2 % je 2240 m: so viel langsamer war der olympische Marathon 1968 in Mexiko-Stadt
+  // (Sucec 1996, Weltelite, bereinigt um den Olympia-Effekt); linear in der Höhe.
+  const lage = D.lage ? String(D.lage).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " m" : "", meer = !!lage && S.meer;
+  const hoehe = D.lage ? 0.062 * D.lage / 2240 : 0, f = meer ? 1 / (1 + hoehe) : 1;
+  $("bahn-m").textContent = hms(flach * f); $("bahn-21").textContent = hms(flach * f / Math.pow(2, k)); $("bahn-10").textContent = mss(t10 * f); $("bahn-5").textContent = mss(t5 * f);
+  $("bahn-titel").textContent = lage ? "Ohne Höhenmeter, " + (meer ? "auf Meereshöhe" : "in " + lage + " Höhe") : "Ohne Höhenmeter entspricht das";
+  $("bahn-seg").hidden = !lage; $("bahn-lage").hidden = !lage;
+  for (const b of document.querySelectorAll("[data-meer]")) { b.setAttribute("aria-pressed", (b.dataset.meer === "1") === meer); if (b.dataset.meer === "0" && lage) b.textContent = "in " + lage; }
+  if (lage) $("bahn-lage").textContent = "Diese Strecke liegt im Mittel auf " + lage + " Höhe. „In " + lage + "“ zeigt die Zeiten für diese Höhe. „Auf Meereshöhe“ rechnet sie mit "
+    + nf(hoehe * 100, 1) + " % um: So viel langsamer war der olympische Marathon 1968 in Mexiko-Stadt (Sucec 1996). Ohne Anpassung an die Höhe verliert man eher mehr, nach zwei bis drei Wochen vor Ort weniger.";
   const perHm = P.p0 * (S.secHm / 0.24) / 1000;
   $("hm-out").textContent = nf(S.secRef, 1) + " s";
   $("hm-note").textContent = "Standard: 1,0 s bei 4:00 /km (Vierer-Schnitt). Wer seinen Wert für eine andere Pace kennt, stellt sie rechts ein. "
@@ -1420,6 +1428,7 @@ $("b-0").addEventListener("click", () => { stop(); setPos(0); });
 
 /* Einstellungen */
 document.querySelectorAll("[data-zoom]").forEach(b => b.addEventListener("click", () => { S.zoom = +b.dataset.zoom; store.set("zoom", S.zoom); renderSettings(); dirty = true; }));
+document.querySelectorAll("[data-meer]").forEach(b => b.addEventListener("click", () => { S.meer = b.dataset.meer === "1"; store.set("meer", S.meer); renderSettings(); }));
 document.querySelectorAll("[data-win]").forEach(b => b.addEventListener("click", () => { S.win = +b.dataset.win; store.set("win", S.win); recompute(); }));
 document.querySelectorAll("[data-speed]").forEach(b => b.addEventListener("click", () => { S.speed = +b.dataset.speed; store.set("speed", S.speed); renderSettings(); }));
 document.querySelectorAll("[data-dir]").forEach(b => b.addEventListener("click", () => { S.dir = b.dataset.dir; renderSettings(); renderRamps(); }));
@@ -1754,7 +1763,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.24';
+const APP_VERSION = '1.25';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
