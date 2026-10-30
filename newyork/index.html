@@ -979,7 +979,11 @@ function drawMain() {
     const tw = c.measureText(lab).width, mx = clamp((Math.max(xa, 0) + Math.min(xb, w)) / 2, tw / 2 + 4, w - tw / 2 - 4);   // im Bild, nie angeschnitten
     if ((xb - xa > tw + 6 || S.zoom <= 2000) && mx - tw / 2 > brRechts + 6) { c.fillStyle = COL["--muted"]; c.fillText(lab, mx, Math.max(yt - 6, 14)); brRechts = mx + tw / 2; }
   }
-  // Mauer (D.mauer): hier zählen feste Minuten statt Steigung; hell hinterlegt, Name und Minuten oben auf dunklem Grund
+  // Mauer (D.mauer): hier zählen feste Minuten statt Steigung; hell hinterlegt, Name und Minuten oben auf dunklem Grund. Die
+  // Beschriftung steht dort, wo das Profil sie nicht verdeckt (seit 1.70, mittig lag sie auf dem Gipfel): im Band, wenn es breit
+  // genug ist, sonst daneben auf der Seite mit dem niedrigeren Profil, der Pfeil zeigt zur Mauer. Wo der Platz nicht reicht, kürzer
+  // („1. Mal · 22 min“, dann „22 min“; den Namen trägt die Straßenzeile); ist nirgends frei, wo am wenigsten verdeckt
+  let yp = null, x1 = 0;   // je Pixel die Höhe der Profillinie in y (erst bei sichtbarer Mauer); links bis x1 steht eine Höhenbeschriftung
   for (const [k, [a, b, name]] of MAUER.entries()) {
     if (b < x0 || a > x0 + S.zoom) continue;
     const xa = Math.max(X(a), 0), xb = Math.min(X(b), w), lab = name + " · " + Math.round(mauerMin(k)) + " min";
@@ -987,8 +991,25 @@ function drawMain() {
     c.strokeStyle = COL["--muted"]; c.lineWidth = 1; c.setLineDash([3, 3]); c.beginPath();
     for (const xx of [X(a), X(b)]) if (xx >= 0 && xx <= w) { c.moveTo(Math.round(xx) + 0.5, padT); c.lineTo(Math.round(xx) + 0.5, h - padB); }
     c.stroke(); c.setLineDash([]);
-    const tw = c.measureText(lab).width, mx = clamp((xa + xb) / 2, tw / 2 + 6, w - tw / 2 - 6);
-    if (xb - xa > 40) { c.fillStyle = COL["--bg"]; c.globalAlpha = 0.8; c.fillRect(mx - tw / 2 - 4, padT + 2, tw + 8, 16); c.globalAlpha = 1; c.fillStyle = COL["--ink"]; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText(lab, mx, padT + 10); }
+    if (xb - xa < 8) continue;
+    if (!yp) {
+      yp = new Float64Array(Math.ceil(w) + 1); for (let px = 0; px < yp.length; px++) yp[px] = Y(hAt(clamp(x0 + px * mpp, 0, L)));
+      for (let v = Math.ceil(YMIN / gstep) * gstep; v <= YMAX; v += gstep) if (Y(v) > padT - 4 && Y(v) - 17 < padT + 18 && Y(v) - 1 > padT + 2) x1 = Math.max(x1, c.measureText(v + " m").width + 14);
+    }
+    const frei = (l, r) => { let m = h; for (let px = Math.max(0, Math.floor(l)); px <= Math.min(yp.length - 1, Math.ceil(r)); px++) m = Math.min(m, yp[px]); return m; };
+    const kand = [], kw = t => c.measureText(t).width + 8, mt = Math.round(mauerMin(k)) + " min";   // [linker Rand, Text, Breite, oberster Profilpunkt darunter, Vorrang]
+    [lab, name.replace(/^[^,]*,\s*/, "") + " · " + mt, mt].forEach((t, s) => {   // lang, ohne „Mauer,“, nur Minuten: je im Band, dann daneben
+      const re = "← " + t, li = t + " →";
+      for (let l = Math.max(xa, x1) + 2; l + kw(t) <= xb - 2; l += 6) kand.push([l, t, kw(t), 0, 3 * s]);
+      if (X(b) + 4 >= x1 && X(b) + 4 + kw(re) <= w) kand.push([X(b) + 4, re, kw(re), 0, 3 * s + 1]);
+      if (X(a) - 4 - kw(li) >= x1 && X(a) - 4 <= w) kand.push([X(a) - 4 - kw(li), li, kw(li), 0, 3 * s + 1]);
+    });
+    const mx = clamp((xa + xb) / 2, x1 + kw(lab) / 2 + 2, w - kw(lab) / 2 - 2); kand.push([mx - kw(lab) / 2, lab, kw(lab), 0, 9]);   // wie bis 1.69
+    for (const q of kand) q[3] = frei(q[0], q[0] + q[2]);
+    const frei2 = kand.filter(q => q[3] >= padT + 21);
+    const [l, t, tw] = frei2.length ? frei2.sort((p, q) => p[4] - q[4] || q[3] - p[3])[0] : kand.sort((p, q) => q[3] - p[3])[0];
+    c.fillStyle = COL["--bg"]; c.globalAlpha = 0.8; c.fillRect(l, padT + 2, tw, 16); c.globalAlpha = 1;
+    c.fillStyle = COL["--ink"]; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText(t, l + tw / 2, padT + 10);
   }
   // außerhalb der Strecke abdunkeln
   c.fillStyle = COL["--bg"];
@@ -1859,7 +1880,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.55';
+const APP_VERSION = '1.56';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
