@@ -1,0 +1,340 @@
+{
+"km": [
+[
+5.0,
+5150.0,
+"Ecke Via Cristoforo Colombo / Circonvallazione Ostiense (Plan, Liste)"
+],
+[
+10.0,
+10085.0,
+"Piazza dell'Emporio (3 m neben der Linie)"
+],
+[
+11.0,
+11145.0,
+"Piazza di Monte Savello (7 m neben der Linie)"
+],
+[
+15.0,
+15210.0,
+"Piazza Cavour (27 m neben der Linie)"
+],
+[
+25.0,
+25740.0,
+"Piazzale Maresciallo Giardino (56 m neben der Linie)"
+],
+[
+26.0,
+26755.0,
+"Piazza Lauro de Bosis (20 m neben der Linie)"
+],
+[
+37.0,
+37755.0,
+"Piazza del Popolo (33 m neben der Linie)"
+],
+[
+41.0,
+41935.0,
+"Piazza Venezia (29 m neben der Linie)"
+]
+],
+"liste": [
+[
+1,
+"Via del Teatro di Marcello",
+864,
+1214,
+0
+],
+[
+2,
+"Lungotevere Aventino",
+1757,
+2175,
+0
+],
+[
+3,
+"Via Marmorata",
+2320,
+3000,
+0
+],
+[
+4,
+"Viale Marco Polo",
+3243,
+4282,
+0
+],
+[
+5,
+"Circonvallazione Ostiense",
+5000,
+5861,
+0
+],
+[
+6,
+"Ponte Settimia Spizzichino",
+5861,
+6094,
+0
+],
+[
+7,
+"Via del Porto Fluviale",
+6803,
+7432,
+0
+],
+[
+8,
+"Via Giovanni Volpato",
+7847,
+7989,
+11
+],
+[
+9,
+"Via Beniamino Franklin",
+8911,
+9043,
+0
+],
+[
+10,
+"Piazza dell'Emporio",
+9965,
+10071,
+0
+],
+[
+11,
+"Lungotevere dei Pierleoni",
+10825,
+11064,
+0
+],
+[
+12,
+"Lungotevere dei Tebaldi",
+11704,
+12264,
+0
+],
+[
+13,
+"Via San Pio Decimo",
+12934,
+13032,
+0
+],
+[
+14,
+"Via di Porta Castello",
+13908,
+14006,
+0
+],
+[
+15,
+"Piazza Cavour",
+14892,
+15161,
+0
+],
+[
+16,
+"Lungotevere in Augusta",
+15484,
+16045,
+0
+],
+[
+17,
+"Via Cola di Rienzo",
+16633,
+17260,
+0
+],
+[
+18,
+"Viale Giulio Cesare",
+17783,
+18903,
+0
+],
+[
+19,
+"Via Fornovo",
+18903,
+19065,
+0
+],
+[
+20,
+"Viale delle Milizie",
+19093,
+20204,
+0
+],
+[
+21,
+"Circonvallazione Trionfale",
+20698,
+21211,
+0
+],
+[
+21.0975,
+"Circonvallazione Trionfale",
+20698,
+21211,
+0
+],
+[
+22,
+"Viale Giuseppe Mazzini",
+21638,
+22312,
+0
+],
+[
+23,
+"Via Oslavia",
+22531,
+22873,
+127
+],
+[
+24,
+"Lungotevere Guglielmo Oberdan",
+23860,
+24221,
+0
+],
+[
+25,
+"Piazzale Maresciallo Giardino",
+24991,
+25108,
+0
+],
+[
+26,
+"Piazza Lauro de Bosis",
+25788,
+26155,
+0
+],
+[
+27,
+"Viale Antonino di San Giuliano",
+26805,
+27025,
+0
+],
+[
+28,
+"Lungotevere Maresciallo Cadorna",
+27765,
+28145,
+0
+],
+[
+29,
+"Lungotevere Grande Ammiraglio Thaon di Revel",
+28815,
+29445,
+0
+],
+[
+30,
+"Lungotevere dell'Acqua Acetosa",
+29845,
+30425,
+0
+],
+[
+31,
+"Viale XVII Olimpiade",
+30825,
+31445,
+0
+],
+[
+32,
+"Via Flaminia",
+31895,
+32385,
+0
+],
+[
+33,
+"Via Giovanni Paolo Pannini",
+33115,
+33265,
+115
+],
+[
+34,
+"Lungotevere Flaminio",
+33525,
+34815,
+0
+],
+[
+35,
+"Lungotevere delle Navi",
+34915,
+35385,
+0
+],
+[
+36,
+"Passeggiata di Ripetta",
+35955,
+36365,
+0
+],
+[
+37,
+"Piazza del Popolo",
+37005,
+37072,
+5
+],
+[
+38,
+"Via dei Due Macelli",
+37856,
+38124,
+0
+],
+[
+39,
+"Via della Fontanella di Borghese",
+38967,
+39148,
+0
+],
+[
+40,
+"Corso del Rinascimento",
+40000,
+40258,
+0
+],
+[
+41,
+"Piazza Venezia",
+40919,
+41042,
+0
+]
+]
+}

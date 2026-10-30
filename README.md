@@ -21,6 +21,9 @@ dann liegen alle Strecken in einer App.
 | Mexiko-Stadt (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/mexiko/ | [`mexiko/`](mexiko/) | [`werkzeuge/mexiko/`](werkzeuge/mexiko/UEBERGABE.md) |
 | Osaka (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/osaka/ | [`osaka/`](osaka/) | [`werkzeuge/osaka/`](werkzeuge/osaka/UEBERGABE.md) |
 | Boston (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/boston/ | [`boston/`](boston/) | [`werkzeuge/boston/`](werkzeuge/boston/UEBERGABE.md) |
+| Amsterdam (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/amsterdam/ | [`amsterdam/`](amsterdam/) | [`werkzeuge/amsterdam/`](werkzeuge/amsterdam/UEBERGABE.md) |
+| Rom (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/rom/ | [`rom/`](rom/) | [`werkzeuge/rom/`](werkzeuge/rom/UEBERGABE.md) |
+| Barcelona (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/barcelona/ | [`barcelona/`](barcelona/) | [`werkzeuge/barcelona/`](werkzeuge/barcelona/UEBERGABE.md) |
 | Kapstadt (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/kapstadt/ | [`kapstadt/`](kapstadt/) | [`werkzeuge/kapstadt/`](werkzeuge/kapstadt/UEBERGABE.md) |
 | Köln (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/koeln/ | [`koeln/`](koeln/) | [`werkzeuge/koeln/`](werkzeuge/koeln/UEBERGABE.md) |
 | München (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/muenchen/ | [`muenchen/`](muenchen/) | [`werkzeuge/muenchen/`](werkzeuge/muenchen/UEBERGABE.md) |
@@ -30,11 +33,11 @@ dann liegen alle Strecken in einer App.
 ## Regeln für Änderungen
 
 - Gearbeitet wird direkt in `<strecke>/index.html` bzw. `index.html` (Startseite). Die Skripte unter `werkzeuge/` sind nur die Herkunft.
-- Hamburg, Berlin, Frankfurt, New York, London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Kapstadt, Köln, München, Oberelbe und Rennsteig haben **denselben Code**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur
-  Strecke und den Speicherschlüsseln (`hhm-…`, `bln-…`, `ffm-…`, `nyc-…`, `ldn-…`, `par-…`, `chi-…`, `syd-…`, `tyo-…`, `vlc-…`, `mex-…`, `osa-…`, `bos-…`, `cpt-…`, `kln-…`, `muc-…`, `oem-…`, `rsl-…`). Eine Änderung am Verhalten oder Aussehen in **allen** Dateien nachziehen.
+- Hamburg, Berlin, Frankfurt, New York, London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Amsterdam, Rom, Barcelona, Kapstadt, Köln, München, Oberelbe und Rennsteig haben **denselben Code**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur
+  Strecke und den Speicherschlüsseln (`hhm-…`, `bln-…`, `ffm-…`, `nyc-…`, `ldn-…`, `par-…`, `chi-…`, `syd-…`, `tyo-…`, `vlc-…`, `mex-…`, `osa-…`, `bos-…`, `ams-…`, `rom-…`, `bcn-…`, `cpt-…`, `kln-…`, `muc-…`, `oem-…`, `rsl-…`). Eine Änderung am Verhalten oder Aussehen in **allen** Dateien nachziehen.
 - Jede App und die Startseite haben ihre eigene Versionsnummer: bei jeder Änderung `APP_VERSION` in der `index.html` und
   `version.json` im selben Ordner gemeinsam hochzählen, sonst kommt das Update auf dem iPhone nicht an.
-- Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `bln-`, `ffm-`, `nyc-`, `ldn-`, `par-`, `chi-`, `syd-`, `tyo-`, `vlc-`, `mex-`, `osa-`, `bos-`, `cpt-`, `kln-`, `muc-`, `oem-`, `rsl-`, `start-`). Ein Service Worker löscht
+- Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `bln-`, `ffm-`, `nyc-`, `ldn-`, `par-`, `chi-`, `syd-`, `tyo-`, `vlc-`, `mex-`, `osa-`, `bos-`, `ams-`, `rom-`, `bcn-`, `cpt-`, `kln-`, `muc-`, `oem-`, `rsl-`, `start-`). Ein Service Worker löscht
   nur Caches mit seinem eigenen Präfix, weil sich alle Apps unter `luperttrading-lab.github.io` denselben Speicher teilen.
 - **Nur dunkel** (seit Hamburg 1.35 in allen Strecken): kein Hell/Dunkel-Umschalter mehr, keine hellen Kartenbilder.
   Die Startseite ist ebenfalls immer dunkel, in den
@@ -46,7 +49,7 @@ dann liegen alle Strecken in einer App.
   `D.lage` (seit Hamburg 1.65, nur für hoch gelegene Strecken, bisher Mexiko-Stadt: mittlere Höhe in m; dann nennt die Tabelle
   „Ohne Höhenmeter“ die Höhe und das Info-Fenster sagt, dass die Zeiten für diese Höhe gelten), `D.tz` (Zeitzone der Uhrzeiten; `D.ort`/`D.ortKurz` nennen den Ort dazu, wenn die Zeitzone ihn nicht verrät, z. B. Boston) `D.start` (Startzeit der ersten Welle in Minuten ab Mitternacht) und `D.wellen` (Wellen mit Uhrzeit und Quelle, siehe Hamburg-Übergabe).
 - Neue Strecke: eigener Ordner neben den anderen, Karte auf der Startseite ergänzen. Reihenfolge: New York als Highlight oben
-  (Klasse `card top`), danach London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston und Kapstadt (nach Teilnehmerzahl), dann die deutschen Strecken alphabetisch. Alle Strecken liegen in **einer** App: installiert wird
+  (Klasse `card top`), danach London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Amsterdam, Rom, Barcelona und Kapstadt (nach Teilnehmerzahl), dann die deutschen Strecken alphabetisch. Alle Strecken liegen in **einer** App: installiert wird
   die Startseite, ihr Scope umfasst alle Unterordner. Die Strecken haben **kein eigenes Manifest und Symbol**, sie verweisen auf
   `../manifest.webmanifest`, `../apple-touch-icon.png` und `../icon-192.png`; *Zum Home-Bildschirm* aus einer Strecke
   installiert so ebenfalls die ganze App.
@@ -66,5 +69,5 @@ dann liegen alle Strecken in einer App.
   mehr Höhenbereich bekommt eine höhere Grafik statt eines anderen Maßstabs (`.spark.hoch` New York 112 px,
   `.spark.berg` Rennsteig 240 px, `.spark.boston` 208 px, `.spark.london` 80 px, `.spark.sydney` 124 px, `.spark.mexiko` 94 px). Pfad: 200 Punkte, je Punkt das Maximum der letzten 100 m.
   Übersichtskarte: `cd werkzeuge && python3 tiles_z11.py <strecke>`, Ergebnis in `D.tiles["11"]` und in die Kartenliste von `sw.js`.
-  Danach `python3 tiles_rand.py <strecke>` (New York, London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston und Kapstadt: `tiles_rand.py <strecke> 2`): baut z11–z13 mit einem Kachelrand entlang der Strecke
+  Danach `python3 tiles_rand.py <strecke>` (New York, London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Amsterdam, Rom, Barcelona und Kapstadt: `tiles_rand.py <strecke> 2`): baut z11–z13 mit einem Kachelrand entlang der Strecke
   neu, damit die mitlaufende Karte an Start, Ziel und Außenkurven nicht ins Graue schaut, und trägt `D.tiles` und `sw.js` selbst ein.
