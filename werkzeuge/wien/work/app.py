@@ -5,7 +5,7 @@
 # orte.py, build.py, gegenprobe.py und planprofil.py (nur Abgleich), route.py, tiles.py, dann aus werkzeuge/: tiles_z11.py wien,
 # work/app.py, tiles_rand.py wien 2
 import json, os, re, shutil
-R = "../../../"; OUT = R + "wien/"; VERSION = "1.8"
+R = "../../../"; OUT = R + "wien/"; VERSION = "1.9"
 os.makedirs(OUT, exist_ok=True)
 t = open(R + "tokio/index.html", encoding="utf-8").read()
 def rep(old, new, n=1):

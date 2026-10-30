@@ -6,7 +6,7 @@
 # Reihenfolge: osm.py, plan.py, georef.py, linie.py, dgm.py, planprofil.py, marken.py, form.py, common.py (Eichung), vergleich.py,
 #              build.py, splits.py, mauer.py, route.py, tiles.py relief, app.py
 import json, os, re, shutil
-R = "../../../"; OUT = R + "greatwall/"; VERSION = "1.13"   # bei jeder Änderung hochzählen (README)
+R = "../../../"; OUT = R + "greatwall/"; VERSION = "1.14"   # bei jeder Änderung hochzählen (README)
 os.makedirs(OUT, exist_ok=True)
 t = open(R + "tokio/index.html", encoding="utf-8").read()
 def rep(old, new, n=1):
