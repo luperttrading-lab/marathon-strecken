@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Athens Marathon. The Authentic
 
-Stand 30.10.2026, App-Version **1.2** (1.2: im Vollbild der Ort groß oben rechts statt am Pfeil, Maßstab auf der Karte; 1.1: Kopf mit Ort groß und „Streckenplan und Steigungsprofil“, Umschalter Karte | Zahlen statt Pünktchen, Karte zuerst, Name der Strecke im Vollbild; 1.0: erste Fassung).
+Stand 30.10.2026, App-Version **1.3** (1.3: Maßstab auf der Karte ohne Kasten, kleiner, in der freieren linken Ecke; 1.2: im Vollbild der Ort groß oben rechts statt am Pfeil, Maßstab auf der Karte; 1.1: Kopf mit Ort groß und „Streckenplan und Steigungsprofil“, Umschalter Karte | Zahlen statt Pünktchen, Karte zuerst, Name der Strecke im Vollbild; 1.0: erste Fassung).
 Adresse nach dem Hochladen: https://luperttrading-lab.github.io/marathon-strecken/athen/.
 
 Die App ist eine Kopie der Tokio-App (Stand 1.30, aktueller gemeinsamer Code) mit eigenen Daten, Texten und Speicherschlüsseln
