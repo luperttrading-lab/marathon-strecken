@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil Great Wall Marathon
 
-Stand 30.10.2026, App-Version **1.0** (1.0: erste Fassung).
+Stand 30.10.2026, App-Version **1.1** (1.1: je Mauerdurchgang ein Rad mit Empfehlung nach Zielzeit, Erklärung der Unterschiede, Voreinstellung 5:00:00; 1.0: erste Fassung).
 Adresse nach dem Hochladen: https://luperttrading-lab.github.io/marathon-strecken/greatwall/.
 
 Die App ist eine Kopie der Tokio-App (aktueller gemeinsamer Code, Tokio 1.26 mit Mauer- und Tor-Logik) mit eigenen Daten, Texten und
