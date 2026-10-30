@@ -56,8 +56,8 @@ Versionsnummer im Kopf prüft von Hand, `localStorage`-Schlüssel `hhm.gesehen`)
   Wert (iOS rollt nach dem Loslassen weiter; das hatte einmal zu falschen Zeiten geführt).
 - **Pace-Modell:** Minetti et al. (2002), skaliert auf die Erfahrung des Nutzers: **1,0 s je Höhenmeter bei 4:00 /km** (= 15 km/h; seit 1.56 so beschriftet, weil Läufer im Schnitt denken)
   (= 4,2 m flache Strecke je Höhenmeter; Minetti ergibt 5,4 m bzw. 1,3 s). Einstellbar 0,5–2,0 s.
-  Geprüft an 3 Mio. Zwischenzeiten (`werkzeuge/eichung/`, 30.10.2026): Boston allein 1,13, alle Strecken zusammen 0,87
-  (New York ohne Brückenabschnitte), bergab „die Hälfte“ bestätigt; die App bleibt bei 1,0 s (Entscheidung des Nutzers:
+  Geprüft an 3 Mio. Zwischenzeiten (`werkzeuge/eichung/`, 30.10.2026): Boston allein 1,13, Athen allein 0,91–0,95,
+  alle Strecken zusammen 0,84–0,87 (New York ohne Brückenabschnitte), bergab „die Hälfte“ bestätigt; die App bleibt bei 1,0 s (Entscheidung des Nutzers:
   der Rechner plant eine Bestzeit bei gleichmäßiger Anstrengung; echte Läufer drücken bergauf mehr, die Messung ist dafür
   eher eine Untergrenze).
   Bergab seit 1.44 eine U-Kurve (`BERGAB`, abgestimmt mit dem Nutzer im „Pace-Kurven-Simulator“, einem privaten Artifact,

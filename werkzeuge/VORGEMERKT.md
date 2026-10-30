@@ -15,7 +15,6 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
 
 ## Eichung
 
-- Athen als stärksten weiteren Test aufnehmen, sobald die App steht (gut 20 km stetig bergauf, 9 Jahrgänge im Datensatz).
 - New York: Lage der 20- und 25-km-Matten zur Queensboro Bridge klären, dann die Brückenabschnitte wieder aufnehmen.
 
 ## Wartet auf andere

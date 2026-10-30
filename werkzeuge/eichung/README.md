@@ -14,6 +14,9 @@ Faktor 1 heißt: das App-Modell stimmt. Bereiche: 95 % aus Bootstrap über ganze
 | New York ohne die Brücken bei km 20–30 | 0,77 [0,55–1,00] | unsicher |
 | alle zusammen, New York ohne Brücken | **0,87** [0,76–0,96] | 0,78 [0,53–1,06] |
 | alle zusammen, Ermüdung nur linear | 0,86 [0,72–0,97] | 1,00 [0,78–1,25] |
+| Athen allein, Ermüdung linear | **0,91** [0,85–0,98] | 1,18 [0,88–1,54] |
+| Athen allein, Ermüdung quadratisch | 0,95 [0,80–1,07] | 1,67 [1,17–2,20] |
+| alle mit Athen, New York ohne Brücken | 0,84 [0,73–0,93] | 0,89 [0,69–1,20] |
 
 - **Boston ist der sauberste Fall:** unser Profil und das unabhängige des Datensatzes stimmen je Abschnitt fast überein
   (km 25–30: +51 gegen +52 m), die Newton Hills liegen mitten in den Abschnitten.
@@ -22,6 +25,10 @@ Faktor 1 heißt: das App-Modell stimmt. Bereiche: 95 % aus Bootstrap über ganze
   drücken den Faktor nach unten. Ohne km 20–30 trägt New York kaum noch Information.
 - **Die Bereiche sind zu eng:** Sie erfassen die Streuung zwischen Jahrgängen, nicht zwischen Strecken. Ehrlich ist eher
   0,8–1,15 bergauf.
+- **Athen** (ergänzt am 30.10.2026, 8 Jahrgänge, 94 428 Läufer): Der lange Anstieg von km 10 bis 31 ergibt 0,91–0,95,
+  also nahe 1,0. Bergab ist Athen unsicher (1,2–1,7): Das Gefälle der letzten 10 km fällt mit Ermüdung und Endspurt zusammen.
+  Grenzen: Höhen nur aus einem 30-m-Modell (FABDEM), Kilometer bis km 33 auf etwa ±50 m, keine 20-km-Matte im Datensatz
+  (km 15–25 als ein Abschnitt).
 - **Bergab „die Hälfte“** wird von Boston und New York einzeln bestätigt (0,98–1,00).
 - **Leistung:** Läufer unter 3 h verlieren relativ weniger (0,7–0,9), das Mittelfeld um 4 h eher 1,0–1,3; nicht über alle
   Strecken stabil.
@@ -30,7 +37,8 @@ Faktor 1 heißt: das App-Modell stimmt. Bereiche: 95 % aus Bootstrap über ganze
   eine Untergrenze.
 
 **Entscheidung des Nutzers (30.10.2026):** Die App bleibt bei 1,0 s und „bergab die Hälfte“. Der Rechner plant eine
-Bestzeit, und dafür zählt gleichmäßige Anstrengung, nicht das typische Überziehen am Berg; die Spanne 0,8–1,15 schließt 1,0 ein. 0,87 statt 1,0 hieße bei 4:00 Zielzeit: Berlin 46 → 40 s, Boston 124 → 108 s, New York 229 → 199 s, Rennsteig
+Bestzeit, und dafür zählt gleichmäßige Anstrengung, nicht das typische Überziehen am Berg; die Spanne 0,8–1,15 schließt 1,0 ein, Athen allein liegt bei 0,91–0,95.
+0,87 statt 1,0 hieße bei 4:00 Zielzeit: Berlin 46 → 40 s, Boston 124 → 108 s, New York 229 → 199 s, Rennsteig
 662 → 580 s Steigungskosten (`steigungskosten_vergleich.js`).
 
 ## Daten
@@ -48,6 +56,7 @@ Gewählt sind nur Jahrgänge auf derselben Strecke wie in unserer App und mit Ne
 | hügelig | Boston | 2013–2026 ohne 2016, 2017 (Zeitnahme unklar) |
 | hügelig | New York | 2009–2025 |
 | hügelig | London | 2019, 2021–2026 |
+| hügelig | Athen | 2013–2019, 2022 (2021 nur zur Hälfte erfasst) |
 | flach | Berlin | 2005–2026 |
 | flach | Chicago | 2005–2026 ohne 2007 (Hitzeabbruch) |
 | flach | Amsterdam | 2012–2025 ohne 2020 |
@@ -56,11 +65,11 @@ Gewählt sind nur Jahrgänge auf derselben Strecke wie in unserer App und mit Ne
 Nicht genommen: Paris, Sydney, Tokio (Strecke damals anders als in unserer App), Kapstadt und Rom (nicht im Datensatz).
 Ausgefiltert: Qualitätsmarken des Datensatzes (`record_flags`), unvollständige Zwischenzeiten, Abschnitts-Pace außerhalb
 2:40–15:00 /km, Zielzeit außerhalb 2–7 h, Abschnitt mehr als 40 % schneller oder doppelt so langsam wie der eigene Schnitt.
-Übrig: 3 057 243 Läufer, verdichtet zu 8 874 Zellen (Jahrgang × Leistungsklasse × Abschnitt, mindestens 30 Läufer).
+Übrig: 3 151 826 Läufer (ohne Athen 3 057 243), verdichtet zu 9 530 Zellen (Jahrgang × Leistungsklasse × Abschnitt, mindestens 30 Läufer).
 
 ## Methode
 
-- Je Läufer und Abschnitt (0–5, 5–10 … 35–40, 40–Ziel): `y = log(Abschnitts-Pace / eigene Durchschnitts-Pace)`; je Zelle
+- Je Läufer und Abschnitt (0–5, 5–10 … 35–40, 40–Ziel; fehlt einer Stadt eine Matte, wird der Abschnitt länger, Athen km 15–25): `y = log(Abschnitts-Pace / eigene Durchschnitts-Pace)`; je Zelle
   der Median. Leistungsklassen nach Zielzeit: unter 2:45, dann in Viertelstunden bis 4:00, halbe Stunden bis 6:00, 6–7 h.
 - Erklärende Größe: der Steigungsaufschlag der App je Abschnitt, `E = Mittel(paceRatio) − 1`, getrennt in bergauf (`E⁺`) und
   bergab (`E⁻`), aus unseren eigenen Höhenprofilen (`modell_seg9.json`).
@@ -77,11 +86,11 @@ Ausgefiltert: Qualitätsmarken des Datensatzes (`record_flags`), unvollständige
    `node modell_segmente.js` → `modell_seg9.json`
 4. `python3 schaetzen.py > ergebnis.txt` (einige Minuten)
 
-Neue Strecke (z. B. Athen): Jahrgänge in `WAHL` (`verdichten.py`), App-Ordner in der Liste von `modell_segmente.js`,
+Neue Strecke: Jahrgänge in `WAHL` (`verdichten.py`), App-Ordner in der Liste von `modell_segmente.js`,
 Stadtname in `NAME` (`schaetzen.py`).
 
 ## Offen
 
 - New York: Lage der 20- und 25-km-Matten zur Queensboro Bridge klären, dann die Brückenabschnitte wieder aufnehmen.
-- Athen ist der stärkste weitere Test (gut 20 km stetig bergauf, 9 Jahrgänge im Datensatz), sobald es die App gibt.
+- Athen: neu rechnen, falls das 5-m-Geländemodell des griechischen Katasters frei wird oder die Lage der Zeitmatten bekannt wird.
 - Leistungsabhängigkeit: ob schnelle Läufer relativ weniger verlieren, an weiteren Strecken prüfen.

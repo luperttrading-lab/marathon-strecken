@@ -5,25 +5,29 @@
 # 150 Bootstrap-Ziehungen über ganze Jahrgänge (fester Startwert, also wiederholbar). Ergebnis vom 30.10.2026: ergebnis.txt
 import json, sys, numpy as np, pandas as pd
 z = pd.read_csv("zellen.csv"); M = json.load(open("modell_seg9.json"))
-NAME = {"Boston": "boston", "New York": "newyork", "London": "london", "Berlin": "berlin", "Chicago": "chicago", "Amsterdam": "amsterdam", "Valencia": "valencia"}
+NAME = {"Boston": "boston", "New York": "newyork", "London": "london", "Berlin": "berlin", "Chicago": "chicago", "Amsterdam": "amsterdam", "Valencia": "valencia", "Athens": "athen"}
 assert all(M[a]["secRef"] == 1 and M[a]["ref"] == 240 for a in NAME.values())
-z["Ep"] = [M[NAME[c]]["seg"][s]["excAuf"] for c, s in zip(z.city, z.seg)]
-z["Em"] = [M[NAME[c]]["seg"][s]["excAb"] for c, s in zip(z.city, z.seg)]
-X = np.array([2.5, 7.5, 12.5, 17.5, 22.5, 27.5, 32.5, 37.5, 41.1]); z["x"] = X[z.seg] / 42.195
+# Abschnitt = Felder von..bis−1 im 9er-Raster (5 km, zuletzt 2,195 km); länger, wo einer Stadt eine Matte fehlt (Athen: 15–25)
+LEN = np.array([5, 5, 5, 5, 5, 5, 5, 5, 2.195]); KUM = np.concatenate([[0], np.cumsum(LEN)])
+mittel = lambda c, a, b, f: float(np.dot(LEN[a:b], [M[NAME[c]]["seg"][j][f] for j in range(a, b)]) / LEN[a:b].sum())
+z["Ep"] = [mittel(c, a, b, "excAuf") for c, a, b in zip(z.city, z.von, z.bis)]
+z["Em"] = [mittel(c, a, b, "excAb") for c, a, b in zip(z.city, z.von, z.bis)]
+z["x"] = (KUM[z.von] + KUM[z.bis]) / 2 / 42.195
 z["g"] = z.city + "|" + z.year.astype(str) + "|" + z.klasse.astype(str); z["ed"] = z.city + "|" + z.year.astype(str)
 K = sorted(z.klasse.unique())
+ALLE = z.copy(); z = ALLE[ALLE.city != "Athens"]   # die ersten drei Teile wie am 30.10.2026, ohne Athen
 
 def fit(d, segs=range(9), staedte=None, nmax=1000, proKlasse=False, rng=None, y="med"):
-    q = z[z.seg.isin(list(segs))]
+    q = z[z.von.isin(list(segs)) & (z.bis - 1).isin(list(segs))]
     if staedte is not None: q = q[q.city.isin(staedte)]
     if rng is not None:   # Bootstrap: Jahrgänge mit Zurücklegen
         eds = q.ed.unique(); pick = rng.choice(eds, len(eds)); cnt = pd.Series(pick).value_counts()
         q = q[q.ed.isin(cnt.index)].copy(); q["rep"] = q.ed.map(cnt)
     else: q = q.copy(); q["rep"] = 1
-    q = q.sort_values(["g", "seg"])
+    q = q.sort_values(["g", "von"])
     cols = {}
     for k in K:
-        for s in segs: cols[f"a{k}_{s}"] = ((q.klasse == k) & (q.seg == s)).astype(float).to_numpy()
+        for s in segs: cols[f"a{k}_{s}"] = (q.klasse == k).to_numpy() * np.where((q.von <= s) & (s < q.bis), LEN[s] / (KUM[q.bis] - KUM[q.von]), 0)
     if proKlasse:
         for k in K: cols[f"kp{k}"] = (q.Ep * (q.klasse == k)).to_numpy(); 
         cols["km"] = q.Em.to_numpy()
@@ -76,3 +80,13 @@ zeige("Boston + NY (ohne 20–30) + flache, quadr.", d=2, staedte=["Boston", "Ne
 zeige("dito, je Leistungsklasse", d=2, staedte=["Boston", "New York"] + FLACH, proKlasse=True)
 zeige("alle (NY ohne 20–30), quadratisch", d=2)
 zeige("alle (NY ohne 20–30), linear", d=1)
+
+# Athen (App athen/ seit 30.10.2026): ein langer, glatter Anstieg km 10–31, dann bergab; im Datensatz nie eine 20-km-Zeit, daher
+# km 15–25 als ein Abschnitt. Die glatte Ermüdung je Jahrgang kann einen so glatten Buckel zum Teil schlucken: daher alle drei Ansätze.
+print("== Athen")
+z = ALLE[~((ALLE.city == "New York") & ALLE.von.isin([4, 5]))]
+for d, art in [(-1, "ohne Ermüdung je Jahrgang"), (1, "Ermüdung linear"), (2, "Ermüdung quadratisch")]:
+    zeige(f"Athen + flache, {art}", d=d, staedte=["Athens"] + FLACH)
+zeige("Athen + flache, linear, je Klasse", d=1, staedte=["Athens"] + FLACH, proKlasse=True)
+zeige("alle mit Athen (NY ohne 20–30), quadratisch", d=2)
+zeige("alle mit Athen (NY ohne 20–30), linear", d=1)

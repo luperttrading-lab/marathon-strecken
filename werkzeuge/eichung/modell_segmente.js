@@ -4,7 +4,7 @@
 //   python3 -m http.server 8765   (dann hier: node modell_segmente.js)  → modell_seg9.json
 const { chromium } = require('playwright');
 const fs = require('fs');
-const APPS = (process.argv[2] || "boston newyork chicago berlin london valencia amsterdam").split(" ");
+const APPS = (process.argv[2] || "boston newyork chicago berlin london valencia amsterdam athen").split(" ");
 (async () => {
   const b = await chromium.launch(); const p = await b.newPage();
   await p.addInitScript(() => { try { localStorage.clear(); } catch (e) {} });
