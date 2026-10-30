@@ -1,6 +1,6 @@
 # Übergabe: Steigungsprofil TCS Amsterdam Marathon
 
-Stand 30.10.2026, App-Version **1.1** (1.1: Steigungskosten als große Zeile unter der Zielzeit; 1.0: erste Fassung).
+Stand 30.10.2026, App-Version **1.2** (1.2: Mauer-Zeit und Tor-Rechner für Strecken mit `D.mauer`, sonst unverändert; 1.1: Steigungskosten als große Zeile unter der Zielzeit; 1.0: erste Fassung).
 Adresse nach dem Hochladen: https://luperttrading-lab.github.io/marathon-strecken/amsterdam/.
 
 Die App ist eine Kopie der Tokio-App (Stand 1.24, aktueller gemeinsamer Code) mit eigenen Daten, Texten und Speicherschlüsseln

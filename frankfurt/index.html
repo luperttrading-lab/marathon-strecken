@@ -194,6 +194,8 @@ button.info span { width: 20px; height: 20px; border: 1.5px solid currentColor; 
 .bahn > span { font-size: 15px; }
 .bahn > b { justify-content: flex-end; padding-left: 12px; font: 700 22px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
 .bahn.steig > span, .bahn.steig > b { border-bottom: 1px solid var(--edge); }   /* Steigungskosten unter der Zielzeit, seit Hamburg 1.67 */
+.bahn.steig + .bahn.steig > span, .bahn.steig + .bahn.steig > b { border-top: 0; }   /* Mauer-Zeile direkt darunter (D.mauer) */
+.bahn .spaet { color: var(--g-u3); }   /* Tor zur Mauer verpasst (D.tor) */
 .goal { font-family: var(--font-display); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
 
 /* Rampen */
@@ -570,11 +572,19 @@ body.run .close svg { width: 20px; height: 20px; }
         <div class="wcol" id="wg-h"></div><span class="colon" aria-hidden="true">:</span><div class="wcol" id="wg-m"></div><span class="colon" aria-hidden="true">:</span><div class="wcol" id="wg-s"></div>
       </div>
       <div class="bahn steig"><span>Davon kosten die Steigungen</span><b id="goal-steig">–</b></div>
+      <div class="bahn steig" id="mauer-zeile" hidden><span>Davon kostet die Mauer</span><b id="goal-mauer">–</b></div>
       <span class="note" id="goal-note">Gleichmäßige Anstrengung: im Flachen 4:58 /km.</span>
       <div class="bahn-kopf"><span class="lbl" id="bahn-titel">Ohne Höhenmeter entspricht das</span><button type="button" class="info" popovertarget="bahn-info" aria-label="Erklärung zu den Zeiten ohne Höhenmeter"><span aria-hidden="true">i</span></button></div>
       <div class="seg bahn-seg" id="bahn-seg" role="group" aria-label="Zeiten umrechnen" hidden><button type="button" data-meer="0">in der Höhe</button><button type="button" data-meer="1">auf Meereshöhe</button></div>
       <div class="bahn" id="bahn"><span>Flacher Marathon</span><b id="bahn-m">–</b><span>Flacher Halbmarathon</span><b id="bahn-21">–</b><span>10 000 m auf der Bahn</span><b id="bahn-10">–</b><span>5000 m auf der Bahn</span><b id="bahn-5">–</b></div>
       <div class="pop" id="bahn-info" popover role="dialog" aria-label="Ohne Höhenmeter"><b>Ohne Höhenmeter</b><p>Dieselbe Anstrengung wie deine Zielzeit auf dieser Strecke, aber ganz flach.</p><p>Halbmarathon, 10 000 m und 5000 m nach der Faustregel Marathon = 10 km × 4,667 (Riegel, Exponent 1,07). Für viele Freizeitläufer ist sie zu optimistisch.</p><p id="bahn-lage" hidden></p><button type="button" popovertarget="bahn-info" popovertargetaction="hide">Schließen</button></div>
+    </div>
+    <div class="setting" id="mauer-set" hidden>
+      <div class="head"><span class="lbl">Zeit auf der Mauer</span><span class="goal" id="mauer-out">–</span></div>
+      <div class="timepanel one" id="mauer-wheel"><div class="wcol" id="wm-min"></div></div>
+      <span class="note" id="mauer-note"></span>
+      <div class="bahn steig" id="tor-zeile" hidden><span id="tor-lbl">Am Tor zur Mauer</span><b id="tor-uhr">–</b></div>
+      <span class="note" id="tor-note" hidden></span>
     </div>
     <div class="setting">
       <div class="head"><span class="lbl">Kosten je Höhenmeter</span><span class="goal" id="hm-out">1,0 s</span></div>
@@ -663,6 +673,7 @@ const mss = s => { s = Math.round(s); return Math.floor(s / 60) + ":" + String(s
 // m:ss,hh für die Pace im Flachen (seit 1.63): ein fester Wert, der flache Marathon steht sekundengenau, 1 s auf 42,195 km = 0,024 s/km
 const mss2 = s => { const c = Math.round(s * 100), m = Math.floor(c / 6000), r = c - m * 6000; return m + ":" + String(Math.floor(r / 100)).padStart(2, "0") + "," + String(r % 100).padStart(2, "0"); };
 const secs = s => { const r = Math.round(s); return (r > 0 ? "+" : r < 0 ? "−" : "±") + Math.abs(r) + " s"; };
+const secsMin = s => Math.abs(s) >= 600 ? (s < 0 ? "−" : "+") + mss(Math.abs(s)) + " min" : secs(s);   // ab 10 min in Minuten (Great Wall)
 
 /* Farbklassen der Steigung in % (fest seit Hamburg 1.35, davor Testvarianten). Gespiegelte Grenzen ±0,5 / 1,5 / 3 / 4,5 /
    6 / 8 / 10. Flach grün; bergab sieben Blautöne von Himmelblau bis Marineblau, die dunkler werden (die drei hellsten seit
@@ -753,12 +764,23 @@ function paceRatio() {
   let sum = 0; for (let i = 1; i < N; i++) sum += (ratio[i - 1] + ratio[i]) / 2 * STEP;
   return { ratio, sum };
 }
+// Zeit je 10-m-Stück auf der Mauer in s (Stück i reicht von Punkt i − 1 bis i), außerhalb 0: Minuten des Durchgangs gleichmäßig verteilt
+function mauerZeit() {
+  const z = new Float64Array(N);
+  MAUER.forEach(([a, b], k) => {
+    const i0 = Math.max(1, Math.round(a / STEP) + 1), i1 = Math.min(N - 1, Math.round(b / STEP));
+    for (let i = i0; i <= i1; i++) z[i] = mauerMin(k) * 60 / (i1 - i0 + 1);
+  });
+  return z;
+}
 function buildPace() {
-  const { ratio, sum } = paceRatio(), t = new Float64Array(N);
-  const p0 = S.goal / (sum / 1000) ; // s/km im Flachen bei gleicher Anstrengung
-  for (let i = 1; i < N; i++) t[i] = t[i - 1] + (ratio[i - 1] + ratio[i]) / 2 * STEP / 1000 * p0;
+  const { ratio } = paceRatio(), mz = mauerZeit(), t = new Float64Array(N);
+  let sum = 0, wz = 0; for (let i = 1; i < N; i++) if (mz[i]) wz += mz[i]; else sum += (ratio[i - 1] + ratio[i]) / 2 * STEP;
+  const p0 = Math.max(S.goal - wz, sum / 1000 * 120) / (sum / 1000) ; // s/km im Flachen bei gleicher Anstrengung (ohne die Mauerminuten)
+  for (let i = 1; i < N; i++) t[i] = t[i - 1] + (mz[i] || (ratio[i - 1] + ratio[i]) / 2 * STEP / 1000 * p0);
   const scale = S.goal / valAt(t, L); for (let i = 0; i < N; i++) t[i] *= scale;
-  P = { ratio, t, p0: p0 * scale };
+  for (let i = 1; i < N; i++) if (mz[i]) ratio[i - 1] = ratio[i] = mz[i] / (STEP / 1000 * p0);   // Mauer: Pace-Faktor aus ihrer Zeit (Rampenkosten, Anzeige)
+  P = { ratio, t, p0: p0 * scale, mauer: wz * scale };
   glaettePace();
 }
 // „Pace hier“: Pace-Faktor gemittelt über das Messfenster, aus der Zeit für das Stück um die Stelle.
@@ -816,6 +838,12 @@ const posNachUpdate = (() => { try { const v = sessionStorage.getItem("ffm-pos")
 const S = { pos: posNachUpdate, start: clamp(Math.round(store.get("start", D.start)) || D.start, 0, 1439), live: false, win: store.get("win", 200), zoom: store.get("zoom", 5000), goal: store.get("goal-v2", null), down: 0.5, speed: store.get("speed", 200), vp: store.get("vp", false), relay: store.get("relay", false), secRef: store.get("sechm", 1.0), ref: store.get("sechm-pace", 240), split: store.get("split", "km"), dir: "up", sort: "km", playing: false };
 if (![50, 100, 200, 1000].includes(S.win)) S.win = 200;
 S.meer = store.get("meer", false) === true;   // Tabelle „Ohne Höhenmeter“ auf Meereshöhe umgerechnet (nur bei D.lage)
+// Mauer (D.mauer = [[von, bis, Name, Anteil], …] in Streckenmetern, seit Hamburg 1.68, bisher Great Wall): auf Mauer und Treppen
+// wird gegangen, gestiegen und gewartet; dort zählen feste Minuten (S.mauerMin, alle Durchgänge zusammen) statt des Steigungsmodells,
+// aufgeteilt nach dem Anteil (gemessene Minuten je Durchgang, ohne Angabe gleich)
+const MAUER = D.mauer || [], MAUER_ANTEIL = MAUER.map(m => m[3] || 1), MAUER_SUMME = MAUER_ANTEIL.reduce((s, v) => s + v, 0);
+S.mauerMin = clamp(Math.round(store.get("mauer-min", D.mauerMin || 60)) || 60, 10, 240);
+const mauerMin = k => S.mauerMin * MAUER_ANTEIL[k] / MAUER_SUMME;   // Minuten für Durchgang k
 // Kosten je Höhenmeter: eingegeben bei der Bezugs-Pace S.ref (Standard 4:00 /km), gerechnet wird intern mit S.secHm bei 4:00 /km
 if (!(S.ref >= 180 && S.ref <= 420)) S.ref = 240;
 S.ref = Math.round(S.ref / 5) * 5; S.secHm = S.secRef * 240 / S.ref;
@@ -829,8 +857,8 @@ const GAST = (() => { const q = new URLSearchParams(location.search), z = /^(\d)
 if (GAST) { S.goal = GAST.goal; S.start = GAST.start; }
 // Voreinstellung: genau 4:00 /km im Flachen; die Zielzeit enthält dann, was das Höhenprofil kostet (je Strecke verschieden)
 if (typeof S.goal !== "number" || !(S.goal > 0)) {
-  const { ratio } = paceRatio(), c = new Float64Array(N);   // gewichtete Meter bis genau 42 195 m (das Raster reicht 5 m weiter)
-  for (let i = 1; i < N; i++) c[i] = c[i - 1] + (ratio[i - 1] + ratio[i]) / 2 * STEP;
+  const { ratio } = paceRatio(), mz = mauerZeit(), c = new Float64Array(N);   // gewichtete Meter bis genau 42 195 m (das Raster reicht 5 m weiter)
+  for (let i = 1; i < N; i++) c[i] = c[i - 1] + (mz[i] ? mz[i] / 0.24 : (ratio[i - 1] + ratio[i]) / 2 * STEP);   // Mauer: ihre Minuten als Meter zu 4:00 /km
   S.goal = Math.round(240 * valAt(c, L) / 1000);
 }
 
@@ -940,6 +968,17 @@ function drawMain() {
     // über der Kurve auf freiem Grund (seit Hamburg 1.37): in der Fläche war es auf den Farben kaum lesbar und verdeckte die Schraffur
     const tw = c.measureText(lab).width, mx = clamp((Math.max(xa, 0) + Math.min(xb, w)) / 2, tw / 2 + 4, w - tw / 2 - 4);   // im Bild, nie angeschnitten
     if ((xb - xa > tw + 6 || S.zoom <= 2000) && mx - tw / 2 > brRechts + 6) { c.fillStyle = COL["--muted"]; c.fillText(lab, mx, Math.max(yt - 6, 14)); brRechts = mx + tw / 2; }
+  }
+  // Mauer (D.mauer): hier zählen feste Minuten statt Steigung; hell hinterlegt, Name und Minuten oben auf dunklem Grund
+  for (const [k, [a, b, name]] of MAUER.entries()) {
+    if (b < x0 || a > x0 + S.zoom) continue;
+    const xa = Math.max(X(a), 0), xb = Math.min(X(b), w), lab = name + " · " + Math.round(mauerMin(k)) + " min";
+    c.fillStyle = COL["--ink"]; c.globalAlpha = 0.1; c.fillRect(xa, padT, xb - xa, ph); c.globalAlpha = 1;
+    c.strokeStyle = COL["--muted"]; c.lineWidth = 1; c.setLineDash([3, 3]); c.beginPath();
+    for (const xx of [X(a), X(b)]) if (xx >= 0 && xx <= w) { c.moveTo(Math.round(xx) + 0.5, padT); c.lineTo(Math.round(xx) + 0.5, h - padB); }
+    c.stroke(); c.setLineDash([]);
+    const tw = c.measureText(lab).width, mx = clamp((xa + xb) / 2, tw / 2 + 6, w - tw / 2 - 6);
+    if (xb - xa > 40) { c.fillStyle = COL["--bg"]; c.globalAlpha = 0.8; c.fillRect(mx - tw / 2 - 4, padT + 2, tw + 8, 16); c.globalAlpha = 1; c.fillStyle = COL["--ink"]; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText(lab, mx, padT + 10); }
   }
   // außerhalb der Strecke abdunkeln
   c.fillStyle = COL["--bg"];
@@ -1146,9 +1185,9 @@ function updateReadout() {
   const up = valAt(W.up, x), dn = valAt(W.dn, x), UP = valAt(W.up, L), DN = valAt(W.dn, L);
   $("r-done").innerHTML = auf_ab(up, dn); $("r-left").innerHTML = auf_ab(UP - up, DN - dn); $("r-total").innerHTML = auf_ab(UP, DN);
   const pace = P.p0 * valAt(P.glatt, x);
-  $("r-pace").innerHTML = mss(pace) + ' <span class="dn">' + secs(pace - P.p0) + "</span>";
+  $("r-pace").innerHTML = mss(pace) + ' <span class="dn">' + secsMin(pace - P.p0) + "</span>";
   $("r-split").textContent = hms(valAt(P.t, x));
-  const flat = P.p0 * x / 1000; $("r-bal").textContent = secs(valAt(P.t, x) - flat) + " bisher";
+  const flat = P.p0 * x / 1000; $("r-bal").textContent = secsMin(valAt(P.t, x) - flat) + " bisher";
   // nächste Rampe
   const inR = RAMPS.find(q => q.a <= x && q.b > x);
   const nxt = RAMPS.filter(q => q.dir === 1 && q.a > x).sort((p, q) => p.a - q.a)[0];
@@ -1267,7 +1306,7 @@ function drawSpark(cv, a, b, base, span) {
 }
 function renderSplits() {
   const W = WIN[S.win], segs = splitSegs(), rows = [];
-  $("split-note").textContent = "Zeiten bei gleichmäßiger Anstrengung für " + hms(S.goal) + ", " + nf(S.secRef, 1) + " s je Höhenmeter bei " + mss(S.ref) + " /km an sanften Anstiegen, an steilen mehr (8 %: " + nf(kostHm(0.08) * S.ref / 240, 1) + " s), bergab die Hälfte, Zeiten mit 100 m Messfenster, damit kurze Wellen mitkosten. Höhenmeter und Steigung über " + (S.win === 1000 ? "1 km" : S.win + " m") + " gemessen. ± = Mehr- oder Minderzeit durch die Steigung gegenüber flach. Profile mit gemeinsamem Höhenmaßstab. Antippen springt hin.";
+  $("split-note").textContent = "Zeiten bei gleichmäßiger Anstrengung für " + hms(S.goal) + ", " + (MAUER.length ? "auf der Mauer " + MAUER.map((m, k) => Math.round(mauerMin(k))).join(" + ") + " min, sonst " : "") + nf(S.secRef, 1) + " s je Höhenmeter bei " + mss(S.ref) + " /km an sanften Anstiegen, an steilen mehr (8 %: " + nf(kostHm(0.08) * S.ref / 240, 1) + " s), bergab die Hälfte, Zeiten mit 100 m Messfenster, damit kurze Wellen mitkosten. Höhenmeter und Steigung über " + (S.win === 1000 ? "1 km" : S.win + " m") + " gemessen. ± = Mehr- oder Minderzeit durch die Steigung gegenüber flach. Profile mit gemeinsamem Höhenmaßstab. Antippen springt hin.";
   let span = 6;
   for (const [a, b, lab] of segs) {
     let mn = Infinity, mx = -Infinity;
@@ -1315,7 +1354,9 @@ function renderSettings() {
   $("goal-out").textContent = hms(S.goal);
   const flach = P.p0 * 42.195; // dieselbe Anstrengung auf einem flachen Marathon
   $("goal-note").textContent = "Gleichmäßige Anstrengung über die ganze Strecke: auf flachen Stücken dieser Strecke " + mss2(P.p0) + " /km, im Schnitt " + mss2(S.goal / (L / 1000)) + " /km.";
-  $("goal-steig").textContent = secs(S.goal - P.p0 * L / 1000);   // gegenüber einer flachen Strecke bei gleicher Anstrengung
+  const mauerLang = MAUER.reduce((s, m) => s + m[1] - m[0], 0), mauerPlus = P.mauer - P.p0 * mauerLang / 1000;   // Mauer gegenüber flach gelaufen
+  $("goal-steig").textContent = secsMin(S.goal - P.p0 * L / 1000 - mauerPlus);   // gegenüber einer flachen Strecke bei gleicher Anstrengung
+  if (MAUER.length) renderMauer(mauerLang, mauerPlus);
   // Bahnzeiten ohne Höhenmeter (seit 1.55): Faustregel Marathon = 10 km × 4,667, das ist Riegel mit Exponent 1,07
   const BAHN = 4.667, k = Math.log(BAHN) / Math.log(42.195 / 10), t10 = flach / BAHN, t5 = t10 * Math.pow(0.5, k);
   // Höhenlage (D.lage, m über dem Meer, nur wo es zählt: Mexiko-Stadt): die Zeiten gelten für diese Höhe. Der Umschalter
@@ -1338,6 +1379,30 @@ function renderSettings() {
   $("speed-note").textContent = "Mit ×" + S.speed + " dauert der ganze Lauf " + (dauer >= 3600 ? hms(dauer) + " h" : mss(dauer) + " min") + (S.speed === 1 ? " (Echtzeit; läuft nur bei eingeschaltetem Bildschirm, zum Mitlaufen am Renntag „Live“ nehmen)" : "") + ". Der Läufer wird bergauf langsamer, wie im Pace-Modell. Einstellen im Vollbild mit dem rechten Drehrad über dem Profil.";
 }
 
+// Mauer und Tor (D.mauer, D.tor): Zeile unter der Zielzeit, Rad „Zeit je Mauerdurchgang“, Ankunft am Tor mit Reserve
+function renderMauer(lang, plus) {
+  const n = MAUER.length, km = v => nf(v / 1000, 1);
+  $("mauer-zeile").hidden = $("mauer-set").hidden = false;
+  $("goal-mauer").textContent = (plus < 0 ? "−" : "+") + mss(Math.abs(plus)) + " min";
+  $("mauer-out").textContent = S.mauerMin + " min";
+  $("mauer-note").textContent = "Die Strecke führt " + (n === 2 ? "zweimal" : n + "-mal") + " über die Mauer: " + MAUER.map(m => "km " + km(m[0]) + "–" + km(m[1])).join(" und ")
+    + ", zusammen " + km(lang) + " km auf Mauer und Treppen. Dort wird gegangen, gestiegen und gewartet; deshalb zählt hier deine Zeit statt des Steigungsmodells: "
+    + MAUER.map((m, k) => (k + 1) + ". Durchgang " + Math.round(mauerMin(k)) + " min").join(", ") + ". " + (D.mauerQ ? D.mauerQ + " " : "")
+    + "Der Rest der Zielzeit verteilt sich wie überall nach Steigung: auf flachen Stücken " + mss2(P.p0) + " /km. Die Mauer kostet damit " + mss(Math.abs(plus)) + " min "
+    + (plus >= 0 ? "mehr" : "weniger") + ", als dieselben " + km(lang) + " km flach zu laufen.";
+  renderTor();
+}
+function renderTor() {
+  if (!D.tor || !P) return;
+  const an = S.start + valAt(P.t, D.tor.m) / 60, rest = D.tor.uhr - an, ziel = S.start + S.goal / 60;
+  $("tor-zeile").hidden = $("tor-note").hidden = false;
+  $("tor-lbl").textContent = "Am " + D.tor.name + " (km " + nf(D.tor.m / 1000, 1) + ")";
+  $("tor-uhr").textContent = uhr(an) + " Uhr"; $("tor-uhr").classList.toggle("spaet", rest < 0);
+  $("tor-note").textContent = (rest >= 0 ? "Es schließt um " + uhr(D.tor.uhr) + " Uhr: " + uhr(rest) + " h Reserve"
+    : "Du kämst " + uhr(-rest) + " h zu spät: Um " + uhr(D.tor.uhr) + " Uhr schließt es, wer km " + nf(D.tor.m / 1000, 1) + " dann nicht erreicht hat, darf nicht ins Ziel")
+    + ". Gerechnet mit Start um " + uhr(S.start) + " Uhr (unter „Für Zuschauer“), im Ziel um " + uhr(ziel) + " Uhr"
+    + (D.zielschluss ? (ziel > D.zielschluss ? ", nach dem Zielschluss um " : ", Zielschluss um ") + uhr(D.zielschluss) + " Uhr" : "") + ".";
+}
 function recompute() { buildPace(); buildRamps(); renderSettings(); renderRamps(); renderSplits(); renderPlan(); renderHmMethods(); dirty = true; }
 
 function setPos(x) { const vorher = S.pos; S.pos = clamp(x, 0, L); if (vorher < L - 1 && S.pos >= L - 1) zielFeier(); dirty = true; }
@@ -1451,12 +1516,14 @@ const setGoal = (h, m, s) => {
   clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("goal-wheels"), recompute), 120);
 };
 const GW = {};
-GW.h = makeWheel($("wg-h"), { key: "gh", label: "Std", min: 1, max: 7, step: 1, fmt: v => String(v), text: v => v + " Stunden", onChange: v => setGoal(v, GW.m.value, GW.s.value) });
+GW.h = makeWheel($("wg-h"), { key: "gh", label: "Std", min: 1, max: MAUER.length ? 9 : 7, step: 1, fmt: v => String(v), text: v => v + " Stunden", onChange: v => setGoal(v, GW.m.value, GW.s.value) });
 GW.m = makeWheel($("wg-m"), { key: "gm", label: "Min", loop: true, min: 0, max: 59, step: 1, fmt: pad2, text: v => v + " Minuten", onChange: v => setGoal(GW.h.value, v, GW.s.value) });
 GW.s = makeWheel($("wg-s"), { key: "gs", label: "Sek", loop: true, min: 0, max: 59, step: 1, fmt: pad2, text: v => v + " Sekunden", onChange: v => setGoal(GW.h.value, GW.m.value, v) });
 /* Räder auf die Zielzeit stellen, auch wenn sie erst sichtbar werden (iOS setzt die Scrollposition verdeckter Räder nicht zuverlässig) */
 GW.k = makeWheel($("wk-hm"), { key: "khm", label: "Sekunden", min: 0.5, max: 2.0, step: 0.1, fmt: v => nf(v, 1), text: v => nf(v, 1) + " Sekunden je Höhenmeter",
   onChange: v => { S.secRef = v; S.secHm = v * 240 / S.ref; store.set("sechm", v); $("hm-out").textContent = nf(v, 1) + " s"; clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("hm-wheel"), recompute), 120); } });
+GW.mz = makeWheel($("wm-min"), { key: "mzm", label: "Minuten", min: 10, max: 240, step: 1, fmt: v => String(v), text: v => v + " Minuten auf der Mauer",
+  onChange: v => { S.mauerMin = v; store.set("mauer-min", v); $("mauer-out").textContent = v + " min"; clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("mauer-wheel"), recompute), 120); } });
 GW.r = makeWheel($("wk-ref"), { key: "kref", label: "Pace /km", min: 180, max: 420, step: 5, fmt: v => mss(v), text: v => mss(v) + " pro Kilometer",
   onChange: v => { S.ref = v; S.secHm = S.secRef * 240 / v; store.set("sechm-pace", v); clearTimeout(goalT); goalT = setTimeout(() => mitAnker($("hm-wheel"), recompute), 120); } });
 /* Für Zuschauer: Startzeit, Uhrzeit an jeder 5-km-Marke, Link zum Teilen, Live nach Plan (Uhrzeiten in der Zeitzone der Strecke) */
@@ -1493,6 +1560,7 @@ function renderPlan() {
     tb.appendChild(tr);
   }
   markWellen();
+  if (MAUER.length) renderTor();
 }
 const setStart = (h, m) => { S.start = h * 60 + m; store.set("start", S.start); mitAnker($("start-wheels"), renderPlan); };
 GW.sh = makeWheel($("ws-h"), { key: "sh", label: "Std", min: 5, max: 14, step: 1, fmt: v => String(v), text: v => v + " Uhr", onChange: v => setStart(v, GW.sm.value) });
@@ -1612,7 +1680,7 @@ for (const sec of document.querySelectorAll("section.klapp")) {
     requestAnimationFrame(() => { if (auf) { syncGoalWheels(); renderSplits(); dirty = true; } halte(); requestAnimationFrame(() => requestAnimationFrame(halte)); });
   });
 }
-const syncGoalWheels = () => { ZW.set(S.zoom); SW.set(S.speed); const g = Math.round(S.goal); GW.h.set(Math.floor(g / 3600)); GW.m.set(Math.floor(g % 3600 / 60)); GW.s.set(g % 60); GW.k.set(S.secRef); GW.r.set(S.ref); GW.sh.set(Math.floor(S.start / 60)); GW.sm.set(S.start % 60); };
+const syncGoalWheels = () => { ZW.set(S.zoom); SW.set(S.speed); const g = Math.round(S.goal); GW.h.set(Math.floor(g / 3600)); GW.m.set(Math.floor(g % 3600 / 60)); GW.s.set(g % 60); GW.k.set(S.secRef); GW.r.set(S.ref); GW.mz.set(S.mauerMin); GW.sh.set(Math.floor(S.start / 60)); GW.sm.set(S.start % 60); };
 requestAnimationFrame(syncGoalWheels);
 if ("IntersectionObserver" in window) new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) syncGoalWheels(); }).observe($("goal-wheels"));
 if ("IntersectionObserver" in window) new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) syncGoalWheels(); }).observe($("start-wheels"));
@@ -1759,6 +1827,7 @@ $("bridges").textContent = [["Tunnel", "Tunnel"], ["Unterführung", "Unterführu
 $("img-note").innerHTML = D.imgNote;
 
 document.body.classList.add("run");
+if (MAUER.length) $("r-bal").previousElementSibling.textContent = "Steigung + Mauer";
 readColors(); renderLegend(); recompute(); setPos(S.pos); requestAnimationFrame(frame);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { applyGr(); dirty = true; });
 </script>
@@ -1766,7 +1835,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.58';
+const APP_VERSION = '1.59';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");

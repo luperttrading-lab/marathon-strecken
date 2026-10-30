@@ -1,0 +1,208 @@
+{
+"linie_m": 42970.49,
+"ref": [
+{
+"km": 2.6,
+"d": 2600.0,
+"abstand": 4.4,
+"was": "Getränke 1",
+"durchgaenge": 2
+},
+{
+"km": 4,
+"d": 4025.0,
+"abstand": 26.7,
+"was": "Kilometerschild",
+"durchgaenge": 2
+},
+{
+"km": 5.1,
+"d": 5285.0,
+"abstand": 38.5,
+"was": "Getränke 2",
+"durchgaenge": 2
+},
+{
+"km": 5.5,
+"d": 5495.0,
+"abstand": 119.7,
+"was": "Getränke 3",
+"durchgaenge": 2
+},
+{
+"km": 6.1,
+"d": 6105.0,
+"abstand": 86.5,
+"was": "Getränke 4",
+"durchgaenge": 2
+},
+{
+"km": 6.4,
+"d": 6365.0,
+"abstand": 45.9,
+"was": "Getränke 5",
+"durchgaenge": 2
+},
+{
+"km": 8.1,
+"d": 8264.8,
+"abstand": 0.0,
+"was": "Getränke 6",
+"durchgaenge": 1
+},
+{
+"km": 10,
+"d": 10095.0,
+"abstand": 18.3,
+"was": "Kilometerschild",
+"durchgaenge": 2
+},
+{
+"km": 11.5,
+"d": 11715.0,
+"abstand": 20.1,
+"was": "Getränke 7",
+"durchgaenge": 2
+},
+{
+"km": 14.2,
+"d": 14370.0,
+"abstand": 2.1,
+"was": "Getränke 8",
+"durchgaenge": 1
+},
+{
+"km": 15,
+"d": 15280.0,
+"abstand": 13.8,
+"was": "Kilometerschild",
+"durchgaenge": 1
+},
+{
+"km": 16.6,
+"d": 16815.0,
+"abstand": 19.1,
+"was": "Getränke 9",
+"durchgaenge": 1
+},
+{
+"km": 19.5,
+"d": 19660.0,
+"abstand": 8.6,
+"was": "Getränke 10",
+"durchgaenge": 1
+},
+{
+"km": 21,
+"d": 21200.0,
+"abstand": 9.0,
+"was": "Kilometerschild",
+"durchgaenge": 1
+},
+{
+"km": 22.7,
+"d": 22845.0,
+"abstand": 26.2,
+"was": "Getränke 11",
+"durchgaenge": 1
+},
+{
+"km": 25.3,
+"d": 25545.0,
+"abstand": 22.8,
+"was": "Getränke 12",
+"durchgaenge": 1
+},
+{
+"km": 26.9,
+"d": 27590.0,
+"abstand": 0.9,
+"was": "Getränke 13",
+"durchgaenge": 1
+},
+{
+"km": 27,
+"d": 27695.0,
+"abstand": 21.2,
+"was": "Kilometerschild",
+"durchgaenge": 1
+},
+{
+"km": 28.9,
+"d": 29240.0,
+"abstand": 2.6,
+"was": "Getränke 14",
+"durchgaenge": 1
+},
+{
+"km": 31.5,
+"d": 31935.0,
+"abstand": 20.1,
+"was": "Getränke 7",
+"durchgaenge": 2
+},
+{
+"km": 32,
+"d": 32625.0,
+"abstand": 14.7,
+"was": "Kilometerschild",
+"durchgaenge": 2
+},
+{
+"km": 34.9,
+"d": 35386.3,
+"abstand": 0.0,
+"was": "Getränke 6",
+"durchgaenge": 1
+},
+{
+"km": 35.0,
+"d": 35549.5,
+"abstand": 0.0,
+"was": "Tor (Cut-off)",
+"durchgaenge": 2
+},
+{
+"km": 35.8,
+"d": 36570.0,
+"abstand": 45.9,
+"was": "Getränke 5",
+"durchgaenge": 2
+},
+{
+"km": 36.1,
+"d": 36825.0,
+"abstand": 86.5,
+"was": "Getränke 4",
+"durchgaenge": 2
+},
+{
+"km": 36.7,
+"d": 37435.0,
+"abstand": 119.7,
+"was": "Getränke 3",
+"durchgaenge": 2
+},
+{
+"km": 37.1,
+"d": 37645.0,
+"abstand": 38.5,
+"was": "Getränke 2",
+"durchgaenge": 2
+},
+{
+"km": 38,
+"d": 38685.0,
+"abstand": 0.2,
+"was": "Kilometerschild",
+"durchgaenge": 2
+},
+{
+"km": 39.6,
+"d": 40330.0,
+"abstand": 4.3,
+"was": "Getränke 1",
+"durchgaenge": 2
+}
+]
+}
