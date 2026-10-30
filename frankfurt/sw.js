@@ -5,9 +5,7 @@ const KARTE = ["./karte-dunkel-z11-0-0.jpg", "./karte-dunkel-z12-0-0.jpg", "./ka
 
 self.addEventListener("install", e => {
   // SHELL am HTTP-Cache vorbei frisch holen (sonst kann eine bis zu 10 min alte Kopie in den Speicher kommen)
-  // Kartenbilder seit 30.10.2026 nicht mehr hier (die Startseite richtet alle Strecken ein, das wären ≈ 72 MB), sondern auf
-  // Auftrag „karten“: beim Öffnen der Strecke oder per Knopf auf der Startseite
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.map(s => new Request(s, { cache: "reload" })))));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.map(s => new Request(s, { cache: "reload" }))).then(() => c.addAll(KARTE).catch(() => {}))));
   self.skipWaiting();
 });
 
@@ -15,25 +13,6 @@ self.addEventListener("activate", e => {
   // nur eigene alte Caches löschen: Startseite und andere Strecken teilen sich denselben Speicher
   e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith("ffm-") && k !== CACHE).map(k => caches.delete(k)))));
   self.clients.claim();
-});
-
-// Aufträge (seit 30.10.2026), Antwort über den mitgeschickten Port: „auffrischen“ (von der Startseite) vergleicht die kleine
-// version.json und holt Seite und Symbole nur bei einer neuen Fassung; „karten“ legt fehlende Kartenbilder ab
-self.addEventListener("message", e => {
-  const port = e.ports && e.ports[0], fertig = ok => { if (port) port.postMessage(ok); };
-  const abs = s => new URL(s, self.location).href;
-  if (e.data === "karten") e.waitUntil(caches.open(CACHE).then(async c => {
-    for (const k of KARTE) if (!(await c.match(abs(k)))) await c.add(new Request(k, { cache: "reload" })).catch(() => {});
-    fertig(true);
-  }).catch(() => fertig(false)));
-  if (e.data === "auffrischen") e.waitUntil(caches.open(CACHE).then(async c => {
-    const neu = await fetch("./version.json", { cache: "no-store" });
-    if (!neu.ok) return fertig(false);
-    const v = await neu.clone().text(), alt = await c.match(abs("./version.json"));
-    if (alt && (await alt.text()) === v && (await c.match(INDEX)) && (await c.match(abs("./")))) return fertig(true);
-    await Promise.all(SHELL.map(s => fetch(s, { cache: "no-cache" }).then(r => { if (r.ok && !r.redirected) return c.put(abs(s), r); })));
-    fertig(true);
-  }).catch(() => fertig(false)));
 });
 
 self.addEventListener("fetch", e => {

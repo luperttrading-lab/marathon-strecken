@@ -84,9 +84,6 @@ h1 { margin: 4px 0 0; font: 700 34px/1.05 var(--font-display); font-size: clamp(
 .note { margin: 18px 0 0; color: var(--muted); font-size: 14px; }
 .note b { color: var(--ink); font-weight: 600; }
 footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
-.offline { display: grid; gap: 8px; margin-top: 12px; }   /* alle Strecken offline (seit 1.37) */
-#karten-alle { justify-self: start; font-family: inherit; font-weight: 600; font-size: 14px; line-height: 1.2; color: var(--blue); background: none; border: 1px solid var(--blue); border-radius: 8px; padding: 9px 12px; cursor: pointer; }
-#karten-alle:disabled { opacity: 0.5; cursor: default; }
 /* Auswahl oben (seit 1.27): Suchfeld und Drehrad wie in den Apps, Mitte zwischen zwei blauen Linien; seit 1.28 flacher:
    Mitte groß, Nachbarn halb so hoch und dicht dran (Zeilenabstand 30 px, Rad 84 px) */
 .wahl { display: grid; gap: 10px; margin: 0 0 18px; }
@@ -117,7 +114,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
 <div class="wrap">
   <header>
     <span class="eyebrow">Steigungsprofile</span>
-    <button type="button" class="ver kopf-ver" aria-label="Nach Update suchen">v1.23</button>
+    <button type="button" class="ver kopf-ver" aria-label="Nach Update suchen">v1.38</button>
     <h1>Welcher Marathon?</h1>
     <p class="sub">Wo es bergauf geht, was dich das an Zeit kostet und wann du wo bist. Gemessen mit Laserscans entlang der offiziellen Strecke.</p>
   </header>
@@ -329,10 +326,6 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
       <span class="go" aria-hidden="true">›</span>
     </a>
   <p class="note">Alle Profile im gleichen Höhenmaßstab. Auf dem iPhone: <b>Teilen →&#xFE0E; Zum Home-Bildschirm</b>, dann liegen alle Strecken in einer App.</p>
-  <div class="offline">
-    <p class="note" id="offline-text">Offline: Beim Öffnen mit Netz werden alle Strecken gespeichert und aufgefrischt, die Karten einer Strecke, sobald du sie öffnest.</p>
-    <button type="button" id="karten-alle">Alle Karten offline speichern (≈ 72 MB)</button>
-  </div>
   <footer>Inoffiziell, kein Angebot der Veranstalter. Daten: offizielle Strecken, Höhenmodelle DGM1 Hamburg, Berlin, Hessen, NRW, Bayern (Bayerische Vermessungsverwaltung) und Sachsen (GeoSN), Thüringen (GDI-Th, 20-m-Raster von Sonny), USGS 3DEP (New York, Boston, Chicago), Environment Agency (London, Open Government Licence v3.0), IGN RGE ALTI (Paris, Licence Ouverte), GSI Japan (Tokio, Osaka, 国土地理院), IGN España (Valencia, PNOA-LiDAR, CC BY 4.0), INEGI (Mexiko-Stadt, LiDAR 5 m), AHN (Amsterdam, CC0), ICGC (Barcelona, CC BY 4.0), INGV TINITALY und Regione Lazio (Rom, CC BY 4.0), NASA SRTM und Copernicus DEM (Great Wall), FABDEM der Universität Bristol (Athen, CC BY-NC-SA 4.0), Stadt Wien (MA 41) und BEV (Wien, CC BY 4.0), City of Cape Town (Kapstadt), NSW Spatial Services (Sydney, CC BY 4.0), © OpenStreetMap-Mitwirkende.</footer>
 </div>
 <script>
@@ -406,7 +399,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
   KARTEN.forEach(k => k.a.addEventListener("click", () => merke(k.href)));
   baueRad(zuletzt);
 })();
-const APP_VERSION = '1.37';
+const APP_VERSION = '1.38';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
@@ -447,6 +440,11 @@ const APP_VERSION = '1.37';
     if (manual || !(laeuft || tippt)) setTimeout(() => { speichereAlles(); location.reload(); }, manual ? 1500 : 3000);
   }
   window.addEventListener("pageshow", () => setTimeout(checkForUpdate, 800));
+  // Ohne Netz läuft die gespeicherte Fassung: einmal sagen (seit 30.10.2026; Nutzer: „Meldung, dass offline evtl. nicht die
+  // aktuelle Version geladen ist“), beim Öffnen ohne Netz und wenn das Netz unterwegs wegbricht
+  const offlineHinweis = () => showInfo("Offline: gespeicherte Fassung v" + APP_VERSION + ", vielleicht nicht die neueste", 6);
+  if (!navigator.onLine) setTimeout(offlineHinweis, 700);
+  window.addEventListener("offline", offlineHinweis);
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") checkForUpdate(); });
   document.querySelectorAll(".ver").forEach(b => { b.textContent = "v" + APP_VERSION; b.addEventListener("click", () => checkForUpdate(true)); });
 
@@ -457,33 +455,7 @@ const APP_VERSION = '1.37';
     try { localStorage.setItem("start.gesehen", APP_VERSION); } catch (_) {}
     if (vorher) setTimeout(() => showInfo("Version " + APP_VERSION + " ist geladen", 4), 400);
   }
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js").catch(() => {});
-    // Alle Strecken offline bereit (seit 1.37): beim Öffnen mit Netz bekommt jede Strecke ihren Service Worker, und deren
-    // gespeicherte Seiten werden aufgefrischt (erst die kleine version.json vergleichen). Kartenbilder nur auf Knopfdruck.
-    const ordner = [...document.querySelectorAll('a.card[href$="/"]')].map(a => a.getAttribute("href"));
-    const bereit = r => r.active ? Promise.resolve(r) : new Promise(ok => {
-      const w = r.installing || r.waiting; if (!w) return ok(r);
-      w.addEventListener("statechange", () => { if (w.state === "activated" || w.state === "redundant") ok(r); });
-    });
-    const auftrag = (r, was) => new Promise(ok => {
-      const w = r && r.active; if (!w) return ok(false);
-      const ch = new MessageChannel(); ch.port1.onmessage = e => ok(e.data); w.postMessage(was, [ch.port2]); setTimeout(() => ok(false), 300000);
-    });
-    let regs = null;
-    const alle = () => regs || (regs = Promise.all(ordner.map(o => navigator.serviceWorker.register(o + "sw.js", { scope: o }).then(bereit).catch(() => null))));
-    if (navigator.onLine) setTimeout(() => alle().then(rs => rs.forEach(r => auftrag(r, "auffrischen"))), 1500);   // nach dem ersten Bild
-    const knopf = document.getElementById("karten-alle"), txt = document.getElementById("offline-text");
-    knopf.addEventListener("click", async () => {
-      if (!navigator.onLine) { txt.textContent = "Ohne Netz lassen sich die Karten nicht speichern."; return; }
-      knopf.disabled = true;
-      if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
-      const rs = await alle(); let n = 0;
-      txt.textContent = "Karten werden gespeichert: 0 von " + rs.length + " Strecken …";
-      for (const r of rs) { await auftrag(r, "karten"); txt.textContent = "Karten werden gespeichert: " + (++n) + " von " + rs.length + " Strecken …"; }
-      txt.textContent = "Alle Karten sind offline gespeichert."; knopf.disabled = false;
-    });
-  }
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 })();
 </script>
 </body>

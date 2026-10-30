@@ -11,6 +11,9 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
   Änderung 24 Dateien, und alle Apps zeigen eine Update-Meldung, auch wenn sich nur eine Strecke ändert (am 30.10.2026
   dreimal nur wegen Great Wall). Risiko:
   Der Offline-Speicher (Service Worker) muss dafür einmal umgebaut werden.
+- **Alle Strecken offline beim Öffnen der Startseite:** gebaut als Hamburg 1.78 / Startseite 1.37 (Commit 9238f37), am
+  30.10.2026 auf Wunsch des Nutzers zurückgenommen („erstmal nur die Meldung“). Kosten: ≈ 1,6 MB einmalig, Karten ≈ 72 MB
+  per Knopf. Wieder einspielen: `git revert` des Rücknahme-Commits.
 - **Weitere Strecken aus dem Angebot von interAir:** Stockholm; Médoc und Beaujolais nachrangig (dort läuft kaum jemand
   auf Zeit). Athen und Wien sind seit 30.10.2026 gebaut.
 
