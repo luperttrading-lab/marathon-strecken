@@ -36,6 +36,9 @@ dann liegen alle Strecken in einer App.
 Das Pace-Modell (1,0 s je Höhenmeter bei 4:00 /km, bergab die Hälfte) ist an 3 Mio. echten Zwischenzeiten geprüft:
 [`werkzeuge/eichung/`](werkzeuge/eichung/README.md) (30.10.2026).
 Besprochene, noch nicht gebaute Ideen und offene Punkte: [`werkzeuge/VORGEMERKT.md`](werkzeuge/VORGEMERKT.md).
+Offline: Die Startseite richtet beim Öffnen mit Netz die Service Worker aller Strecken ein und frischt deren Seiten auf (≈ 65 KB
+gepackt je Strecke); Kartenbilder kommen beim Öffnen einer Strecke oder per Knopf „Alle Karten offline speichern“ (≈ 72 MB).
+Neue Strecken brauchen dafür nur ihre Karte auf der Startseite (`a.card[href$="/"]`) und ein `sw.js` wie die anderen.
 
 ## Regeln für Änderungen
 
