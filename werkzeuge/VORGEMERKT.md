@@ -24,7 +24,6 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
 - Athen: Laufbahn im Stadion steigt im 30-m-Modell um gut 2 m (in Wirklichkeit eben); Kataster-Modell (5 m), falls es frei
   wird; GPX 2027 prüfen (Umweg über Michalakopoulou/Feidippidou). Höhen unter CC BY-NC-SA (FABDEM): vor einer Weitergabe
   an interAir klären.
-- Halbmarathon-Marke: „21,1“ oder genau „21,0975“ (Ziel zeigt seit 1.76 „42,195“), Nutzer gefragt.
 
 ## Eichung
 

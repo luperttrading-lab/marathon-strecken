@@ -57,5 +57,6 @@ Offene Ideen und Punkte: `werkzeuge/VORGEMERKT.md`. Eichung des Pace-Modells: `w
 1. **Gemeinsamer Kern** statt 24 Kopien, bevor Stockholm App Nr. 25 wird (siehe `werkzeuge/VORGEMERKT.md`).
 2. Startseite „Deine Form auf allen Strecken“.
 3. Stockholm.
-4. Kleinkram: Halbmarathon „21,1“ oder „21,0975“ (Nutzer fragen), drei Wasserstellen in Wien, Stadion-Laufbahn in Athen.
+4. Kleinkram: drei Wasserstellen in Wien, Stadion-Laufbahn in Athen. (Entschieden 30.10.2026: Ziel zeigt „42,195“,
+   Halbmarathon bleibt „21,1“.)
 5. Rom: Laser-Geländemodell des Umweltministeriums prüfen, geplante Erinnerung am 07.11.2026.
