@@ -36,6 +36,9 @@ dann liegen alle Strecken in einer App.
 Das Pace-Modell (1,0 s je Höhenmeter bei 4:00 /km, bergab die Hälfte) ist an 3 Mio. echten Zwischenzeiten geprüft:
 [`werkzeuge/eichung/`](werkzeuge/eichung/README.md) (30.10.2026).
 Besprochene, noch nicht gebaute Ideen und offene Punkte: [`werkzeuge/VORGEMERKT.md`](werkzeuge/VORGEMERKT.md).
+Offline: Jede Strecke ist offline in der Fassung da, die zuletzt mit Netz geöffnet war (orangener Hinweis mit der Nummer).
+Die Startseite frischt beim Öffnen mit Netz die schon gespeicherten Strecken auf (seit 1.40; `version.json` vergleichen, nur
+bei neuer Fassung die Seite holen). Nie geöffnete Strecken sind offline nicht da.
 
 ## Regeln für Änderungen
 

@@ -401,7 +401,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
   KARTEN.forEach(k => k.a.addEventListener("click", () => merke(k.href)));
   baueRad(zuletzt);
 })();
-const APP_VERSION = '1.39';
+const APP_VERSION = '1.40';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
@@ -458,6 +458,27 @@ const APP_VERSION = '1.39';
     if (vorher) setTimeout(() => showInfo("Version " + APP_VERSION + " ist geladen", 4), 400);
   }
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+  // Gespeicherte Strecken auffrischen (seit 1.40; Nutzer: „alle mit orangem Hinweis“): beim Öffnen mit Netz werden nur Strecken
+  // geprüft, deren Seite schon im Speicher liegt (einmal geöffnet); die kleine version.json entscheidet, ob Seite und version.json
+  // neu geholt werden. Nie geöffnete Strecken bleiben außen vor. Dazu bekommt ihr Service Worker die Gelegenheit zum Update.
+  if (navigator.onLine && "caches" in window) setTimeout(async () => {
+    try {
+      const ordner = [...document.querySelectorAll('a.card[href$="/"]')].map(a => new URL(a.getAttribute("href"), location.href).href);
+      const opt = { ignoreVary: true, ignoreSearch: true };
+      for (const name of await caches.keys()) {
+        if (name.startsWith("start-")) continue;
+        const c = await caches.open(name); let o = null;
+        for (const x of ordner) if (await c.match(x, opt)) { o = x; break; }
+        if (!o) continue;
+        const neu = await fetch(o + "version.json", { cache: "no-store" }); if (!neu.ok) continue;
+        const v = await neu.clone().text(), alt = await c.match(o + "version.json", opt);
+        if (alt && (await alt.text()) === v) continue;
+        const seite = await fetch(o, { cache: "no-cache" }); if (!seite.ok || seite.redirected) continue;
+        await c.put(o, seite.clone()); await c.put(o + "index.html", seite); await c.put(o + "version.json", neu);
+        if ("serviceWorker" in navigator) navigator.serviceWorker.getRegistration(o).then(r => r && r.update()).catch(() => {});
+      }
+    } catch (_) {}
+  }, 1500);
 })();
 </script>
 </body>
