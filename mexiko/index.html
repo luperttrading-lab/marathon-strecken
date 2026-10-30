@@ -462,7 +462,7 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Maratón de la Ciudad de México Telcel · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.10</button></span>
+    <span class="eyebrow">Maratón de la Ciudad de México Telcel · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.11</button></span>
     <h1>Mexiko-Stadt</h1>
     <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Amtliches Laser-Höhenmodell des INEGI (5-m-Raster) entlang der Strecke 2026, nach dem Plan des Veranstalters auf OpenStreetMap nachgezeichnet, alle 10 m ausgewertet.</p>
@@ -471,7 +471,7 @@ body.run .close svg { width: 20px; height: 20px; }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v1.10</button></span>
+    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v1.11</button></span>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -1127,9 +1127,9 @@ function drawOverview() {
   c.strokeStyle = COL["--blue"]; c.lineWidth = 2; c.beginPath(); c.moveTo(X(S.pos), 0); c.lineTo(X(S.pos), pad + ph + 2); c.stroke();
   // km-Beschriftung
   c.fillStyle = COL["--muted"]; c.font = "500 10.5px " + getComputedStyle(document.body).fontFamily; c.textAlign = "center"; c.textBaseline = "top";
-  const wEnde = c.measureText("42,2").width;   // „40“ entfällt, wenn es an „42,2“ stößt (schmale Übersicht neben dem Kästchen)
+  const wEnde = c.measureText("42,195").width;   // „40“ entfällt, wenn es an „42,195“ stößt (schmale Übersicht neben dem Kästchen)
   for (let k = 0; k <= 40; k += 5) { if (X(L) - X(k * 1000) < (wEnde + c.measureText(String(k)).width) / 2 + 4) continue; c.fillText(k, X(k * 1000), h - 11); }
-  c.fillText("42,2", X(L), h - 11);
+  c.textAlign = "right"; c.fillText("42,195", Math.min(X(L) + c.measureText("42,195").width / 2, w), h - 11);   // seit 1.76 statt 42,2, rechts nie angeschnitten
   for (const mk of D.marks) if ((mk.c === "relay" && S.relay) || mk.c === "half") { c.fillStyle = COL[MARK_STYLE[mk.c]]; c.fillRect(X(mk.k) - 1, pad + ph, 2, 4); }
 }
 
@@ -1217,7 +1217,7 @@ function passend(el) {
 function updateReadout() {
   const x = S.pos, W = WIN[S.win];
   const g = valAt(W.g, x);
-  $("r-km").textContent = nf(x / 1000, 2);
+  $("r-km").textContent = x >= L - 0.5 ? nf(L / 1000, 3) : nf(x / 1000, 2);   // im Ziel genau 42,195 (seit 1.76)
   $("r-glbl").textContent = "Steigung · " + (S.win === 1000 ? "1 km" : S.win + " m");
   $("r-grade").textContent = sgn(g, 1) + " %";
   $("needle").style.left = (gaugePos(g) * 100) + "%";
@@ -1326,7 +1326,7 @@ function splitSegs() {
   if (S.split === "five") { for (let k = 0; k < 40; k += 5) out.push([k * 1000, (k + 5) * 1000, k + "–" + (k + 5)]); out.push([40000, L, "40–42,2"]); }
   else if (S.split === "ten") { for (let k = 0; k < 40; k += 10) out.push([k * 1000, (k + 10) * 1000, k + "–" + (k + 10)]); out.push([40000, L, "40–42,2"]); }
   else if (S.split === "hm") { out.push([0, L / 2, "1. Hälfte"]); out.push([L / 2, L, "2. Hälfte"]); }
-  else { for (let k = 0; k < 42; k++) out.push([k * 1000, (k + 1) * 1000, String(k + 1)]); out.push([42000, L, "42,2"]); }
+  else { for (let k = 0; k < 42; k++) out.push([k * 1000, (k + 1) * 1000, String(k + 1)]); out.push([42000, L, "42,195"]); }
   return out;
 }
 const tfmt = s => s >= 3600 ? hms(s) : mss(s);
@@ -1671,7 +1671,7 @@ function paceBand() {
   c.fillStyle = "#6a9cff"; c.font = "600 40px " + fd; c.fillText(name.toUpperCase(), W / 2, 760);
   c.fillStyle = "#ffffff"; c.font = "700 76px " + fd; c.fillText("Ziel " + hms(S.goal), W / 2, 845);
   c.fillStyle = "#93a3b0"; c.font = "500 36px " + fd; c.fillText("Halbmarathon " + hms(valAt(P.t, L / 2)) + "  ·  im Flachen " + mss2(P.p0) + " /km", W / 2, 900);
-  const rows = []; for (let k = 1; k <= 42; k++) rows.push([String(k), k * 1000]); rows.push(["42,2", L]);
+  const rows = []; for (let k = 1; k <= 42; k++) rows.push([String(k), k * 1000]); rows.push(["42,195", L]);
   const top = 960, rh = 60, half = 22;
   rows.forEach(([lab, x], i) => {
     const col = i < half ? 0 : 1, j = col ? i - half : i, x0 = col * W / 2, y = top + j * rh;
@@ -1921,7 +1921,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.10';
+const APP_VERSION = '1.11';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
