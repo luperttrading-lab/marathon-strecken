@@ -6,7 +6,7 @@
 # Reihenfolge: osm.py, plan.py, georef.py, linie.py, dgm.py, planprofil.py, marken.py, form.py, common.py (Eichung), vergleich.py,
 #              build.py, splits.py, mauer.py, route.py, tiles.py relief, app.py
 import json, os, re, shutil
-R = "../../../"; OUT = R + "greatwall/"; VERSION = "1.1"   # bei jeder Änderung hochzählen (README)
+R = "../../../"; OUT = R + "greatwall/"; VERSION = "1.2"   # bei jeder Änderung hochzählen (README)
 os.makedirs(OUT, exist_ok=True)
 t = open(R + "tokio/index.html", encoding="utf-8").read()
 def rep(old, new, n=1):
@@ -33,13 +33,21 @@ data["ziel"] = 5 * 3600   # Voreinstellung 5:00:00: 4:00 /km im Flachen ergäbe 
 data["mauerEmpf"] = [[mz["Mauer 1"]["bei5h"], mz["Mauer 1"]["jeStunde"]], [mz["Mauer 2"]["bei5h"], mz["Mauer 2"]["jeStunde"]]]
 schnell, langsam = G["4–4.5 h"], G["7–7.5 h"]
 mi = lambda v: str(round(v))
-data["mauerQ"] = ("Warum zwei verschiedene Zeiten: Beim 1. Mal sind Marathon und Halbmarathon aller drei Wellen zugleich auf der Mauer, die Treppen "
-                  "sind schmal, überholen geht kaum. Deshalb brauchten 2026 fast alle ähnlich lange: " + mi(schnell["mauer1"][1]) + " min, wer in 4 bis "
-                  "4½ h ins Ziel kam, " + mi(langsam["mauer1"][1]) + " min bei 7 bis 7½ h. Das 2. Mal führt nach 35 km den Goat Track hinauf, das Feld "
-                  "hat sich verteilt: Jetzt zählt die eigene Form, " + mi(schnell["mauer2"][1]) + " gegen " + mi(langsam["mauer2"][1]) + " min. Die "
-                  "Empfehlung folgt den Zwischenzeiten 2026 (" + str(sum(g["n"] for g in mz["gruppen"])) + " Läufer, Mediane): je Stunde Zielzeit "
-                  + mi(mz["Mauer 1"]["jeStunde"]) + " min mehr beim 1. Mal und " + mi(mz["Mauer 2"]["jeStunde"]) + " min mehr beim 2. Mal; "
-                  "unter 4 h gab es keine Daten.")
+# Höhenmeter auf den Mauerstücken (alle 50 m, gegen Rauschen): dieselbe Mauer in Gegenrichtung, beim 1. Mal überwiegend bergab,
+# beim 2. Mal überwiegend bergauf (Nutzerfrage 30.10.2026: „beim 1. Mal voller und trotzdem halb so lang?“)
+def hm(a, b):
+    xs = list(range(a // 10, b // 10 + 1, 5)); d = [data["h"][j] / 100 - data["h"][i] / 100 for i, j in zip(xs, xs[1:])]
+    return round(sum(x for x in d if x > 0), -1), round(-sum(x for x in d if x < 0), -1)
+(u1, d1), (u2, d2) = hm(*data["mauer"][0][:2]), hm(*data["mauer"][1][:2])
+data["mauerQ"] = ("Warum das 2. Mal fast doppelt so lange dauert: Es ist dieselbe Mauer in Gegenrichtung. Beim 1. Mal liegt der große Anstieg "
+                  "schon auf der Straße davor, auf der Mauer geht es etwa %d m hinauf und %d m über Treppen hinunter. Beim 2. Mal sind es %d m "
+                  "Treppen bergauf, über den Goat Track und nach 35 km; das Bergab folgt danach auf der Straße. Dass es beim 1. Mal voller ist, "
+                  "zeigt sich woanders: Da brauchten fast alle ähnlich lange (%s min bei 4 bis 4½ h Zielzeit, %s min bei 7 bis 7½ h), beim "
+                  "2. Mal zählt die eigene Form (%s gegen %s min). Die Empfehlung folgt diesen Zwischenzeiten 2026 (%d Läufer, Mediane): je "
+                  "Stunde Zielzeit %s min mehr beim 1. Mal, %s min mehr beim 2. Mal; unter 4 h gab es keine Daten. Das 2. Mal ist gemessen als "
+                  "Zeit vom Tor ins Ziel minus die Straße danach nach dem Modell; wer dort langsamer ist, dem rechnet es das der Mauer zu."
+                  % (u1, d1, u2, mi(schnell["mauer1"][1]), mi(langsam["mauer1"][1]), mi(schnell["mauer2"][1]), mi(langsam["mauer2"][1]),
+                     sum(g["n"] for g in mz["gruppen"]), mi(mz["Mauer 1"]["jeStunde"]), mi(mz["Mauer 2"]["jeStunde"])))
 tm = json.load(open("tilemeta.json")); data["tiles"] = {z: tm[z] for z in sorted((k for k in tm if k.isdigit()), key=int)}
 data["imgNote"] = open("imgnote.html", encoding="utf-8").read().strip()
 m = re.search(r'^const D = \{.*\};$', t, re.M); t = t[:m.start()] + "const D = " + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";" + t[m.end():]
