@@ -276,6 +276,23 @@ tr.hm-zeile .hm-lbl { text-align: left; font-family: var(--font-display); letter
 td.sp, th.sp { text-align: center; padding-left: 4px; padding-right: 4px; }
 .spark { width: 58px; height: 22px; display: inline-block; vertical-align: middle; }
 tfoot td { font-weight: 600; border-bottom: 0; border-top: 2px solid var(--rule); }
+/* Zu breite Tabellen werden stufenweise enger (passTabelle, seit 1.72): weniger Abstand, schmalere Profilbilder, kleinere Schrift */
+.table-wrap.eng1 th, .table-wrap.eng1 td { padding-left: 3px; padding-right: 3px; }
+.table-wrap.eng1 th { letter-spacing: 0; }
+.table-wrap.eng1 th:first-child, .table-wrap.eng1 td:first-child { padding-left: 8px; }
+.table-wrap.eng1 th:last-child, .table-wrap.eng1 td:last-child { padding-right: 8px; }
+.table-wrap.eng1 .spark { width: 46px; }
+.table-wrap.eng2 table { font-size: 12px; }
+.table-wrap.eng2 th { font-size: 10px; padding-left: 2px; padding-right: 2px; }
+.table-wrap.eng2 td { padding-left: 2px; padding-right: 2px; }
+.table-wrap.eng2 .spark { width: 38px; }
+.table-wrap.eng3 table { font-size: 11px; }
+.table-wrap.eng3 th:first-child, .table-wrap.eng3 td:first-child { padding-left: 6px; }
+.table-wrap.eng3 th:last-child, .table-wrap.eng3 td:last-child { padding-right: 6px; }
+.table-wrap.eng3 .spark { width: 30px; }
+.table-wrap.eng3 .where { max-width: 6em; font-size: 11px; overflow-wrap: anywhere; hyphens: auto; }
+.table-wrap.eng3 .sw { width: 6px; margin-right: 3px; }
+td.leer { white-space: normal; }   /* „Keine Rampe …“ über alle Spalten */
 
 /* Wischbare Seiten unter der ersten Zeile: Zahlen, Karte, Fotos, Sehenswertes */
 .street-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
@@ -1228,7 +1245,7 @@ function renderRamps() {
   let list = RAMPS.filter(q => q.dir === (S.dir === "up" ? 1 : -1));
   list = S.sort === "km" ? list.sort((p, q) => p.a - q.a) : list.sort((p, q) => Math.abs(q.avg) - Math.abs(p.avg));
   const tb = $("ramp-body"); tb.innerHTML = "";
-  if (!list.length) { const tr = document.createElement("tr"); tr.innerHTML = '<td colspan="6">Keine Rampe über der Schwelle. Kleineres Messfenster wählen.</td>'; tb.appendChild(tr); return; }
+  if (!list.length) { const tr = document.createElement("tr"); tr.innerHTML = '<td colspan="6" class="leer">Keine Rampe über der Schwelle. Kleineres Messfenster wählen.</td>'; tb.appendChild(tr); passTabelle(tb.closest(".table-wrap")); return; }
   for (const q of list) {
     const tr = document.createElement("tr"); tr.tabIndex = 0; tr.dataset.a = q.a; tr.dataset.b = q.b;
     const color = COL[CLASS_TOK[cls(q.avg)]];
@@ -1238,6 +1255,7 @@ function renderRamps() {
     tr.addEventListener("click", go); tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
     tb.appendChild(tr);
   }
+  passTabelle(tb.closest(".table-wrap"));
   markRampRows();
 }
 function markRampRows() { for (const tr of $("ramp-body").children) { const a = +tr.dataset.a, b = +tr.dataset.b; tr.classList.toggle("here", S.pos >= a && S.pos < b); } }
@@ -1248,6 +1266,7 @@ function renderHmMethods() {
   const rows = [["Messfenster 50 m", valAt(WIN[50].up, L), 50], ["Messfenster 100 m", valAt(WIN[100].up, L), 100], ["Messfenster 200 m", valAt(WIN[200].up, L), 200], ["Messfenster 1 km", valAt(WIN[1000].up, L), 1000],
     ["Wie GPS-Uhren: Anstieg zählt ab 0,5 m", hystUp(0.5)], ["… ab 1 m", hystUp(1)], ["… ab 3 m", hystUp(3)]];
   $("hm-methods").innerHTML = rows.map(([t, v, w]) => "<tr" + (w === S.win ? ' style="font-weight:700"' : "") + "><td>" + t + "</td><td>" + Math.round(v) + "</td></tr>").join("");
+  passTabelle($("hm-methods").closest(".table-wrap"));
 }
 
 /* Drehräder: Werte stehen bei loop 7-mal hintereinander, nach dem Drehen springt das Rad unsichtbar in die mittlere Kopie */
@@ -1322,6 +1341,16 @@ function drawSpark(cv, a, b, base, span) {
   for (let x = a, first = true; x < b + dx; x += dx) { const xx = Math.min(x, b); first ? c.moveTo(X(xx), Y(hAt(xx))) : c.lineTo(X(xx), Y(hAt(xx))); first = false; }
   c.stroke();
 }
+// Zu breite Tabellen werden stufenweise enger (seit 1.72; vorher liefen sie rechts aus dem Bild, z. B. Great Wall mit „+268 s“
+// je km oder iPhones mit 375 px Breite): Klassen eng1 bis eng3 am .table-wrap, CSS bei tfoot. Zugeklappt hat eine Tabelle keine
+// Breite und bleibt, wie sie ist; beim Aufklappen, bei neuer Fensterbreite und nach dem Laden der Schrift wird neu gemessen.
+function passTabelle(wrap) {
+  if (!wrap || !wrap.clientWidth) return false;
+  const vor = wrap.className; wrap.classList.remove("eng1", "eng2", "eng3");
+  for (let k = 1; k <= 3 && wrap.scrollWidth > wrap.clientWidth; k++) wrap.classList.add("eng" + k);
+  return wrap.className !== vor;
+}
+const passAlle = () => { for (const w of document.querySelectorAll(".table-wrap")) if (passTabelle(w) && w.contains($("split-body"))) renderSplits(); };
 function renderSplits() {
   const W = WIN[S.win], segs = splitSegs(), rows = [];
   $("split-note").textContent = "Zeiten bei gleichmäßiger Anstrengung für " + hms(S.goal) + ", " + (MAUER.length ? "auf der Mauer " + MAUER.map((m, k) => Math.round(mauerMin(k))).join(" + ") + " min, sonst " : "") + nf(S.secRef, 1) + " s je Höhenmeter bei " + mss(S.ref) + " /km an sanften Anstiegen, an steilen mehr (8 %: " + nf(kostHm(0.08) * S.ref / 240, 1) + " s), bergab die Hälfte, Zeiten mit 100 m Messfenster, damit kurze Wellen mitkosten. Höhenmeter und Steigung über " + (S.win === 1000 ? "1 km" : S.win + " m") + " gemessen. ± = Mehr- oder Minderzeit durch die Steigung gegenüber flach. Profile mit gemeinsamem Höhenmaßstab. Antippen springt hin.";
@@ -1333,14 +1362,14 @@ function renderSplits() {
     const t = valAt(P.t, b) - valAt(P.t, a);
     rows.push({ a, b, lab, mn, up: valAt(W.up, b) - valAt(W.up, a), dn: valAt(W.dn, b) - valAt(W.dn, a), t, eff: t - P.p0 * (b - a) / 1000, cum: valAt(P.t, b) });
   }
-  const tb = $("split-body"); tb.innerHTML = "";
+  const tb = $("split-body"), sp = []; tb.innerHTML = "";   // Profilbilder erst nach passTabelle, die ihre Breite ändern kann
   for (const r of rows) {
     const tr = document.createElement("tr"); tr.tabIndex = 0; tr.dataset.a = r.a; tr.dataset.b = r.b;
     tr.innerHTML = "<td>" + r.lab + '</td><td class="sp"><canvas class="spark" aria-hidden="true"></canvas></td><td>' + hmf(r.up, "+") + "</td><td>" + hmf(r.dn, "−") + "</td><td>" + secs(r.eff) + "</td><td>" + tfmt(r.t) + "</td><td>" + hms(r.cum) + "</td>";
     const go = () => { stop(); setPos(r.a + 5); document.body.classList.add("run"); dirty = true; };
     tr.addEventListener("click", go); tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
     tb.appendChild(tr);
-    drawSpark(tr.querySelector("canvas"), r.a, r.b, r.mn, span);
+    sp.push([tr.querySelector("canvas"), r]);
     // Halbmarathon-Zeile zwischen den Abschnitten davor und danach (seit 1.52; bei „Hälften“ ist sie die Grenze selbst)
     if (S.split !== "hm" && r.b <= L / 2 && (rows[rows.indexOf(r) + 1] || { b: 0 }).b > L / 2) {
       const hm = document.createElement("tr"); hm.className = "hm-zeile"; hm.tabIndex = 0; hm.dataset.a = L / 2; hm.dataset.b = L / 2;
@@ -1351,6 +1380,7 @@ function renderSplits() {
     }
   }
   $("split-foot").innerHTML = "<tr><td>Summe</td><td></td><td>" + hmf(valAt(W.up, L), "+") + "</td><td>" + hmf(valAt(W.dn, L), "−") + "</td><td>" + secs(S.goal - P.p0 * L / 1000) + "</td><td>" + hms(S.goal) + "</td><td></td></tr>";
+  passTabelle(tb.closest(".table-wrap")); for (const [cv, r] of sp) drawSpark(cv, r.a, r.b, r.mn, span);
   markSplitRows();
 }
 function markSplitRows() { for (const tr of $("split-body").children) { const a = +tr.dataset.a, b = +tr.dataset.b; tr.classList.toggle("here", S.pos >= a && (S.pos < b || (b >= L && S.pos >= L))); } }
@@ -1591,6 +1621,7 @@ function renderPlan() {
     tr.addEventListener("click", go); tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
     tb.appendChild(tr);
   }
+  passTabelle(tb.closest(".table-wrap"));
   markWellen();
   if (MAUER.length) renderTor();
 }
@@ -1709,7 +1740,7 @@ for (const sec of document.querySelectorAll("section.klapp")) {
     const auf = inhalt.hidden, vor = kopf.getBoundingClientRect().top;
     const halte = () => { const d = kopf.getBoundingClientRect().top - vor; if (Math.abs(d) >= 0.5) scrollBy(0, d); };
     setze(auf); store.set("klapp-" + sec.dataset.k, auf); halte();
-    requestAnimationFrame(() => { if (auf) { syncGoalWheels(); renderSplits(); dirty = true; } halte(); requestAnimationFrame(() => requestAnimationFrame(halte)); });
+    requestAnimationFrame(() => { if (auf) { syncGoalWheels(); renderSplits(); passAlle(); dirty = true; } halte(); requestAnimationFrame(() => requestAnimationFrame(halte)); });
   });
 }
 const syncGoalWheels = () => { ZW.set(S.zoom); SW.set(S.speed); const g = Math.round(S.goal); GW.h.set(Math.floor(g / 3600)); GW.m.set(Math.floor(g % 3600 / 60)); GW.s.set(g % 60); GW.k.set(S.secRef); GW.r.set(S.ref); if (MAUER.length) { GW.m1.set(mauerMin(0)); if (MAUER.length > 1) GW.m2.set(mauerMin(1)); } GW.sh.set(Math.floor(S.start / 60)); GW.sm.set(S.start % 60); };
@@ -1847,7 +1878,7 @@ function drawPage() { if (page === 1) drawMap(); }
 const retheme = () => { readColors(); renderLegend(); renderRamps(); renderSplits(); dirty = true; };
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", retheme);
 new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-window.addEventListener("resize", () => { dirty = true; });
+let passT = 0; window.addEventListener("resize", () => { dirty = true; clearTimeout(passT); passT = setTimeout(passAlle, 150); });
 
 /* Texte zur Datengrundlage */
 // Tunnel einzeln mit Länge, Unterführungen, Brücken und Rampen gesammelt
@@ -1861,13 +1892,13 @@ $("img-note").innerHTML = D.imgNote;
 document.body.classList.add("run");
 if (MAUER.length) $("r-bal").previousElementSibling.textContent = "Steigung + Mauer";
 readColors(); renderLegend(); recompute(); setPos(S.pos); requestAnimationFrame(frame);
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { applyGr(); dirty = true; });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { applyGr(); passAlle(); dirty = true; });
 </script>
 <script>
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.7';
+const APP_VERSION = '1.8';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
