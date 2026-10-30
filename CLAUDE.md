@@ -19,16 +19,23 @@ Offene Ideen und Punkte: `werkzeuge/VORGEMERKT.md`. Eichung des Pace-Modells: `w
 
 ## Konventionen beim Ändern
 
-- Alle Strecken-Apps haben **denselben Code**; Unterschiede nur in Daten (`const D`), Texten zur Strecke und Präfixen.
-  Eine Änderung am Verhalten in **allen** Apps nachziehen, am besten mit einem Python-Patch-Skript, das jeden ersetzten Text
-  per `assert s.count(alt) == 1` prüft.
-- Jede Änderung: `APP_VERSION` in der `index.html`, `version.json` und den Kopf der `werkzeuge/<strecke>/UEBERGABE.md`
-  gemeinsam hochzählen. **Nummern nur nach oben**, auch beim Zurücknehmen, sonst erkennen die Handys den Stand nicht.
-- Great Wall entsteht über `werkzeuge/greatwall/work/app.py` aus `tokio/index.html` und `tokio/sw.js`: dort `VERSION`
-  hochzählen und das Skript laufen lassen. Bei Athen und Wien nur `VERSION` in `app.py` mitführen, das Skript **nicht**
-  allein laufen lassen (danach müsste `tiles_rand.py` folgen, sonst sind Kartenbilder und Kachelangaben falsch).
-- Neue Strecken baut ein Agent nach dem Muster in `werkzeuge/athen/` bzw. `werkzeuge/wien/` (Basis `tokio/index.html`, nicht
-  committen); Startseite (Karte, Reihenfolge nach Teilnehmerzahl, Mini-Profil), README und Push macht die Hauptsitzung.
+- **Gemeinsamer Kern** (seit Marathon 2.0): Alle Strecken-Apps haben denselben Kern; Unterschiede nur in ihren Feldern
+  (Daten `const D`, `SHORT`, Texte zur Strecke, Präfixe, Kartenliste). **Den Kern nur in `hamburg/index.html` bzw.
+  `hamburg/sw.js` ändern**, dann `python3 werkzeuge/kern/kern.py --version 2.N --schreiben` (setzt ihn in alle Strecken ein).
+  Ohne Schalter prüft `kern.py` nur und muss „Alle gleich“ melden; vor jedem Commit laufen lassen. Patch-Skripte über 24
+  Dateien entfallen; für die Startseite (`index.html`, kein Erzeugnis) weiter mit `assert s.count(alt) == 1`.
+- **Eine Versionsnummer für die ganze App** (Quelle `version.json` im Wurzelordner): `kern.py --version 2.N --schreiben` setzt
+  sie in allen Strecken und auf der Startseite, auch wenn sich nur Daten einer Strecke geändert haben. **Nummern nur nach
+  oben** (Zahlvergleich, 2.10 > 2.9), auch beim Zurücknehmen, sonst erkennen die Handys den Stand nicht. Änderungen am Kern in
+  `werkzeuge/kern/AENDERUNGEN.md` eintragen, Änderungen an Daten oder Texten einer Strecke im Kopf ihrer
+  `werkzeuge/<strecke>/UEBERGABE.md`. Commits heißen „… (Marathon 2.N)“.
+- Great Wall: Daten und Texte entstehen über `werkzeuge/greatwall/work/app.py` aus `tokio/index.html` und `tokio/sw.js`; die
+  Nummer liest es aus `version.json`. Kette: `app.py` laufen lassen, danach `kern.py` (prüfen) muss „Alle gleich“ melden. Athen
+  und Wien lesen die Nummer ebenso, ihr `app.py` aber **nicht** allein laufen lassen (danach müsste `tiles_rand.py` folgen,
+  sonst sind Kartenbilder und Kachelangaben falsch).
+- Neue Strecken baut ein Agent nach dem Muster in `werkzeuge/athen/` bzw. `werkzeuge/wien/` (nicht committen) und liefert die
+  Felder; die Seite entsteht mit `kern.py --neu <ordner> <felder.json>` (Format: `kern.py --felder tokio`). Startseite (Karte,
+  Reihenfolge nach Teilnehmerzahl, Mini-Profil), README und Push macht die Hauptsitzung.
 - Commits auf Deutsch, direkt auf `main`.
 
 ## Prüfen
@@ -54,7 +61,8 @@ Offene Ideen und Punkte: `werkzeuge/VORGEMERKT.md`. Eichung des Pace-Modells: `w
 
 ## Nächste Schritte (Stand 30.10.2026)
 
-1. **Gemeinsamer Kern** statt 24 Kopien, bevor Stockholm App Nr. 25 wird (siehe `werkzeuge/VORGEMERKT.md`).
+1. ~~**Gemeinsamer Kern** statt 24 Kopien~~ – erledigt 30.10.2026 als Marathon 2.0 (`werkzeuge/kern/`). Offen: Prüfung am
+   iPhone (Banner aus dem Hintergrund, „2.0 ist geladen“ einmal, Tipp „ist aktuell“, Flugmodus).
 2. Startseite „Deine Form auf allen Strecken“.
 3. Stockholm.
 4. Kleinkram: drei Wasserstellen in Wien, Stadion-Laufbahn in Athen. (Entschieden 30.10.2026: im Ziel „42,2“ – „42,195“ war

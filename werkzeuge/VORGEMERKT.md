@@ -7,10 +7,15 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
 - **Startseite „Deine Form auf allen Strecken“:** eine Zeit auf flacher Strecke eingeben, für jede Strecke die gleichwertige
   Zeit sehen (hilft bei der Wahl einer Reise). Das Modell dafür ist seit 30.10.2026 an echten Zwischenzeiten geprüft
   (`werkzeuge/eichung/`).
-- **Gemeinsamer Kern statt 24 Kopien**, spätestens vor App Nr. 25 (seit Athen und Wien sind es 24): Heute trifft jede
-  Änderung 24 Dateien, und alle Apps zeigen eine Update-Meldung, auch wenn sich nur eine Strecke ändert (am 30.10.2026
-  dreimal nur wegen Great Wall). Risiko:
-  Der Offline-Speicher (Service Worker) muss dafür einmal umgebaut werden.
+- ~~**Gemeinsamer Kern statt 24 Kopien**~~ – erledigt 30.10.2026 als Marathon 2.0: Erzeuger `werkzeuge/kern/kern.py` mit
+  Hamburg als Vorlage, eine Versionsnummer für die ganze App, „ist geladen“ einmal statt je Strecke
+  ([`kern/AENDERUNGEN.md`](kern/AENDERUNGEN.md)). Im Browser blieb alles wie vorher, der Service Worker ist unverändert. Der
+  Staffel-Schalter kommt seitdem aus den Daten und ist auch in Rom und Wien sichtbar. Offen: Prüfung am iPhone.
+  - **Option für später, Variante A:** Kern zur Laufzeit als eine gemeinsame Datei (`kern.js` mit CSS, Markup und Code im
+    Wurzelordner, je Strecke nur eine dünne Seite mit den Feldern). Nur bei konkretem Bedarf, etwa wenn die Startseite den
+    Pace-Code selbst braucht. Bedingungen aus der Analyse: Kern in SHELL des Service Workers, die Startseite frischt ihn mit
+    auf, Hinweis in der dünnen Seite, wenn der Kern fehlt, Cache-Namen unverändert, Übergang am iPhone prüfen. `kern.py` kennt
+    die Grenze zwischen Kern und Feldern schon und könnte dann dünne Seiten schreiben.
 - **Alle Strecken offline beim Öffnen der Startseite:** gebaut als Hamburg 1.78 / Startseite 1.37 (Commit 9238f37), am
   30.10.2026 auf Wunsch des Nutzers zurückgenommen („erstmal nur die Meldung“). Kosten: ≈ 1,6 MB einmalig, Karten ≈ 72 MB
   per Knopf. Wieder einspielen: `git revert` des Rücknahme-Commits.

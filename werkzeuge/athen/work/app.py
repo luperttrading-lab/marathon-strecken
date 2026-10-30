@@ -4,7 +4,8 @@
 # Reihenfolge: parse.py, osm.py, linie.py, marken.py, fabdem.py, dgm.py, planprofil.py, strassen.py, orte.py, clean.py, build.py,
 # route.py, tiles.py, dann aus werkzeuge/: tiles_z11.py athen, athen/work/app.py, tiles_rand.py athen 2
 import json, os, re, shutil
-R = "../../../"; OUT = R + "athen/"; VERSION = "1.10"
+R = "../../../"; OUT = R + "athen/"
+VERSION = json.load(open(R + "version.json"))["version"]   # eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 os.makedirs(OUT, exist_ok=True)
 t = open(R + "tokio/index.html", encoding="utf-8").read()
 def rep(old, new, n=1):

@@ -42,11 +42,20 @@ bei neuer Fassung die Seite holen). Nie geöffnete Strecken sind offline nicht d
 
 ## Regeln für Änderungen
 
-- Gearbeitet wird direkt in `<strecke>/index.html` bzw. `index.html` (Startseite). Die Skripte unter `werkzeuge/` sind nur die Herkunft.
-- Hamburg, Berlin, Frankfurt, New York, London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Amsterdam, Rom, Barcelona, Athen, Kapstadt, Wien, Great Wall, Köln, München, Oberelbe und Rennsteig haben **denselben Code**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur
-  Strecke und den Speicherschlüsseln (`hhm-…`, `bln-…`, `ffm-…`, `nyc-…`, `ldn-…`, `par-…`, `chi-…`, `syd-…`, `tyo-…`, `vlc-…`, `mex-…`, `osa-…`, `bos-…`, `ams-…`, `rom-…`, `bcn-…`, `ath-…`, `cpt-…`, `vie-…`, `gwm-…`, `kln-…`, `muc-…`, `oem-…`, `rsl-…`). Eine Änderung am Verhalten oder Aussehen in **allen** Dateien nachziehen.
-- Jede App und die Startseite haben ihre eigene Versionsnummer: bei jeder Änderung `APP_VERSION` in der `index.html` und
-  `version.json` im selben Ordner gemeinsam hochzählen, sonst kommt das Update auf dem iPhone nicht an.
+- **Gemeinsamer Kern** (seit 2.0): Alle Strecken bestehen aus demselben Kern (CSS, Markup, Code, Update-Mechanismus, `sw.js`)
+  und ihren Feldern (Texte zur Strecke, `const D`, `const SHORT`, Präfixe, Kartenliste). **Den Kern nur in `hamburg/index.html`
+  bzw. `hamburg/sw.js` ändern**, dann `python3 werkzeuge/kern/kern.py --version 2.N --schreiben`: Das setzt ihn in alle
+  Strecken ein. Felder einer Strecke direkt in `<strecke>/index.html` ändern (oder über ihre Werkzeuge), danach
+  `python3 werkzeuge/kern/kern.py` (prüft nur, muss „Alle gleich“ melden). Änderungen am Kern stehen in
+  [`werkzeuge/kern/AENDERUNGEN.md`](werkzeuge/kern/AENDERUNGEN.md). Die Startseite (`index.html`) wird direkt bearbeitet;
+  die übrigen Skripte unter `werkzeuge/` sind nur die Herkunft der Daten.
+- Hamburg, Berlin, Frankfurt, New York, London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Amsterdam, Rom, Barcelona, Athen, Kapstadt, Wien, Great Wall, Köln, München, Oberelbe und Rennsteig haben **denselben Kern**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur
+  Strecke und den Speicherschlüsseln (`hhm-…`, `bln-…`, `ffm-…`, `nyc-…`, `ldn-…`, `par-…`, `chi-…`, `syd-…`, `tyo-…`, `vlc-…`, `mex-…`, `osa-…`, `bos-…`, `ams-…`, `rom-…`, `bcn-…`, `ath-…`, `cpt-…`, `vie-…`, `gwm-…`, `kln-…`, `muc-…`, `oem-…`, `rsl-…`; Hamburg `hhm-…`, aber Cache `hh-`). Eine Änderung am Verhalten oder Aussehen nur in Hamburg machen; `kern.py` zieht sie in **allen** Dateien nach.
+- **Eine Versionsnummer für die ganze App** (seit 2.0, vorher je Strecke eine eigene): Quelle ist `version.json` im
+  Wurzelordner. Bei jeder Änderung, auch an Daten einer einzelnen Strecke, `kern.py --version 2.N --schreiben`: Das schreibt
+  dieselbe Nummer in alle `<strecke>/version.json`, alle `APP_VERSION`, beide Versionsknöpfe und die Startseite. Sonst kommt
+  das Update auf dem iPhone nicht an. Nummern nur nach oben (Zahlvergleich, 2.10 > 2.9), auch beim Zurücknehmen. Jede Seite
+  prüft weiter die `version.json` im eigenen Ordner; „Version X ist geladen“ kommt einmal für die ganze App (`marathon.gesehen`).
 - Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `bln-`, `ffm-`, `nyc-`, `ldn-`, `par-`, `chi-`, `syd-`, `tyo-`, `vlc-`, `mex-`, `osa-`, `bos-`, `ams-`, `rom-`, `bcn-`, `ath-`, `cpt-`, `vie-`, `gwm-`, `kln-`, `muc-`, `oem-`, `rsl-`, `start-`). Ein Service Worker löscht
   nur Caches mit seinem eigenen Präfix, weil sich alle Apps unter `luperttrading-lab.github.io` denselben Speicher teilen.
 - **Nur dunkel** (seit Hamburg 1.35 in allen Strecken): kein Hell/Dunkel-Umschalter mehr, keine hellen Kartenbilder.
@@ -62,7 +71,8 @@ bei neuer Fassung die Seite holen). Nie geöffnete Strecken sind offline nicht d
   feste Minuten statt Steigung, seit 1.69 je Durchgang ein Rad; ohne eigenes Drehen gilt die Empfehlung `D.mauerEmpf =
   [[Minuten bei 5 h, je Stunde mehr], …]` für die Zielzeit, `D.mauerQ` erklärt sie; `D.tor = {m, uhr, name}` ist ein Cut-off,
   die Einstellungen nennen Ankunft und Reserve, `D.zielschluss` in Minuten ab Mitternacht), `D.tz` (Zeitzone der Uhrzeiten; `D.ort`/`D.ortKurz` nennen den Ort dazu, wenn die Zeitzone ihn nicht verrät, z. B. Boston) `D.start` (Startzeit der ersten Welle in Minuten ab Mitternacht) und `D.wellen` (Wellen mit Uhrzeit und Quelle, siehe Hamburg-Übergabe).
-- Neue Strecke: eigener Ordner neben den anderen, Karte auf der Startseite ergänzen. Reihenfolge: New York als Highlight oben
+- Neue Strecke: eigener Ordner neben den anderen, angelegt mit `python3 werkzeuge/kern/kern.py --neu <ordner> <felder.json>`
+  (Format: `kern.py --felder tokio`), Karte auf der Startseite ergänzen. Reihenfolge: New York als Highlight oben
   (Klasse `card top`), danach London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Amsterdam, Rom, Barcelona, Athen, Kapstadt, Wien und Great Wall (nach Teilnehmerzahl), dann die deutschen Strecken alphabetisch. Alle Strecken liegen in **einer** App: installiert wird
   die Startseite, ihr Scope umfasst alle Unterordner. Die Strecken haben **kein eigenes Manifest und Symbol**, sie verweisen auf
   `../manifest.webmanifest`, `../apple-touch-icon.png` und `../icon-192.png`; *Zum Home-Bildschirm* aus einer Strecke

@@ -116,7 +116,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
 <div class="wrap">
   <header>
     <span class="eyebrow">Steigungsprofile</span>
-    <button type="button" class="ver kopf-ver" aria-label="Nach Update suchen">v1.38</button>
+    <button type="button" class="ver kopf-ver" aria-label="Nach Update suchen">v2.0</button>
     <h1>Welcher Marathon?</h1>
     <p class="sub">Wo es bergauf geht, was dich das an Zeit kostet und wann du wo bist. Gemessen mit Laserscans entlang der offiziellen Strecke.</p>
   </header>
@@ -401,7 +401,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
   KARTEN.forEach(k => k.a.addEventListener("click", () => merke(k.href)));
   baueRad(zuletzt);
 })();
-const APP_VERSION = '1.40';
+const APP_VERSION = '2.0';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
@@ -418,6 +418,9 @@ const APP_VERSION = '1.40';
   const speichereAlles = () => { try { if (typeof S !== "undefined") localStorage.setItem("hhm-pos", JSON.stringify(Math.round(S.pos))); } catch (_) {} };
   updateEl.addEventListener("click", () => { if (updateEl.classList.contains("info")) ausblenden(); });
   document.getElementById("update-go").addEventListener("click", () => { speichereAlles(); location.reload(); });
+  // Versionsnummern als Zahlen vergleichen: 2.10 ist größer als 2.9
+  const hoeher = (a, b) => { const x = String(a).split(".").map(Number), y = String(b).split(".").map(Number);
+    for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] || 0) - (y[i] || 0); if (d) return d > 0; } return false; };
 
   async function checkForUpdate(manual = false) {
     if (checking) return;
@@ -439,7 +442,11 @@ const APP_VERSION = '1.40';
     zeigeBanner("Neue Version " + v + " ist da");
     // nicht mitten im Abspielen und nicht beim Tippen im Suchfeld neu laden (dann bleibt der Knopf „Jetzt laden“)
     const laeuft = typeof S !== "undefined" && S.playing, tippt = document.activeElement && document.activeElement.id === "suche";
-    if (manual || !(laeuft || tippt)) setTimeout(() => { speichereAlles(); location.reload(); }, manual ? 1500 : 3000);
+    // Schutz vor Neuladen-Schleifen (seit 2.0): von selbst höchstens einmal je Zielnummer und Seite in dieser Sitzung, falls Pages
+    // kurz eine neue version.json und noch die alte Seite liefert; danach bleibt das Banner mit dem Knopf stehen
+    const NL = "marathon.neuladen " + location.pathname;
+    let schon = false; try { schon = sessionStorage.getItem(NL) === v; } catch (_) {}
+    if (manual || !(laeuft || tippt || schon)) setTimeout(() => { try { sessionStorage.setItem(NL, v); } catch (_) {} speichereAlles(); location.reload(); }, manual ? 1500 : 3000);
   }
   window.addEventListener("pageshow", () => setTimeout(checkForUpdate, 800));
   // Ohne Netz läuft die gespeicherte Fassung: einmal sagen (seit 30.10.2026; Nutzer: „Meldung, dass offline evtl. nicht die
@@ -450,11 +457,16 @@ const APP_VERSION = '1.40';
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") checkForUpdate(); });
   document.querySelectorAll(".ver").forEach(b => { b.textContent = "v" + APP_VERSION; b.addEventListener("click", () => checkForUpdate(true)); });
 
-  // Nach einem Update einmal sagen, welche Fassung jetzt läuft (beim allerersten Start still)
+  // Nach einem Update einmal sagen, welche Fassung jetzt läuft (beim allerersten Start still). Seit 2.0 eine Nummer für die ganze
+  // App und ein gemeinsamer Schlüssel mit den Strecken: die Meldung kommt einmal, wo man zuerst hinkommt, und nur bei höherer Nummer.
+  // Rückfall beim Umstieg: start.gesehen, sonst der alte Schlüssel einer Strecke (hhm.gesehen …)
   let vorher = null;
-  try { vorher = localStorage.getItem("start.gesehen"); } catch (_) {}
-  if (vorher !== APP_VERSION) {
-    try { localStorage.setItem("start.gesehen", APP_VERSION); } catch (_) {}
+  try {
+    vorher = localStorage.getItem("marathon.gesehen") || localStorage.getItem("start.gesehen");
+    for (let i = 0; !vorher && i < localStorage.length; i++) { const k = localStorage.key(i); if (/^[a-z]+\.gesehen$/.test(k)) vorher = localStorage.getItem(k); }
+  } catch (_) {}
+  if (!vorher || hoeher(APP_VERSION, vorher)) {
+    try { localStorage.setItem("marathon.gesehen", APP_VERSION); } catch (_) {}
     if (vorher) setTimeout(() => showInfo("Version " + APP_VERSION + " ist geladen", 4), 400);
   }
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
