@@ -4,6 +4,9 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
 
 ## Ideen (mit dem Nutzer besprochen, Reihenfolge offen)
 
+- **Als Nächstes (Nutzer 31.10.2026, „morgen“):** alle Strecken offline, aber **ohne Karten** (Seiten ≈ 65 KB gepackt je
+  Strecke; mit Karten wären es bei 20 weiteren Strecken ≈ 140 MB). Im Kartenfeld ein Hinweis, wenn das Handy offline ist und
+  die Kartenbilder fehlen. Braucht Rückfragen an den Nutzer, deshalb nicht über Nacht.
 - **Startseite „Deine Form auf allen Strecken“:** eine Zeit auf flacher Strecke eingeben, für jede Strecke die gleichwertige
   Zeit sehen (hilft bei der Wahl einer Reise). Das Modell dafür ist seit 30.10.2026 an echten Zwischenzeiten geprüft
   (`werkzeuge/eichung/`).
