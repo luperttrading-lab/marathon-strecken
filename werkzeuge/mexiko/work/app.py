@@ -27,6 +27,7 @@ rep('<meta name="description" content="Steigungsprofil des Tokio-Marathons: Höh
     '<meta name="description" content="Steigungsprofil des Mexiko-Stadt-Marathons: Höhe, Steigung, Pace-Modell und Karte.">')
 rep('<title>Steigungsprofil Tokio-Marathon</title>', '<title>Steigungsprofil Mexiko-Stadt-Marathon</title>')
 rep('<span class="eyebrow">Tokyo Marathon · Kurs 2026 · ', '<span class="eyebrow">Maratón de la Ciudad de México Telcel · Kurs 2026 · ')
+rep('<h1>Tokio</h1>', '<h1>Mexiko-Stadt</h1>')   # Ort als Überschrift (seit Hamburg 1.73)
 rep('<p class="sub">Amtliches Laser-Höhenmodell der GSI (5-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>',
     '<p class="sub">' + open("sub.html", encoding="utf-8").read().strip() + '</p>')
 rep("/* Hell/Dunkel: eigene Wahl (tyo-theme)", "/* Hell/Dunkel: eigene Wahl (mex-theme)")

@@ -91,9 +91,11 @@ body { font-family: var(--font-body); font-size: 15px; line-height: 1.45; -webki
 }
 .num { font-variant-numeric: tabular-nums; }
 header.top { display: flex; flex-direction: column; gap: 2px; }
-.back { display: block; width: max-content; margin-bottom: 4px; padding: 4px 0; font: 600 13px/1.2 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
+.back { display: block; width: max-content; margin-bottom: 2px; padding: 10px 0 8px; font: 600 15px/1.2 var(--font-display); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
 .eyebrow { font-family: var(--font-display); font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); }
-h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1.05; text-wrap: balance; }
+h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 40px; line-height: 1.05; text-wrap: balance; }   /* der Ort, seit Hamburg 1.73 */
+h1 small { font-size: 0.5em; font-weight: 600; color: var(--muted); }
+.untertitel { margin: 2px 0 0; font: 600 19px/1.2 var(--font-display); }
 .sub { color: var(--muted); font-size: 14px; margin: 2px 0 0; }
 
 .panel { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); }
@@ -294,13 +296,14 @@ tfoot td { font-weight: 600; border-bottom: 0; border-top: 2px solid var(--rule)
 .table-wrap.eng3 .sw { width: 6px; margin-right: 3px; }
 td.leer { white-space: normal; }   /* „Keine Rampe …“ über alle Spalten */
 
-/* Wischbare Seiten unter der ersten Zeile: Zahlen, Karte, Fotos, Sehenswertes */
+/* Wischbare Seiten unter der ersten Zeile: Karte, Zahlen */
 .street-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .street-row .street { flex: 1 1 auto; }
-.dots { display: flex; flex: none; }
-.dots button { width: 18px; height: 22px; min-height: 0; padding: 0; border: 0; background: none; display: grid; place-items: center; border-radius: 0; }
-.dots button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--edge); box-sizing: border-box; }
-.dots button[aria-selected="true"]::before { background: var(--blue); border-color: var(--blue); }
+/* Umschalter Karte | Zahlen (seit Hamburg 1.73 beschriftet und flach; die Pünktchen davor fand kaum jemand) */
+.dots { display: flex; flex: none; border: 1px solid var(--edge); border-radius: 6px; overflow: hidden; }
+.dots button { min-height: 0; height: 21px; padding: 0 7px; border: 0; border-radius: 0; background: none; font: 600 10.5px/1 var(--font-display); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.dots button + button { border-left: 1px solid var(--edge); }
+.dots button[aria-selected="true"] { background: var(--blue); color: var(--bg); }
 .pager { --rpad: 14px; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; margin-inline: calc(-1 * var(--rpad)); }
 .pager::-webkit-scrollbar { display: none; }
 body.run .pager { --rpad: 12px; }
@@ -373,6 +376,7 @@ body.run #play { flex: 1.6 1 auto; min-width: 0; }
 .readout { position: relative; }
 .corner { position: absolute; top: 10px; z-index: 2; display: flex; align-items: center; gap: 6px; height: 26px; min-height: 0; padding: 0 9px; background: none; border: 0; border-radius: 6px; color: var(--muted); font: 600 11px/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; }
 .corner.back { left: 6px; padding: 0 7px; color: var(--blue); }
+.corner.back span { font-size: 13px; letter-spacing: 0.06em; }   /* Name der Strecke, nur im Vollbild */
 .corner.l { left: 36px; }
 .corner.r { right: 6px; }
 body.run .corner { top: 3px; }
@@ -457,15 +461,16 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Vienna City Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.0</button></span>
-    <h1>Steigungsprofil zum Durchwischen</h1>
+    <span class="eyebrow">Vienna City Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.1</button></span>
+    <h1>Wien</h1>
+    <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Amtliches Geländemodell der Stadt Wien (1-m-Raster aus Vermessung und Laserscan) entlang der offiziellen Strecke, alle 10 m ausgewertet; die Reichsbrücke nach dem Laser-Oberflächenmodell des BEV, vier kurze Brücken geschätzt.</p>
   </header>
 
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
-    <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.0</button>
+    <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="run-only" id="run-ort"></span></a>
+    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.1</button>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -476,8 +481,13 @@ body.run .close svg { width: 20px; height: 20px; }
       <div><div class="lbl">Höhe</div><div class="val" id="r-h">0<small>m</small></div></div>
     </div>
     <div class="street-row"><div class="street"><span id="r-street">–</span><span class="q" id="r-quarter"></span></div>
-      <div class="dots" id="dots" role="tablist" aria-label="Anzeige wählen"><button type="button" role="tab" data-go="0" aria-label="Zahlen"></button><button type="button" role="tab" data-go="1" aria-label="Karte"></button></div></div>
+      <div class="dots" id="dots" role="tablist" aria-label="Anzeige wählen"><button type="button" role="tab" data-go="0">Karte</button><button type="button" role="tab" data-go="1">Zahlen</button></div></div>
     <div class="pager" id="pager">
+      <div class="page page-map">
+        <canvas id="map" aria-label="Karte mit der Strecke und deiner Position"></canvas>
+        <div class="mapctl"><button type="button" id="map-in" aria-label="Karte vergrößern">+</button><button type="button" id="map-out" aria-label="Karte verkleinern">−</button><button type="button" class="run-only" id="map-size" aria-label="Karte größer oder kleiner stellen">&#x2195;&#xFE0E;</button></div>
+        <span class="credit map-credit">© OpenStreetMap-Mitwirkende</span>
+      </div>
       <div class="page">
         <div class="stats">
           <div><div class="lbl">Bisher</div><div class="v" id="r-done">0 <span class="dn">0</span></div></div>
@@ -493,11 +503,6 @@ body.run .close svg { width: 20px; height: 20px; }
           <div><div class="lbl">Aktuelle Rampe</div><div class="v" id="r-cur">–</div><div class="mini" id="r-cur2">gerade keine</div></div>
           <div class="span2"><div class="lbl">Nächster Anstieg</div><div class="v" id="r-nxt">–</div><div class="mini" id="r-nxt2">–</div></div>
         </div>
-      </div>
-      <div class="page page-map">
-        <canvas id="map" aria-label="Karte mit der Strecke und deiner Position"></canvas>
-        <div class="mapctl"><button type="button" id="map-in" aria-label="Karte vergrößern">+</button><button type="button" id="map-out" aria-label="Karte verkleinern">−</button><button type="button" class="run-only" id="map-size" aria-label="Karte größer oder kleiner stellen">&#x2195;&#xFE0E;</button></div>
-        <span class="credit map-credit">© OpenStreetMap-Mitwirkende</span>
       </div>
     </div>
   </section>
@@ -1499,6 +1504,7 @@ $("run-close").addEventListener("click", () => { stop(); document.body.classList
 $("run-open").addEventListener("click", () => { document.body.classList.add("run"); dirty = true; });
 // Der Pfeil oben links führt im Vollbild zurück in die normale Ansicht (seit 1.51), sonst zu allen Strecken
 const zurueck = document.querySelector(".corner.back");
+$("run-ort").textContent = document.querySelector("h1").firstChild.textContent.trim();   // Name der Strecke neben dem Pfeil (seit 1.73)
 zurueck.addEventListener("click", e => {
   if (!document.body.classList.contains("run")) return;
   e.preventDefault(); stop(); document.body.classList.remove("run"); dirty = true;
@@ -1748,11 +1754,11 @@ requestAnimationFrame(syncGoalWheels);
 if ("IntersectionObserver" in window) new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) syncGoalWheels(); }).observe($("goal-wheels"));
 if ("IntersectionObserver" in window) new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) syncGoalWheels(); }).observe($("start-wheels"));
 
-/* Seiten unter der ersten Zeile: Zahlen, Karte, Fotos, Sehenswertes */
+/* Seiten unter der ersten Zeile: Karte, Zahlen */
 const pager = $("pager"), dots = [...document.querySelectorAll("#dots button")];
-let page = clamp(store.get("page", 0), 0, 1);
+let page = clamp(store.get("seite", 0), 0, 1);   // 0 Karte, 1 Zahlen; seit 1.73 Karte zuerst und eigener Schlüssel, sonst gälten alte Werte vertauscht
 const setDots = () => dots.forEach((b, i) => b.setAttribute("aria-selected", String(i === page)));
-pager.addEventListener("scroll", () => { const p = clamp(Math.round(pager.scrollLeft / Math.max(1, pager.clientWidth)), 0, 1); if (p !== page) { page = p; setDots(); store.set("page", page); dirty = true; } }, { passive: true });
+pager.addEventListener("scroll", () => { const p = clamp(Math.round(pager.scrollLeft / Math.max(1, pager.clientWidth)), 0, 1); if (p !== page) { page = p; setDots(); store.set("seite", page); dirty = true; } }, { passive: true });
 dots.forEach(b => b.addEventListener("click", () => pager.scrollTo({ left: +b.dataset.go * pager.clientWidth, behavior: REDUCED ? "auto" : "smooth" })));
 if ("ResizeObserver" in window) new ResizeObserver(() => { pager.scrollLeft = page * pager.clientWidth; dirty = true; }).observe(pager);
 requestAnimationFrame(() => { pager.scrollLeft = page * pager.clientWidth; setDots(); });
@@ -1872,7 +1878,7 @@ $("map-size").addEventListener("click", () => {
 new MutationObserver(applyGr).observe(document.body, { attributes: true, attributeFilter: ["class"] });
 window.addEventListener("resize", applyGr);
 
-function drawPage() { if (page === 1) drawMap(); }
+function drawPage() { if (page === 0) drawMap(); }
 
 /* Theme-Wechsel */
 const retheme = () => { readColors(); renderLegend(); renderRamps(); renderSplits(); dirty = true; };
@@ -1898,7 +1904,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.0';
+const APP_VERSION = '1.1';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");

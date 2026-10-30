@@ -23,6 +23,7 @@ rep('<meta name="description" content="Steigungsprofil des Tokio-Marathons: Höh
     '<meta name="description" content="Steigungsprofil des Osaka-Marathons: Höhe, Steigung, Pace-Modell und Karte.">')
 rep('<title>Steigungsprofil Tokio-Marathon</title>', '<title>Steigungsprofil Osaka-Marathon</title>')
 rep('<span class="eyebrow">Tokyo Marathon · Kurs 2026 · ', '<span class="eyebrow">Osaka Marathon · Kurs 2026 · ')
+rep('<h1>Tokio</h1>', '<h1>Osaka</h1>')   # Ort als Überschrift (seit Hamburg 1.73)
 rep("/* Hell/Dunkel: eigene Wahl (tyo-theme)", "/* Hell/Dunkel: eigene Wahl (osa-theme)")
 t = t.replace('"tyo-', '"osa-').replace('"tyo.', '"osa.')
 assert "tyo-" not in t and "tyo." not in t, "tyo übrig"

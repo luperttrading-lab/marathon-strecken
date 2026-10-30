@@ -4,7 +4,7 @@
 # Reihenfolge: parse.py, osm.py, linie.py, marken.py, fabdem.py, dgm.py, planprofil.py, strassen.py, orte.py, clean.py, build.py,
 # route.py, tiles.py, dann aus werkzeuge/: tiles_z11.py athen, athen/work/app.py, tiles_rand.py athen 2
 import json, os, re, shutil
-R = "../../../"; OUT = R + "athen/"; VERSION = "1.0"
+R = "../../../"; OUT = R + "athen/"; VERSION = "1.1"
 os.makedirs(OUT, exist_ok=True)
 t = open(R + "tokio/index.html", encoding="utf-8").read()
 def rep(old, new, n=1):
@@ -35,6 +35,7 @@ rep('<meta name="description" content="Steigungsprofil des Tokio-Marathons: Höh
     '<meta name="description" content="Steigungsprofil des Athen-Marathons: Höhe, Steigung, Pace-Modell und Karte.">')
 rep('<title>Steigungsprofil Tokio-Marathon</title>', '<title>Steigungsprofil Athen-Marathon</title>')
 rep('<span class="eyebrow">Tokyo Marathon · Kurs 2026 · ', '<span class="eyebrow">Athens Marathon. The Authentic · Kurs 2026 · ')
+rep('<h1>Tokio</h1>', '<h1>Athen</h1>')   # Ort als Überschrift (seit Hamburg 1.73)
 rep('<p class="sub">Amtliches Laser-Höhenmodell der GSI (5-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>',
     '<p class="sub">' + open("sub.html", encoding="utf-8").read().strip() + '</p>')
 rep("/* Hell/Dunkel: eigene Wahl (tyo-theme)", "/* Hell/Dunkel: eigene Wahl (ath-theme)")
