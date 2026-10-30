@@ -376,7 +376,8 @@ body.run #play { flex: 1.6 1 auto; min-width: 0; }
 .readout { position: relative; }
 .corner { position: absolute; top: 10px; z-index: 2; display: flex; align-items: center; gap: 6px; height: 26px; min-height: 0; padding: 0 9px; background: none; border: 0; border-radius: 6px; color: var(--muted); font: 600 11px/1 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; }
 .corner.back { left: 6px; padding: 0 7px; color: var(--blue); }
-.corner.back span { font-size: 13px; letter-spacing: 0.06em; }   /* Name der Strecke, nur im Vollbild */
+#run-ort { font: 600 17px/1 var(--font-display); letter-spacing: 0.01em; text-transform: none; color: var(--ink); }   /* Name der Strecke im Vollbild, seit 1.74 rechts statt am Pfeil */
+.corner.ort { gap: 9px; }
 .corner.l { left: 36px; }
 .corner.r { right: 6px; }
 body.run .corner { top: 3px; }
@@ -461,7 +462,7 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Run Rome The Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.7</button></span>
+    <span class="eyebrow">Run Rome The Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v1.8</button></span>
     <h1>Rom</h1>
     <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Kein Laser-Höhenmodell verfügbar: Höhen aus dem 10-m-Modell TINITALY des INGV, angeglichen an Höhenpunkte der Regione Lazio; Strecke 2026 nach der Straßenliste des Veranstalters auf OpenStreetMap nachgezeichnet, alle 10 m ausgewertet.</p>
@@ -469,8 +470,8 @@ body.run .close svg { width: 20px; height: 20px; }
 
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
-    <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="run-only" id="run-ort"></span></a>
-    <button type="button" class="corner r ver run-only" id="run-ver" aria-label="Nach Update suchen">v1.7</button>
+    <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v1.8</button></span>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -1504,7 +1505,7 @@ $("run-close").addEventListener("click", () => { stop(); document.body.classList
 $("run-open").addEventListener("click", () => { document.body.classList.add("run"); dirty = true; });
 // Der Pfeil oben links führt im Vollbild zurück in die normale Ansicht (seit 1.51), sonst zu allen Strecken
 const zurueck = document.querySelector(".corner.back");
-$("run-ort").textContent = document.querySelector("h1").firstChild.textContent.trim();   // Name der Strecke neben dem Pfeil (seit 1.73)
+$("run-ort").textContent = document.querySelector("h1").firstChild.textContent.trim();   // Name der Strecke im Vollbild oben rechts (seit 1.73)
 zurueck.addEventListener("click", e => {
   if (!document.body.classList.contains("run")) return;
   e.preventDefault(); stop(); document.body.classList.remove("run"); dirty = true;
@@ -1815,6 +1816,17 @@ function drawMap() {
     for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { c.fillStyle = COL[(i + j) % 2 ? "--surface" : "--ink"]; c.fillRect(x + i * 4, y + j * 4, 4, 4); }
     c.strokeStyle = COL["--surface"]; c.lineWidth = 1.5; c.strokeRect(x - 0.75, y - 0.75, 17.5, 17.5);
   }
+  { // Maßstab unten links (seit 1.74): runde Strecke, höchstens 110 px lang; Meter je Bildpunkt aus Web-Mercator bei Zoom z
+    const mpp = 40075016.686 * Math.cos(la * Math.PI / 180) / (256 * 2 ** z);
+    const d = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000].filter(m => m / mpp <= 110).pop() || 50, len = d / mpp;
+    const lab = d >= 1000 ? d / 1000 + " km" : d + " m", x0 = 10, y0 = h - 9;
+    c.font = "600 11px " + getComputedStyle(document.documentElement).getPropertyValue("--font-display"); c.textAlign = "left"; c.textBaseline = "alphabetic";
+    const bw = Math.max(len, c.measureText(lab).width) + 12;
+    c.fillStyle = COL["--surface"]; c.globalAlpha = 0.85; c.beginPath(); c.roundRect ? c.roundRect(x0 - 6, y0 - 23, bw, 28, 4) : c.rect(x0 - 6, y0 - 23, bw, 28); c.fill(); c.globalAlpha = 1;
+    c.strokeStyle = COL["--ink"]; c.lineWidth = 2; c.lineCap = "butt"; c.lineJoin = "miter";
+    c.beginPath(); c.moveTo(x0, y0 - 6); c.lineTo(x0, y0); c.lineTo(x0 + len, y0); c.lineTo(x0 + len, y0 - 6); c.stroke();
+    c.fillStyle = COL["--ink"]; c.fillText(lab, x0, y0 - 9);
+  }
   c.fillStyle = COL["--surface"]; c.beginPath(); c.arc(SX(rx), SY(ry), 8.5, 0, 2 * Math.PI); c.fill();
   c.fillStyle = COL["--blue"]; c.beginPath(); c.arc(SX(rx), SY(ry), 6, 0, 2 * Math.PI); c.fill();
 }
@@ -1904,7 +1916,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '1.7';
+const APP_VERSION = '1.8';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
