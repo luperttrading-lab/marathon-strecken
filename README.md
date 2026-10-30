@@ -25,8 +25,10 @@ dann liegen alle Strecken in einer App.
 | Rom (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/rom/ | [`rom/`](rom/) | [`werkzeuge/rom/`](werkzeuge/rom/UEBERGABE.md) |
 | Barcelona (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/barcelona/ | [`barcelona/`](barcelona/) | [`werkzeuge/barcelona/`](werkzeuge/barcelona/UEBERGABE.md) |
 | Athen, Athens Marathon. The Authentic (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/athen/ | [`athen/`](athen/) | [`werkzeuge/athen/`](werkzeuge/athen/UEBERGABE.md) |
+| Stockholm, adidas Stockholm Marathon (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/stockholm/ | [`stockholm/`](stockholm/) | [`werkzeuge/stockholm/`](werkzeuge/stockholm/UEBERGABE.md) |
 | Kapstadt (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/kapstadt/ | [`kapstadt/`](kapstadt/) | [`werkzeuge/kapstadt/`](werkzeuge/kapstadt/UEBERGABE.md) |
 | Wien, Vienna City Marathon (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/wien/ | [`wien/`](wien/) | [`werkzeuge/wien/`](werkzeuge/wien/UEBERGABE.md) |
+| Médoc, Marathon des Châteaux du Médoc (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/medoc/ | [`medoc/`](medoc/) | [`werkzeuge/medoc/`](werkzeuge/medoc/UEBERGABE.md) |
 | Great Wall (Chinesische Mauer) (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/greatwall/ | [`greatwall/`](greatwall/) | [`werkzeuge/greatwall/`](werkzeuge/greatwall/UEBERGABE.md) |
 | Köln (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/koeln/ | [`koeln/`](koeln/) | [`werkzeuge/koeln/`](werkzeuge/koeln/UEBERGABE.md) |
 | München (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/muenchen/ | [`muenchen/`](muenchen/) | [`werkzeuge/muenchen/`](werkzeuge/muenchen/UEBERGABE.md) |
@@ -49,14 +51,14 @@ bei neuer Fassung die Seite holen). Nie geöffnete Strecken sind offline nicht d
   `python3 werkzeuge/kern/kern.py` (prüft nur, muss „Alle gleich“ melden). Änderungen am Kern stehen in
   [`werkzeuge/kern/AENDERUNGEN.md`](werkzeuge/kern/AENDERUNGEN.md). Die Startseite (`index.html`) wird direkt bearbeitet;
   die übrigen Skripte unter `werkzeuge/` sind nur die Herkunft der Daten.
-- Hamburg, Berlin, Frankfurt, New York, London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Amsterdam, Rom, Barcelona, Athen, Kapstadt, Wien, Great Wall, Köln, München, Oberelbe und Rennsteig haben **denselben Kern**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur
-  Strecke und den Speicherschlüsseln (`hhm-…`, `bln-…`, `ffm-…`, `nyc-…`, `ldn-…`, `par-…`, `chi-…`, `syd-…`, `tyo-…`, `vlc-…`, `mex-…`, `osa-…`, `bos-…`, `ams-…`, `rom-…`, `bcn-…`, `ath-…`, `cpt-…`, `vie-…`, `gwm-…`, `kln-…`, `muc-…`, `oem-…`, `rsl-…`; Hamburg `hhm-…`, aber Cache `hh-`). Eine Änderung am Verhalten oder Aussehen nur in Hamburg machen; `kern.py` zieht sie in **allen** Dateien nach.
+- Hamburg, Berlin, Frankfurt, New York, London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Amsterdam, Rom, Barcelona, Athen, Stockholm, Kapstadt, Wien, Médoc, Great Wall, Köln, München, Oberelbe und Rennsteig haben **denselben Kern**; sie unterscheiden sich nur in den Daten (`const D`), den Texten zur
+  Strecke und den Speicherschlüsseln (`hhm-…`, `bln-…`, `ffm-…`, `nyc-…`, `ldn-…`, `par-…`, `chi-…`, `syd-…`, `tyo-…`, `vlc-…`, `mex-…`, `osa-…`, `bos-…`, `ams-…`, `rom-…`, `bcn-…`, `ath-…`, `sth-…`, `cpt-…`, `vie-…`, `med-…`, `gwm-…`, `kln-…`, `muc-…`, `oem-…`, `rsl-…`; Hamburg `hhm-…`, aber Cache `hh-`). Eine Änderung am Verhalten oder Aussehen nur in Hamburg machen; `kern.py` zieht sie in **allen** Dateien nach.
 - **Eine Versionsnummer für die ganze App** (seit 2.0, vorher je Strecke eine eigene): Quelle ist `version.json` im
   Wurzelordner. Bei jeder Änderung, auch an Daten einer einzelnen Strecke, `kern.py --version 2.N --schreiben`: Das schreibt
   dieselbe Nummer in alle `<strecke>/version.json`, alle `APP_VERSION`, beide Versionsknöpfe und die Startseite. Sonst kommt
   das Update auf dem iPhone nicht an. Nummern nur nach oben (Zahlvergleich, 2.10 > 2.9), auch beim Zurücknehmen. Jede Seite
   prüft weiter die `version.json` im eigenen Ordner; „Version X ist geladen“ kommt einmal für die ganze App (`marathon.gesehen`).
-- Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `bln-`, `ffm-`, `nyc-`, `ldn-`, `par-`, `chi-`, `syd-`, `tyo-`, `vlc-`, `mex-`, `osa-`, `bos-`, `ams-`, `rom-`, `bcn-`, `ath-`, `cpt-`, `vie-`, `gwm-`, `kln-`, `muc-`, `oem-`, `rsl-`, `start-`). Ein Service Worker löscht
+- Jeder Ordner hat einen eigenen Service Worker mit eigenem Cache-Präfix (`hh-`, `bln-`, `ffm-`, `nyc-`, `ldn-`, `par-`, `chi-`, `syd-`, `tyo-`, `vlc-`, `mex-`, `osa-`, `bos-`, `ams-`, `rom-`, `bcn-`, `ath-`, `sth-`, `cpt-`, `vie-`, `med-`, `gwm-`, `kln-`, `muc-`, `oem-`, `rsl-`, `start-`). Ein Service Worker löscht
   nur Caches mit seinem eigenen Präfix, weil sich alle Apps unter `luperttrading-lab.github.io` denselben Speicher teilen.
 - **Nur dunkel** (seit Hamburg 1.35 in allen Strecken): kein Hell/Dunkel-Umschalter mehr, keine hellen Kartenbilder.
   Die Startseite ist ebenfalls immer dunkel, in den
@@ -73,7 +75,7 @@ bei neuer Fassung die Seite holen). Nie geöffnete Strecken sind offline nicht d
   die Einstellungen nennen Ankunft und Reserve, `D.zielschluss` in Minuten ab Mitternacht), `D.tz` (Zeitzone der Uhrzeiten; `D.ort`/`D.ortKurz` nennen den Ort dazu, wenn die Zeitzone ihn nicht verrät, z. B. Boston) `D.start` (Startzeit der ersten Welle in Minuten ab Mitternacht) und `D.wellen` (Wellen mit Uhrzeit und Quelle, siehe Hamburg-Übergabe).
 - Neue Strecke: eigener Ordner neben den anderen, angelegt mit `python3 werkzeuge/kern/kern.py --neu <ordner> <felder.json>`
   (Format: `kern.py --felder tokio`), Karte auf der Startseite ergänzen. Reihenfolge: New York als Highlight oben
-  (Klasse `card top`), danach London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Amsterdam, Rom, Barcelona, Athen, Kapstadt, Wien und Great Wall (nach Teilnehmerzahl), dann die deutschen Strecken alphabetisch. Alle Strecken liegen in **einer** App: installiert wird
+  (Klasse `card top`), danach London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Amsterdam, Rom, Barcelona, Athen, Stockholm, Kapstadt, Wien, Médoc und Great Wall (nach Teilnehmerzahl), dann die deutschen Strecken alphabetisch. Alle Strecken liegen in **einer** App: installiert wird
   die Startseite, ihr Scope umfasst alle Unterordner. Die Strecken haben **kein eigenes Manifest und Symbol**, sie verweisen auf
   `../manifest.webmanifest`, `../apple-touch-icon.png` und `../icon-192.png`; *Zum Home-Bildschirm* aus einer Strecke
   installiert so ebenfalls die ganze App.
@@ -93,6 +95,6 @@ bei neuer Fassung die Seite holen). Nie geöffnete Strecken sind offline nicht d
   mehr Höhenbereich bekommt eine höhere Grafik statt eines anderen Maßstabs (`.spark.hoch` New York 112 px,
   `.spark.berg` Rennsteig 240 px, `.spark.boston` 208 px, `.spark.london` 80 px, `.spark.sydney` 124 px, `.spark.mexiko` 94 px, `.spark.wien` 70 px; Great Wall `.spark.mauer` 230 px und Athen `.spark.athen` 174 px im halben Maßstab, dazu „Bild halber Maßstab“ in der Zeile darüber). Pfad: 200 Punkte, je Punkt das Maximum der letzten 100 m.
   Übersichtskarte: `cd werkzeuge && python3 tiles_z11.py <strecke>`, Ergebnis in `D.tiles["11"]` und in die Kartenliste von `sw.js`.
-  Danach `python3 tiles_rand.py <strecke>` (New York, London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Amsterdam, Rom, Barcelona, Kapstadt, Athen und Wien: `tiles_rand.py <strecke> 2`; **Great Wall nicht**: dort baut `work/tiles.py` ein dunkles Relief aus
+  Danach `python3 tiles_rand.py <strecke>` (New York, London, Paris, Chicago, Sydney, Tokio, Valencia, Mexiko-Stadt, Osaka, Boston, Amsterdam, Rom, Barcelona, Kapstadt, Athen, Wien, Stockholm und Médoc: `tiles_rand.py <strecke> 2`; **Great Wall nicht**: dort baut `work/tiles.py` ein dunkles Relief aus
   Copernicus mit OSM-Linien, `tiles_z11.py` und `tiles_rand.py` würden es durch die fast leere OSM-Karte ersetzen): baut z11–z13 mit einem Kachelrand entlang der Strecke
   neu, damit die mitlaufende Karte an Start, Ziel und Außenkurven nicht ins Graue schaut, und trägt `D.tiles` und `sw.js` selbst ein.

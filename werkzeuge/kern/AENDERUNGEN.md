@@ -6,6 +6,11 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.1 (30.10.2026): Stockholm und Médoc
+
+- Kern unverändert. Zwei neue Strecken über `kern.py --neu`: `stockholm/` (Präfix `sth-`) und `medoc/` (Präfix `med-`),
+  Karten auf der Startseite. Nummer für alle hochgezählt, damit die Startseite das Update bringt.
+
 ## 2.0 (30.10.2026): gemeinsamer Kern, eine Versionsnummer
 
 - **Erzeuger** `werkzeuge/kern/kern.py`: Vorlage ist Hamburg. Prüfen (Standard, schreibt nichts, Diff und Ausgang 1 bei

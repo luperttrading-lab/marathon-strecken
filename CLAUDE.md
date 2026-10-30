@@ -1,6 +1,6 @@
 # Marathon-Steigungsprofile
 
-Steigungsprofile von 24 Marathonstrecken als Web-Apps für das iPhone, ausgeliefert über GitHub Pages aus `main`:
+Steigungsprofile von 26 Marathonstrecken als Web-Apps für das iPhone, ausgeliefert über GitHub Pages aus `main`:
 https://luperttrading-lab.github.io/marathon-strecken/ . Aufbau, Strecken und Konventionen stehen in `README.md`,
 Bedien- und Designentscheidungen in `werkzeuge/hamburg/UEBERGABE.md`, je Strecke in `werkzeuge/<strecke>/UEBERGABE.md`.
 Offene Ideen und Punkte: `werkzeuge/VORGEMERKT.md`. Eichung des Pace-Modells: `werkzeuge/eichung/README.md`.
@@ -64,7 +64,8 @@ Offene Ideen und Punkte: `werkzeuge/VORGEMERKT.md`. Eichung des Pace-Modells: `w
 1. ~~**Gemeinsamer Kern** statt 24 Kopien~~ – erledigt 30.10.2026 als Marathon 2.0 (`werkzeuge/kern/`). Offen: Prüfung am
    iPhone (Banner aus dem Hintergrund, „2.0 ist geladen“ einmal, Tipp „ist aktuell“, Flugmodus).
 2. Startseite „Deine Form auf allen Strecken“.
-3. Stockholm.
+3. ~~Stockholm~~ – gebaut 30.10.2026 (Marathon 2.1), dazu Médoc. Offen: Höhen Stockholm nur aus der GPX-Datei des
+   Veranstalters (Lantmäteriet-Laserdaten nur mit Geotorget-Konto, Entscheidung des Nutzers).
 4. Kleinkram: drei Wasserstellen in Wien, Stadion-Laufbahn in Athen. (Entschieden 30.10.2026: im Ziel „42,2“ – „42,195“ war
    kurz drin und wurde zurückgenommen –, Halbmarathon „21,1“.)
 5. Rom: Laser-Geländemodell des Umweltministeriums prüfen, geplante Erinnerung am 07.11.2026.

@@ -1,0 +1,555 @@
+{
+"punkte": [
+{
+"art": "Bouteille d'eau",
+"or_m": 3100,
+"s": 3067.0,
+"km": 3.061,
+"daneben": 0.0,
+"lat": 45.19031,
+"lon": -0.7684
+},
+{
+"art": "Petit déjeuner",
+"or_m": 3400,
+"s": 3411.7,
+"km": 3.405,
+"daneben": 26.6,
+"lat": 45.189162935,
+"lon": -0.764781559
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 6700,
+"s": 6722.8,
+"km": 6.71,
+"daneben": 24.0,
+"lat": 45.164810191,
+"lon": -0.787254895
+},
+{
+"art": "Dégustation",
+"or_m": -1,
+"s": 6890.6,
+"km": 6.877,
+"daneben": 5.9,
+"lat": 45.16427226,
+"lon": -0.787848863
+},
+{
+"art": "Dégustation",
+"or_m": 9000,
+"s": 9022.5,
+"km": 9.005,
+"daneben": 16.3,
+"lat": 45.151374787,
+"lon": -0.779876024
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 10200,
+"s": 10185.5,
+"km": 10.166,
+"daneben": 0.0,
+"lat": 45.148931473,
+"lon": -0.771123918
+},
+{
+"art": "Dégustation",
+"or_m": 10300,
+"s": 10286.0,
+"km": 10.266,
+"daneben": 0.0,
+"lat": 45.149342425,
+"lon": -0.770037647
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 12400,
+"s": 12458.4,
+"km": 12.434,
+"daneben": 0.0,
+"lat": 45.148246112,
+"lon": -0.744645489
+},
+{
+"art": "Dégustation",
+"or_m": 14100,
+"s": 14113.9,
+"km": 14.086,
+"daneben": 0.0,
+"lat": 45.150611357,
+"lon": -0.733179875
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 14300,
+"s": 14293.5,
+"km": 14.266,
+"daneben": 22.7,
+"lat": 45.151301385,
+"lon": -0.734357615
+},
+{
+"art": "Dégustation",
+"or_m": 16000,
+"s": 16018.6,
+"km": 15.987,
+"daneben": 25.8,
+"lat": 45.164360846,
+"lon": -0.74165
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 16300,
+"s": 16288.8,
+"km": 16.257,
+"daneben": 0.0,
+"lat": 45.165606576,
+"lon": -0.741395548
+},
+{
+"art": "Dégustation",
+"or_m": 17700,
+"s": 17703.3,
+"km": 17.669,
+"daneben": 10.0,
+"lat": 45.175870139,
+"lon": -0.749780555
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 17900,
+"s": 17895.8,
+"km": 17.861,
+"daneben": 0.0,
+"lat": 45.177120318,
+"lon": -0.751475537
+},
+{
+"art": "Dégustation",
+"or_m": -1,
+"s": 19614.7,
+"km": 19.576,
+"daneben": 16.1,
+"lat": 45.190582861,
+"lon": -0.755726303
+},
+{
+"art": "Dégustation",
+"or_m": 21200,
+"s": 21215.4,
+"km": 21.174,
+"daneben": 20.9,
+"lat": 45.201877895,
+"lon": -0.751924923
+},
+{
+"art": "Cannelés",
+"or_m": 21300,
+"s": 21315.3,
+"km": 21.274,
+"daneben": 0.0,
+"lat": 45.202551068,
+"lon": -0.752246285
+},
+{
+"art": "Dégustation",
+"or_m": 23600,
+"s": 23631.3,
+"km": 23.585,
+"daneben": 0.0,
+"lat": 45.211277069,
+"lon": -0.769410473
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 23600,
+"s": 23704.1,
+"km": 23.658,
+"daneben": 0.0,
+"lat": 45.211927604,
+"lon": -0.769299791
+},
+{
+"art": "Dégustation",
+"or_m": 25500,
+"s": 25547.2,
+"km": 25.497,
+"daneben": 0.0,
+"lat": 45.223882147,
+"lon": -0.770229605
+},
+{
+"art": "Secours",
+"or_m": 25600,
+"s": 25621.5,
+"km": 25.571,
+"daneben": 0.0,
+"lat": 45.224182235,
+"lon": -0.771074683
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 25600,
+"s": 25645.7,
+"km": 25.596,
+"daneben": 27.2,
+"lat": 45.224415184,
+"lon": -0.771638392
+},
+{
+"art": "Dégustation",
+"or_m": 26700,
+"s": 26753.9,
+"km": 26.702,
+"daneben": 0.0,
+"lat": 45.230520401,
+"lon": -0.777190032
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 27700,
+"s": 27735.1,
+"km": 27.681,
+"daneben": 0.0,
+"lat": 45.229625529,
+"lon": -0.787062219
+},
+{
+"art": "Secours",
+"or_m": 27700,
+"s": 27755.4,
+"km": 27.701,
+"daneben": 8.0,
+"lat": 45.229654122,
+"lon": -0.78739997
+},
+{
+"art": "Dégustation",
+"or_m": 27800,
+"s": 27822.0,
+"km": 27.768,
+"daneben": 0.0,
+"lat": 45.229968904,
+"lon": -0.787870029
+},
+{
+"art": "Dégustation",
+"or_m": 29200,
+"s": 29306.0,
+"km": 29.249,
+"daneben": 4.7,
+"lat": 45.241432276,
+"lon": -0.787557352
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 30600,
+"s": 30676.9,
+"km": 30.617,
+"daneben": 24.7,
+"lat": 45.238597634,
+"lon": -0.772573051
+},
+{
+"art": "Dégustation",
+"or_m": 30700,
+"s": 30724.1,
+"km": 30.664,
+"daneben": 20.6,
+"lat": 45.23845903,
+"lon": -0.772178142
+},
+{
+"art": "Secours",
+"or_m": 30700,
+"s": 30764.6,
+"km": 30.705,
+"daneben": 24.7,
+"lat": 45.238732486,
+"lon": -0.771847037
+},
+{
+"art": "Dégustation",
+"or_m": 31000,
+"s": 31024.3,
+"km": 30.964,
+"daneben": 25.4,
+"lat": 45.2384661,
+"lon": -0.768996779
+},
+{
+"art": "Dégustation",
+"or_m": 33000,
+"s": 33034.3,
+"km": 32.97,
+"daneben": 25.3,
+"lat": 45.25357,
+"lon": -0.77431
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 33100,
+"s": 33179.7,
+"km": 33.115,
+"daneben": 0.0,
+"lat": 45.253779163,
+"lon": -0.772922363
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 34100,
+"s": 34179.5,
+"km": 34.113,
+"daneben": 13.7,
+"lat": 45.260912795,
+"lon": -0.767695334
+},
+{
+"art": "Secours",
+"or_m": 34200,
+"s": 34248.2,
+"km": 34.181,
+"daneben": 0.0,
+"lat": 45.260924006,
+"lon": -0.766994641
+},
+{
+"art": "Dégustation",
+"or_m": 34200,
+"s": 34277.6,
+"km": 34.211,
+"daneben": 25.0,
+"lat": 45.261073369,
+"lon": -0.766374265
+},
+{
+"art": "Dégustation",
+"or_m": 35300,
+"s": 35382.7,
+"km": 35.314,
+"daneben": 25.4,
+"lat": 45.254141499,
+"lon": -0.762647042
+},
+{
+"art": "Secours",
+"or_m": 37200,
+"s": 37226.0,
+"km": 37.153,
+"daneben": 0.0,
+"lat": 45.246388049,
+"lon": -0.751382254
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 37200,
+"s": 37265.3,
+"km": 37.193,
+"daneben": 0.0,
+"lat": 45.24604144,
+"lon": -0.751279943
+},
+{
+"art": "Huîtres",
+"or_m": 37200,
+"s": 37276.8,
+"km": 37.204,
+"daneben": 23.2,
+"lat": 45.245737685,
+"lon": -0.751178346
+},
+{
+"art": "Entrecôte",
+"or_m": 38800,
+"s": 38878.4,
+"km": 38.803,
+"daneben": 0.0,
+"lat": 45.231778951,
+"lon": -0.747671117
+},
+{
+"art": "Bouteille d'eau",
+"or_m": 39200,
+"s": 39234.9,
+"km": 39.158,
+"daneben": 28.9,
+"lat": 45.228319926,
+"lon": -0.74733
+},
+{
+"art": "Secours",
+"or_m": 39200,
+"s": 39286.2,
+"km": 39.21,
+"daneben": 0.0,
+"lat": 45.228118033,
+"lon": -0.74733
+},
+{
+"art": "Fromage",
+"or_m": 40800,
+"s": 40898.0,
+"km": 40.818,
+"daneben": 0.0,
+"lat": 45.213687103,
+"lon": -0.748876505
+},
+{
+"art": "Dégustation",
+"or_m": -1,
+"s": 40925.1,
+"km": 40.845,
+"daneben": 130.8,
+"lat": 45.213397251,
+"lon": -0.750528509
+},
+{
+"art": "Glaces",
+"or_m": 41300,
+"s": 41388.6,
+"km": 41.308,
+"daneben": 0.0,
+"lat": 45.209287301,
+"lon": -0.748392265
+}
+],
+"staende": [
+{
+"name": "Château Grand-Puy-Lacoste",
+"km_plaquette": 3,
+"osm": {
+"km": 3.075,
+"daneben": 61
+},
+"wasser_km": 3.061
+},
+{
+"name": "Château Larose-Trintaudon",
+"km_plaquette": 7,
+"osm": {
+"km": 6.819,
+"daneben": 29
+},
+"wasser_km": 6.71
+},
+{
+"name": "Château Lagrange",
+"km_plaquette": 10,
+"osm": {
+"km": 9.975,
+"daneben": 43
+},
+"wasser_km": 10.166
+},
+{
+"name": "Château Beychevelle",
+"km_plaquette": 12,
+"osm": {
+"km": 13.451,
+"daneben": 77
+},
+"wasser_km": 12.434
+},
+{
+"name": "Château Ducru-Beaucaillou",
+"km_plaquette": 13,
+"osm": {
+"km": 13.983,
+"daneben": 98
+},
+"wasser_km": 12.434
+},
+{
+"name": "Saint-Julien",
+"km_plaquette": 16,
+"osm": null,
+"wasser_km": 16.257
+},
+{
+"name": "Château Pichon-Longueville Comtesse de Lalande",
+"km_plaquette": 18,
+"osm": {
+"km": 17.72,
+"daneben": 41
+},
+"wasser_km": 17.861
+},
+{
+"name": "Cave La Rose Pauillac",
+"km_plaquette": 21,
+"osm": {
+"km": 21.22,
+"daneben": 16
+},
+"wasser_km": 23.658
+},
+{
+"name": "Château d'Armailhac",
+"km_plaquette": 23,
+"osm": {
+"km": 23.559,
+"daneben": 37
+},
+"wasser_km": 23.658
+},
+{
+"name": "Château Lafite-Rothschild",
+"km_plaquette": 25,
+"osm": {
+"km": 25.691,
+"daneben": 90
+},
+"wasser_km": 25.596
+},
+{
+"name": "Château Lafon-Rochet",
+"km_plaquette": 27,
+"osm": {
+"km": 27.716,
+"daneben": 41
+},
+"wasser_km": 27.681
+},
+{
+"name": "Le Crock",
+"km_plaquette": 30,
+"osm": null,
+"wasser_km": 30.617
+},
+{
+"name": "Château Tronquoy-Lalande",
+"km_plaquette": 33,
+"osm": {
+"km": 33.089,
+"daneben": 57
+},
+"wasser_km": 33.115
+},
+{
+"name": "Château Phélan-Ségur",
+"km_plaquette": 34,
+"osm": {
+"km": 34.063,
+"daneben": 92
+},
+"wasser_km": 34.113
+},
+{
+"name": "Château Montrose",
+"km_plaquette": 37,
+"osm": {
+"km": 32.16,
+"daneben": 682
+},
+"wasser_km": 37.193
+},
+{
+"name": "Gironde 1",
+"km_plaquette": 39,
+"osm": null,
+"wasser_km": 39.158
+}
+]
+}
