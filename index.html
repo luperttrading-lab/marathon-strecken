@@ -24,6 +24,8 @@ body { margin: 0; } img { max-width: 100%; } [hidden] { display: none !important
 .update.an { opacity: 1; pointer-events: auto; }
 .update[hidden] { display: none; }
 .update.info { background: #2d2d33; color: #f2f2f7; font-weight: 500; }
+.update.info.offline { background: #ff9f0a; color: #241400; font-weight: 600; }   /* Offline-Hinweis: Warnfarbe, bleibt bis zum Antippen */
+.update.offline::after { content: "✕"; flex: none; font-size: 16px; opacity: 0.6; }
 .update .update-btn { flex: none; min-height: 36px; padding: 8px 14px; font-size: 15px; background: #06240e; color: #fff; border: 0; border-radius: 10px; }
 @media (prefers-reduced-motion: reduce) { .update { transition: none; } }
 </style>
@@ -399,7 +401,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
   KARTEN.forEach(k => k.a.addEventListener("click", () => merke(k.href)));
   baueRad(zuletzt);
 })();
-const APP_VERSION = '1.38';
+const APP_VERSION = '1.39';
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
@@ -442,7 +444,7 @@ const APP_VERSION = '1.38';
   window.addEventListener("pageshow", () => setTimeout(checkForUpdate, 800));
   // Ohne Netz läuft die gespeicherte Fassung: einmal sagen (seit 30.10.2026; Nutzer: „Meldung, dass offline evtl. nicht die
   // aktuelle Version geladen ist“), beim Öffnen ohne Netz und wenn das Netz unterwegs wegbricht
-  const offlineHinweis = () => showInfo("Offline: gespeicherte Fassung v" + APP_VERSION + ", vielleicht nicht die neueste", 6);
+  const offlineHinweis = () => { showInfo("Offline: gespeicherte Fassung v" + APP_VERSION + ", vielleicht nicht die neueste", 0); updateEl.classList.add("offline"); };   // orange, bleibt bis zum Antippen
   if (!navigator.onLine) setTimeout(offlineHinweis, 700);
   window.addEventListener("offline", offlineHinweis);
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") checkForUpdate(); });
