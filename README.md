@@ -33,6 +33,7 @@ dann liegen alle Strecken in einer App.
 
 Das Pace-Modell (1,0 s je Höhenmeter bei 4:00 /km, bergab die Hälfte) ist an 3 Mio. echten Zwischenzeiten geprüft:
 [`werkzeuge/eichung/`](werkzeuge/eichung/README.md) (30.10.2026).
+Besprochene, noch nicht gebaute Ideen und offene Punkte: [`werkzeuge/VORGEMERKT.md`](werkzeuge/VORGEMERKT.md).
 
 ## Regeln für Änderungen
 
