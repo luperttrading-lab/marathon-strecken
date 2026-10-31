@@ -6,6 +6,11 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.2 (31.10.2026): Suche auf der Startseite
+
+- Kern unverändert. Startseite: neue erste Suchstufe „Stadtname beginnt mit der Eingabe“. Bisher traf „St“ auch das Wort
+  „Stadt“ in „Mexiko-Stadt“, und das alphabetische Rad stellte Mexiko-Stadt vor Stockholm.
+
 ## 2.1 (30.10.2026): Stockholm und Médoc
 
 - Kern unverändert. Zwei neue Strecken über `kern.py --neu`: `stockholm/` (Präfix `sth-`) und `medoc/` (Präfix `med-`),

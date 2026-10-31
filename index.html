@@ -116,7 +116,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
 <div class="wrap">
   <header>
     <span class="eyebrow">Steigungsprofile</span>
-    <button type="button" class="ver kopf-ver" aria-label="Nach Update suchen">v2.1</button>
+    <button type="button" class="ver kopf-ver" aria-label="Nach Update suchen">v2.2</button>
     <h1>Welcher Marathon?</h1>
     <p class="sub">Wo es bergauf geht, was dich das an Zeit kostet und wann du wo bist. Gemessen mit Laserscans entlang der offiziellen Strecke.</p>
   </header>
@@ -363,8 +363,9 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
       + ' <span class="' + (tage <= 14 ? "bald" : "bis") + '">· ' + bis + "</span>";
   });
 })();
-/* Auswahl (seit 1.27): Suchfeld und Drehrad. Treffer in drei Stufen: Stadtname (Wortanfang), sonst weitere Namen, Land,
-   Veranstalter (data-such, Wortanfang), sonst irgendwo im Text. „F“ zeigt so nur Frankfurt, „USA“ die drei US-Strecken. */
+/* Auswahl (seit 1.27): Suchfeld und Drehrad. Treffer in vier Stufen: Stadtname beginnt mit der Eingabe (seit 2.2: „St“ zeigt
+   Stockholm, nicht auch Mexiko-Stadt), sonst Stadtname (Wortanfang), sonst weitere Namen, Land, Veranstalter (data-such,
+   Wortanfang), sonst irgendwo im Text. „F“ zeigt so nur Frankfurt, „USA“ die drei US-Strecken. */
 (() => {
   const norm = t => t.toLowerCase().replace(/ß/g, "ss").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ae/g, "a").replace(/oe/g, "o").replace(/ue/g, "u");
   const woerter = t => norm(t).split(/[^a-z0-9]+/).filter(Boolean);
@@ -376,7 +377,8 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
   const passt = (ws, qs) => qs.every(q => ws.some(w => w.startsWith(q)));
   const treffer = text => {
     const qs = woerter(text); if (!qs.length) return KARTEN;
-    for (const stufe of [k => passt(k.w1, qs), k => passt(k.w2.concat(k.w1), qs), k => qs.every(q => k.alles.includes(q))]) { const t = KARTEN.filter(stufe); if (t.length) return t; }
+    const anfang = qs.join(" ");
+    for (const stufe of [k => k.w1.join(" ").startsWith(anfang), k => passt(k.w1, qs), k => passt(k.w2.concat(k.w1), qs), k => qs.every(q => k.alles.includes(q))]) { const t = KARTEN.filter(stufe); if (t.length) return t; }
     return [];
   };
   const suche = document.getElementById("suche"), rad = document.getElementById("rad"), los = document.getElementById("los"), leer = document.getElementById("leer");
@@ -417,7 +419,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
   KARTEN.forEach(k => k.a.addEventListener("click", () => merke(k.href)));
   baueRad(zuletzt);
 })();
-const APP_VERSION = '2.1';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.2';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
