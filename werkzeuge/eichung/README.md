@@ -41,6 +41,10 @@ Bestzeit, und dafür zählt gleichmäßige Anstrengung, nicht das typische Über
 0,87 statt 1,0 hieße bei 4:00 Zielzeit: Berlin 46 → 40 s, Boston 124 → 108 s, New York 229 → 199 s, Rennsteig
 662 → 580 s Steigungskosten (`steigungskosten_vergleich.js`).
 
+**Gegenprobe des Nutzers (31.10.2026):** Hausstrecke 9,8 km Rundkurs mit 100 m hoch und runter. Erfahrung des Nutzers: die
+Rundenzeit entspricht seiner flachen 10-km-Zeit. Das Modell ergibt bei sanften bis mittleren Anstiegen (2–5 %) +2,3 bis +2,8 %
+gegenüber flach auf 9,8 km, mit Riegel auf 10 km (× 1,022) zusammen den Faktor 0,997 – passt.
+
 ## Daten
 
 **Pace Notes v3** von Andrew Kam, [Figshare](https://doi.org/10.6084/m9.figshare.33965155), Lizenz **CC BY 4.0**:
