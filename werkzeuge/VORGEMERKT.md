@@ -28,13 +28,17 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
 
 - **Marathons in Deutschland, Österreich und der Schweiz** (Recherche 31.10.2026, Nutzer: „nach und nach alle“, Reichweite
   so wichtig wie das Profil, erst die flachen): Runde 1 Hannover, Düsseldorf, Zürich gebaut (Marathon 2.4), Runde 2 Münster,
-  Luzern, Freiburg gebaut (Marathon 2.5). Runde 3 Berg: Jungfrau, Zermatt, Brocken, dazu im Kern ein Hinweis an steilen
-  Stellen („Straßenmodell, am Berg zu optimistisch“). Danach Graz, Salzburg, LGT Alpin, Allgäu, Ulm und die übrigen.
+  Luzern, Freiburg gebaut (Marathon 2.5). Runde 3 Berg: Jungfrau, Zermatt, Brocken gebaut mit Hinweis im Kern (Marathon 2.6). Danach Graz, Salzburg, LGT Alpin, Allgäu, Ulm und die übrigen.
   Ranking und Quellen: Bericht vom 31.10.2026 (Jungfrau 3 604, Zermatt 355, Brocken 676, Luzern 3 076, Freiburg 1 560,
   Münster 3 114 Finisher).
 - **Bergmarathons, Zeitprognose:** Das Pace-Modell ist an Straßenrennen geeicht; ab etwa 10 % gehen die meisten. Später
   eichen, ohne Namen: Zwischenzeiten innerhalb des Jungfrau-Marathons (flaches Tal bis Lauterbrunnen gegen den steilen Teil),
   je Läufer relativ wie in `eichung/`. Idee: auf sehr steilen Stücken Höhenmeter je Stunde statt Pace.
+  Daten dafür (31.10.2026 geprüft, nichts gespeichert): Datasport hat für Jungfrau 2026 Zwischenzeiten aller 3 604 Finisher an
+  km 3,3 / 5 / 10,4 / 15,1 / 21,1 / 25,9 / 30,7 / 38,5, für Zermatt 4 Etappen (Zermatt, Sunnegga, Riffelalp); Brocken keine.
+  Befunde: Jungfrau-Richtzeiten des Veranstalters für 5 h: 1:59 / 3:11 / 4:16 (Halbmarathon / Wengen / Wixi), Modell 2:08 / 3:20 /
+  4:22; Zermatt Median-Anteile der Etappen 39,8 / 29,5 / 17,2 / 13,3 %, Modell 45,6 / 29,1 / 15,3 / 9,9 %; Brocken Modell 3:04 bei
+  4:00 /km flach, Median 2026 4:42. Das Modell unterschätzt die steilen Stücke auch bei fester Zielzeit.
 
 ## Kleinigkeiten aus den Übergaben
 

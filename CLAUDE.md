@@ -1,6 +1,6 @@
 # Marathon-Steigungsprofile
 
-Steigungsprofile von 34 Marathonstrecken als Web-Apps für das iPhone, ausgeliefert über GitHub Pages aus `main`:
+Steigungsprofile von 37 Marathonstrecken als Web-Apps für das iPhone, ausgeliefert über GitHub Pages aus `main`:
 https://luperttrading-lab.github.io/marathon-strecken/ . Aufbau, Strecken und Konventionen stehen in `README.md`,
 Bedien- und Designentscheidungen in `werkzeuge/hamburg/UEBERGABE.md`, je Strecke in `werkzeuge/<strecke>/UEBERGABE.md`.
 Offene Ideen und Punkte: `werkzeuge/VORGEMERKT.md`. Eichung des Pace-Modells: `werkzeuge/eichung/README.md`.
@@ -34,8 +34,8 @@ Offene Ideen und Punkte: `werkzeuge/VORGEMERKT.md`. Eichung des Pace-Modells: `w
   und Wien lesen die Nummer ebenso, ihr `app.py` aber **nicht** allein laufen lassen (danach müsste `tiles_rand.py` folgen,
   sonst sind Kartenbilder und Kachelangaben falsch).
 - Neue Strecken baut ein Agent nach dem Muster in `werkzeuge/athen/` bzw. `werkzeuge/wien/` (nicht committen) und liefert die
-  Felder; die Seite entsteht mit `kern.py --neu <ordner> <felder.json>` (Format: `kern.py --felder tokio`). Startseite (Karte,
-  Reihenfolge nach Teilnehmerzahl, Mini-Profil), README und Push macht die Hauptsitzung.
+  Felder; die Seite entsteht mit `kern.py --neu <ordner> <felder.json>` (Format: `kern.py --felder tokio`). Startseite (Karte mit
+  `data-land`, Reihenfolge nach Teilnehmerzahl, deutsche Strecken alphabetisch, Mini-Profil), README und Push macht die Hauptsitzung.
 - Commits auf Deutsch, direkt auf `main`.
 
 ## Prüfen

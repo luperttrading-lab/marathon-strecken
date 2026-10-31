@@ -6,6 +6,23 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.6 (31.10.2026): Bergstrecken, Hinweis auf Bergstrecken, Liste auf der Startseite
+
+- **Kern:** Nutzer 31.10.2026: Bergmarathons „erst mal mit dem Hinweis über die realistische Prognose“, später verbessern. Der Kern
+  misst die Länge mit mehr als 10 % Steigung über 200 m (ohne die Mauer der Great Wall, deren Zeit man selbst wählt). Ab 0,3 km
+  steht ein oranger Hinweis bei „Zwischenzeiten“, „Für Zuschauer“ und unter der Zielzeit: „Bergstrecke: X km mit mehr als 10 %
+  Steigung. Das Zeitmodell ist an Straßenmarathons geeicht. Wo die meisten gehen, sind seine Zeiten zu optimistisch: Rechne dort
+  mit deutlich mehr Zeit.“ Stand: Great Wall 1,1 km, Rennsteig 0,4 km, alle anderen Strecken 0 (kein Hinweis).
+- Später (VORGEMERKT): Eichung mit Zwischenzeiten eines Bergmarathons, auf sehr steilen Stücken Höhenmeter je Stunde statt Pace.
+- **Kern, Höhenachse:** Schritte 200, 250, 500, 1000 m dazu (bisher höchstens 100 m; Jungfrau hätte 17 Linien). Ändert nur Strecken,
+  bei denen 100 m zu eng war.
+- **Drei Bergstrecken** über `kern.py --neu` (dritte Runde): `jungfrau/` (Präfix `jfm-`, swissALTI3D, 1 929 Höhenmeter bergauf,
+  3 604 Finisher 2026), `zermatt/` (`zgm-`, swissALTI3D, 1 816 m, 355), `brocken/` (`brk-`, DGM1 Sachsen-Anhalt, 1 146 m, 616).
+  Hinweis erscheint dort (7,3 / 6,8 / 3,5 km über 10 %). Startseite: eigener Bergmaßstab für die Mini-Profile (7 px je 40 m).
+- **Startseite:** doppelter Sicherheitsabstand oben entfernt (`:root` und `.wrap` hatten beide `safe-area-inset-top`, etwa 47 pt
+  verschenkt; Nutzer: „da oben Platz verschenkt“). Knopf „Alle N Strecken als Liste“ unter dem Drehrad: Vollbild-Liste nach Land
+  (Länder und darin Städte alphabetisch), A–Z oder nach dem nächsten Termin; Land aus `data-land` je Karte (neue Karten brauchen es).
+
 ## 2.5 (31.10.2026): Münster, Luzern, Freiburg
 
 - Kern unverändert. Drei neue Strecken über `kern.py --neu` (zweite Runde Deutschland/Schweiz): `muenster/` (Präfix `mst-`,

@@ -1,0 +1,46 @@
+Fenster    50 m: ↑ 1202.0 m  ↓ 1198.3 m  steilste bergauf 22.6 % bei km 16.34, bergab -22.6 % bei km 7.88
+Fenster   100 m: ↑ 1182.6 m  ↓ 1179.0 m  steilste bergauf 20.6 % bei km 16.36, bergab -17.0 % bei km 7.87
+Fenster   200 m: ↑ 1146.2 m  ↓ 1142.7 m  steilste bergauf 18.1 % bei km 17.56, bergab -11.7 % bei km 7.82
+Fenster  1000 m: ↑ 1004.7 m  ↓ 1003.6 m  steilste bergauf 16.3 % bei km 16.76, bergab -9.3 % bei km 20.31
+Rohdaten Punkt für Punkt ↑ 1256 m; bereinigt ↑ 1234.6 m
+Höhe min/max 266.4 1140.6 bei km 0.0 19.18 Start 266.4 Ziel 270.1
+Straßenabschnitte 29 Marken 10 Brücken 8
+   [0, 'Himmelpforte', 'Wernigerode']
+   [1220, 'Waldweg am Haidknüll', 'Wernigerode']
+   [3690, 'Waldweg Öhrenfeld – Tänntal', 'Wernigerode']
+   [4380, 'Lindenallee', 'Wernigerode']
+   [4480, 'Waldweg Öhrenfeld – Tänntal', 'Drübeck']
+   [5290, 'Klosterholz', 'Drübeck']
+   [6440, 'Waldweg nach Ilsenburg', 'Drübeck']
+   [7240, 'Waldweg nach Ilsenburg', 'Ilsenburg']
+   [7980, 'Ilsetal', 'Ilsenburg']
+   [12790, 'Rote Brücke', 'Ilsenburg']
+   [12890, 'Ilsetal', 'Ilsenburg']
+   [13620, 'Gelber Brink', 'Ilsenburg']
+   [13710, 'Waldweg am Gelben Brink', 'Ilsenburg']
+   [14640, 'Hermannstraße', 'Schierke / Ilsenburg']
+   [16160, 'Hirtenstieg', 'Schierke']
+   [18950, 'Brockenplateau', 'Schierke']
+   [19300, 'Brockenstraße', 'Schierke']
+   [23060, 'Glashüttenweg', 'Schierke']
+   [27400, 'Glashüttenweg', 'Schierke / Elbingerode']
+   [27700, 'Glashüttenweg', 'Wernigerode / Elbingerode']
+   [28490, 'Glashüttenweg', 'Wernigerode']
+   [29680, 'Eschwegestraße', 'Wernigerode']
+   [30010, 'Ellenbogen-Chaussee', 'Wernigerode']
+   [32010, 'Thumkuhlental', 'Wernigerode']
+   [32530, 'Waldweg zum Hanneckenbruch', 'Wernigerode']
+   [33940, 'Bielsteinchaussee', 'Wernigerode']
+   [35990, 'Waldweg über die Mönchsbuche', 'Wernigerode']
+   [38550, 'Waldweg über den Schwengskopf', 'Wernigerode']
+   [41150, 'Waldweg am Kuhbornteich', 'Wernigerode']
+   9071 Verpflegung | Verpflegung, km 9,1, Ilsetal; laut Veranstalter km 9, geöffnet 9:00–10:30 Uhr
+   14607 Verpflegung | Verpflegung, km 14,6, Stempelsbuche; laut Veranstalter km 15, geöffnet 9:30–11:30 Uhr
+   17338 Getränke | Tränke (nur Getränke), km 17,3, Eiserner Tisch (gelbe Schutzjacken für die Brockenpassage, Rückgabe am Knochenbrecher); laut Veranstalter km 17, geöffnet 10:00–12:00 Uhr
+   20345 Verpflegung | Verpflegung, km 20,3, Knochenbrecher; laut Veranstalter km 21, geöffnet 10:15–12:30 Uhr
+   21098 Halbmarathon | Halbmarathon
+   23061 Verpflegung | Verpflegung, km 23,1, Brockenbett; laut Veranstalter km 24, geöffnet 10:30–13:00 Uhr
+   29999 Verpflegung | Verpflegung, km 30,0, Skihütte Hohnekopf; laut Veranstalter km 30, geöffnet 10:30–13:30 Uhr
+   33894 Verpflegung | Verpflegung, km 33,9, Steinerne Renne; laut Veranstalter km 34, geöffnet 10:45–14:00 Uhr
+   36545 Verpflegung | Verpflegung, km 36,5, Mönchsbuche; laut Veranstalter km 37, geöffnet 11:00–14:15 Uhr
+   38531 Getränke | Tränke (nur Getränke), km 38,5, Kastanienplatz; laut Veranstalter km 39, geöffnet 11:00–14:30 Uhr

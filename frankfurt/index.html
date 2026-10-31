@@ -209,6 +209,10 @@ button.info span { width: 20px; height: 20px; border: 1.5px solid currentColor; 
 .ramps .row { padding-inline: 14px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; }
 .ramps h2, .source h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 20px; }
 .rule-note { padding-inline: 14px; font-size: 12.5px; color: var(--muted); margin: 0; }
+/* Bergstrecke (seit 2.6): Hinweis, dass das Straßenmodell dort zu optimistisch ist; Warnfarbe wie der Offline-Hinweis */
+.berg-note { margin: 6px 14px 2px; padding: 8px 11px; border-left: 3px solid #ff9f0a; border-radius: 8px; background: rgba(255, 159, 10, 0.12); color: var(--ink); font-size: 12.5px; line-height: 1.35; }
+.setting .berg-note { margin: 6px 0 0; }
+.berg-note[hidden] { display: none; }
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
 th { text-align: right; font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
@@ -470,7 +474,7 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Mainova Frankfurt Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.5</button></span>
+    <span class="eyebrow">Mainova Frankfurt Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.6</button></span>
     <h1>Frankfurt</h1>
     <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>
@@ -479,7 +483,7 @@ body.run .close svg { width: 20px; height: 20px; }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.5</button></span>
+    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.6</button></span>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -558,6 +562,7 @@ body.run .close svg { width: 20px; height: 20px; }
       </div>
     </div>
     <p class="rule-note" id="split-note"></p>
+    <p class="berg-note" hidden></p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>km</th><th class="sp">Profil</th><th>↑ m</th><th>↓ m</th><th>±</th><th>Zeit</th><th>Gesamt</th></tr></thead>
@@ -574,6 +579,7 @@ body.run .close svg { width: 20px; height: 20px; }
       <button type="button" id="plan-share">Plan teilen</button>
     </div>
     <p class="rule-note" id="plan-note"></p>
+    <p class="berg-note" hidden></p>
     <div class="row plan-start">
       <span class="lbl">Deine Startzeit</span>
       <div class="timepanel two" id="start-wheels"><div class="wcol" id="ws-h"></div><span class="colon" aria-hidden="true">:</span><div class="wcol" id="ws-m"></div></div>
@@ -608,6 +614,7 @@ body.run .close svg { width: 20px; height: 20px; }
       <div class="bahn steig"><span>Davon kosten die Steigungen</span><b id="goal-steig">–</b></div>
       <div class="bahn steig" id="mauer-zeile" hidden><span>Davon kostet die Mauer</span><b id="goal-mauer">–</b></div>
       <span class="note" id="goal-note">Gleichmäßige Anstrengung: im Flachen 4:58 /km.</span>
+      <p class="berg-note" hidden></p>
       <div class="bahn-kopf"><span class="lbl" id="bahn-titel">Ohne Höhenmeter entspricht das</span><button type="button" class="info" popovertarget="bahn-info" aria-label="Erklärung zu den Zeiten ohne Höhenmeter"><span aria-hidden="true">i</span></button></div>
       <div class="seg bahn-seg" id="bahn-seg" role="group" aria-label="Zeiten umrechnen" hidden><button type="button" data-meer="0">in der Höhe</button><button type="button" data-meer="1">auf Meereshöhe</button></div>
       <div class="bahn" id="bahn"><span>Flacher Marathon</span><b id="bahn-m">–</b><span>Flacher Halbmarathon</span><b id="bahn-21">–</b><span>10 000 m auf der Bahn</span><b id="bahn-10">–</b><span>5000 m auf der Bahn</span><b id="bahn-5">–</b></div>
@@ -878,6 +885,18 @@ S.meer = store.get("meer", false) === true;   // Tabelle „Ohne Höhenmeter“ 
 // ein Rad. Ohne eigenes Drehen gilt die Empfehlung für die Zielzeit: D.mauerEmpf = [[Minuten bei 5 h, je Stunde mehr], …]
 // (Great Wall: Zwischenzeiten 2026), sonst der vierte Wert in D.mauer
 const MAUER = D.mauer || [];
+// Bergstrecke (seit 2.6; Nutzer: „erst mal die Bergmarathons mit dem Hinweis über die realistische Prognose“): Länge mit mehr
+// als 10 % Steigung über 200 m, ohne die Mauer (deren Zeit wählt man selbst). Ab 0,3 km ein Hinweis bei Zwischenzeiten, Für
+// Zuschauer und Zielzeit: das Modell ist an Straßenmarathons geeicht, wo die meisten gehen, sind seine Zeiten zu optimistisch.
+// Stand 2.6: Great Wall 1,1 km, Rennsteig 0,4 km, alle Stadtmarathons 0
+const STEIL = (() => { const w = Math.round(200 / STEP); let n = 0;
+  for (let i = 0; i + w < N; i++) { const m = (i + w / 2) * STEP; if (D.h[i + w] - D.h[i] >= 2000 && !MAUER.some(x => m >= x[0] && m <= x[1])) n++; }
+  return n * STEP / 1000; })();
+if (STEIL >= 0.3) for (const e of document.querySelectorAll(".berg-note")) {
+  e.textContent = "Bergstrecke: " + nf(STEIL, 1) + " km mit mehr als 10 % Steigung" + (MAUER.length ? " (ohne die Mauer)" : "") + ". Das Zeitmodell ist an "
+    + "Straßenmarathons geeicht. Wo die meisten gehen, sind seine Zeiten zu optimistisch: Rechne dort mit deutlich mehr Zeit.";
+  e.hidden = false;
+}
 S.mauerAuto = store.get("mauer-auto", true) !== false;
 S.mauerEigen = MAUER.map((m, k) => clamp(Math.round(store.get("mauer-min-" + (k + 1), 0)) || 0, 0, 180));
 const mauerEmpf = k => { const e = D.mauerEmpf && D.mauerEmpf[k], T = S.goal > 0 ? S.goal / 3600 : 5; return clamp(Math.round(e ? e[0] + e[1] * (T - 5) : MAUER[k][3] || 30), 10, 180); };
@@ -975,7 +994,7 @@ function drawMain() {
   // Höhenraster
   c.font = "500 11px " + getComputedStyle(document.body).fontFamily; c.textBaseline = "middle";
   // Hilfslinien: nach Höhenbereich (höchstens ~8) und mindestens 18 px auseinander, sonst überlappen die Beschriftungen
-  const yr = YMAX - YMIN, gmin = yr > 200 ? 50 : yr > 100 ? 25 : yr > 30 ? 10 : 5, gstep = [5, 10, 25, 50, 100].find(s => s >= gmin && phk * s / yr >= 18) || 100;
+  const yr = YMAX - YMIN, gmin = yr > 200 ? 50 : yr > 100 ? 25 : yr > 30 ? 10 : 5, gstep = [5, 10, 25, 50, 100, 200, 250, 500, 1000].find(s => s >= gmin && phk * s / yr >= 18) || 1000;   // 200–1000 seit 2.6 (Bergmarathons, bis 1 800 m Höhenbereich)
   for (let v = Math.ceil(YMIN / gstep) * gstep; v <= YMAX; v += gstep) {
     c.strokeStyle = COL["--grid"]; c.lineWidth = 1; c.beginPath(); c.moveTo(0, Math.round(Y(v)) + 0.5); c.lineTo(w, Math.round(Y(v)) + 0.5); c.stroke();
   }
@@ -1943,7 +1962,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '2.5';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.6';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
