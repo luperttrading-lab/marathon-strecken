@@ -44,6 +44,9 @@ Bestzeit, und dafür zählt gleichmäßige Anstrengung, nicht das typische Über
 **Gegenprobe des Nutzers (31.10.2026):** Hausstrecke 9,8 km Rundkurs mit 100 m hoch und runter. Erfahrung des Nutzers: die
 Rundenzeit entspricht seiner flachen 10-km-Zeit. Das Modell ergibt bei sanften bis mittleren Anstiegen (2–5 %) +2,3 bis +2,8 %
 gegenüber flach auf 9,8 km, mit Riegel auf 10 km (× 1,022) zusammen den Faktor 0,997 – passt.
+Nachgemessen (GPX aus MapPlanner, Laser-DGM1 Hessen): Linie 9,91 km, gelaufen mit abgekürzten Ecken ≈ 9,85 km; ↑ 112 m (200-m-Fenster;
+MapPlanner nennt 163 m, sein Höhenmodell liegt im Wald 15–25 m zu hoch). Modell: Runde = flache 10 km × 1,012 (mit Faktor 0,87 der
+Straßen-Eichung × 1,008), also 40:00 flach → 40:29 bzw. 40:20 auf der Runde – im Rahmen der Erfahrung des Nutzers.
 
 ## Daten
 
