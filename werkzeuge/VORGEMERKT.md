@@ -26,7 +26,22 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
   sinnvoll oder nicht machbar: Frozen Lake (auf dem Eis, flach), Lost City Mexiko (keine offizielle Strecke), Bhutan (Pfade,
   nur 30-m-Modell), Antarktis (Kurs wechselt, kleines Feld).
 
+- **Marathons in Deutschland, Österreich und der Schweiz** (Recherche 31.10.2026, Nutzer: „nach und nach alle“, Reichweite
+  so wichtig wie das Profil, erst die flachen): Runde 1 Hannover, Düsseldorf, Zürich gebaut (Marathon 2.4). Runde 2 Münster,
+  Luzern (swissALTI3D wie Zürich), Freiburg. Runde 3 Berg: Jungfrau, Zermatt, Brocken, dazu im Kern ein Hinweis an steilen
+  Stellen („Straßenmodell, am Berg zu optimistisch“). Danach Graz, Salzburg, LGT Alpin, Allgäu, Ulm und die übrigen.
+  Ranking und Quellen: Bericht vom 31.10.2026 (Jungfrau 3 604, Zermatt 355, Brocken 676, Luzern 3 076, Freiburg 1 560,
+  Münster 3 114 Finisher).
+- **Bergmarathons, Zeitprognose:** Das Pace-Modell ist an Straßenrennen geeicht; ab etwa 10 % gehen die meisten. Später
+  eichen, ohne Namen: Zwischenzeiten innerhalb des Jungfrau-Marathons (flaches Tal bis Lauterbrunnen gegen den steilen Teil),
+  je Läufer relativ wie in `eichung/`. Idee: auf sehr steilen Stücken Höhenmeter je Stunde statt Pace.
+
 ## Kleinigkeiten aus den Übergaben
+
+- Hannover: Veranstalter nennt „19 m Höhenunterschied“, gemessen 9,4 m; zwei Unterführungen (Fernroder Straße, Kopernikusstraße)
+  geschätzt; DGM1 2016 (Stadt hat 2021).
+- Düsseldorf: keine GPX, Linie aus dem Streckenplan-PDF 2026; Start Ehrenhof laut Plan, „Höhe Tonhalle“ laut Text.
+- Zürich: Lage der 12 Verpflegungsposten nur aus dem Plan (am See ±0,5 km); Kurs 2027 mit „punktuellen Anpassungen“.
 
 - Shanghai: Kurs 2025 in der App, weil der Plan 2026 fehlt (Seite „赛事路线图“, Nr. 3289): **Ende November 2026 nachsehen**
   (Rennen 6.12.2026), dann Wegpunkte in `linie.py`, Startzeiten in `app.py`. Linie aus OSM-Straßen, Wenden geschätzt (±0,3 km);

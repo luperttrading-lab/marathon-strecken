@@ -1,0 +1,158 @@
+      0 km   0.00   190 m  Joseph-Beuys-Ufer              Joseph-Beuys-Ufer      primary        
+    190 km   0.19   580 m  Cecilienallee                  Cecilienallee          primary        
+    770 km   0.77    10 m                                                        primary        
+    780 km   0.78   960 m  Cecilienallee                  Cecilienallee          tertiary       
+   1740 km   1.73  1500 m  Rotterdamer Straße             Rotterdamer Straße     tertiary       
+   3240 km   3.22    40 m                                                        tertiary       
+   3280 km   3.26  1130 m  Stockumer Kirchstraße          Stockumer Kirchstraße  tertiary       
+   4410 km   4.39    10 m  Stockumer Kirchstraße          Stockumer Kirchstraße  tertiary_link   
+   4420 km   4.40  1340 m  Kaiserswerther Straße          Kaiserswerther Straße  tertiary       
+   5760 km   5.73   220 m  Uerdinger Straße               Uerdinger Straße       tertiary       
+   5980 km   5.95    10 m                                                                       
+   5990 km   5.96    50 m  Rotterdamer Straße             Rotterdamer Straße     tertiary       
+   6040 km   6.01   950 m  Cecilienallee                  Cecilienallee          tertiary       
+   6990 km   6.96    20 m                                                        primary        
+   7010 km   6.98    10 m  Homberger Straße               Homberger Straße       primary        
+   7020 km   6.99   230 m  Cecilienallee                  Cecilienallee          primary        
+   7250 km   7.22   780 m  Klever Straße                  Klever Straße          secondary      
+   8030 km   7.99    10 m                                                        footway        
+   8040 km   8.00   900 m  Roßstraße                      Roßstraße              tertiary       
+   8940 km   8.90   460 m  Tannenstraße                   Tannenstraße           residential    
+   9400 km   9.36    10 m                                                        path           
+   9410 km   9.37   890 m  Ulmenstraße                    Ulmenstraße            secondary      
+  10300 km  10.25   230 m  Münsterstraße                  Münsterstraße          secondary      
+  10530 km  10.48   160 m  Jülicher Straße                Jülicher Straße        secondary      
+  10690 km  10.64   560 m  Klever Straße                  Klever Straße          secondary      
+  11250 km  11.20   570 m  Fischerstraße                  Fischerstraße          secondary      
+  11820 km  11.76   260 m  Kaiserstraße                   Kaiserstraße           secondary      
+  12080 km  12.02    10 m  Sternstraße                    Sternstraße            residential    
+  12090 km  12.03   320 m  Kaiserstraße                   Kaiserstraße           secondary      
+  12410 km  12.35   240 m  Maximilian-Weyhe-Allee         Maximilian-Weyhe-Allee secondary      
+  12650 km  12.59    10 m  Maximilian-Weyhe-Allee         Maximilian-Weyhe-Allee path           
+  12660 km  12.60   490 m  Hofgartenrampe                 Hofgartenrampe         secondary      
+  13150 km  13.09   630 m                                                        secondary    Brücke  1
+  13780 km  13.72  1150 m  Luegallee                      Luegallee              secondary      
+  14930 km  14.86  1070 m  Hansaallee                     Hansaallee             tertiary       
+  16000 km  15.93   340 m  Fritz-Vomfelde-Straße          Fritz-Vomfelde-Straße  tertiary       
+  16340 km  16.26    10 m  Am Strauchbusch                Am Strauchbusch        tertiary       
+  16350 km  16.27   110 m  Fritz-Vomfelde-Straße          Fritz-Vomfelde-Straße  tertiary       
+  16460 km  16.38   360 m  Am Seestern                    Am Seestern            tertiary       
+  16820 km  16.74    60 m  Am Seestern                    Am Seestern            secondary_link   
+  16880 km  16.80   310 m  Lütticher Straße               Lütticher Straße       secondary      
+  17190 km  17.11    10 m                                                        secondary_link   
+  17200 km  17.12   110 m  Brüsseler Straße               Brüsseler Straße       secondary      
+  17310 km  17.23   240 m  Brüsseler Straße               Brüsseler Straße       residential    
+  17550 km  17.47  1600 m  Kaiser-Friedrich-Ring          Kaiser-Friedrich-Ring  residential    
+  19150 km  19.06   810 m  Kaiser-Wilhelm-Ring            Kaiser-Wilhelm-Ring    residential    
+  19960 km  19.87   880 m  Düsseldorfer Straße            Düsseldorfer Straße    tertiary       
+  20840 km  20.74   190 m  Barmer Straße                  Barmer Straße          residential    
+  21030 km  20.93    40 m  Belsenstraße                   Belsenstraße           secondary      
+  21070 km  20.97    90 m  Belsenplatz                    Belsenplatz            secondary      
+  21160 km  21.06  1020 m  Luegallee                      Luegallee              secondary      
+  22180 km  22.08   630 m                                                        secondary    Brücke  1
+  22810 km  22.70   200 m  Hofgartenrampe                 Hofgartenrampe         secondary      
+  23010 km  22.90    40 m  Fritz-Roeber-Straße            Fritz-Roeber-Straße    secondary      
+  23050 km  22.94    60 m  Hofgartenrampe                 Hofgartenrampe         secondary      
+  23110 km  23.00   170 m  Fritz-Roeber-Straße            Fritz-Roeber-Straße    secondary      
+  23280 km  23.17   450 m  Heinrich-Heine-Allee           Heinrich-Heine-Allee   secondary      
+  23730 km  23.62    10 m  Heinrich-Heine-Allee           Heinrich-Heine-Allee   tertiary       
+  23740 km  23.63   130 m  Heinrich-Heine-Allee           Heinrich-Heine-Allee   secondary      
+  23870 km  23.76   140 m  Breite Straße                  Breite Straße          secondary      
+  24010 km  23.90   110 m  Benrather Straße               Benrather Straße       tertiary       
+  24120 km  24.01    30 m  Benrather Straße               Benrather Straße       tertiary     Brücke  1
+  24150 km  24.04    10 m  Benrather Straße               Benrather Straße       tertiary       
+  24160 km  24.05    10 m                                                        footway        -1
+  24170 km  24.06   260 m  Königsallee                    Königsallee            residential    
+  24430 km  24.32    10 m                                                                       
+  24440 km  24.33   140 m  Theodor-Körner-Straße          Theodor-Körner-Straße  tertiary       
+  24580 km  24.47    10 m  Heinrich-Heine-Allee           Heinrich-Heine-Allee   tertiary       
+  24590 km  24.48   450 m  Heinrich-Heine-Allee           Heinrich-Heine-Allee   secondary      
+  25040 km  24.92   250 m  Maximilian-Weyhe-Allee         Maximilian-Weyhe-Allee secondary      
+  25290 km  25.17   430 m  Jägerhofstraße                 Jägerhofstraße         secondary      
+  25720 km  25.60    10 m                                                        path           
+  25730 km  25.61    80 m  Duisburger Straße              Duisburger Straße      secondary      
+  25810 km  25.69   160 m  Prinz-Georg-Straße             Prinz-Georg-Straße     secondary      
+  25970 km  25.85    20 m  Rochusstraße                   Rochusstraße           tertiary       
+  25990 km  25.87   720 m  Prinz-Georg-Straße             Prinz-Georg-Straße     secondary      
+  26710 km  26.59   370 m  Eulerstraße                    Eulerstraße            secondary      
+  27080 km  26.95   450 m  Jülicher Straße                Jülicher Straße        secondary      
+  27530 km  27.40   170 m  Jülicher Brücke                Jülicher Brücke        secondary    Brücke  1
+  27700 km  27.57   380 m  Grunerstraße                   Grunerstraße           secondary      
+  28080 km  27.95   530 m  Brehmstraße                    Brehmstraße            primary        
+  28610 km  28.48   600 m  Graf-Recke-Straße              Graf-Recke-Straße      tertiary       
+  29210 km  29.07    10 m                                                        footway        
+  29220 km  29.08   250 m  Fritz-Wüst-Straße              Fritz-Wüst-Straße      residential    
+  29470 km  29.33   420 m  Sohnstraße                     Sohnstraße             residential    
+  29890 km  29.75    10 m                                                                       
+  29900 km  29.76   320 m  Rembrandtstraße                Rembrandtstraße        residential    
+  30220 km  30.08   220 m  Goethestraße                   Goethestraße           residential    
+  30440 km  30.30   620 m  Lindemannstraße                Lindemannstraße        primary        
+  31060 km  30.92    30 m  Brehmplatz                     Brehmplatz             primary        
+  31090 km  30.94    20 m  Brehmplatz                     Brehmplatz             tertiary       
+  31110 km  30.96  1160 m  Rethelstraße                   Rethelstraße           tertiary       
+  32270 km  32.12    80 m  Grafenberger Allee             Grafenberger Allee     secondary      
+  32350 km  32.20    10 m  Am Wehrhahn                    Am Wehrhahn            secondary      
+  32360 km  32.21    80 m  Am Wehrhahn                    Am Wehrhahn            secondary    Brücke  1
+  32440 km  32.29    60 m  Am Wehrhahn                    Am Wehrhahn            secondary      
+  32500 km  32.35   530 m  Adlerstraße                    Adlerstraße            secondary      
+  33030 km  32.88   130 m  Vagedesstraße                  Vagedesstraße          secondary      
+  33160 km  33.01    50 m  Prinz-Georg-Straße             Prinz-Georg-Straße     secondary      
+  33210 km  33.06   110 m  Duisburger Straße              Duisburger Straße      secondary      
+  33320 km  33.16   210 m  Jacobistraße                   Jacobistraße           secondary      
+  33530 km  33.37    10 m  Jacobistraße                   Jacobistraße           secondary    Brücke  1
+  33540 km  33.38   110 m  Jacobistraße                   Jacobistraße           secondary      
+  33650 km  33.49   240 m  Tonhallenstraße                Tonhallenstraße        secondary      
+  33890 km  33.73   350 m  Oststraße                      Oststraße              secondary      
+  34240 km  34.08    10 m  Friedrich-Ebert-Straße         Friedrich-Ebert-Straße tertiary       
+  34250 km  34.09   270 m  Steinstraße                    Steinstraße            tertiary       
+  34520 km  34.36   570 m  Berliner Allee                 Berliner Allee         secondary      
+  35090 km  34.93    80 m  Hüttenstraße                   Hüttenstraße           secondary      
+  35170 km  35.01   170 m  Corneliusstraße                Corneliusstraße        secondary      
+  35340 km  35.18    10 m                                                        secondary_link   
+  35350 km  35.19   490 m  Herzogstraße                   Herzogstraße           primary        
+  35840 km  35.67   170 m  Reichsstraße                   Reichsstraße           trunk          
+  36010 km  35.84    30 m  Rheinkniebrücke                Rheinkniebrücke        trunk          
+  36040 km  35.87   160 m  Reichsstraße                   Reichsstraße           secondary      
+  36200 km  36.03    10 m                                                                       
+  36210 km  36.04    30 m  Reichsstraße                   Reichsstraße           residential    
+  36240 km  36.07   260 m  Konkordiastraße                Konkordiastraße        residential    
+  36500 km  36.33    10 m                                                                       
+  36510 km  36.34    90 m  Fürstenwall                    Fürstenwall            tertiary       
+  36600 km  36.43   360 m  Lorettostraße                  Lorettostraße          residential    
+  36960 km  36.79    40 m  Neusser Straße                 Neusser Straße         residential    
+  37000 km  36.83    80 m  Neusser Straße                 Neusser Straße         tertiary       
+  37080 km  36.91    10 m  Neusser Straße                 Neusser Straße         tertiary_link   
+  37090 km  36.92   770 m  Gladbacher Straße              Gladbacher Straße      tertiary       
+  37860 km  37.68   570 m  Hammer Straße                  Hammer Straße          tertiary       
+  38430 km  38.25   150 m  Stromstraße                    Stromstraße            tertiary       
+  38580 km  38.40    70 m  Ernst-Gnoß-Straße              Ernst-Gnoß-Straße      tertiary       
+  38650 km  38.47    50 m  Ernst-Gnoß-Straße              Ernst-Gnoß-Straße      tertiary      Tunnel yes -1
+  38700 km  38.52   170 m  Ernst-Gnoß-Straße              Ernst-Gnoß-Straße      tertiary       
+  38870 km  38.69   290 m  Neusser Straße                 Neusser Straße         tertiary       
+  39160 km  38.98    40 m  Neusser Straße                 Neusser Straße         residential    
+  39200 km  39.02   200 m  Hubertusstraße                 Hubertusstraße         residential    
+  39400 km  39.22   200 m  Kavalleriestraße               Kavalleriestraße       secondary      
+  39600 km  39.42   300 m  Haroldstraße                   Haroldstraße           secondary      
+  39900 km  39.71   280 m  Graf-Adolf-Platz               Graf-Adolf-Platz       secondary      
+  40180 km  39.99   410 m  Königsallee                    Königsallee            residential    
+  40590 km  40.40    20 m                                                        footway        
+  40610 km  40.42    30 m  Benrather Straße               Benrather Straße       tertiary     Brücke  1
+  40640 km  40.45    10 m  Benrather Straße               Benrather Straße       tertiary       
+  40650 km  40.46   340 m  Königsallee                    Königsallee            residential    
+  40990 km  40.80    80 m  Graf-Adolf-Platz               Graf-Adolf-Platz       residential    
+  41070 km  40.88    10 m                                                        footway        
+  41080 km  40.89    60 m  Breite Straße                  Breite Straße          secondary      
+  41140 km  40.95    10 m                                                        footway        
+  41150 km  40.96    90 m  Graf-Adolf-Platz               Graf-Adolf-Platz       secondary      
+  41240 km  41.05   310 m  Haroldstraße                   Haroldstraße           secondary      
+  41550 km  41.36   230 m  Haroldstraße                   Haroldstraße           tertiary       
+  41780 km  41.59    10 m  Haroldstraße                   Haroldstraße           pedestrian     
+  41790 km  41.60    10 m                                                        path           
+  41800 km  41.61    10 m  Johannes-Rau-Platz             Johannes-Rau-Platz     pedestrian     
+  41810 km  41.61    30 m  Johannes-Rau-Platz             Johannes-Rau-Platz     path           
+  41840 km  41.64    40 m  Johannes-Rau-Platz             Johannes-Rau-Platz     pedestrian     
+  41880 km  41.68    40 m                                                        path           
+  41920 km  41.72    30 m  Mannesmannufer                 Mannesmannufer         pedestrian     
+  41950 km  41.75    90 m                                                        path           
+  42040 km  41.84   120 m                                                        footway        
+  42160 km  41.96   240 m  Rheinwerft                     Rheinwerft             pedestrian     

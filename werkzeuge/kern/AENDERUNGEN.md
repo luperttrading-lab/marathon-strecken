@@ -6,6 +6,14 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.4 (31.10.2026): Hannover, Düsseldorf, Zürich
+
+- Kern unverändert. Drei neue Strecken über `kern.py --neu` (erste Runde der Marathons in Deutschland, Österreich und der
+  Schweiz, Nutzer 31.10.2026: „Reichweite genauso wichtig wie das Profil“, erst die flachen): `hannover/` (Präfix `han-`,
+  DGM1 Niedersachsen, Brücken aus DOM1), `duesseldorf/` (`dus-`, DGM1/DOM1 NRW), `zuerich/` (`zrh-`, swissALTI3D,
+  Brücken aus swissSURFACE3D; `werkzeuge/zuerich/work/swissalti.py` für weitere Schweizer Strecken). Karten auf der
+  Startseite: Zürich nach Teilnehmerzahl, Düsseldorf und Hannover alphabetisch bei den deutschen Strecken.
+
 ## 2.3 (31.10.2026): alle Strecken offline, Karten auf Wunsch
 
 Nutzer 31.10.2026: alle Strecken offline, aber ohne Karten (mit Karten wären es bald über 80 MB); im Kartenfeld ein Hinweis,
