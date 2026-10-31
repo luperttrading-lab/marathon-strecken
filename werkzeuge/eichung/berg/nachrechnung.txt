@@ -1,0 +1,44 @@
+Jungfrau: 11062 Zeilen, im Ziel mit allen Zeiten 10308, plausibel 10307
+Zermatt: 877 Zeilen, im Ziel mit allen Zeiten 817, plausibel 817
+LGT: 292 Zeilen, im Ziel mit allen Zeiten 286, plausibel 286
+== 1a Dauer-Term (Riegel) und die Schätzung aus den Zwischenzeiten
+   Ein Faktor auf die Pace des ganzen Rennens kürzt sich in log(Abschnitt / Anker) heraus; er ändert nur die Klasse.
+   Exponent 1.07: Faktor 0.690 statt 0.685, Fehler je Zelle 3.90 statt 3.87 % (nur weil Läufer die Klasse wechseln; y je Läufer unverändert)
+   Exponent 1.10: Faktor 0.690 statt 0.685, Fehler je Zelle 3.92 statt 3.87 % (nur weil Läufer die Klasse wechseln; y je Läufer unverändert)
+   Exponent 1.15: Faktor 0.688 statt 0.685, Fehler je Zelle 3.88 statt 3.87 % (nur weil Läufer die Klasse wechseln; y je Läufer unverändert)
+
+== 1b Umrechnung: Zielzeit / flache Marathonzeit = (E/L)^(1/(2−b)), selbstkonsistent mit dem Faktor (T_Strecke/T_flach)^(b−1)
+   Jungfrau   E/L App 1.238, Vorschlag 1.411 | b=1.00: App 1.238, neu 1.411; b=1.07: App 1.258, neu 1.448; b=1.10: App 1.268, neu 1.466; b=1.15: App 1.286, neu 1.499; Teil B 1.435 (n=5)
+   Zermatt    E/L App 1.212, Vorschlag 1.361 | b=1.00: App 1.212, neu 1.361; b=1.07: App 1.229, neu 1.393; b=1.10: App 1.238, neu 1.409; b=1.15: App 1.254, neu 1.437; Teil B 1.436 (n=2)
+   LGT        E/L App 1.218, Vorschlag 1.381 | b=1.00: App 1.218, neu 1.381; b=1.07: App 1.236, neu 1.415; b=1.10: App 1.245, neu 1.432; b=1.15: App 1.261, neu 1.462;
+   Brocken    E/L App 1.093, Vorschlag 1.150 | b=1.00: App 1.093, neu 1.150; b=1.07: App 1.100, neu 1.162; b=1.10: App 1.103, neu 1.168; b=1.15: App 1.110, neu 1.179;
+   Rennsteig  E/L App 1.048, Vorschlag 1.068 | b=1.00: App 1.048, neu 1.068; b=1.07: App 1.052, neu 1.074; b=1.10: App 1.054, neu 1.076; b=1.15: App 1.057, neu 1.081;
+   Tal langsamer als Bestzeit, was der Dauer-Term erklärt (Verhältnis 1,435): b=1.07 → 2.6 %, b=1.10 → 3.7 %, b=1.15 → 5.6 %; gemessen 6.6 % → b = 1.18
+
+== 2 Restaufschlag über der App-Kurve (Minetti × 0,77): Bergauf-Aufschlag × (1 + γ · X)
+  schon gestiegene Höhenmeter (je 1000)  γ = 0.685 | Fehler je Zelle 3.87 % | weggelassen: Jungfrau +1.7 %; Zermatt -6.5 %; LGT +3.1 % | Klassen (Modell − beob.): +1.3 -1.1 -1.1 -1.7 +1.0 % | Zielzeit bei 4:00 /km: boston +0.3 %, newyork +0.3 %, athen +0.4 %, rennsteig +1.9 %, brocken +5.3 %, jungfrau +13.9 %
+  verstrichene Zeit (je Stunde)          γ = 0.215 | Fehler je Zelle 4.87 % | weggelassen: Jungfrau +2.4 %; Zermatt -6.8 %; LGT +0.4 % | Klassen (Modell − beob.): -0.1 -0.8 +0.0 +0.7 +2.7 % | Zielzeit bei 4:00 /km: boston +0.9 %, newyork +0.9 %, athen +1.1 %, rennsteig +2.7 %, brocken +3.4 %, jungfrau +11.1 %
+  zurückgelegte km (je 10 km)            γ = 0.253 | Fehler je Zelle 5.04 % | weggelassen: Jungfrau +4.5 %; Zermatt -10.3 %; LGT +0.9 % | Klassen (Modell − beob.): +1.4 -0.3 -0.2 -0.2 +1.4 % | Zielzeit bei 4:00 /km: boston +1.6 %, newyork +1.6 %, athen +1.8 %, rennsteig +4.4 %, brocken +5.0 %, jungfrau +16.0 %
+  zusätzliche Steigung (je 10 %)         γ = 0.489 | Fehler je Zelle 8.02 % | weggelassen: Jungfrau +2.1 %; Zermatt -16.8 %; LGT +1.7 % | Klassen (Modell − beob.): -0.4 -0.5 -0.7 -1.9 -1.0 % | Zielzeit bei 4:00 /km: boston +0.4 %, newyork +0.4 %, athen +0.5 %, rennsteig +2.2 %, brocken +6.1 %, jungfrau +14.0 %
+  Höhenmeter + Steigung                  γ = 0.685 / 0.000 | Fehler je Zelle 3.87 % | weggelassen: Jungfrau +1.7 %; Zermatt -7.5 %; LGT +3.1 % | Klassen (Modell − beob.): +1.3 -1.1 -1.1 -1.7 +1.0 % | Zielzeit bei 4:00 /km: boston +0.3 %, newyork +0.3 %, athen +0.4 %, rennsteig +1.9 %, brocken +5.3 %, jungfrau +13.9 %
+  Höhenmeter + Zeit                      γ = 0.540 / 0.050 | Fehler je Zelle 3.77 % | weggelassen: Jungfrau +1.7 %; Zermatt -6.2 %; LGT +2.5 % | Klassen (Modell − beob.): +1.0 -0.8 -0.5 -0.3 +2.0 % | Zielzeit bei 4:00 /km: boston +0.4 %, newyork +0.5 %, athen +0.6 %, rennsteig +2.1 %, brocken +4.9 %, jungfrau +13.5 %
+  Höhenmeter + km                        γ = 0.566 / 0.045 | Fehler je Zelle 3.80 % | weggelassen: Jungfrau +1.7 %; Zermatt -7.8 %; LGT +2.9 % | Klassen (Modell − beob.): +1.6 -0.7 -0.6 -1.1 +1.2 % | Zielzeit bei 4:00 /km: boston +0.5 %, newyork +0.6 %, athen +0.7 %, rennsteig +2.4 %, brocken +5.3 %, jungfrau +14.4 %
+
+== 3 Flach-Meter je Höhenmeter: App-Kurve × (1 + 0.685 × schon gestiegen / 1000)
+          5 %  10 %  15 %  20 %  30 %
+0 m       4.6   5.1   5.4   5.8   6.4
+250 m     5.4   5.9   6.4   6.8   7.5
+500 m     6.2   6.8   7.3   7.8   8.6
+1000 m    7.8   8.5   9.2   9.7  10.8
+1500 m    9.4  10.3  11.0  11.7  13.0
+2000 m   11.0  12.0  12.9  13.7  15.2
+Minetti   6.0   6.6   7.1   7.5   8.3
+
+== 4 Beispiel flach 3:30 (gleichmäßige Anstrengung): App heute / neu ohne Dauer-Term / neu mit Dauer-Term b = 1,07 / beobachtet
+  strecke heute  neu neu_dauer beobachtet_anker_3_30 beobachtet_mit_dauer
+ Jungfrau  4:20 4:56      5:04         4:59 (n=2022)        5:07 (n=2260)
+  Zermatt  4:14 4:45      4:52           4:51 (n=77)          4:57 (n=93)
+      LGT  4:15 4:50      4:57           4:50 (n=48)          4:59 (n=57)
+  Brocken  3:49 4:01      4:04                     –                    –
+Rennsteig  3:40 3:44      3:45                     –                    –
+   Brocken 2026 (nur Zielzeiten, davengo): schnellste 2:53:39, Median 4:42:12; Rennsteig: keine Daten

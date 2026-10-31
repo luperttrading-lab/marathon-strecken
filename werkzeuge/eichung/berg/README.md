@@ -245,13 +245,120 @@ Rechenfensters vervielfachen, die es dort schon gibt (`WIN[100].up`):
 - Die Zielzeit plant gleichmäßige Anstrengung; die Läufer am Berg teilen sich ein und sind im Flachen schneller, am Ende
   langsamer als die App. Das ändert der Vorschlag nicht.
 
+## Nachrechnung 31.10.2026
+
+Idee des Nutzers: Ein Bergmarathon dauert 20–45 % länger als flach. Wer länger unterwegs ist, muss die Intensität senken wie
+auf einer längeren Strecke (Faustregel der App: Marathon = 10 km × 4,667, also Riegel T ∝ D^1,07). Dazu die Frage, welche Größe
+den Restaufschlag über der App-Kurve (Minetti × 0,77) am besten erklärt. Skript `nachrechnung.py`, Ausgabe `nachrechnung.txt`,
+dieselben Rohdaten (neu geladen, danach gelöscht).
+
+### 1. Dauer-Term (Riegel)
+
+**(a) Verteilung über die Strecke:** Ein Dauer-Term verlangsamt das ganze Rennen um denselben Faktor. In log(Abschnitt / Anker)
+kürzt er sich heraus, er steckt schon im Anker-Tempo. Nachgerechnet: Faktor 0,685 → 0,688–0,690 bei b = 1,07 / 1,10 / 1,15 (nur weil
+Läufer die Klasse wechseln), Fehler je Zelle 3,87 → 3,88–3,92 %. **Die Schätzung des Höhenmeter-Faktors ändert er nicht. [Sicher]**
+
+**(b) Umrechnung Streckenzeit ↔ flache Marathonzeit:** Hier gehört er hin. Selbstkonsistent gilt
+T_Strecke = T_flach × (E/L) × (T_Strecke / T_flach)^(b−1), also T_Strecke / T_flach = (E/L)^(1/(2−b)) (E/L: gewichtete Strecke / Länge).
+
+| Strecke | App heute | Vorschlag | + Dauer b = 1,07 | b = 1,10 | b = 1,15 | Teil B (Spitze) |
+|---|---|---|---|---|---|---|
+| Jungfrau | 1,238 | 1,411 | 1,448 | 1,466 | 1,499 | 1,435 (5) |
+| Zermatt | 1,212 | 1,361 | 1,393 | 1,409 | 1,437 | 1,436 (2) |
+| LGT | 1,218 | 1,381 | 1,415 | 1,432 | 1,462 | – |
+| Brocken | 1,093 | 1,150 | 1,162 | 1,168 | 1,179 | – |
+| Rennsteig | 1,048 | 1,068 | 1,074 | 1,076 | 1,081 | – |
+
+Je Läufer der 7 aus Teil B (Vorhersage / tatsächliches Verhältnis − 1, Median und Spanne):
+
+| | ohne Dauer | b = 1,07 | b = 1,10 | b = 1,15 |
+|---|---|---|---|---|
+| Vorschlag | −4,8 % (−5,4 … +6,4) | −2,3 % (−3,2 … +9,2) | −1,1 % (−2,1 … +10,6) | +1,1 % (−0,1 … +13,1) |
+| App heute | −15,5 % | −14,2 % | −13,6 % | −12,5 % |
+
+- **Der Dauer-Term schließt mit 1,07 gut die Hälfte der restlichen Lücke des Vorschlags, mit 1,10–1,15 die ganze.** Der App von
+  heute hilft er kaum (−15,5 → −14,2 %). **[Wahrscheinlich]** (nur 7 Läufer, eine Bestzeit lief erst nach dem Bergmarathon).
+- **Tal 6,6 % langsamer als die Bestzeit:** Der Dauer-Term erklärt bei 1,07 davon 2,6 %, bei 1,10 3,7 %, bei 1,15 5,6 %; ganz erst
+  bei b ≈ 1,18. Zerlegt man die 7: Ziel / Anker-Äquivalenz im Median 1,340 (1,31–1,42), also klettert die Spitze bis 5 % besser als
+  der Vorschlag für alle Klassen (1,411 bzw. 1,361); dafür läuft sie das Tal 6,6 % statt 2,6 % langsamer. Die beiden Abweichungen
+  heben sich zum Teil auf. Der Rest im Tal ist wohl bewusst zurückhaltender Start oder eine Bestzeit, die besser ist als die
+  aktuelle Form. **[Vermutung]**
+- **Empfehlung:** b = 1,07 wie die Faustregel der App, nur in der Umrechnung („Ohne Höhenmeter entspricht das …“ und Zielzeit aus
+  einer flachen Zeit), nicht in der Verteilung über die Strecke. Bei Stadtmarathons (E/L 1,00–1,01) bewirkt er unter 0,1 %.
+
+### 2. Welche Größe erklärt den Restaufschlag?
+
+Bergauf-Aufschlag der App × (1 + γ · X), Ermüdung einheitlich, bergab wie die App. „weggelassen“: aus zwei Rennen geschätzt, am
+dritten geprüft (Median, negativ = zu schnell). „Klassen“: Modell − beobachtet je Klasse von < 3:15 bis > 4:45. Zeit-Variante bei
+der Wirkung mit 4:00 /km gerechnet (langsamere Läufer bekämen mehr).
+
+| X | γ | Fehler je Zelle | weggelassen Jungfrau / Zermatt / LGT | Klassen | Zielzeit bei 4:00 /km: Boston / New York / Rennsteig / Brocken / Jungfrau |
+|---|---|---|---|---|---|
+| **schon gestiegene Höhenmeter (je 1000)** | **0,685** | **3,87 %** | **+1,7 / −6,5 / +3,1 %** | +1,3 −1,1 −1,1 −1,7 +1,0 | **+0,3 / +0,3 / +1,9 / +5,3 / +13,9 %** |
+| verstrichene Zeit (je Stunde) | 0,215 | 4,87 % | +2,4 / −6,8 / +0,4 % | −0,1 −0,8 0,0 +0,7 +2,7 | +0,9 / +0,9 / +2,7 / +3,4 / +11,1 % |
+| zurückgelegte km (je 10 km) | 0,253 | 5,04 % | +4,5 / −10,3 / +0,9 % | +1,4 −0,3 −0,2 −0,2 +1,4 | +1,6 / +1,6 / +4,4 / +5,0 / +16,0 % |
+| zusätzliche Steigung (je 10 %) | 0,489 | 8,02 % | +2,1 / −16,8 / +1,7 % | −0,4 −0,5 −0,7 −1,9 −1,0 | +0,4 / +0,4 / +2,2 / +6,1 / +14,0 % |
+| Höhenmeter + Steigung | 0,685 / 0,000 | 3,87 % | +1,7 / −7,5 / +3,1 % | wie Höhenmeter | wie Höhenmeter |
+| Höhenmeter + Zeit | 0,540 / 0,050 | 3,77 % | +1,7 / −6,2 / +2,5 % | +1,0 −0,8 −0,5 −0,3 +2,0 | +0,4 / +0,5 / +2,1 / +4,9 / +13,5 % |
+| Höhenmeter + km | 0,566 / 0,045 | 3,80 % | +1,7 / −7,8 / +2,9 % | +1,6 −0,7 −0,6 −1,1 +1,2 | +0,5 / +0,6 / +2,4 / +5,3 / +14,4 % |
+
+- **Schon gestiegene Höhenmeter erklären den Rest am besten.** Ein zusätzlicher Steigungsterm über Minetti × 0,77 hinaus geht neben
+  ihnen auf 0; allein ist er der schlechteste. Zeit oder km dazu verbessern den Fehler nur um 0,1 Punkte. **[Sicher]** für diese
+  drei Strecken.
+- **Zeit** würde die Kosten vom eigenen Tempo abhängig machen (wer langsamer ist, ist länger unterwegs). Die Daten zeigen das
+  nicht: Die langsamste Klasse schätzt die Zeit-Variante 2,7 % zu langsam. **km** wie Zeit verteuern auch Stadtmarathons um
+  1–1,6 % (späte Hügel wie Boston km 26–33: +92 bzw. +163 s). Die Straßen-Eichung lässt für Boston nur etwa +16 s zu (1,13 ×
+  die Hügelkosten, Bereich +4 bis +25 s); die Höhenmeter-Variante liegt mit +28 s knapp darüber.
+- **Übertragbar** sind die Höhenmeter am besten: Sie hängen nur an der Strecke, Stadtmarathons bleiben, Rennsteig +1,9 %, Brocken
+  +5,3 %. Great Wall: außerhalb der Mauer +2,5 % (Mauer-Höhenmeter nicht mitgezählt) bzw. +3,1 % (mitgezählt); die Mauer-Minuten
+  stammen aus echten Zwischenzeiten und bleiben. Ich würde die Mauer nicht mitzählen, weil ihre Minuten die Mühe schon enthalten.
+  **[Wahrscheinlich]**; für Rennsteig, Brocken und Great Wall ist es ungeprüft (keine Zwischenzeiten). **[Vermutung]**
+
+### 3. Formel stetig
+
+Flach-Meter je Höhenmeter = App-Kurve (Minetti × 0,77) × (1 + 0,685 × schon gestiegene Höhenmeter / 1000) (`tafel_flachmeter.csv`):
+
+| schon gestiegen | 5 % | 10 % | 15 % | 20 % | 30 % |
+|---|---|---|---|---|---|
+| 0 m (App heute) | 4,6 | 5,1 | 5,4 | 5,8 | 6,4 |
+| 250 m | 5,4 | 5,9 | 6,4 | 6,8 | 7,5 |
+| 500 m | 6,2 | 6,8 | 7,3 | 7,8 | 8,6 |
+| 1000 m | 7,8 | 8,5 | 9,2 | 9,7 | 10,8 |
+| 1500 m | 9,4 | 10,3 | 11,0 | 11,7 | 13,0 |
+| 2000 m | 11,0 | 12,0 | 12,9 | 13,7 | 15,2 |
+| Minetti (Labor) | 6,0 | 6,6 | 7,1 | 7,5 | 8,3 |
+
+### 4. Wirkung und Beispiel
+
+Alle 40 Strecken bei 4:00 /km (`wirkung.txt`): Die 34 Stadtmarathons ändern sich um höchstens +0,4 % (26 davon um höchstens
++0,1 %; Boston +28 s, New York +33 s, Athen +41 s). Rennsteig +1,9 %, Great Wall außerhalb der Mauer +2,5–3,1 %, Brocken +5,3 %,
+Zermatt +12,3 %, LGT +13,4 %, Jungfrau +13,9 %.
+
+Wer flach 3:30 läuft (gleichmäßige Anstrengung; `beispiel_3_30.csv`):
+
+| Strecke | App heute | Vorschlag | Vorschlag + Dauer (1,07) | beobachtet, Anker = 3:30 | beobachtet, Anker = 3:30 × Dauerfaktor |
+|---|---|---|---|---|---|
+| Jungfrau | 4:20 | 4:56 | 5:04 | 4:59 (2022 Läufer) | 5:07 (2260) |
+| Zermatt | 4:14 | 4:45 | 4:52 | 4:51 (77) | 4:57 (93) |
+| LGT | 4:15 | 4:50 | 4:57 | 4:50 (48) | 4:59 (57) |
+| Brocken | 3:49 | 4:01 | 4:04 | – | – |
+| Rennsteig | 3:40 | 3:44 | 3:45 | – | – |
+
+„Anker = 3:30“ heißt: Die Läufer liefen den flachen Anfang wie ein 3:30-Marathon; das passt zum Vorschlag ohne Dauer-Term. Steckt
+der Dauer-Term im Anker (die letzte Spalte, Anker um (Ziel/flach)^0,07 langsamer), passt der Vorschlag mit Dauer-Term; er liegt dann
+1–2 % zu schnell (3–5 min). Welche Spalte für Hobbyläufer gilt, zeigen die Daten nicht (Teil B nur für die Spitze). Brocken hat nur Zielzeiten
+(2026 schnellste 2:53:39, Median 4:42:12), Rennsteig keine; dort ist nichts gegengeprüft.
+
 ## Wiederholen
 
 1. `python3 laden.py /tmp/berg/roh` (etwa 70 Abrufe, 5 Minuten)
 2. `python3 auswerten.py /tmp/berg/roh 200 > ergebnis.txt` (etwa 5 Minuten; schreibt `abschnitte.csv`, `zellen_berg.csv`,
    `k_abschnitte.csv`, `ergebnis_steigung.csv`, `prognosen.csv`, `zermatt_halbmarathon.csv`, `parameter.json`)
 3. `python3 wirkung.py > wirkung.txt` (alle Strecken bisher und neu)
-4. `rm -r /tmp/berg`
+4. `python3 nachrechnung.py /tmp/berg/roh > nachrechnung.txt` (Dauer-Term, Größen für den Restaufschlag, Tafel, Beispiel; schreibt
+   `tafel_flachmeter.csv`, `beispiel_3_30.csv`). Die Zerlegung je Läufer in Teil B braucht die Namen und ist bewusst nicht im Repo;
+   dort stehen nur die verdichteten Werte.
+5. `rm -r /tmp/berg`
 
 `modell.py` liest die Höhen direkt aus den App-Seiten; der Nachbau des Kerns (Stand 2.7) trifft die Modellzeiten der App bei
 4:00 /km auf die Sekunde (Jungfrau 3:29:01, Zermatt 3:24:31, LGT 3:25:32).
