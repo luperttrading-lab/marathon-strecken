@@ -1,0 +1,136 @@
+nur geglättet: [(10422, 10542, ''), (35857, 35876, 'Rüschhausweg')]
+Fenster    50 m: ↑ 161.9 m  ↓ 159.2 m  steilste bergauf  6.4 % bei km 7.51, bergab -6.6 % bei km 7.38
+Fenster   100 m: ↑ 151.8 m  ↓ 149.0 m  steilste bergauf  5.2 % bei km 19.72, bergab -5.0 % bei km 15.39
+Fenster   200 m: ↑ 133.2 m  ↓ 130.6 m  steilste bergauf  4.1 % bei km 19.73, bergab -2.9 % bei km 15.42
+Fenster  1000 m: ↑  72.3 m  ↓  69.6 m  steilste bergauf  1.3 % bei km 19.34, bergab -1.5 % bei km 31.41
+Rohdaten Punkt für Punkt ↑ 200 m; bereinigt ↑ 189.5 m
+Höhe min/max 52.2 83.7 bei km 6.28 21.3 Start 57.5 Ziel 60.3
+Straßenabschnitte 107 Marken 19 Brücken 2
+   [0, 'Schlossplatz', 'Altstadt / Schloss']
+   [170, 'Am Stadtgraben', 'Altstadt / Schloss']
+   [740, 'Aegidiistraße', 'Altstadt']
+   [1250, 'Bispinghof', 'Altstadt']
+   [1420, 'Universitätsstraße', 'Altstadt']
+   [1540, 'Krummer Timpen', 'Altstadt']
+   [1780, 'Frauenstraße', 'Altstadt']
+   [1910, 'Katthagen', 'Altstadt']
+   [2010, 'Rosenstraße', 'Altstadt']
+   [2160, 'Spiekerhof', 'Altstadt']
+   [2360, 'Bogenstraße', 'Altstadt']
+   [2440, 'Neubrückenstraße', 'Altstadt']
+   [2940, 'Promenade', 'Altstadt / Kreuzviertel']
+   [3410, 'Am Kreuztor', 'Kreuzviertel']
+   [3630, 'Nordstraße', 'Kreuzviertel']
+   [3800, 'Studtstraße', 'Kreuzviertel']
+   [4240, 'Lazarettstraße', 'Kreuzviertel']
+   [4320, 'Schulstraße', 'Kreuzviertel']
+   [4470, 'Uppenbergstraße', 'Kreuzviertel']
+   [4750, 'Melchersstraße', 'Kreuzviertel']
+   [5510, 'Coerdestraße', 'Kreuzviertel']
+   [5590, 'Kettelerstraße', 'Kreuzviertel']
+   [5750, 'Tannenbergstraße', 'Kreuzviertel']
+   [5890, 'Kerßenbrockstraße', 'Kreuzviertel']
+   [6010, 'Kettelerstraße', 'Kreuzviertel']
+   [6230, 'Kanalstraße', 'Schlachthof / Kreuzviertel']
+   [6680, 'Promenade', 'Schlachthof / Altstadt']
+   [7450, 'Promenade', 'Bahnhof / Altstadt']
+   [8350, 'Königsstraße', 'Altstadt']
+   [8480, 'Verspoel', 'Altstadt']
+   [8560, 'Klosterstraße', 'Altstadt']
+   [8960, 'Salzstraße', 'Altstadt']
+   [9240, 'Heinrich-Brüning-Straße', 'Altstadt']
+   [9360, 'Stubengasse', 'Altstadt']
+   [9540, 'Windthorststraße', 'Altstadt']
+   [9660, 'Ludgeristraße', 'Altstadt']
+   [9840, 'Rothenburg', 'Altstadt']
+   [10100, 'Aegidiistraße', 'Altstadt']
+   [10600, 'Weseler Straße', 'Altstadt']
+   [10710, 'Bismarckallee', 'Pluggendorf']
+   [11100, 'Richard-Schirrmann-Weg', 'Pluggendorf']
+   [11220, 'Scharnhorststraße', 'Pluggendorf']
+   [11940, 'Kardinal-von-Galen-Ring', 'Pluggendorf']
+   [12100, 'Kardinal-von-Galen-Ring', 'Sentruper Höhe / Schloss']
+   [12400, 'Fuß- und Radweg', 'Schloss']
+   [12700, 'Annette-Allee', 'Schloss']
+   [13320, 'Himmelreichallee', 'Schloss']
+   [13690, 'Landoisstraße', 'Schloss']
+   [13830, 'Robert-Koch-Straße', 'Schloss']
+   [14180, 'Pottkamp', 'Schloss']
+   [14400, 'Vesaliusweg', 'Schloss']
+   [14560, 'Kardinal-von-Galen-Ring', 'Sentruper Höhe / Schloss']
+   [14920, 'Domagkstraße', 'Sentruper Höhe']
+   [15670, 'Wilhelm-Klemm-Straße', 'Sentruper Höhe']
+   [15920, 'Corrensstraße', 'Sentruper Höhe']
+   [16320, 'Mendelstraße', 'Sentruper Höhe']
+   [16930, 'Gievenbecker Weg', 'Gievenbeck']
+   [17750, 'Gescherweg', 'Gievenbeck']
+   [18120, 'Am Breilbusch', 'Gievenbeck']
+   [18710, 'Horstmarer Landweg', 'Gievenbeck']
+   [19500, 'Haus Uhlenkotten', 'Gievenbeck']
+   [20380, 'Steinfurter Straße', 'Gievenbeck / Kinderhaus']
+   [21080, 'Altenberger Straße', 'Nienberge']
+   [21650, 'Sebastianstraße', 'Nienberge']
+   [21760, 'Kirmstraße', 'Nienberge']
+   [22040, 'Flamenstraße', 'Nienberge']
+   [22260, 'Mörikestraße', 'Nienberge']
+   [22460, 'Hermann-Hesse-Straße', 'Nienberge']
+   [22550, 'Isolde-Kurz-Straße', 'Nienberge']
+   [22650, 'Stefan-Zweig-Straße', 'Nienberge']
+   [23180, 'Am Rüschhaus', 'Nienberge']
+   [23480, 'Schonebecker Weg', 'Nienberge']
+   [24850, 'Haus Vögeding', 'Nienberge']
+   [25500, 'Twerenfeldweg', 'Nienberge']
+   [26420, 'Stodtbrockweg', 'Roxel']
+   [27410, 'Fuß- und Radweg', 'Roxel']
+   [27920, 'Bredeheide', 'Roxel']
+   [28550, 'Roxeler Straße', 'Roxel']
+   [28970, 'Wulfertstraße', 'Roxel']
+   [29170, 'Schulte-Bernd-Straße', 'Roxel']
+   [29370, 'Ricarda-Huch-Straße', 'Roxel']
+   [29550, 'Paul-Gerhardt-Straße', 'Roxel']
+   [29680, 'Lindenstraße', 'Roxel']
+   [30070, 'Schelmenstiege', 'Roxel']
+   [30480, 'Roxeler Straße', 'Roxel']
+   [32040, 'Roxeler Straße', 'Gievenbeck / Sentruper Höhe']
+   [32780, 'Dieckmannstraße', 'Gievenbeck']
+   [33890, 'Borkenfeld', 'Gievenbeck']
+   [34120, 'Mergelberg', 'Gievenbeck']
+   [34990, 'Nünningweg', 'Gievenbeck']
+   [35870, 'Rüschhausweg', 'Gievenbeck']
+   [36390, 'Arnheimweg', 'Gievenbeck']
+   [36870, 'Gievenbecker Reihe', 'Gievenbeck']
+   [37470, 'Roxeler Straße', 'Gievenbeck / Sentruper Höhe']
+   [38080, 'Albert-Schweitzer-Straße', 'Sentruper Höhe']
+   [38300, 'Schmeddingstraße', 'Sentruper Höhe']
+   [39180, 'Mausbachstraße', 'Sentruper Höhe']
+   [39520, 'Niels-Stensen-Straße', 'Sentruper Höhe']
+   [39830, 'Vesaliusweg', 'Schloss']
+   [39950, 'Pottkamp', 'Schloss']
+   [40170, 'Robert-Koch-Straße', 'Schloss']
+   [40510, 'Landoisstraße', 'Schloss']
+   [40660, 'Himmelreichallee', 'Schloss']
+   [41040, 'Adenauerallee', 'Schloss']
+   [41420, 'Aegidiistraße', 'Altstadt']
+   [41900, 'Rothenburg', 'Altstadt']
+   [42140, 'Prinzipalmarkt', 'Altstadt']
+   {'k': 4740, 's': 'Wasser', 'c': 'water', 'n': 'Erfrischungspunkt 1, km 4,7 (Tabelle: km 4,3), Kanonierplatz (Wasser)'}
+   {'k': 7500, 's': 'Wasser', 'c': 'water', 'n': 'Erfrischungspunkt 2, km 7,5, Servatiiplatz / Promenade (Wasser)'}
+   {'k': 9500, 's': 'Verpflegung', 'c': 'food', 'n': 'Verpflegungspunkt 1, km 9,5, Ludgeristraße (Wasser, Elektrolytgetränk, Obst, Eigenverpflegung)'}
+   {'k': 10710, 's': 'Wechsel 1', 'c': 'relay', 'n': 'Staffelwechsel 1, Weseler Straße / Ecke Bismarckallee (Etappe 1: ca. 10,5 km laut Veranstalter)'}
+   {'k': 11800, 's': 'Wasser', 'c': 'water', 'n': 'Erfrischungspunkt 3, km 11,8, Scharnhorststraße / Platz der Weißen Rose (Wasser)'}
+   {'k': 14500, 's': 'Verpflegung', 'c': 'food', 'n': 'Verpflegungspunkt 2, km 14,5, Vesaliusweg (Wasser, Elektrolytgetränk, Obst, Eigenverpflegung)'}
+   {'k': 17500, 's': 'Wasser', 'c': 'water', 'n': 'Erfrischungspunkt 4, km 17,5, Mendelstraße / Gievenbecker Weg (Wasser)'}
+   {'k': 20300, 's': 'Verpflegung', 'c': 'food', 'n': 'Verpflegungspunkt 3, km 20,3, Haus Uhlenkotten (Wasser, Elektrolytgetränk, Obst, Cola, Eigenverpflegung)'}
+   {'k': 21098, 's': 'Halbmarathon', 'c': 'half', 'n': 'Halbmarathon'}
+   {'k': 21150, 's': 'Wechsel 2', 'c': 'relay', 'n': 'Staffelwechsel 2, Nienberge, Altenberger Straße (Etappe 2: ca. 11,0 km laut Veranstalter)'}
+   {'k': 22500, 's': 'Wasser', 'c': 'water', 'n': 'Erfrischungspunkt 5, km 22,5, Hermann-Hesse-Straße / Mörikestraße (Wasser)'}
+   {'k': 25300, 's': 'Verpflegung', 'c': 'food', 'n': 'Verpflegungspunkt 4, km 25,3, Haus Vögeding (Wasser, Elektrolytgetränk, Obst, Cola, Eigenverpflegung)'}
+   {'k': 27500, 's': 'Wasser', 'c': 'water', 'n': 'Erfrischungspunkt 6, km 27,5, Stodtbrockweg (Wasser)'}
+   {'k': 29100, 's': 'Verpflegung', 'c': 'food', 'n': 'Verpflegungspunkt 5, km 29,1 (Tabelle: km 30,0), Wulfertstraße (Wasser, Elektrolytgetränk, Obst, Cola, Eigenverpflegung)'}
+   {'k': 31290, 's': 'Wechsel 3', 'c': 'relay', 'n': 'Staffelwechsel 3, Roxeler Straße / Dingbängerweg (Etappe 3: ca. 10,0 km laut Veranstalter)'}
+   {'k': 32500, 's': 'Wasser', 'c': 'water', 'n': 'Erfrischungspunkt 7, km 32,5, Ramertsweg (Wasser)'}
+   {'k': 35000, 's': 'Verpflegung', 'c': 'food', 'n': 'Verpflegungspunkt 6, km 35,0, Mergelberg / Ecke Nünningweg (Wasser, Elektrolytgetränk, Obst, Cola, Eigenverpflegung)'}
+   {'k': 37500, 's': 'Wasser', 'c': 'water', 'n': 'Erfrischungspunkt 8, km 37,5, Gievenbecker Reihe an der Feuerwehr (Wasser)'}
+   {'k': 40000, 's': 'Verpflegung', 'c': 'food', 'n': 'Verpflegungspunkt 7, km 40,0, Vesaliusweg (Wasser, Elektrolytgetränk, Obst, Cola, Eigenverpflegung)'}
+   {'a': 15410, 'b': 15447, 'name': 'Domagkstraße unter dem Coesfelder Kreuz', 'kind': 'Unterführung'}
+   {'a': 23236, 'b': 23275, 'name': 'Am Rüschhaus unter der B 54', 'kind': 'Unterführung'}

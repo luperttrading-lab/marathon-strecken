@@ -1,6 +1,6 @@
 # Marathon-Steigungsprofile
 
-Steigungsprofile von 31 Marathonstrecken als Web-Apps für das iPhone, ausgeliefert über GitHub Pages aus `main`:
+Steigungsprofile von 34 Marathonstrecken als Web-Apps für das iPhone, ausgeliefert über GitHub Pages aus `main`:
 https://luperttrading-lab.github.io/marathon-strecken/ . Aufbau, Strecken und Konventionen stehen in `README.md`,
 Bedien- und Designentscheidungen in `werkzeuge/hamburg/UEBERGABE.md`, je Strecke in `werkzeuge/<strecke>/UEBERGABE.md`.
 Offene Ideen und Punkte: `werkzeuge/VORGEMERKT.md`. Eichung des Pace-Modells: `werkzeuge/eichung/README.md`.

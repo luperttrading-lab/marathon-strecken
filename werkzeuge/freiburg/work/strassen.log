@@ -1,0 +1,353 @@
+      0 km   0.00    60 m                                                        service        
+     60 km   0.06    10 m                                                        path           
+     70 km   0.07   280 m  Emmy-Noether-Straße            Emmy-Noether-Straße    unclassified   
+    350 km   0.34    20 m                                                        secondary_link   
+    370 km   0.35   720 m  Berliner Allee                 Berliner Allee         secondary      
+   1090 km   1.07   630 m  Ensisheimer Straße             Ensisheimer Straße     residential    
+   1720 km   1.69    20 m                                                        service        
+   1740 km   1.71    20 m  Siedlerweg                     Siedlerweg             path           
+   1760 km   1.73    70 m  Anton-Dichtel-Platz            Anton-Dichtel-Platz    path           
+   1830 km   1.80   130 m  Siedlerweg                     Siedlerweg             path           
+   1960 km   1.93    10 m  Am Hägle                       Am Hägle               residential    
+   1970 km   1.94   430 m                                                        cycleway       
+   2400 km   2.36    10 m                                                        path           
+   2410 km   2.37    60 m                                                        cycleway       
+   2470 km   2.43    70 m  Grenzweg                       Grenzweg               path           
+   2540 km   2.50    80 m                                                        path           
+   2620 km   2.58    70 m  Gerhart-Hauptmann-Straße       Gerhart-Hauptmann-Straße service        
+   2690 km   2.64    10 m                                                        footway        
+   2700 km   2.65    50 m  Hofackerstraße                 Hofackerstraße         residential    
+   2750 km   2.70   170 m  Husserlstraße                  Husserlstraße          residential    
+   2920 km   2.87   190 m  Sigsteinstraße                 Sigsteinstraße         residential    
+   3110 km   3.05    20 m  Paduaallee                     Paduaallee             tertiary_link   
+   3130 km   3.07    10 m                                                        path          Tunnel yes -1
+   3140 km   3.08    10 m  Sundgauallee                   Sundgauallee           tertiary_link   
+   3150 km   3.09   510 m                                                        path           
+   3660 km   3.59    10 m                                                        track          
+   3670 km   3.60    80 m  Im Zinklern                    Im Zinklern            track          
+   3750 km   3.68    50 m                                                        service        
+   3800 km   3.73    40 m  Betzenhauser Brücke            Betzenhauser Brücke    service      Brücke  1
+   3840 km   3.77    10 m                                                        service        
+   3850 km   3.77   200 m                                                        cycleway       
+   4050 km   3.97    60 m  Betzenhauser Steg              Betzenhauser Steg      path         Brücke  1
+   4110 km   4.03    10 m                                                        path           
+   4120 km   4.04   280 m  Betzenhauser Weg               Betzenhauser Weg       path           
+   4400 km   4.31    20 m  Tel-Aviv-Yafo-Allee            Tel-Aviv-Yafo-Allee    trunk          
+   4420 km   4.33   180 m  Betzenhauser Weg               Betzenhauser Weg       path           
+   4600 km   4.51    10 m                                                                       
+   4610 km   4.52   210 m  Betzenhauser Weg               Betzenhauser Weg       path           
+   4820 km   4.72    10 m  Betzenhauser Weg               Betzenhauser Weg       path         Brücke  1
+   4830 km   4.73    40 m  Betzenhauser Weg               Betzenhauser Weg       path           
+   4870 km   4.77   260 m                                                        path           
+   5130 km   5.02   230 m                                                        cycleway       
+   5360 km   5.25    10 m                                                                       
+   5370 km   5.25    60 m                                                        service        
+   5430 km   5.31    90 m  Bugginger Straße               Bugginger Straße       residential    
+   5520 km   5.40    10 m                                                                       
+   5530 km   5.41   220 m  Bugginger Straße               Bugginger Straße       residential    
+   5750 km   5.62   120 m  Binzengrün                     Binzengrün             residential    
+   5870 km   5.74    20 m  Binzengrün                     Binzengrün             residential  Brücke  1
+   5890 km   5.76   120 m  Binzengrün                     Binzengrün             residential    
+   6010 km   5.87   600 m  Unterer Mühlenweg              Unterer Mühlenweg      residential    
+   6610 km   6.47   120 m                                                        path           
+   6730 km   6.59    20 m                                                        path         Brücke  1
+   6750 km   6.61   160 m                                                        path           
+   6910 km   6.76    60 m  Christophstraße                Christophstraße        living_street   
+   6970 km   6.78    10 m                                                                       
+   6980 km   6.79   230 m  Markgrafenstraße               Markgrafenstraße       tertiary       
+   7210 km   7.02   970 m  Uffhauser Straße               Uffhauser Straße       tertiary       
+   8180 km   7.98    40 m  Uffhauser Straße               Uffhauser Straße       tertiary     Brücke  1
+   8220 km   8.02    50 m  Uffhauser Straße               Uffhauser Straße       tertiary       
+   8270 km   8.06    30 m  Basler Landstraße              Basler Landstraße      tertiary       
+   8300 km   8.09   110 m  Am Mettweg                     Am Mettweg             residential    
+   8410 km   8.19    50 m  Hüttweg                        Hüttweg                residential    
+   8460 km   8.24   390 m  Hüttweg                        Hüttweg                track          
+   8850 km   8.63   130 m  Hüttweg                        Hüttweg                residential    
+   8980 km   8.76   280 m  Schildackerweg                 Schildackerweg         track          
+   9260 km   9.04    20 m  Schildackerweg                 Schildackerweg         service        
+   9280 km   9.06   260 m  Schildackerweg                 Schildackerweg         residential    
+   9540 km   9.32    80 m  Schildackerweg                 Schildackerweg         service        
+   9620 km   9.40   130 m  Schildackerweg                 Schildackerweg         path           
+   9750 km   9.53   100 m  Schildackerweg                 Schildackerweg         residential    
+   9850 km   9.63   160 m  Schildackerweg                 Schildackerweg         path           
+  10010 km   9.78    10 m                                                                       
+  10020 km   9.79   110 m  Auf der Hardt                  Auf der Hardt          living_street   
+  10130 km   9.90    10 m                                                                       
+  10140 km   9.91    80 m  Akazienweg                     Akazienweg             living_street   
+  10220 km   9.99    10 m                                                                       
+  10230 km   9.99   190 m  Langemarckstraße               Langemarckstraße       residential    
+  10420 km  10.18   160 m  Langemarckstraße               Langemarckstraße       living_street   
+  10580 km  10.34    70 m  Skagerrakstraße                Skagerrakstraße        residential    
+  10650 km  10.40   140 m  Matthias-Erzberger-Straße      Matthias-Erzberger-Straße residential    
+  10790 km  10.54    10 m                                                                       
+  10800 km  10.55   110 m  Weddigenstraße                 Weddigenstraße         residential    
+  10910 km  10.65    10 m                                                        path           
+  10920 km  10.66    20 m  Weddigenstraße                 Weddigenstraße         residential    
+  10940 km  10.67   230 m  Lorettostraße                  Lorettostraße          residential    
+  11170 km  10.89   110 m  Johann-von-Weerth-Straße       Johann-von-Weerth-Straße residential    
+  11280 km  11.00    70 m  Reiterstraße                   Reiterstraße           residential    
+  11350 km  11.06   180 m  Bayernstraße                   Bayernstraße           residential    
+  11530 km  11.24    10 m  Bayernstraße                   Bayernstraße           residential  Brücke  1
+  11540 km  11.25   130 m  Schwimmbadstraße               Schwimmbadstraße       residential    
+  11670 km  11.37   420 m  Konradstraße                   Konradstraße           residential    
+  12090 km  11.78   190 m  Erwinstraße                    Erwinstraße            residential    
+  12280 km  11.97    10 m                                                                       
+  12290 km  11.97   100 m  Brombergstraße                 Brombergstraße         residential    
+  12390 km  12.07    10 m                                                                       
+  12400 km  12.07   230 m  Urachstraße                    Urachstraße            residential    
+  12630 km  12.30    70 m                                                        service        
+  12700 km  12.37   250 m  Urachstraße                    Urachstraße            residential    
+  12950 km  12.62   230 m  Peter-Sprung-Straße            Peter-Sprung-Straße    living_street   
+  13180 km  12.84   250 m                                                        cycleway       
+  13430 km  13.08   610 m  Andlawstraße                   Andlawstraße           residential    
+  14040 km  13.68    60 m  Schützenallee                  Schützenallee          residential    
+  14100 km  13.74    60 m                                                        service        
+  14160 km  13.80   200 m                                                        path           
+  14360 km  13.98    20 m                                                        secondary_link   
+  14380 km  14.00    80 m                                                        path           
+  14460 km  14.07    10 m                                                                       
+  14470 km  14.08    10 m                                                        cycleway       
+  14480 km  14.09    20 m                                                        path           
+  14500 km  14.11   180 m                                                        cycleway       
+  14680 km  14.29    10 m                                                        service        
+  14690 km  14.30   100 m  Runzstraße                     Runzstraße             residential    
+  14790 km  14.39    90 m  Lochmattenstraße               Lochmattenstraße       residential    
+  14880 km  14.48   640 m  Otto-Wels-Straße               Otto-Wels-Straße       residential    
+  15520 km  15.12    10 m  Dreisamuferweg                 Dreisamuferweg         cycleway       
+  15530 km  15.12    10 m  Fabrikstraße                   Fabrikstraße           residential    
+  15540 km  15.13    40 m  Fabrikstraße                   Fabrikstraße           residential  Brücke  1
+  15580 km  15.17    10 m  Karl-Hausch-Weg                Karl-Hausch-Weg        path           
+  15590 km  15.18   340 m  Oberau                         Oberau                 residential    
+  15930 km  15.51    80 m  Mühlenstraße                   Mühlenstraße           residential    
+  16010 km  15.59    10 m                                                                       
+  16020 km  15.60   230 m  Kartäuserstraße                Kartäuserstraße        unclassified   
+  16250 km  15.82    70 m  Schwabentorring                Schwabentorring        primary        
+  16320 km  15.89    10 m  Schwabentorplatz               Schwabentorplatz       primary        
+  16330 km  15.90    30 m  Schlossbergring                Schlossbergring        primary        
+  16360 km  15.93    20 m  Schwabentorplatz               Schwabentorplatz       pedestrian     
+  16380 km  15.95    10 m  Schwabentorplatz               Schwabentorplatz       pedestrian    Tunnel building_passage 
+  16390 km  15.96    10 m  Schwabentorplatz               Schwabentorplatz       pedestrian     
+  16400 km  15.97    90 m  Oberlinden                     Oberlinden             pedestrian     
+  16490 km  16.06   310 m  Salzstraße                     Salzstraße             pedestrian     
+  16800 km  16.36   310 m  Bertoldstraße                  Bertoldstraße          pedestrian     
+  17110 km  16.67   110 m  Platz der Alten Synagoge       Platz der Alten Synagoge pedestrian     
+  17220 km  16.78    90 m  Platz der Universität          Platz der Universität  pedestrian     
+  17310 km  16.86   160 m  Belfortstraße                  Belfortstraße          residential    
+  17470 km  17.02    90 m  Moltkestraße                   Moltkestraße           residential    
+  17560 km  17.10    10 m                                                        service        
+  17570 km  17.11   290 m  Wilhelmstraße                  Wilhelmstraße          residential    
+  17860 km  17.39    40 m  Bismarckallee                  Bismarckallee          primary        
+  17900 km  17.43    20 m                                                        cycleway       
+  17920 km  17.44    10 m                                                        footway      Brücke  2
+  17930 km  17.45    20 m  Wiwilíbrücke                   Wiwilíbrücke           cycleway     Brücke  2
+  17950 km  17.47    10 m                                                        footway      Brücke  2
+  17960 km  17.48   130 m  Wiwilíbrücke                   Wiwilíbrücke           cycleway     Brücke  2
+  18090 km  17.61    10 m  Wiwilíbrücke                   Wiwilíbrücke           cycleway       
+  18100 km  17.62    10 m                                                        footway        
+  18110 km  17.63    80 m  Wentzingerstraße               Wentzingerstraße       residential    
+  18190 km  17.70    10 m                                                                       
+  18200 km  17.71   160 m  Wannerstraße                   Wannerstraße           residential    
+  18360 km  17.87   200 m  Guntramstraße                  Guntramstraße          residential    
+  18560 km  18.07    10 m                                                                       
+  18570 km  18.07   100 m  Egonstraße                     Egonstraße             residential    
+  18670 km  18.17    10 m                                                                       
+  18680 km  18.18   130 m  Klarastraße                    Klarastraße            residential    
+  18810 km  18.31   360 m  Kreuzstraße                    Kreuzstraße            residential    
+  19170 km  18.66    70 m  Mathildenstraße                Mathildenstraße        service        
+  19240 km  18.72    80 m  Kenzinger Straße               Kenzinger Straße       path           
+  19320 km  18.80    20 m  Kenzinger Straße               Kenzinger Straße       service        
+  19340 km  18.82   160 m  Beurbarungsstraße              Beurbarungsstraße      residential    
+  19500 km  18.97   240 m  Ferrandstraße                  Ferrandstraße          residential    
+  19740 km  19.21   520 m  Kandelstraße                   Kandelstraße           residential    
+  20260 km  19.73    10 m                                                                       
+  20270 km  19.74   220 m  Eichstetter Straße             Eichstetter Straße     residential    
+  20490 km  19.95   270 m  Waldkircher Straße             Waldkircher Straße     secondary      
+  20760 km  20.21    20 m  Kaiserstuhlplatz               Kaiserstuhlplatz       secondary      
+  20780 km  20.23   540 m  Kaiserstuhlstraße              Kaiserstuhlstraße      residential    
+  21320 km  20.77    90 m  Kaiserstuhlstraße              Kaiserstuhlstraße      residential  Brücke  1
+  21410 km  20.86    30 m  Kaiserstuhlstraße              Kaiserstuhlstraße      residential    
+  21440 km  20.88   150 m  Emmy-Noether-Straße            Emmy-Noether-Straße    unclassified   
+  21590 km  21.02    10 m                                                        path           
+  21600 km  21.03   120 m                                                        service        
+  21720 km  21.15    10 m                                                        path           
+  21730 km  21.16   280 m  Emmy-Noether-Straße            Emmy-Noether-Straße    unclassified   
+  22010 km  21.43    20 m                                                        secondary_link   
+  22030 km  21.45   720 m  Berliner Allee                 Berliner Allee         secondary      
+  22750 km  22.16   640 m  Ensisheimer Straße             Ensisheimer Straße     residential    
+  23390 km  22.80    10 m                                                        service        
+  23400 km  22.81    30 m  Siedlerweg                     Siedlerweg             path           
+  23430 km  22.84    60 m  Anton-Dichtel-Platz            Anton-Dichtel-Platz    path           
+  23490 km  22.90   130 m  Siedlerweg                     Siedlerweg             path           
+  23620 km  23.03    10 m  Am Hägle                       Am Hägle               residential    
+  23630 km  23.03   430 m                                                        cycleway       
+  24060 km  23.46    10 m                                                        path           
+  24070 km  23.47    60 m                                                        cycleway       
+  24130 km  23.53    70 m  Grenzweg                       Grenzweg               path           
+  24200 km  23.59    90 m                                                        path           
+  24290 km  23.68    70 m  Gerhart-Hauptmann-Straße       Gerhart-Hauptmann-Straße service        
+  24360 km  23.75    50 m  Hofackerstraße                 Hofackerstraße         residential    
+  24410 km  23.79    10 m                                                        footway        
+  24420 km  23.80   170 m  Husserlstraße                  Husserlstraße          residential    
+  24590 km  23.97   180 m  Sigsteinstraße                 Sigsteinstraße         residential    
+  24770 km  24.14    20 m  Paduaallee                     Paduaallee             tertiary_link   
+  24790 km  24.16    10 m                                                        path          Tunnel yes -1
+  24800 km  24.17    10 m  Sundgauallee                   Sundgauallee           tertiary_link   
+  24810 km  24.18   520 m                                                        path           
+  25330 km  24.70    80 m  Im Zinklern                    Im Zinklern            track          
+  25410 km  24.77    50 m                                                        service        
+  25460 km  24.82    50 m  Betzenhauser Brücke            Betzenhauser Brücke    service      Brücke  1
+  25510 km  24.87   200 m                                                        cycleway       
+  25710 km  25.07    60 m  Betzenhauser Steg              Betzenhauser Steg      path         Brücke  1
+  25770 km  25.13    10 m                                                        path           
+  25780 km  25.13   290 m  Betzenhauser Weg               Betzenhauser Weg       path           
+  26070 km  25.42    20 m  Tel-Aviv-Yafo-Allee            Tel-Aviv-Yafo-Allee    trunk          
+  26090 km  25.44   170 m  Betzenhauser Weg               Betzenhauser Weg       path           
+  26260 km  25.61    10 m                                                                       
+  26270 km  25.61    10 m  Betzenhauser Weg               Betzenhauser Weg       path           
+  26280 km  25.62    10 m  Betzenhauser Weg               Betzenhauser Weg       path         Brücke  1
+  26290 km  25.63   200 m  Betzenhauser Weg               Betzenhauser Weg       path           
+  26490 km  25.83    10 m  Betzenhauser Weg               Betzenhauser Weg       path         Brücke  1
+  26500 km  25.84    30 m  Betzenhauser Weg               Betzenhauser Weg       path           
+  26530 km  25.87   140 m                                                        path           
+  26670 km  26.01    10 m                                                                       
+  26680 km  26.02   120 m                                                        path           
+  26800 km  26.13   230 m                                                        cycleway       
+  27030 km  26.35    70 m                                                        service        
+  27100 km  26.42    80 m  Bugginger Straße               Bugginger Straße       residential    
+  27180 km  26.50    10 m                                                                       
+  27190 km  26.50   220 m  Bugginger Straße               Bugginger Straße       residential    
+  27410 km  26.72    10 m  Sulzburger Straße              Sulzburger Straße      residential    
+  27420 km  26.73   110 m  Binzengrün                     Binzengrün             residential    
+  27530 km  26.84    30 m  Binzengrün                     Binzengrün             residential  Brücke  1
+  27560 km  26.87   110 m  Binzengrün                     Binzengrün             residential    
+  27670 km  26.97    10 m                                                        path           
+  27680 km  26.98   590 m  Unterer Mühlenweg              Unterer Mühlenweg      residential    
+  28270 km  27.57   130 m                                                        path           
+  28400 km  27.70    10 m                                                        path         Brücke  1
+  28410 km  27.71   160 m                                                        path           
+  28570 km  27.86    70 m  Christophstraße                Christophstraße        living_street   
+  28640 km  27.89    10 m  Markgrafenstraße               Markgrafenstraße       tertiary     Brücke  1
+  28650 km  27.90   230 m  Markgrafenstraße               Markgrafenstraße       tertiary       
+  28880 km  28.13   760 m  Uffhauser Straße               Uffhauser Straße       tertiary       
+  29640 km  28.89    10 m  Am Kirchacker                  Am Kirchacker          residential    
+  29650 km  28.90   190 m  Uffhauser Straße               Uffhauser Straße       tertiary       
+  29840 km  29.08    50 m  Uffhauser Straße               Uffhauser Straße       tertiary     Brücke  1
+  29890 km  29.13    40 m  Uffhauser Straße               Uffhauser Straße       tertiary       
+  29930 km  29.17    40 m  Basler Landstraße              Basler Landstraße      tertiary       
+  29970 km  29.20   100 m  Am Mettweg                     Am Mettweg             residential    
+  30070 km  29.29    10 m                                                                       
+  30080 km  29.30    50 m  Hüttweg                        Hüttweg                residential    
+  30130 km  29.35   380 m  Hüttweg                        Hüttweg                track          
+  30510 km  29.73   130 m  Hüttweg                        Hüttweg                residential    
+  30640 km  29.86   290 m  Schildackerweg                 Schildackerweg         track          
+  30930 km  30.15    20 m  Schildackerweg                 Schildackerweg         service        
+  30950 km  30.17   260 m  Schildackerweg                 Schildackerweg         residential    
+  31210 km  30.43    80 m  Schildackerweg                 Schildackerweg         service        
+  31290 km  30.51   130 m  Schildackerweg                 Schildackerweg         path           
+  31420 km  30.64   100 m  Schildackerweg                 Schildackerweg         residential    
+  31520 km  30.74   160 m  Schildackerweg                 Schildackerweg         path           
+  31680 km  30.89   110 m  Auf der Hardt                  Auf der Hardt          living_street   
+  31790 km  31.00    10 m                                                                       
+  31800 km  31.01    90 m  Akazienweg                     Akazienweg             living_street   
+  31890 km  31.09    10 m                                                                       
+  31900 km  31.10   180 m  Langemarckstraße               Langemarckstraße       residential    
+  32080 km  31.28   160 m  Langemarckstraße               Langemarckstraße       living_street   
+  32240 km  31.44    10 m  Skagerrakstraße                Skagerrakstraße        living_street   
+  32250 km  31.45    60 m  Skagerrakstraße                Skagerrakstraße        residential    
+  32310 km  31.51    10 m                                                                       
+  32320 km  31.51   140 m  Matthias-Erzberger-Straße      Matthias-Erzberger-Straße residential    
+  32460 km  31.65   140 m  Weddigenstraße                 Weddigenstraße         residential    
+  32600 km  31.78   230 m  Lorettostraße                  Lorettostraße          residential    
+  32830 km  32.00    10 m                                                        footway        
+  32840 km  32.00   100 m  Johann-von-Weerth-Straße       Johann-von-Weerth-Straße residential    
+  32940 km  32.10    10 m                                                                       
+  32950 km  32.11    60 m  Reiterstraße                   Reiterstraße           residential    
+  33010 km  32.17   180 m  Bayernstraße                   Bayernstraße           residential    
+  33190 km  32.35    10 m  Bayernstraße                   Bayernstraße           residential  Brücke  1
+  33200 km  32.35    10 m                                                                       
+  33210 km  32.36   120 m  Schwimmbadstraße               Schwimmbadstraße       residential    
+  33330 km  32.47    10 m                                                                       
+  33340 km  32.48   410 m  Konradstraße                   Konradstraße           residential    
+  33750 km  32.88   200 m  Erwinstraße                    Erwinstraße            residential    
+  33950 km  33.08    10 m                                                                       
+  33960 km  33.09    90 m  Brombergstraße                 Brombergstraße         residential    
+  34050 km  33.17    10 m                                                                       
+  34060 km  33.18   240 m  Urachstraße                    Urachstraße            residential    
+  34300 km  33.42    60 m                                                        service        
+  34360 km  33.48   250 m  Urachstraße                    Urachstraße            residential    
+  34610 km  33.72   230 m  Peter-Sprung-Straße            Peter-Sprung-Straße    living_street   
+  34840 km  33.94   250 m                                                        cycleway       
+  35090 km  34.19   610 m  Andlawstraße                   Andlawstraße           residential    
+  35700 km  34.79    10 m                                                        path           
+  35710 km  34.80    50 m  Schützenallee                  Schützenallee          residential    
+  35760 km  34.85    10 m                                                                       
+  35770 km  34.85    60 m                                                        service        
+  35830 km  34.91   170 m                                                        path           
+  36000 km  35.06    10 m  Schwarzwaldstraße              Schwarzwaldstraße      secondary      
+  36010 km  35.07    20 m                                                        path           
+  36030 km  35.09    10 m                                                        secondary_link   
+  36040 km  35.10    90 m                                                        path           
+  36130 km  35.19    10 m                                                        cycleway       
+  36140 km  35.20    30 m                                                        path           
+  36170 km  35.23   180 m                                                        cycleway       
+  36350 km  35.40   100 m  Runzstraße                     Runzstraße             residential    
+  36450 km  35.50    90 m  Lochmattenstraße               Lochmattenstraße       residential    
+  36540 km  35.59   650 m  Otto-Wels-Straße               Otto-Wels-Straße       residential    
+  37190 km  36.23    10 m  Fabrikstraße                   Fabrikstraße           residential    
+  37200 km  36.24    40 m  Fabrikstraße                   Fabrikstraße           residential  Brücke  1
+  37240 km  36.28    10 m                                                                       
+  37250 km  36.28   340 m  Oberau                         Oberau                 residential    
+  37590 km  36.62    90 m  Mühlenstraße                   Mühlenstraße           residential    
+  37680 km  36.70   230 m  Kartäuserstraße                Kartäuserstraße        unclassified   
+  37910 km  36.93    10 m  Wallstraße                     Wallstraße             unclassified   
+  37920 km  36.94    70 m  Schwabentorring                Schwabentorring        primary        
+  37990 km  37.01    30 m  Schlossbergring                Schlossbergring        primary        
+  38020 km  37.04    30 m  Schwabentorplatz               Schwabentorplatz       pedestrian     
+  38050 km  37.06    10 m  Schwabentorplatz               Schwabentorplatz       pedestrian    Tunnel building_passage 
+  38060 km  37.07    10 m  Schwabentorplatz               Schwabentorplatz       pedestrian     
+  38070 km  37.08    80 m  Oberlinden                     Oberlinden             pedestrian     
+  38150 km  37.16   310 m  Salzstraße                     Salzstraße             pedestrian     
+  38460 km  37.47   310 m  Bertoldstraße                  Bertoldstraße          pedestrian     
+  38770 km  37.78    10 m  Rotteckring                    Rotteckring            pedestrian     
+  38780 km  37.78   100 m  Platz der Alten Synagoge       Platz der Alten Synagoge pedestrian     
+  38880 km  37.88   100 m  Platz der Universität          Platz der Universität  pedestrian     
+  38980 km  37.98   150 m  Belfortstraße                  Belfortstraße          residential    
+  39130 km  38.13    10 m                                                                       
+  39140 km  38.14    90 m  Moltkestraße                   Moltkestraße           residential    
+  39230 km  38.22   300 m  Wilhelmstraße                  Wilhelmstraße          residential    
+  39530 km  38.51    40 m  Bismarckallee                  Bismarckallee          primary        
+  39570 km  38.55    10 m                                                        cycleway       
+  39580 km  38.55    10 m                                                        footway        
+  39590 km  38.56    10 m                                                        footway      Brücke  2
+  39600 km  38.57   160 m  Wiwilíbrücke                   Wiwilíbrücke           cycleway     Brücke  2
+  39760 km  38.73    10 m  Wiwilíbrücke                   Wiwilíbrücke           cycleway       
+  39770 km  38.74    80 m  Wentzingerstraße               Wentzingerstraße       residential    
+  39850 km  38.82    10 m                                                                       
+  39860 km  38.82   160 m  Wannerstraße                   Wannerstraße           residential    
+  40020 km  38.98   200 m  Guntramstraße                  Guntramstraße          residential    
+  40220 km  39.18    10 m                                                                       
+  40230 km  39.18   100 m  Egonstraße                     Egonstraße             residential    
+  40330 km  39.28    10 m                                                                       
+  40340 km  39.29   140 m  Klarastraße                    Klarastraße            residential    
+  40480 km  39.42   360 m  Kreuzstraße                    Kreuzstraße            residential    
+  40840 km  39.78    10 m  Mathildenstraße                Mathildenstraße        residential    
+  40850 km  39.79    50 m  Mathildenstraße                Mathildenstraße        service        
+  40900 km  39.83    10 m  Kenzinger Straße               Kenzinger Straße       path           
+  40910 km  39.84    10 m                                                        path           
+  40920 km  39.85    60 m  Kenzinger Straße               Kenzinger Straße       path           
+  40980 km  39.91    30 m  Kenzinger Straße               Kenzinger Straße       service        
+  41010 km  39.94   150 m  Beurbarungsstraße              Beurbarungsstraße      residential    
+  41160 km  40.09    10 m                                                                       
+  41170 km  40.09   230 m  Ferrandstraße                  Ferrandstraße          residential    
+  41400 km  40.32   530 m  Kandelstraße                   Kandelstraße           residential    
+  41930 km  40.85   220 m  Eichstetter Straße             Eichstetter Straße     residential    
+  42150 km  41.06    10 m                                                                       
+  42160 km  41.07   260 m  Waldkircher Straße             Waldkircher Straße     secondary      
+  42420 km  41.32    20 m  Kaiserstuhlplatz               Kaiserstuhlplatz       secondary      
+  42440 km  41.34   540 m  Kaiserstuhlstraße              Kaiserstuhlstraße      residential    
+  42980 km  41.88    90 m  Kaiserstuhlstraße              Kaiserstuhlstraße      residential  Brücke  1
+  43070 km  41.97    30 m  Kaiserstuhlstraße              Kaiserstuhlstraße      residential    
+  43100 km  41.99    10 m                                                                       
+  43110 km  42.00    80 m  Emmy-Noether-Straße            Emmy-Noether-Straße    unclassified   
+  43190 km  42.08    10 m                                                                       
+  43200 km  42.08   120 m                                                        service        

@@ -27,8 +27,8 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
   nur 30-m-Modell), Antarktis (Kurs wechselt, kleines Feld).
 
 - **Marathons in Deutschland, Österreich und der Schweiz** (Recherche 31.10.2026, Nutzer: „nach und nach alle“, Reichweite
-  so wichtig wie das Profil, erst die flachen): Runde 1 Hannover, Düsseldorf, Zürich gebaut (Marathon 2.4). Runde 2 Münster,
-  Luzern (swissALTI3D wie Zürich), Freiburg. Runde 3 Berg: Jungfrau, Zermatt, Brocken, dazu im Kern ein Hinweis an steilen
+  so wichtig wie das Profil, erst die flachen): Runde 1 Hannover, Düsseldorf, Zürich gebaut (Marathon 2.4), Runde 2 Münster,
+  Luzern, Freiburg gebaut (Marathon 2.5). Runde 3 Berg: Jungfrau, Zermatt, Brocken, dazu im Kern ein Hinweis an steilen
   Stellen („Straßenmodell, am Berg zu optimistisch“). Danach Graz, Salzburg, LGT Alpin, Allgäu, Ulm und die übrigen.
   Ranking und Quellen: Bericht vom 31.10.2026 (Jungfrau 3 604, Zermatt 355, Brocken 676, Luzern 3 076, Freiburg 1 560,
   Münster 3 114 Finisher).
@@ -41,6 +41,10 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
 - Hannover: Veranstalter nennt „19 m Höhenunterschied“, gemessen 9,4 m; zwei Unterführungen (Fernroder Straße, Kopernikusstraße)
   geschätzt; DGM1 2016 (Stadt hat 2021).
 - Düsseldorf: keine GPX, Linie aus dem Streckenplan-PDF 2026; Start Ehrenhof laut Plan, „Höhe Tonhalle“ laut Text.
+- Münster: Kilometerangaben des Veranstalters widersprüchlich (Kanonierplatz Tabelle 4,3 / Ort 4,7; Wulfertstraße 30,0 / 29,1);
+  ohne GPX nur ±0,2 km; Staffelwechsel 2 nur nach Plansymbol.
+- Luzern: Stadtquartiere fehlen (map.stadtluzern.ch nicht erreichbar, opendata.swiss 403); Startslot-Zeiten ohne Jahreszahl.
+- Freiburg: Kilometer ±0,3 km (Kästen im Plan bis 333 m früher); Rundenwechsel auf dem Messplatz angenommen; Kurs 2027 folgt.
 - Zürich: Lage der 12 Verpflegungsposten nur aus dem Plan (am See ±0,5 km); Kurs 2027 mit „punktuellen Anpassungen“.
 
 - Shanghai: Kurs 2025 in der App, weil der Plan 2026 fehlt (Seite „赛事路线图“, Nr. 3289): **Ende November 2026 nachsehen**

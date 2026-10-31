@@ -6,6 +6,15 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.5 (31.10.2026): Münster, Luzern, Freiburg
+
+- Kern unverändert. Drei neue Strecken über `kern.py --neu` (zweite Runde Deutschland/Schweiz): `muenster/` (Präfix `mst-`,
+  DGM1/DOM1 NRW, Staffel), `luzern/` (`lzn-`, swissALTI3D/swissSURFACE3D, offizielle GPX aus der TrackMaxx-Karte; klärt „175 oder
+  220 Höhenmeter“: beides je nach Messfenster), `freiburg/` (`fbg-`, DGM1/DOM1 Baden-Württemberg, zwei Runden; die Wechselstellen
+  des Schülermarathons hat die Hauptsitzung aus `D.marks` genommen, sonst erschiene ein Staffel-Schalter ohne Marathonstaffel).
+  Startseite: Luzern nach Teilnehmerzahl, Münster und Freiburg alphabetisch; Freiburg mit eigener Profilhöhe (`.spark.freiburg`,
+  90 px, 61 m Höhenbereich).
+
 ## 2.4 (31.10.2026): Hannover, Düsseldorf, Zürich
 
 - Kern unverändert. Drei neue Strecken über `kern.py --neu` (erste Runde der Marathons in Deutschland, Österreich und der
