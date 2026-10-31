@@ -474,7 +474,7 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">adidas Stockholm Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.6</button></span>
+    <span class="eyebrow">adidas Stockholm Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.7</button></span>
     <h1>Stockholm</h1>
     <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Kein Laser-Höhenmodell frei abrufbar (Lantmäteriet nur mit Anmeldung): Höhen aus der GPX-Datei des Veranstalters (Herkunft nicht angegeben), gegengeprüft mit dem 30-m-Modell FABDEM und der Streckenbeschreibung; Strecke 2026, alle 10 m ausgewertet.</p>
@@ -483,7 +483,7 @@ body.run .close svg { width: 20px; height: 20px; }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.6</button></span>
+    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.7</button></span>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -990,15 +990,28 @@ function drawMain() {
   const padT = (S.vp || S.relay) ? 34 : 22, padB = namen ? 40 : 26, ph = h - padT - padB; // ohne Wasser und Staffel reicht Platz für die Halbmarathon-Marke
   const kopf = MAUER.length ? 24 : 0, phk = ph - kopf;   // Mauer: freie Zeile über dem höchsten Punkt für ihre Beschriftung (seit 1.71)
   const x0 = S.pos - S.zoom / 2, mpp = S.zoom / w;
-  const X = x => (x - x0) / mpp, Y = v => padT + kopf + (YMAX - v) / (YMAX - YMIN) * phk;
+  // Mindestens 10-fach überhöht (seit 2.7; Nutzer zu Zermatt: „im Höhenprofil sieht man nicht, wie steil es eigentlich ist“): Bei
+  // großem Höhenbereich (über ~450 m) wäre der Ausschnitt mit der Höhe der ganzen Strecke nur 3- bis 5-fach überhöht, 10 % sähen
+  // flach aus. Dann zeigt der Läuferblick ein Höhenband, das dem Ausschnitt folgt (die eigene Stelle bleibt immer im Bild):
+  // 10 % Steigung stehen unter 45°. Strecken mit kleinerem Höhenbereich zeigen wie bisher die ganze Höhe.
+  const EXMIN = 10, band = mpp * phk / EXMIN;
+  let yLo = YMIN, yHi = YMAX;
+  if (YMAX - YMIN > band) {
+    let lo = Infinity, hi = -Infinity;
+    for (let i = Math.max(0, Math.floor(x0 / STEP)), e = Math.min(N - 1, Math.ceil((x0 + S.zoom) / STEP)); i <= e; i++) { if (H[i] < lo) lo = H[i]; if (H[i] > hi) hi = H[i]; }
+    const hr = hAt(S.pos), mitte = clamp((lo + hi) / 2 + 2, hr - band * 0.35, hr + band * 0.35);   // stetig: die eigene Stelle bleibt im Bild
+    yLo = Math.max(YMIN, Math.min(YMAX - band, mitte - band / 2)); yHi = yLo + band;
+  }
+  const X = x => (x - x0) / mpp, Y = v => padT + kopf + (yHi - v) / (yHi - yLo) * phk;
   // Höhenraster
   c.font = "500 11px " + getComputedStyle(document.body).fontFamily; c.textBaseline = "middle";
   // Hilfslinien: nach Höhenbereich (höchstens ~8) und mindestens 18 px auseinander, sonst überlappen die Beschriftungen
-  const yr = YMAX - YMIN, gmin = yr > 200 ? 50 : yr > 100 ? 25 : yr > 30 ? 10 : 5, gstep = [5, 10, 25, 50, 100, 200, 250, 500, 1000].find(s => s >= gmin && phk * s / yr >= 18) || 1000;   // 200–1000 seit 2.6 (Bergmarathons, bis 1 800 m Höhenbereich)
-  for (let v = Math.ceil(YMIN / gstep) * gstep; v <= YMAX; v += gstep) {
+  const yr = yHi - yLo, gmin = yr > 200 ? 50 : yr > 100 ? 25 : yr > 30 ? 10 : 5, gstep = [5, 10, 25, 50, 100, 200, 250, 500, 1000].find(s => s >= gmin && phk * s / yr >= 18) || 1000;   // 200–1000 seit 2.6 (Bergmarathons, bis 1 800 m Höhenbereich)
+  for (let v = Math.ceil(yLo / gstep) * gstep; v <= yHi; v += gstep) {
     c.strokeStyle = COL["--grid"]; c.lineWidth = 1; c.beginPath(); c.moveTo(0, Math.round(Y(v)) + 0.5); c.lineTo(w, Math.round(Y(v)) + 0.5); c.stroke();
   }
-  // Fläche nach Steigungsklasse
+  // Fläche nach Steigungsklasse; Fläche, Linie und Brücken nur im Profilfeld (das Höhenband kann schmaler sein als der Ausschnitt)
+  c.save(); c.beginPath(); c.rect(0, padT, w, h - padB - padT); c.clip();
   const g = WIN[S.win].g;
   const i0 = Math.max(0, Math.floor(x0 / STEP) - 1), i1 = Math.min(N - 1, Math.ceil((x0 + S.zoom) / STEP) + 1);
   const paths = CLASS_TOK.map(() => new Path2D());
@@ -1031,12 +1044,13 @@ function drawMain() {
     const tw = c.measureText(lab).width, mx = clamp((Math.max(xa, 0) + Math.min(xb, w)) / 2, tw / 2 + 4, w - tw / 2 - 4);   // im Bild, nie angeschnitten
     if ((xb - xa > tw + 6 || S.zoom <= 2000) && mx - tw / 2 > brRechts + 6) { c.fillStyle = COL["--muted"]; c.fillText(lab, mx, Math.max(yt - 6, 14)); brRechts = mx + tw / 2; }
   }
+  c.restore();
   // Mauer (D.mauer): hier zählen feste Minuten statt Steigung; hell hinterlegt, Name und Minuten oben auf dunklem Grund. Seit 1.71
   // in der freien Zeile über dem Profil (kopf), mittig über der Mauer: so verdecken sie den Gipfel nie (1.70 wich stattdessen
   // seitlich aus und sprang beim Laufen zwischen den Seiten). Links bis x1 steht eine Höhenbeschriftung in derselben Zeile.
   // Gezeichnet wird sie erst nach dem Läufer (mauerLab), sonst liefe sein Strich durch die Minuten.
   let x1 = 0; const mauerLab = [];
-  if (MAUER.length) for (let v = Math.ceil(YMIN / gstep) * gstep; v <= YMAX; v += gstep) if (Y(v) - 17 < padT + 18 && Y(v) - 1 > padT + 2) x1 = Math.max(x1, c.measureText(v + " m").width + 14);
+  if (MAUER.length) for (let v = Math.ceil(yLo / gstep) * gstep; v <= yHi; v += gstep) if (Y(v) - 17 < padT + 18 && Y(v) - 1 > padT + 2) x1 = Math.max(x1, c.measureText(v + " m").width + 14);
   for (const [k, [a, b, name]] of MAUER.entries()) {
     if (b < x0 || a > x0 + S.zoom) continue;
     const xa = Math.max(X(a), 0), xb = Math.min(X(b), w), lab = name + " · " + Math.round(mauerMin(k)) + " min";
@@ -1096,7 +1110,7 @@ function drawMain() {
   }
   // Höhenbeschriftung, nach den Markierungen: ein Wert, der oben in deren Beschriftung liefe (z. B. „Halbmarathon“), entfällt
   c.font = "500 11px " + getComputedStyle(document.body).fontFamily;
-  for (let v = Math.ceil(YMIN / gstep) * gstep; v <= YMAX; v += gstep) {
+  for (let v = Math.ceil(yLo / gstep) * gstep; v <= yHi; v += gstep) {
     if (Y(v) <= padT - 4 || Y(v) >= h - padB - 6) continue;
     const y = Y(v) - 9, tw = c.measureText(v + " m").width;
     if (y - 8 < 17 && markBox.some(([a, b]) => a < tw + 12 && b > 0)) continue;
@@ -1127,7 +1141,7 @@ function drawMain() {
     c.font = "500 12px " + fd; c.fillStyle = COL["--muted"]; tabText(c, secs(pace - P.p0), x + wP + 5, my, "left");
     c.restore(); }
   // Überhöhung
-  const ex = (S.zoom / w) / ((YMAX - YMIN) / phk);
+  const ex = (S.zoom / w) / ((yHi - yLo) / phk);
   $("exag").textContent = "Seitlich wischen · Höhe " + Math.round(ex) + "-fach überhöht";
 }
 
@@ -1962,7 +1976,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '2.6';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.7';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");

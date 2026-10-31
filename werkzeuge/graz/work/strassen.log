@@ -1,0 +1,164 @@
+      0 km   0.00   290 m  Opernring                      Opernring              primary        
+    290 km   0.29   300 m  Joanneumring                   Joanneumring           primary        
+    590 km   0.59   260 m  Wielandgasse                   Wielandgasse           primary        
+    850 km   0.83   230 m  Wielandgasse                   Wielandgasse           secondary      
+   1080 km   1.06   450 m  Schönaugasse                   Schönaugasse           secondary      
+   1530 km   1.51   390 m  Schönaugürtel                  Schönaugürtel          primary        
+   1920 km   1.90  1130 m  Conrad-von-Hötzendorf-Straße   Conrad-von-Hötzendorf-Straße primary        
+   3050 km   3.02    10 m  Evangelimanngasse              Evangelimanngasse      residential    
+   3060 km   3.03    10 m                                                        footway        
+   3070 km   3.04  1120 m  Conrad-von-Hötzendorf-Straße   Conrad-von-Hötzendorf-Straße primary        
+   4190 km   4.16    10 m                                                        footway        
+   4200 km   4.17   610 m  Schönaugürtel                  Schönaugürtel          primary        
+   4810 km   4.76    10 m                                                        service        
+   4820 km   4.77   400 m  Neuholdaugasse                 Neuholdaugasse         residential    
+   5220 km   5.17   330 m  Pestalozzistraße               Pestalozzistraße       residential    
+   5550 km   5.49   200 m  Grazbachgasse                  Grazbachgasse          primary        
+   5750 km   5.69    80 m  Alfred-Stingl-Brücke           Alfred-Stingl-Brücke   primary      Brücke  1
+   5830 km   5.77    10 m  Zweiglgasse                    Zweiglgasse            primary        
+   5840 km   5.77   740 m  Grieskai                       Grieskai               primary        
+   6580 km   6.51   560 m  Lendkai                        Lendkai                primary        
+   7140 km   7.07  1050 m  Lendkai                        Lendkai                secondary      
+   8190 km   8.11    70 m  Floßlendplatz                  Floßlendplatz          residential    
+   8260 km   8.18   130 m  Neue Bienengasse               Neue Bienengasse       residential    
+   8390 km   8.31   160 m  Bienengasse                    Bienengasse            residential    
+   8550 km   8.47    30 m  Bienengasse                    Bienengasse            secondary      
+   8580 km   8.50   750 m  Wiener Straße                  Wiener Straße          secondary      
+   9330 km   9.24   120 m  Lendplatz                      Lendplatz              secondary      
+   9450 km   9.36   240 m  Keplerstraße                   Keplerstraße           primary        
+   9690 km   9.59    80 m  Keplerbrücke                   Keplerbrücke           primary      Brücke  1
+   9770 km   9.67   100 m  Wickenburggasse                Wickenburggasse        primary        
+   9870 km   9.77   350 m  Körösistraße                   Körösistraße           secondary      
+  10220 km  10.12   580 m  Körösistraße                   Körösistraße           tertiary       
+  10800 km  10.70   270 m  Fischergasse                   Fischergasse           tertiary       
+  11070 km  10.96   910 m  Körösistraße                   Körösistraße           tertiary       
+  11980 km  11.87    10 m                                                        footway        
+  11990 km  11.88   140 m  Grabenstraße                   Grabenstraße           primary        
+  12130 km  12.02    20 m  Grabenstraße                   Grabenstraße           primary      Brücke  2
+  12150 km  12.04   310 m  Grabenstraße                   Grabenstraße           primary        
+  12460 km  12.35   820 m  Weinzöttlstraße                Weinzöttlstraße        primary        
+  13280 km  13.16    20 m  Weinzöttlstraße                Weinzöttlstraße        primary      Brücke  1
+  13300 km  13.18  1670 m  Weinzöttlstraße                Weinzöttlstraße        primary        
+  14970 km  14.85    10 m  Weinzöttlstraße                Weinzöttlstraße        primary      Brücke  1
+  14980 km  14.86   810 m  Weinzöttlstraße                Weinzöttlstraße        primary        
+  15790 km  15.67   310 m  Grabenstraße                   Grabenstraße           primary        
+  16100 km  15.98    20 m  Grabenstraße                   Grabenstraße           primary      Brücke  2
+  16120 km  16.00   170 m  Grabenstraße                   Grabenstraße           primary        
+  16290 km  16.17  1720 m  Theodor-Körner-Straße          Theodor-Körner-Straße  secondary      
+  18010 km  17.88   150 m  Lange Gasse                    Lange Gasse            residential    
+  18160 km  18.03   290 m  Laimburggasse                  Laimburggasse          residential    
+  18450 km  18.31    10 m  Weldenstraße                   Weldenstraße           pedestrian     
+  18460 km  18.32   330 m  Wickenburggasse                Wickenburggasse        primary        
+  18790 km  18.65    10 m                                                        service        -1
+  18800 km  18.66   340 m  Kaiser-Franz-Josef-Kai         Kaiser-Franz-Josef-Kai primary        
+  19140 km  19.00    50 m  Kaiser-Franz-Josef-Kai         Kaiser-Franz-Josef-Kai residential    
+  19190 km  19.05   340 m  Sackstraße                     Sackstraße             residential    
+  19530 km  19.38    10 m  Sporgasse                      Sporgasse              pedestrian     
+  19540 km  19.39   160 m  Murgasse                       Murgasse               residential    
+  19700 km  19.55   160 m  Neutorgasse                    Neutorgasse            residential    
+  19860 km  19.71   180 m  Neutorgasse                    Neutorgasse            tertiary       
+  20040 km  19.89    10 m                                                        footway        
+  20050 km  19.89   100 m  Kalchberggasse                 Kalchberggasse         residential    
+  20150 km  19.99    10 m                                                        footway        
+  20160 km  20.00   140 m  Raubergasse                    Raubergasse            residential    
+  20300 km  20.14    20 m                                                        footway        
+  20320 km  20.16    80 m  Sparkassenplatz                Sparkassenplatz        pedestrian     
+  20400 km  20.23    10 m                                                        footway        
+  20410 km  20.24    60 m  Albrechtgasse                  Albrechtgasse          pedestrian     
+  20470 km  20.30    20 m                                                        pedestrian     
+  20490 km  20.32    40 m  Hauptplatz                     Hauptplatz             footway        
+  20530 km  20.36    10 m  Neue-Welt-Gasse                Neue-Welt-Gasse        pedestrian     
+  20540 km  20.37    40 m  Hauptplatz                     Hauptplatz             pedestrian     
+  20580 km  20.41    10 m  Hauptplatz                     Hauptplatz             footway        
+  20590 km  20.42    10 m  Hauptplatz                     Hauptplatz             pedestrian     
+  20600 km  20.43   340 m  Herrengasse                    Herrengasse            pedestrian     
+  20940 km  20.77    10 m  Am Eisernen Tor                Am Eisernen Tor        pedestrian     
+  20950 km  20.78    50 m  Am Eisernen Tor                Am Eisernen Tor        residential    
+  21000 km  20.82    10 m                                                                       
+  21010 km  20.83    10 m  Opernring                      Opernring              primary        
+  21020 km  20.84    30 m  Am Eisernen Tor                Am Eisernen Tor        pedestrian     
+  21050 km  20.87   230 m  Opernring                      Opernring              primary        
+  21280 km  21.10    10 m  Ella-Flesch-Platz              Ella-Flesch-Platz      footway        
+  21290 km  21.11   280 m  Opernring                      Opernring              primary        
+  21570 km  21.39   290 m  Joanneumring                   Joanneumring           primary        
+  21860 km  21.68    10 m  Radetzkystraße                 Radetzkystraße         primary        
+  21870 km  21.69   260 m  Wielandgasse                   Wielandgasse           primary        
+  22130 km  21.93   230 m  Wielandgasse                   Wielandgasse           secondary      
+  22360 km  22.16   450 m  Schönaugasse                   Schönaugasse           secondary      
+  22810 km  22.61   380 m  Schönaugürtel                  Schönaugürtel          primary        
+  23190 km  22.99  1140 m  Conrad-von-Hötzendorf-Straße   Conrad-von-Hötzendorf-Straße primary        
+  24330 km  24.12    10 m  Evangelimanngasse              Evangelimanngasse      residential    
+  24340 km  24.13    10 m                                                        footway        
+  24350 km  24.14  1120 m  Conrad-von-Hötzendorf-Straße   Conrad-von-Hötzendorf-Straße primary        
+  25470 km  25.26   620 m  Schönaugürtel                  Schönaugürtel          primary        
+  26090 km  25.87    10 m                                                        footway        
+  26100 km  25.88   400 m  Neuholdaugasse                 Neuholdaugasse         residential    
+  26500 km  26.28   320 m  Pestalozzistraße               Pestalozzistraße       residential    
+  26820 km  26.59    10 m                                                        footway        
+  26830 km  26.60   200 m  Grazbachgasse                  Grazbachgasse          primary        
+  27030 km  26.80    80 m  Alfred-Stingl-Brücke           Alfred-Stingl-Brücke   primary      Brücke  1
+  27110 km  26.88    10 m  Zweiglgasse                    Zweiglgasse            primary        
+  27120 km  26.88   730 m  Grieskai                       Grieskai               primary        
+  27850 km  27.61   570 m  Lendkai                        Lendkai                primary        
+  28420 km  28.18  1050 m  Lendkai                        Lendkai                secondary      
+  29470 km  29.23    70 m  Floßlendplatz                  Floßlendplatz          residential    
+  29540 km  29.30   130 m  Neue Bienengasse               Neue Bienengasse       residential    
+  29670 km  29.42   160 m  Bienengasse                    Bienengasse            residential    
+  29830 km  29.58    30 m  Bienengasse                    Bienengasse            secondary      
+  29860 km  29.61   740 m  Wiener Straße                  Wiener Straße          secondary      
+  30600 km  30.34   130 m  Lendplatz                      Lendplatz              secondary      
+  30730 km  30.47   230 m  Keplerstraße                   Keplerstraße           primary        
+  30960 km  30.70    90 m  Keplerbrücke                   Keplerbrücke           primary      Brücke  1
+  31050 km  30.79   100 m  Wickenburggasse                Wickenburggasse        primary        
+  31150 km  30.88   350 m  Körösistraße                   Körösistraße           secondary      
+  31500 km  31.23   580 m  Körösistraße                   Körösistraße           tertiary       
+  32080 km  31.81   270 m  Fischergasse                   Fischergasse           tertiary       
+  32350 km  32.08   910 m  Körösistraße                   Körösistraße           tertiary       
+  33260 km  32.99    10 m                                                        footway        
+  33270 km  33.00   140 m  Grabenstraße                   Grabenstraße           primary        
+  33410 km  33.14    20 m  Grabenstraße                   Grabenstraße           primary      Brücke  2
+  33430 km  33.16   310 m  Grabenstraße                   Grabenstraße           primary        
+  33740 km  33.46   820 m  Weinzöttlstraße                Weinzöttlstraße        primary        
+  34560 km  34.28    20 m  Weinzöttlstraße                Weinzöttlstraße        primary      Brücke  1
+  34580 km  34.30  1660 m  Weinzöttlstraße                Weinzöttlstraße        primary        
+  36240 km  35.96    20 m  Weinzöttlstraße                Weinzöttlstraße        primary      Brücke  1
+  36260 km  35.98   810 m  Weinzöttlstraße                Weinzöttlstraße        primary        
+  37070 km  36.79   300 m  Grabenstraße                   Grabenstraße           primary        
+  37370 km  37.09    20 m  Grabenstraße                   Grabenstraße           primary      Brücke  2
+  37390 km  37.11   180 m  Grabenstraße                   Grabenstraße           primary        
+  37570 km  37.29  1710 m  Theodor-Körner-Straße          Theodor-Körner-Straße  secondary      
+  39280 km  39.00   160 m  Lange Gasse                    Lange Gasse            residential    
+  39440 km  39.15   290 m  Laimburggasse                  Laimburggasse          residential    
+  39730 km  39.44   340 m  Wickenburggasse                Wickenburggasse        primary        
+  40070 km  39.78    10 m                                                        service        -1
+  40080 km  39.79   340 m  Kaiser-Franz-Josef-Kai         Kaiser-Franz-Josef-Kai primary        
+  40420 km  40.13    50 m  Kaiser-Franz-Josef-Kai         Kaiser-Franz-Josef-Kai residential    
+  40470 km  40.18   330 m  Sackstraße                     Sackstraße             residential    
+  40800 km  40.50    10 m  Hauptplatz                     Hauptplatz             pedestrian     
+  40810 km  40.51   160 m  Murgasse                       Murgasse               residential    
+  40970 km  40.67    10 m                                                        footway        
+  40980 km  40.68    10 m  Neutorgasse                    Neutorgasse            residential    
+  40990 km  40.69    10 m  Franziskanerplatz              Franziskanerplatz      pedestrian     
+  41000 km  40.70   140 m  Neutorgasse                    Neutorgasse            residential    
+  41140 km  40.84   180 m  Neutorgasse                    Neutorgasse            tertiary       
+  41320 km  41.02    10 m                                                        footway        
+  41330 km  41.03   100 m  Kalchberggasse                 Kalchberggasse         residential    
+  41430 km  41.12    10 m                                                        footway        
+  41440 km  41.13   140 m  Raubergasse                    Raubergasse            residential    
+  41580 km  41.27    20 m                                                        footway        
+  41600 km  41.29    80 m  Sparkassenplatz                Sparkassenplatz        pedestrian     
+  41680 km  41.37    60 m  Albrechtgasse                  Albrechtgasse          pedestrian     
+  41740 km  41.43    10 m  Neue Welt                      Neue Welt              pedestrian     
+  41750 km  41.44    20 m                                                        pedestrian     
+  41770 km  41.45    40 m  Hauptplatz                     Hauptplatz             footway        
+  41810 km  41.49    10 m  Neue-Welt-Gasse                Neue-Welt-Gasse        pedestrian     
+  41820 km  41.50    40 m  Hauptplatz                     Hauptplatz             pedestrian     
+  41860 km  41.54    10 m  Hauptplatz                     Hauptplatz             footway        
+  41870 km  41.55    10 m  Hauptplatz                     Hauptplatz             pedestrian     
+  41880 km  41.56   340 m  Herrengasse                    Herrengasse            pedestrian     
+  42220 km  41.90    10 m  Am Eisernen Tor                Am Eisernen Tor        pedestrian     
+  42230 km  41.91    50 m  Am Eisernen Tor                Am Eisernen Tor        residential    
+  42280 km  41.95    10 m                                                        footway        
+  42290 km  41.96    10 m  Opernring                      Opernring              primary        
+  42300 km  41.97    30 m  Am Eisernen Tor                Am Eisernen Tor        pedestrian     
+  42330 km  42.00   200 m  Opernring                      Opernring              primary        

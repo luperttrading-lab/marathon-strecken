@@ -1,0 +1,1 @@
+{"w": 3, "laenge": {"3": 42200.5, "3.5": 42104.0, "4": 42014.9}, "hinweis": "Linie der Google-Karte vom Start- bis zum Zielpunkt 42 988 m (geodätisch); kürzeste Linie im Band ±w m. w = 3 m: 42 200,5 m, Runde und Schleife je auf 21 097,5 m gestreckt (strecke.py). ideal_3.5.json und ideal_4.json gelöscht (nur Abgleich; mit schnur_szg.py 3.5 4 neu rechnen)."}

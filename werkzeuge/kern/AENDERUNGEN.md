@@ -6,6 +6,18 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.7 (31.10.2026): Läuferblick mindestens 10-fach überhöht; Graz, Salzburg, Liechtenstein
+
+- **Kern:** Nutzer zu Zermatt: „im Höhenprofil sieht man nicht, wie steil es eigentlich ist“ (1 200 m Höhe auf der Achse, der
+  Ausschnitt nur 2-fach überhöht, während Hamburg 71-fach überhöht ist). Der Läuferblick ist jetzt mindestens 10-fach überhöht
+  (10 % Steigung stehen unter 45°). Reicht die Höhe des Bildes dafür nicht, zeigt er ein Höhenband, das dem Ausschnitt folgt;
+  die eigene Stelle bleibt immer im Bild (stetig, kein Springen beim Laufen). Fläche, Linie und Brücken sind auf das Profilfeld
+  beschnitten. Betrifft nur Strecken mit mehr als etwa 450 m Höhenbereich (Jungfrau, Zermatt, Brocken, LGT); alle anderen zeigen
+  wie bisher die ganze Höhe. Die Angabe „Höhe N-fach überhöht“ unter dem Profil nennt den Faktor.
+- **Drei neue Strecken** über `kern.py --neu` (vierte Runde): `graz/` (Präfix `grz-`, BEV ALS DTM/DSM, Staffel; `werkzeuge/graz/work/bev.py`
+  liest BEV-Kacheln per HTTP-Range), `salzburg/` (`szg-`, BEV, Staffel; Veranstalter „9 m Höhendifferenz“, gemessen 21 m),
+  `liechtenstein/` (`lgt-`, LGT Alpin Marathon, swissALTI3D, 1 900 Höhenmeter, Linie ohne GPX nachgezeichnet, Staffel 25 + 17).
+
 ## 2.6 (31.10.2026): Bergstrecken, Hinweis auf Bergstrecken, Liste auf der Startseite
 
 - **Kern:** Nutzer 31.10.2026: Bergmarathons „erst mal mit dem Hinweis über die realistische Prognose“, später verbessern. Der Kern
