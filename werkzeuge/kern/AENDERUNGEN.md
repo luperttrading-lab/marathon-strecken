@@ -24,7 +24,9 @@ wenn das Handy offline ist; Karten aller Strecken per Knopf, „mit Datenmenge u
   aber ohne Karten). Knopf „Alle Karten offline speichern (≈ N MB)“ mit der Menge, die im Speicher noch fehlt (aus
   `karten.json`); Antippen öffnet die Rückfrage „Das lädt etwa N MB … wirklich?“ mit „Ja, speichern“ / „Abbrechen“. Die Seite
   holt die Bilder selbst (vier gleichzeitig, Fortschritt in MB) und legt sie in den Speicher der jeweiligen Strecke. Danach
-  verschwindet der Knopf. Stand 2.3: 701 Kartenbilder, 78 MB für 26 Strecken.
+  verschwindet der Knopf.
+- **Zwei neue Strecken** über `kern.py --neu`: `honolulu/` (Präfix `hnl-`, USGS-Lasermodell 1 m) und `shanghai/` (Präfix
+  `sha-`, FABDEM geglättet, Brücken geschätzt, Kurs 2025, weil der Plan 2026 noch fehlt). Karten auf der Startseite nach Boston.
 
 ## 2.2 (31.10.2026): Suche auf der Startseite
 

@@ -28,6 +28,12 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
 
 ## Kleinigkeiten aus den Übergaben
 
+- Shanghai: Kurs 2025 in der App, weil der Plan 2026 fehlt (Seite „赛事路线图“, Nr. 3289): **Ende November 2026 nachsehen**
+  (Rennen 6.12.2026), dann Wegpunkte in `linie.py`, Startzeiten in `app.py`. Linie aus OSM-Straßen, Wenden geschätzt (±0,3 km);
+  Brücke Longhua Gang (+9,2 m) ist die größte Unsicherheit. Finisher nicht veröffentlicht (23 000 Starter 2025).
+- Honolulu: 17 Verpflegungsstellen von Hand aus dem schematischen Plan (±0,3 km, Veranstalter sagt 16); Grenzen der
+  Startgruppen widersprüchlich.
+
 - Stockholm: Höhen aus der GPX-Datei des Veranstalters (Herkunft unbekannt, sehr glatt; Brückendecks drin). Laser-Modell
   von Lantmäteriet (Markhöjdmodell 1 m, CC BY 4.0) nur mit kostenlosem Geotorget-Konto: Nutzer entscheidet, ob er sich
   anmeldet; dann wie Wien rechnen. Kurs, Starts und Marken 2027 nachtragen.
