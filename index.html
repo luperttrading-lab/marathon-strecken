@@ -86,6 +86,17 @@ h1 { margin: 4px 0 0; font: 700 34px/1.05 var(--font-display); font-size: clamp(
 .note { margin: 18px 0 0; color: var(--muted); font-size: 14px; }
 .note b { color: var(--ink); font-weight: 600; }
 footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
+/* Offline (seit 2.3): alle Strecken ohne Karten beim Öffnen, Karten aller Strecken per Knopf mit Rückfrage und Datenmenge */
+.offline { display: grid; gap: 10px; margin-top: 12px; }
+.offline .note { margin: 0; }
+.offline button { justify-self: start; font-family: inherit; font-weight: 600; font-size: 14px; line-height: 1.2; color: var(--blue); background: none; border: 1px solid var(--blue); border-radius: 8px; padding: 9px 12px; cursor: pointer; }
+.offline button:disabled { opacity: 0.5; cursor: default; }
+.offline button.ja { color: #fff; background: var(--blue); }
+.offline .frage { display: grid; gap: 10px; padding: 11px 14px 12px; border: 1px solid var(--rule); border-left: 3px solid var(--blue); border-radius: 12px; color: var(--muted); font-size: 14px; }
+.offline .frage[hidden], .offline button[hidden] { display: none; }
+.offline .frage p { margin: 0; }
+.offline .frage b { color: var(--ink); font-weight: 600; }
+.offline .knoepfe { display: flex; flex-wrap: wrap; gap: 10px; }
 /* Auswahl oben (seit 1.27): Suchfeld und Drehrad wie in den Apps, Mitte zwischen zwei blauen Linien; seit 1.28 flacher:
    Mitte groß, Nachbarn halb so hoch und dicht dran (Zeilenabstand 30 px, Rad 84 px) */
 .wahl { display: grid; gap: 10px; margin: 0 0 18px; }
@@ -116,7 +127,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
 <div class="wrap">
   <header>
     <span class="eyebrow">Steigungsprofile</span>
-    <button type="button" class="ver kopf-ver" aria-label="Nach Update suchen">v2.2</button>
+    <button type="button" class="ver kopf-ver" aria-label="Nach Update suchen">v2.3</button>
     <h1>Welcher Marathon?</h1>
     <p class="sub">Wo es bergauf geht, was dich das an Zeit kostet und wann du wo bist. Gemessen mit Laserscans entlang der offiziellen Strecke.</p>
   </header>
@@ -344,6 +355,14 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
       <span class="go" aria-hidden="true">›</span>
     </a>
   <p class="note">Alle Profile im gleichen Höhenmaßstab. Auf dem iPhone: <b>Teilen →&#xFE0E; Zum Home-Bildschirm</b>, dann liegen alle Strecken in einer App.</p>
+  <div class="offline">
+    <p class="note" id="offline-text">Offline: Beim Öffnen mit Netz werden alle Strecken ohne Karten gespeichert (zusammen etwa 2 MB). Die Karte einer Strecke kommt dazu, sobald du die Strecke öffnest.</p>
+    <button type="button" id="karten-alle" hidden>Alle Karten offline speichern</button>
+    <div class="frage" id="karten-frage" role="dialog" aria-label="Alle Karten speichern?" hidden>
+      <p>Das lädt etwa <b id="karten-mb"></b> auf dein Handy, am besten im WLAN. Willst du wirklich die Karten aller Strecken speichern?</p>
+      <div class="knoepfe"><button type="button" class="ja" id="karten-ja">Ja, speichern</button><button type="button" id="karten-nein">Abbrechen</button></div>
+    </div>
+  </div>
   <footer>Inoffiziell, kein Angebot der Veranstalter. Daten: offizielle Strecken, Höhenmodelle DGM1 Hamburg, Berlin, Hessen, NRW, Bayern (Bayerische Vermessungsverwaltung) und Sachsen (GeoSN), Thüringen (GDI-Th, 20-m-Raster von Sonny), USGS 3DEP (New York, Boston, Chicago), Environment Agency (London, Open Government Licence v3.0), IGN RGE ALTI (Paris, Licence Ouverte), GSI Japan (Tokio, Osaka, 国土地理院), IGN España (Valencia, PNOA-LiDAR, CC BY 4.0), INEGI (Mexiko-Stadt, LiDAR 5 m), AHN (Amsterdam, CC0), ICGC (Barcelona, CC BY 4.0), INGV TINITALY und Regione Lazio (Rom, CC BY 4.0), NASA SRTM und Copernicus DEM (Great Wall), FABDEM der Universität Bristol (Athen, CC BY-NC-SA 4.0), IGN RGE ALTI und LiDAR HD (Médoc, Licence Ouverte), GPX-Höhen des Veranstalters (Stockholm), Stadt Wien (MA 41) und BEV (Wien, CC BY 4.0), City of Cape Town (Kapstadt), NSW Spatial Services (Sydney, CC BY 4.0), © OpenStreetMap-Mitwirkende.</footer>
 </div>
 <script>
@@ -419,7 +438,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
   KARTEN.forEach(k => k.a.addEventListener("click", () => merke(k.href)));
   baueRad(zuletzt);
 })();
-const APP_VERSION = '2.2';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.3';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
@@ -508,7 +527,61 @@ const APP_VERSION = '2.2';   // eine Nummer für die ganze App (seit 2.0), setzt
         if ("serviceWorker" in navigator) navigator.serviceWorker.getRegistration(o).then(r => r && r.update()).catch(() => {});
       }
     } catch (_) {}
+    // Alle Strecken offline bereit (seit 2.3; Nutzer: „alle Strecken offline, ohne Karten“): jede Strecke bekommt ihren Service
+    // Worker, der bei der Installation nur Seite, version.json und Symbole speichert (≈ 65 KB gepackt je Strecke), keine Karten
+    if ("serviceWorker" in navigator) for (const o of [...document.querySelectorAll('a.card[href$="/"]')].map(a => a.getAttribute("href")))
+      navigator.serviceWorker.register(o + "sw.js", { scope: o }).catch(() => {});
+    kartenStand();
   }, 1500);
+
+  // Karten aller Strecken (seit 2.3; Nutzer: „beim Anklicken alle Karten für offline laden, angeben, wie groß die Datenmenge ist
+  // und ob der User sich sicher ist“). karten.json (von kern.py) nennt je Strecke Speicher und Kartenbilder mit Größe; die Seite
+  // zählt, was im Speicher der Strecken fehlt, und legt es nach der Rückfrage direkt dort ab (der Service Worker der Startseite
+  // lässt Anfragen in die Ordner der Strecken durch)
+  const knopf = document.getElementById("karten-alle"), frage = document.getElementById("karten-frage"), txt = document.getElementById("offline-text");
+  const mb = b => b < 1e6 ? "1 MB" : Math.round(b / 1e6) + " MB";
+  let fehlen = [], laeuft = false;
+  async function kartenStand() {
+    if (!("caches" in window) || laeuft) return;
+    try {
+      const K = await (await fetch("karten.json", { cache: "no-cache" })).json(); fehlen = [];
+      for (const [o, e] of Object.entries(K)) {
+        const c = (await caches.has(e.cache)) ? await caches.open(e.cache) : null;
+        for (const [f, b] of Object.entries(e.karten)) {
+          const url = new URL(o + "/" + f, location.href).href;
+          if (!c || !(await c.match(url, { ignoreSearch: true }))) fehlen.push([e.cache, url, b]);
+        }
+      }
+      const rest = fehlen.reduce((s, x) => s + x[2], 0);
+      knopf.textContent = "Alle Karten offline speichern (≈ " + mb(rest) + ")"; knopf.hidden = !fehlen.length; knopf.disabled = false;
+      document.getElementById("karten-mb").textContent = mb(rest);
+      if (!fehlen.length) txt.textContent = "Offline: Alle Strecken und alle Karten sind gespeichert.";
+    } catch (_) {}
+  }
+  knopf.addEventListener("click", () => { frage.hidden = false; knopf.hidden = true; });
+  document.getElementById("karten-nein").addEventListener("click", () => { frage.hidden = true; knopf.hidden = !fehlen.length; });
+  document.getElementById("karten-ja").addEventListener("click", async () => {
+    frage.hidden = true;
+    if (!navigator.onLine) { txt.textContent = "Ohne Netz lassen sich die Karten nicht speichern."; knopf.hidden = false; return; }
+    laeuft = true; knopf.hidden = false; knopf.disabled = true;
+    if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+    const gesamt = fehlen.reduce((s, x) => s + x[2], 0), liste = fehlen.slice(); let fertig = 0, schief = 0;
+    const zeig = () => { knopf.textContent = "Karten werden gespeichert: " + Math.round(fertig / 1e6) + " von " + mb(gesamt) + " …"; };
+    zeig();
+    const arbeiter = async () => {
+      for (let x; (x = liste.shift()); ) {
+        try {
+          const res = await fetch(x[1], { cache: "no-cache" });
+          if (!res.ok || res.redirected) throw 0;
+          await (await caches.open(x[0])).put(x[1], res);
+        } catch (_) { schief++; }
+        fertig += x[2]; zeig();
+      }
+    };
+    await Promise.all([arbeiter(), arbeiter(), arbeiter(), arbeiter()]);   // vier gleichzeitig
+    laeuft = false; await kartenStand();
+    txt.textContent = schief ? schief + " Kartenbilder kamen nicht an. Tipp den Knopf später noch einmal an." : "Offline: Alle Strecken und alle Karten sind gespeichert.";
+  });
 })();
 </script>
 </body>

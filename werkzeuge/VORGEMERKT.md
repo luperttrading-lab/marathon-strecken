@@ -4,9 +4,11 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
 
 ## Ideen (mit dem Nutzer besprochen, Reihenfolge offen)
 
-- **Als Nächstes (Nutzer 31.10.2026, „morgen“):** alle Strecken offline, aber **ohne Karten** (Seiten ≈ 65 KB gepackt je
-  Strecke; mit Karten wären es bei 20 weiteren Strecken ≈ 140 MB). Im Kartenfeld ein Hinweis, wenn das Handy offline ist und
-  die Kartenbilder fehlen. Braucht Rückfragen an den Nutzer, deshalb nicht über Nacht.
+- ~~Alle Strecken offline ohne Karten~~ – erledigt 31.10.2026 als Marathon 2.3 (Karten aller Strecken per Knopf mit
+  Rückfrage und Datenmenge, Hinweis im Kartenfeld; [`kern/AENDERUNGEN.md`](kern/AENDERUNGEN.md)).
+- **Halbmarathons** (interAir bietet 8 an: Lissabon, Paris, New York, Prag, Berlin, Brooklyn, Kopenhagen, Cardiff):
+  **vorerst nicht** (Nutzer 31.10.2026: „ein ganz anderes Projekt“). Der Kern hat 42,2 km an mehreren Stellen fest
+  (Zielkarte, Achse, Schieber, 5-km-Tabelle); vorher müsste er alles aus der Streckenlänge rechnen.
 - **Startseite „Deine Form auf allen Strecken“:** eine Zeit auf flacher Strecke eingeben, für jede Strecke die gleichwertige
   Zeit sehen (hilft bei der Wahl einer Reise). Das Modell dafür ist seit 30.10.2026 an echten Zwischenzeiten geprüft
   (`werkzeuge/eichung/`).
@@ -19,11 +21,10 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
     Pace-Code selbst braucht. Bedingungen aus der Analyse: Kern in SHELL des Service Workers, die Startseite frischt ihn mit
     auf, Hinweis in der dünnen Seite, wenn der Kern fehlt, Cache-Namen unverändert, Übergang am iPhone prüfen. `kern.py` kennt
     die Grenze zwischen Kern und Feldern schon und könnte dann dünne Seiten schreiben.
-- **Alle Strecken offline beim Öffnen der Startseite:** gebaut als Hamburg 1.78 / Startseite 1.37 (Commit 9238f37), am
-  30.10.2026 auf Wunsch des Nutzers zurückgenommen („erstmal nur die Meldung“). Kosten: ≈ 1,6 MB einmalig, Karten ≈ 72 MB
-  per Knopf. Wieder einspielen: `git revert` des Rücknahme-Commits.
-- **Weitere Strecken aus dem Angebot von interAir:** Beaujolais nachrangig (dort läuft kaum jemand auf Zeit). Athen und
-  Wien sind seit 30.10.2026 gebaut, Stockholm und Médoc seit 30.10.2026 (Marathon 2.1).
+- **Weitere Strecken aus dem Angebot von interAir** (Abgleich 31.10.2026 mit 32 Laufreisen): Honolulu und Shanghai gebaut
+  31.10.2026 (Marathon 2.3). Beaujolais nachrangig (dort läuft kaum jemand auf Zeit; IGN 1 m frei, Weg wie Médoc). Nicht
+  sinnvoll oder nicht machbar: Frozen Lake (auf dem Eis, flach), Lost City Mexiko (keine offizielle Strecke), Bhutan (Pfade,
+  nur 30-m-Modell), Antarktis (Kurs wechselt, kleines Feld).
 
 ## Kleinigkeiten aus den Übergaben
 

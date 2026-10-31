@@ -6,6 +6,26 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.3 (31.10.2026): alle Strecken offline, Karten auf Wunsch
+
+Nutzer 31.10.2026: alle Strecken offline, aber ohne Karten (mit Karten wären es bald über 80 MB); im Kartenfeld ein Hinweis,
+wenn das Handy offline ist; Karten aller Strecken per Knopf, „mit Datenmenge und ob der User sich sicher ist“.
+
+- **Service Worker:** lädt bei der Installation nur noch Seite, `version.json`, Manifest und Symbole, keine Kartenbilder. Neu
+  der Auftrag `karten` (von der eigenen Seite beim Öffnen mit Netz): fehlende Kartenbilder dieser Strecke ablegen. Wer eine
+  Strecke öffnet, hat ihre Karte also weiter offline; Cache-Namen unverändert, gespeicherte Karten bleiben.
+- **Kartenfeld:** Fehlt ein sichtbares Kartenbild, steht links ein Hinweis, offline „Offline: Karte nicht gespeichert /
+  Strecke, Profil und Zahlen gehen“, mit Netz „Kartenbilder laden gerade nicht“; oben oder unten, gegenüber dem Maßstab, der
+  OSM-Vermerk entfällt dann. Fehlgeschlagene Bilder werden mit Netz bis zu dreimal nach 2 s und nach „online“ (0,8 s später)
+  neu versucht.
+- **`kern.py`** schreibt `karten.json` im Wurzelordner (je App Speichername und Kartenbilder mit Bytes); Prüfen meldet eine
+  veraltete Liste.
+- **Startseite:** richtet beim Öffnen mit Netz die Service Worker aller Strecken ein (≈ 1,8 MB gepackt für alle, wie 1.37,
+  aber ohne Karten). Knopf „Alle Karten offline speichern (≈ N MB)“ mit der Menge, die im Speicher noch fehlt (aus
+  `karten.json`); Antippen öffnet die Rückfrage „Das lädt etwa N MB … wirklich?“ mit „Ja, speichern“ / „Abbrechen“. Die Seite
+  holt die Bilder selbst (vier gleichzeitig, Fortschritt in MB) und legt sie in den Speicher der jeweiligen Strecke. Danach
+  verschwindet der Knopf. Stand 2.3: 701 Kartenbilder, 78 MB für 26 Strecken.
+
 ## 2.2 (31.10.2026): Suche auf der Startseite
 
 - Kern unverändert. Startseite: neue erste Suchstufe „Stadtname beginnt mit der Eingabe“. Bisher traf „St“ auch das Wort

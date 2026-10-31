@@ -45,14 +45,17 @@ Offene Ideen und Punkte: `werkzeuge/VORGEMERKT.md`. Eichung des Pace-Modells: `w
   Version, Tabellen bei 320/375/393/430 px ohne Überbreite, Bilder der geänderten Stelle ansehen.
 - Nach dem Push jede `version.json` unter GitHub Pages abfragen, bis alle den neuen Stand haben; erst dann „live“ melden.
 
-## Offline (Stand Startseite 1.40, Hamburg 1.80)
+## Offline (Stand Marathon 2.3)
 
 - Service Worker je Strecke: eigene Dateien Netz zuerst, offline **nur aus dem eigenen Speicher**; die Seite wird bei jedem
-  Besuch mit Netz auch als `index.html` erneuert. Kartenbilder werden bei der Installation vorgeladen.
-- Offline erscheint oben ein oranger Hinweis „gespeicherte Fassung vX, vielleicht nicht die neueste“, bis man ihn antippt.
-- Die Startseite frischt beim Öffnen mit Netz alle schon gespeicherten Strecken auf (`version.json` vergleichen). Nie geöffnete
-  Strecken sind offline nicht da; das Komplettpaket (alle Strecken beim Öffnen, Karten per Knopf) wurde gebaut und auf Wunsch
-  des Nutzers zurückgenommen (Commit 9238f37).
+  Besuch mit Netz auch als `index.html` erneuert. Bei der Installation **keine Kartenbilder**; die holt die Seite beim Öffnen
+  mit Netz (Auftrag `karten` an den eigenen Service Worker).
+- Die Startseite richtet beim Öffnen mit Netz alle Strecken ein (ohne Karten, ≈ 1,8 MB) und frischt gespeicherte auf
+  (`version.json` vergleichen). Knopf „Alle Karten offline speichern (≈ N MB)“ mit Rückfrage; Grundlage `karten.json`, das
+  `kern.py --schreiben` schreibt (Prüfen meldet eine veraltete Liste, also nach neuen Strecken oder Kartenbildern immer
+  `--schreiben`).
+- Offline erscheint oben ein oranger Hinweis „gespeicherte Fassung vX, vielleicht nicht die neueste“, bis man ihn antippt; im
+  Kartenfeld ohne Bilder „Offline: Karte nicht gespeichert“ (gegenüber dem Maßstab).
 
 ## Regeln
 

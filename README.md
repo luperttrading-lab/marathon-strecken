@@ -38,9 +38,10 @@ dann liegen alle Strecken in einer App.
 Das Pace-Modell (1,0 s je Höhenmeter bei 4:00 /km, bergab die Hälfte) ist an 3 Mio. echten Zwischenzeiten geprüft:
 [`werkzeuge/eichung/`](werkzeuge/eichung/README.md) (30.10.2026).
 Besprochene, noch nicht gebaute Ideen und offene Punkte: [`werkzeuge/VORGEMERKT.md`](werkzeuge/VORGEMERKT.md).
-Offline: Jede Strecke ist offline in der Fassung da, die zuletzt mit Netz geöffnet war (orangener Hinweis mit der Nummer).
-Die Startseite frischt beim Öffnen mit Netz die schon gespeicherten Strecken auf (seit 1.40; `version.json` vergleichen, nur
-bei neuer Fassung die Seite holen). Nie geöffnete Strecken sind offline nicht da.
+Offline (seit 2.3): Die Startseite speichert beim Öffnen mit Netz alle Strecken ohne Karten (≈ 1,8 MB) und frischt
+gespeicherte auf (`version.json` vergleichen). Die Karte einer Strecke kommt beim Öffnen der Strecke dazu, alle Karten per Knopf
+auf der Startseite nach Rückfrage mit der Datenmenge (`karten.json` aus `kern.py`). Offline steht oben ein orangener Hinweis mit
+der Nummer, im Kartenfeld ohne Kartenbilder „Offline: Karte nicht gespeichert“.
 
 ## Regeln für Änderungen
 

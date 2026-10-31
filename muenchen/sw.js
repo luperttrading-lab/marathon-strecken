@@ -5,8 +5,19 @@ const KARTE = ["./karte-dunkel-z11-0-0.jpg", "./karte-dunkel-z12-0-0.jpg", "./ka
 
 self.addEventListener("install", e => {
   // SHELL am HTTP-Cache vorbei frisch holen (sonst kann eine bis zu 10 min alte Kopie in den Speicher kommen)
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.map(s => new Request(s, { cache: "reload" }))).then(() => c.addAll(KARTE).catch(() => {}))));
+  // Kartenbilder seit 2.3 nicht mehr hier: die Startseite richtet alle Strecken ein (ohne Karten ≈ 2 MB, mit ≈ 80 MB). Die Karten
+  // einer Strecke kommen auf Auftrag „karten“ beim Öffnen der Strecke, alle zusammen per Knopf auf der Startseite
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.map(s => new Request(s, { cache: "reload" })))));
   self.skipWaiting();
+});
+
+// Auftrag „karten“ (seit 2.3, von der eigenen Seite beim Öffnen mit Netz): fehlende Kartenbilder ablegen, vorhandene nicht neu holen
+self.addEventListener("message", e => {
+  if (e.data !== "karten") return;
+  const abs = s => new URL(s, self.location).href;
+  e.waitUntil(caches.open(CACHE).then(async c => {
+    for (const k of KARTE) if (!(await c.match(abs(k)))) await c.add(new Request(k, { cache: "reload" })).catch(() => {});
+  }).catch(() => {}));
 });
 
 self.addEventListener("activate", e => {

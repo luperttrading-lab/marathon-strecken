@@ -18,6 +18,10 @@ Aufrufe (von überall, das Skript findet das Repo selbst):
   python3 werkzeuge/kern/kern.py --felder tokio             Felder einer App als JSON (Muster für --neu)
   python3 werkzeuge/kern/kern.py --neu stockholm felder.json  neue Strecke aus Feldern (index.html, sw.js, version.json)
 
+Dazu schreibt `--schreiben` die Liste `karten.json` im Wurzelordner (seit 2.3): je App der Name ihres Speichers (CACHE) und
+die Kartenbilder aus KARTE mit Dateigröße. Die Startseite nennt daraus die Datenmenge für „Alle Karten offline speichern“ und legt
+die Bilder direkt in den Speicher der Strecken. Prüfen meldet eine veraltete Liste (neue Strecke, neue Kartenbilder).
+
 `--schreiben` bricht ab, wenn eine App außerhalb der Felder von den anderen abweicht (jemand hat den Kern dort direkt geändert):
 die Änderung nach Hamburg übertragen oder sie mit `--erzwingen` verwerfen. Ebenso, wenn sich Dateien ändern, die Nummer aber
 nicht (sonst kommt das Update auf dem iPhone nicht an).
@@ -139,6 +143,21 @@ def lies_app(app):
     return {"t": t, "s": s, "kern": kern, "teile": teile, "swkern": swkern, "swteile": swteile, "version_json": vj}
 
 
+def karten_liste(namen, daten):
+    """karten.json: {app: {"cache": Name des Speichers, "karten": {Datei: Bytes}}}, für den Knopf auf der Startseite (seit 2.3)."""
+    aus = {}
+    for a in namen:
+        m = re.search(r'const CACHE = "([^"]+)"', daten[a]["swteile"]["cachezeile"])
+        dateien = {}
+        for k in json.loads(daten[a]["swteile"]["karte"]):
+            f = os.path.join(REPO, a, k[2:] if k.startswith("./") else k)
+            if not os.path.isfile(f):
+                raise Fehler(f"{a}/sw.js: Kartenbild {k} fehlt im Ordner")
+            dateien[k[2:] if k.startswith("./") else k] = os.path.getsize(f)
+        aus[a] = {"cache": m.group(1), "karten": dateien}
+    return json.dumps(aus, ensure_ascii=False, separators=(",", ":")) + "\n"
+
+
 def version_zentral():
     return json.loads(lies("version.json"))["version"]
 
@@ -197,6 +216,10 @@ def pruefen():
             teile.append("Version " + "/".join(sorted(str(v) for v in vs)) + " statt " + zentral)
         fehler += bool(teile)
         print(f"  {a:10s} {'; '.join(teile) if teile else ('Vorlage' if a == VORLAGE else 'gleich')}")
+    kl = karten_liste(namen, daten)
+    if not os.path.isfile(os.path.join(REPO, "karten.json")) or lies("karten.json") != kl:
+        print("  karten.json veraltet (neue Strecke oder andere Kartenbilder): mit --version <neue Nummer> --schreiben neu schreiben")
+        fehler += 1
     sv, sk = start_versionen()
     if set(sv + sk) != {zentral} or len(sv) != 1 or len(sk) != 1:
         print(f"  Startseite: APP_VERSION {sv}, Knopf {sk} statt {zentral}")
@@ -254,6 +277,7 @@ def schreiben(neue, erzwingen):
     st_neu = RX_START_KNOPF.sub(lambda m: m.group(1) + neue + m.group(3), RX_VERSION.sub(f"const APP_VERSION = '{neue}';", st))
     neu["index.html"] = (st, st_neu)
     neu["version.json"] = (lies("version.json"), json.dumps({"version": neue}))
+    neu["karten.json"] = (lies("karten.json") if os.path.isfile(os.path.join(REPO, "karten.json")) else None, karten_liste(namen, daten))
     geaendert = [p for p, (alt, n) in neu.items() if alt != n]
     if not geaendert:
         print(f"Nichts zu tun: alle Apps haben den Kern aus {VORLAGE}/ und Version {neue}.")
@@ -266,7 +290,7 @@ def schreiben(neue, erzwingen):
     for p in geaendert:
         schreibe(p, neu[p][1])
     kern_neu = [a for a in namen if (daten[a]["kern"], daten[a]["swkern"]) != (ref_kern, ref_sw)]
-    print(f"Version {neue} geschrieben: {len(geaendert)} Dateien ({len(namen)} Apps, Startseite, version.json).")
+    print(f"Version {neue} geschrieben: {len(geaendert)} Dateien ({len(namen)} Apps, Startseite, version.json, karten.json).")
     if kern_neu:
         print("Kern neu eingesetzt in: " + ", ".join(kern_neu))
     print("Als Nächstes: Prüfen im Browser (CLAUDE.md), Kopf der Änderungsliste werkzeuge/kern/AENDERUNGEN.md, Commit „… (Marathon "

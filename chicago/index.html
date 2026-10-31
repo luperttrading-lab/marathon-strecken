@@ -315,6 +315,12 @@ body.run .page { gap: 6px; }
 .mapctl { position: absolute; top: 12px; right: calc(var(--rpad) + 6px); display: grid; gap: 6px; }
 .mapctl button { width: 32px; height: 32px; min-height: 0; padding: 0; font: 600 18px/1 var(--font-display); background: var(--surface); border-color: var(--edge); }
 .credit { position: absolute; right: calc(var(--rpad) + 4px); bottom: 2px; font-size: 9.5px; color: var(--muted); background: var(--surface); padding: 0 4px; border-radius: 3px; opacity: 0.85; }
+/* Kartenfeld ohne Kartenbilder (seit 2.3; Nutzer: „im Kartenfeld wird angezeigt, dass das Handy offline ist“): links, frei von +/−,
+   oben oder unten gegenüber dem Maßstab (drawMap) */
+.map-hinweis { position: absolute; top: 14px; left: calc(var(--rpad) + 10px); max-width: calc(100% - 2 * var(--rpad) - 66px); text-align: left; font-size: 12.5px; line-height: 1.35; color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 5px 9px; white-space: pre-line; pointer-events: none; }
+.map-hinweis[hidden] { display: none; }
+.map-hinweis.unten { top: auto; bottom: 10px; }
+.page-map.ohne-karte .map-credit { display: none; }
 
 /* Laufmodus: Anzeige und Läuferblick füllen genau einen Bildschirm */
 .stage { display: contents; }
@@ -464,7 +470,7 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Bank of America Chicago Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.2</button></span>
+    <span class="eyebrow">Bank of America Chicago Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.3</button></span>
     <h1>Chicago</h1>
     <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der offiziellen Strecke, alle 10 m ausgewertet.</p>
@@ -473,7 +479,7 @@ body.run .close svg { width: 20px; height: 20px; }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.2</button></span>
+    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.3</button></span>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -489,6 +495,7 @@ body.run .close svg { width: 20px; height: 20px; }
       <div class="page page-map">
         <canvas id="map" aria-label="Karte mit der Strecke und deiner Position"></canvas>
         <div class="mapctl"><button type="button" id="map-in" aria-label="Karte vergrößern">+</button><button type="button" id="map-out" aria-label="Karte verkleinern">−</button><button type="button" class="run-only" id="map-size" aria-label="Karte größer oder kleiner stellen">&#x2195;&#xFE0E;</button></div>
+        <div class="map-hinweis" id="map-hinweis" role="status" hidden></div>
         <span class="credit map-credit">© OpenStreetMap-Mitwirkende</span>
       </div>
       <div class="page">
@@ -1785,7 +1792,13 @@ const mapStufen = (w, h) => { const ov = fitZ(w, h), gap = 12 - ov, k = gap > 1 
   for (let i = 1; i <= k; i++) zw.push(Math.round((ov + gap * i / (k + 1)) * 100) / 100); return ["ov", ...zw, 12, 13, 14, 15, 16]; };
 const isDark = () => { const m = /^#?([0-9a-f]{6})$/i.exec(COL["--surface"] || ""); if (!m) return false; const v = parseInt(m[1], 16); return (0.299 * (v >> 16) + 0.587 * ((v >> 8) & 255) + 0.114 * (v & 255)) < 110; };
 const imgCache = {};
-const mapImg = name => { const key = "karte-dunkel-" + name + ".jpg"; let im = imgCache[key]; if (!im) { im = new Image(); im.onload = () => { dirty = true; }; im.src = key; imgCache[key] = im; } return im; };
+// Fehlt ein Bild (offline nicht gespeichert), merkt es sich das (Hinweis im Kartenfeld); mit Netz wird es neu versucht (seit 2.3)
+const mapImg = name => { const key = "karte-dunkel-" + name + ".jpg"; let im = imgCache[key]; if (!im) { im = new Image(); im.onload = () => { dirty = true; }; im.onerror = () => { im.fehlt = true; dirty = true;
+  // mit Netz bis zu dreimal neu versuchen (das Ereignis „online“ kommt oft, bevor das Netz wirklich trägt)
+  if (navigator.onLine && (mapVersuch[key] = (mapVersuch[key] || 0) + 1) <= 3) setTimeout(() => { if (imgCache[key] === im) delete imgCache[key]; dirty = true; }, 2000); };
+  im.src = key; imgCache[key] = im; } return im; };
+const mapVersuch = {};
+window.addEventListener("online", () => setTimeout(() => { for (const k in imgCache) if (imgCache[k].fehlt) { delete imgCache[k]; delete mapVersuch[k]; } dirty = true; }, 800));
 function drawMap() {
   const cv = $("map"), { w, h, dpr } = sizeCanvas(cv); if (!w || !h) return; const c = cv.getContext("2d");
   c.setTransform(dpr, 0, 0, dpr, 0, 0); c.fillStyle = COL["--bg"]; c.fillRect(0, 0, w, h);
@@ -1794,10 +1807,11 @@ function drawMap() {
   const [cx, cy] = ov ? [(RB.x0 + RB.x1) / 2 * 2 ** lvl, (RB.y0 + RB.y1) / 2 * 2 ** lvl] : [rx, ry], mx = ov ? (w - 42) / 2 : w / 2;
   const SX = gx => (gx - cx) * sc + mx, SY = gy => (gy - cy) * sc + h / 2;
   c.imageSmoothingQuality = "high";
+  let fehlt = false;
   for (const [ox, oy, cw, ch, name] of T.chunks) {
     const x = SX(T.x0 + ox), y = SY(T.y0 + oy), ww = cw * sc, hh = ch * sc;
     if (x > w || y > h || x + ww < 0 || y + hh < 0) continue;
-    const im = mapImg(name); if (im.complete && im.naturalWidth) c.drawImage(im, x, y, ww, hh);
+    const im = mapImg(name); if (im.complete && im.naturalWidth) c.drawImage(im, x, y, ww, hh); else if (im.fehlt) fehlt = true;
   }
   // Untergrund: dunkel etwas aufhellen (Straßen sonst kaum zu sehen), hell etwas abdunkeln (blendet sonst)
   c.globalCompositeOperation = isDark() ? "screen" : "multiply"; c.fillStyle = COL["--map-tint"];
@@ -1835,6 +1849,10 @@ function drawMap() {
     c.strokeStyle = "rgba(11, 20, 28, 0.85)"; c.lineWidth = 4; strich();
     c.strokeStyle = COL["--ink"]; c.lineWidth = 1.5; strich();
     textSchein(c, lab, x0 + len + 6, y0 - 2);
+    // Hinweis ohne Kartenbilder (seit 2.3) links, auf der anderen Seite als der Maßstab; ohne Bilder auch kein OSM-Vermerk
+    const mh = $("map-hinweis"), txt = !fehlt ? "" : navigator.onLine ? "Kartenbilder laden gerade nicht" : "Offline: Karte nicht gespeichert\nStrecke, Profil und Zahlen gehen";
+    if (mh.textContent !== txt) mh.textContent = txt;
+    mh.hidden = !fehlt; mh.classList.toggle("unten", y0 < h / 2); cv.parentNode.classList.toggle("ohne-karte", fehlt);
   }
   c.fillStyle = COL["--surface"]; c.beginPath(); c.arc(SX(rx), SY(ry), 8.5, 0, 2 * Math.PI); c.fill();
   c.fillStyle = COL["--blue"]; c.beginPath(); c.arc(SX(rx), SY(ry), 6, 0, 2 * Math.PI); c.fill();
@@ -1925,7 +1943,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '2.2';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.3';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
@@ -1995,7 +2013,10 @@ const APP_VERSION = '2.2';   // eine Nummer für die ganze App (seit 2.0), setzt
     try { localStorage.setItem("marathon.gesehen", APP_VERSION); } catch (_) {}
     if (vorher) setTimeout(() => showInfo("Version " + APP_VERSION + " ist geladen", 4), 400);
   }
-  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+  // Kartenbilder dieser Strecke offline ablegen, die fehlenden (seit 2.3 nicht mehr bei der Installation des Service Workers: die
+  // Startseite richtet alle Strecken ein, Karten aller Strecken nur auf Knopfdruck dort)
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").then(() => navigator.serviceWorker.ready)
+    .then(r => { if (navigator.onLine && r.active) r.active.postMessage("karten"); }).catch(() => {});
 })();
 </script>
 </body>
