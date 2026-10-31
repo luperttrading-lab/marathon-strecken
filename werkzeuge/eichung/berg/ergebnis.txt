@@ -1,0 +1,270 @@
+Jungfrau: 11062 Zeilen, im Ziel mit allen Zeiten 10308, plausibel 10307
+Zermatt: 877 Zeilen, im Ziel mit allen Zeiten 817, plausibel 817
+LGT: 292 Zeilen, im Ziel mit allen Zeiten 286, plausibel 286
+
+== Abschnitte (Höhen der App; ↑/↓ mit 200-m-Fenster wie in den Übergaben; Höhenmeter je Steigungsklasse und Steigung mit 100 m wie das Modell)
+  rennen                abschnitt        km   h0   h1  auf200  ab200  hm_0_5  hm_5_10  hm_10_15  hm_15_20  hm_20p  steigung_hm_gew  hm_vorher  app_faktor  anker
+Jungfrau   Start–Runde Interlaken   0.0–3.3  567  567       8      7       9        0         0         0       0              0.8          4       1.005  False
+Jungfrau               Runde–km 5   3.3–5.0  567  567       4      4       6        0         0         0       0              2.3         10       1.007   True
+Jungfrau          km 5–Wilderswil  5.0–10.4  567  588      26      5      29        0         0         0       0              1.2         26       1.019   True
+Jungfrau Wilderswil–Lauterbrunnen 10.4–21.1  588  800     262     50     150      121         0         0       0              4.8        179       1.106  False
+Jungfrau     Lauterbrunnen–Stocki 21.1–25.9  800  789      25     36      28        1         0         0       0              3.0        336       1.009  False
+Jungfrau            Stocki–Wengen 25.9–30.7  789 1276     502     13      24       85        72       145     182             16.3        663       1.575  False
+Jungfrau              Wengen–Wixi 30.7–38.5 1276 1857     590     13      57      200       319        25       0             10.2       1152       1.387  False
+Jungfrau                Wixi–Ziel 38.5–42.2 1857 2330     513     36      11       19        51       125     316             20.9       1670       1.803  False
+ Zermatt            Start–Zermatt  0.0–20.6 1101 1605     564     59     200      239        79        71       4              7.8        296       1.132   True
+ Zermatt         Zermatt–Sunnegga 20.6–32.0 1605 2256     704     53      66      260       389         0       0              9.8        896       1.306  False
+ Zermatt       Sunnegga–Riffelalp 32.0–39.1 2256 2220     188    223      37       25        53        93       0             12.2       1456       1.105  False
+ Zermatt           Riffelalp–Ziel 39.1–42.2 2220 2575     361      6      13       41        85       140      85             15.9       1719       1.636  False
+     LGT              Start–Vaduz  0.0–10.1  441  455      30     15      30        5         0         0       0              2.2         15       1.010   True
+     LGT               Vaduz–Steg 10.1–25.5  455 1317    1130    268      55      180       628       285       0             12.6        721       1.367  False
+     LGT                Steg–Ziel 25.5–42.2 1317 1611     741    448      73      247       219       144      96             12.0       1608       1.205  False
+
+App-Modell, wirksame Flach-m je Höhenmeter je Steigungsklasse (Mittel über die drei Strecken): 0–5 % 4.42  5–10 % 4.90  10–15 % 5.24  15–20 % 5.61  > 20 % 5.97
+Minetti (Labor, gleiche Energie):                                                   0–5 % 5.77  5–10 % 6.37  10–15 % 6.81  15–20 % 7.29  > 20 % 7.76
+
+== Läufer je Rennen, Jahr und Klasse (Klasse = flache Marathonzeit aus der Pace im Anker, Ermüdung wie ein 3:15-Läufer)
+klasse         < 3:15  3:15–3:45  3:45–4:15  4:15–4:45  ≥ 4:45
+rennen   jahr                                                 
+Jungfrau 2024     320        929       1329        641      35
+         2025     382       1031       1267        725      44
+         2026     317        917       1281        986     103
+LGT      2026      24         78        102         74       0
+Zermatt  2025      37         70        137        122      96
+         2026      38         53         91        107      66
+
+Mediane je Klasse: Zielzeit, flache Äquivalenzzeit (einheitlich / mit klasseneigener Ermüdung) [h]
+                       n  ziel   teq  teq_klasse
+rennen   klasse                                 
+Jungfrau < 3:15     1019  4.30  3.05        3.04
+         3:15–3:45  2877  5.03  3.55        3.56
+         3:45–4:15  3877  5.76  4.01        4.07
+         4:15–4:45  2352  6.39  4.42        4.60
+         ≥ 4:45      182  6.81  4.83        5.15
+LGT      < 3:15       24  4.18  3.08        3.07
+         3:15–3:45    78  4.85  3.52        3.53
+         3:45–4:15   102  5.53  4.02        4.09
+         4:15–4:45    74  6.00  4.42        4.61
+         ≥ 4:45        8  6.92  4.81        5.16
+Zermatt  < 3:15       75  4.15  3.06        3.05
+         3:15–3:45   123  4.88  3.58        3.60
+         3:45–4:15   228  5.57  4.03        4.09
+         4:15–4:45   229  6.24  4.48        4.64
+         ≥ 4:45      162  6.94  4.98        5.27
+
+== Kontrolle: Jungfrau km 21,1–25,9 (flach), Pace gegen den Anker in % nach Abzug des Modells, und die Ermüdung flacher Marathons
+          beob           flach_einheitlich           flach_klasse           
+jahr      2024 2025 2026              2024 2025 2026         2024  2025 2026
+klasse                                                                      
+< 3:15     2.3 -0.1  0.0               1.3  1.3  1.3          1.0   1.2  1.2
+3:15–3:45  1.9 -0.2  0.8               1.3  1.3  1.3          1.7   1.7  1.7
+3:45–4:15  2.3  0.0  0.5               1.3  1.3  1.3          3.0   3.2  3.2
+4:15–4:45  3.5  1.0  0.3               1.3  1.3  1.3          5.6   5.9  5.9
+≥ 4:45     1.5  3.0  0.0               1.3  1.3  1.3          9.7  10.0  9.7
+
+== Flach-m je Höhenmeter bergauf je Abschnitt (Ermüdung einheitlich (3:15-Profil)); Steigung = Höhenmeter-gewichtetes Mittel bergauf
+                                   Steigung %  Höhenmeter vorher  App  alle  < 3:15  3:15–3:45  3:45–4:15  4:15–4:45  ≥ 4:45
+Jungfrau Wilderswil–Lauterbrunnen         4.8                179  4.6   5.9     5.6        5.7        5.8        6.4     6.7
+Zermatt Zermatt–Sunnegga                  9.8                896  5.0   8.2     7.1        8.1        8.1        8.5     8.3
+Jungfrau Wengen–Wixi                     10.2               1152  5.1   9.5     9.0        9.7        9.7        9.3     7.8
+LGT Steg–Ziel                            12.0               1608  5.2  10.6     9.6       11.1       10.7       10.3     NaN
+Zermatt Sunnegga–Riffelalp               12.2               1456  5.2  14.3    11.6       13.9       14.0       15.2    14.8
+LGT Vaduz–Steg                           12.6                721  5.3   6.7     6.3        6.9        6.7        6.7     NaN
+Zermatt Riffelalp–Ziel                   15.9               1719  5.5  12.5    12.9       12.7       12.4       12.3    12.4
+Jungfrau Stocki–Wengen                   16.3                663  5.5   8.1     7.4        7.9        8.3        8.4     7.4
+Jungfrau Wixi–Ziel                       20.9               1670  5.8  12.0    12.0       11.8       12.0       12.0    11.5
+
+== Flach-m je Höhenmeter bergauf je Abschnitt (ohne Ermüdung); Steigung = Höhenmeter-gewichtetes Mittel bergauf
+                                   Steigung %  Höhenmeter vorher  App  alle  < 3:15  3:15–3:45  3:45–4:15  4:15–4:45  ≥ 4:45
+Jungfrau Wilderswil–Lauterbrunnen         4.8                179  4.6   6.0     5.7        5.7        5.8        6.5     6.7
+Zermatt Zermatt–Sunnegga                  9.8                896  5.0   8.7     7.6        8.6        8.6        9.0     8.8
+Jungfrau Wengen–Wixi                     10.2               1152  5.1  10.8    10.3       11.0       11.1       10.6     9.0
+LGT Steg–Ziel                            12.0               1608  5.2  12.0    10.9       12.6       12.1       11.7     NaN
+Zermatt Sunnegga–Riffelalp               12.2               1456  5.2  17.2    14.3       16.8       16.9       18.2    17.8
+LGT Vaduz–Steg                           12.6                721  5.3   6.8     6.4        7.0        6.7        6.7     NaN
+Zermatt Riffelalp–Ziel                   15.9               1719  5.5  13.4    13.9       13.7       13.4       13.2    13.4
+Jungfrau Stocki–Wengen                   16.3                663  5.5   8.6     7.9        8.4        8.8        8.8     7.9
+Jungfrau Wixi–Ziel                       20.9               1670  5.8  12.9    13.0       12.8       13.0       13.0    12.5
+
+== Flach-m je Höhenmeter bergauf je Abschnitt (Ermüdung je Klasse nach km); Steigung = Höhenmeter-gewichtetes Mittel bergauf
+                                   Steigung %  Höhenmeter vorher  App  alle  < 3:15  3:15–3:45  3:45–4:15  4:15–4:45  ≥ 4:45
+Jungfrau Wilderswil–Lauterbrunnen         4.8                179  4.6   5.7     5.6        5.7        5.6        5.8     5.3
+Zermatt Zermatt–Sunnegga                  9.8                896  5.0   7.2     7.3        7.9        7.6        7.1     6.1
+Jungfrau Wengen–Wixi                     10.2               1152  5.1   8.6     9.2        9.5        8.9        7.3     5.2
+LGT Steg–Ziel                            12.0               1608  5.2   9.5     9.7       11.0        9.4        8.0     NaN
+Zermatt Sunnegga–Riffelalp               12.2               1456  5.2  11.5    12.2       13.4       12.2       11.3     9.2
+LGT Vaduz–Steg                           12.6                721  5.3   6.6     6.3        6.9        6.5        6.2     NaN
+Zermatt Riffelalp–Ziel                   15.9               1719  5.5  11.7    13.0       12.6       11.9       11.2    10.9
+Jungfrau Stocki–Wengen                   16.3                663  5.5   7.6     7.5        7.8        7.8        7.1     5.6
+Jungfrau Wixi–Ziel                       20.9               1670  5.8  11.5    12.1       11.7       11.5       10.9    10.0
+
+== Flach-m je Höhenmeter bergauf je Abschnitt (Ermüdung je Klasse nach Zeitanteil); Steigung = Höhenmeter-gewichtetes Mittel bergauf
+                                   Steigung %  Höhenmeter vorher  App  alle  < 3:15  3:15–3:45  3:45–4:15  4:15–4:45  ≥ 4:45
+Jungfrau Wilderswil–Lauterbrunnen         4.8                179  4.6   6.0     5.8        5.9        5.9        6.3     6.0
+Zermatt Zermatt–Sunnegga                  9.8                896  5.0   7.5     7.4        8.1        7.9        7.4     6.4
+Jungfrau Wengen–Wixi                     10.2               1152  5.1   9.2     9.6       10.0        9.4        7.9     5.5
+LGT Steg–Ziel                            12.0               1608  5.2   9.5     9.7       11.1        9.5        7.9     NaN
+Zermatt Sunnegga–Riffelalp               12.2               1456  5.2  11.9    12.6       14.1       12.8       11.5     9.2
+LGT Vaduz–Steg                           12.6                721  5.3   6.6     6.4        7.0        6.6        6.4     NaN
+Zermatt Riffelalp–Ziel                   15.9               1719  5.5  11.1    12.6       12.2       11.4       10.6    10.0
+Jungfrau Stocki–Wengen                   16.3                663  5.5   8.0     7.7        8.2        8.3        7.8     6.2
+Jungfrau Wixi–Ziel                       20.9               1670  5.8  11.1    11.9       11.5       11.1       10.3     9.3
+
+== Modelle (alle Läufer; Ermüdung einheitlich; bergab wie App): mittlerer quadratischer Fehler je Zelle und Parameter
+  App-Kurve × a                    RMS  8.6 % | a 1.897 | k: 8.4 9.3 9.9 10.6 11.3 | ohne je Rennen, Fehler dort: Jungfrau +8.4 %; Zermatt -18.9 %; LGT +6.4 %
+  App × a + Knick c                RMS  8.1 % | a 1.595, c 2.214 | k: 7.1 7.8 8.9 10.6 12.8 | ohne je Rennen, Fehler dort: Jungfrau +0.8 %; Zermatt -17.9 %; LGT +3.6 %
+  App × a + Höhe                   RMS  5.4 % | a 1.205, hoe 0.256 | k: 5.3 5.9 6.3 6.8 7.2 | ohne je Rennen, Fehler dort: Jungfrau +7.2 %; Zermatt -6.5 %; LGT +10.5 %
+  App × a + Bergermüdung           RMS  5.0 % | a 1.194, ger 0.194 | k: 5.3 5.8 6.3 6.7 7.1 | ohne je Rennen, Fehler dort: Jungfrau +4.4 %; Zermatt -4.9 %; LGT +11.1 %
+  App × a + Knick + Bergermüdung   RMS  4.4 % | a 0.971, c 1.559, ger 0.196 | k: 4.3 4.8 5.5 6.6 8.1 | ohne je Rennen, Fehler dort: Jungfrau +4.0 %; Zermatt -5.5 %; LGT +8.8 %
+  App + Bergermüdung (a = 1)       RMS  5.3 % | ger 0.254 | k: 4.4 4.9 5.2 5.6 6.0 | ohne je Rennen, Fehler dort: Jungfrau +1.6 %; Zermatt -1.2 %; LGT +12.0 %
+  App, Aufschlag wächst (a = 1)    RMS  3.9 % | gauf 0.685 | k: 4.4 4.9 5.2 5.6 6.0 | ohne je Rennen, Fehler dort: Jungfrau +1.7 %; Zermatt -6.5 %; LGT +3.1 %
+  App, Aufschlag wächst + Höhe wie Mexiko RMS  3.8 % | gauf 0.604 | k: 4.4 4.9 5.2 5.6 6.0 | ohne je Rennen, Fehler dort: Jungfrau +2.1 %; Zermatt -6.7 %; LGT +3.5 %
+  App × a, Aufschlag wächst        RMS  3.9 % | a 1.008, gauf 0.675 | k: 4.5 4.9 5.3 5.6 6.0 | ohne je Rennen, Fehler dort: Jungfrau -0.3 %; Zermatt -8.8 %; LGT +3.4 %
+  App × a + Knick, Aufschlag wächst RMS  3.9 % | a 1.008, c 0.000, gauf 0.675 | k: 4.5 4.9 5.3 5.6 6.0 | ohne je Rennen, Fehler dort: Jungfrau -0.3 %; Zermatt -8.8 %; LGT +3.4 %
+  Klassen monoton, 0–5 % = App     RMS  7.1 % | d1 0.000, d2 7.216, d3 0.000, d4 0.000 | k: 4.4 4.4 11.6 11.6 11.6 | ohne je Rennen, Fehler dort: Jungfrau +1.2 %; Zermatt -18.8 %; LGT +6.2 %
+  Klassen monoton + Bergermüdung   RMS  4.3 % | d1 0.000, d2 1.871, d3 1.515, d4 0.000, ger 0.179 | k: 4.4 4.4 6.3 7.8 7.8 | ohne je Rennen, Fehler dort: Jungfrau +4.4 %; Zermatt -5.3 %; LGT +9.7 %
+  Klassen monoton, Aufschlag wächst RMS  3.6 % | d1 0.181, d2 0.978, d3 0.000, d4 0.000, gauf 0.725 | k: 4.4 4.6 5.6 5.6 5.6 | ohne je Rennen, Fehler dort: Jungfrau +1.4 %; Zermatt -8.3 %; LGT +4.5 %
+
+== Abweichung Modell − beobachtet je Abschnitt (Median über Jahre und Klassen, %)
+                                    App  App-Kurve × a  App × a + Knick c  App × a + Höhe  App × a + Bergermüdung  App × a + Knick + Bergermüdung  App + Bergermüdung (a = 1)  App, Aufschlag wächst (a = 1)  App, Aufschlag wächst + Höhe wie Mexiko  App × a, Aufschlag wächst  App × a + Knick, Aufschlag wächst  Klassen monoton, 0–5 % = App  Klassen monoton + Bergermüdung  Klassen monoton, Aufschlag wächst
+Jungfrau Start–Runde Interlaken     1.2            0.3                0.6             0.9                     0.6                             0.8                         0.7                            1.2                                      1.1                        1.1                                1.1                           1.2                             0.9                                1.2
+Jungfrau Wilderswil–Lauterbrunnen  -2.8            4.4                2.1             1.5                     1.8                            -0.0                         1.1                           -1.5                                     -1.4                       -1.5                               -1.5                          -3.3                            -0.5                               -1.8
+Jungfrau Lauterbrunnen–Stocki       0.6            1.1                0.9             5.7                     6.5                             6.5                         8.2                            1.1                                      1.7                        1.1                                1.1                           0.5                             5.9                                1.1
+Jungfrau Stocki–Wengen            -15.2           11.6               11.5             2.3                     2.5                             2.0                        -0.8                           -1.3                                     -1.5                       -1.2                               -1.2                          11.7                             3.8                               -1.7
+Jungfrau Wengen–Wixi              -21.1           -0.3               -5.3             4.0                     3.6                            -0.7                         4.0                           -1.0                                     -0.6                       -1.0                               -1.0                          -3.4                            -0.1                                0.6
+Jungfrau Wixi–Ziel                -39.8           -7.4               -3.0            -2.6                    -3.8                            -0.0                        -4.7                            3.0                                      2.8                        2.9                                2.9                          -4.5                            -1.6                                1.7
+LGT Vaduz–Steg                     -7.6           14.0               10.6            10.8                     9.6                             6.6                         8.0                            3.7                                      4.1                        3.8                                3.8                          16.1                             9.1                                5.1
+LGT Steg–Ziel                     -18.7           -3.3               -5.7             7.7                    11.6                             9.8                        15.0                            1.0                                      1.8                        1.0                                1.0                          -6.0                             9.3                                1.8
+Zermatt Zermatt–Sunnegga          -13.9           -4.8               -7.4            -2.5                    -1.0                            -3.3                        -0.3                           -1.8                                     -1.8                       -1.8                               -1.8                          -2.8                            -2.6                               -0.3
+Zermatt Sunnegga–Riffelalp        -20.5          -19.3              -18.3            -4.4                    -1.0                            -0.1                         3.6                          -10.5                                     -9.2                      -10.6                              -10.6                         -13.4                            -0.1                               -9.6
+Zermatt Riffelalp–Ziel            -40.5          -20.8              -19.3           -17.2                   -12.5                           -11.5                       -11.7                           -5.4                                     -6.2                       -5.5                               -5.5                         -13.0                            -9.7                               -4.2
+
+== Flach-m je Höhenmeter bergauf nach Steigungsklasse und Leistungsklasse (ohne Höhe/Bergermüdung bzw. mit), 95 % aus 200 Bootstrap-Ziehungen über Läufer
+   App       0–5 % 4.4  5–10 % 4.9  10–15 % 5.2  15–20 % 5.6  > 20 % 6.0
+   Minetti   0–5 % 5.8  5–10 % 6.4  10–15 % 6.8  15–20 % 7.3  > 20 % 7.8
+-- App-Kurve × a                   Ermüdung einheitlich (3:15 alle       0–5 % 8.4 [8.3–8.4]  5–10 % 9.3 [9.2–9.3]  10–15 % 9.9 [9.9–10.0]  15–20 % 10.6 [10.6–10.7]  > 20 % 11.3 [11.3–11.4]  | a 1.897 [1.888–1.906]
+-- App-Kurve × a                   Ermüdung einheitlich (3:15 < 3:15     0–5 % 8.0 [7.9–8.1]  5–10 % 8.9 [8.7–9.0]  10–15 % 9.5 [9.4–9.6]  15–20 % 10.2 [10.0–10.3]  > 20 % 10.8 [10.7–11.0]  | a 1.815 [1.786–1.835]
+-- App-Kurve × a                   Ermüdung einheitlich (3:15 3:15–3:45  0–5 % 8.3 [8.2–8.4]  5–10 % 9.2 [9.1–9.3]  10–15 % 9.8 [9.7–9.9]  15–20 % 10.5 [10.4–10.6]  > 20 % 11.2 [11.1–11.3]  | a 1.876 [1.858–1.892]
+-- App-Kurve × a                   Ermüdung einheitlich (3:15 3:45–4:15  0–5 % 8.6 [8.5–8.7]  5–10 % 9.5 [9.4–9.6]  10–15 % 10.2 [10.1–10.3]  15–20 % 10.9 [10.8–11.0]  > 20 % 11.6 [11.5–11.7]  | a 1.942 [1.927–1.958]
+-- App-Kurve × a                   Ermüdung einheitlich (3:15 4:15–4:45  0–5 % 8.6 [8.5–8.7]  5–10 % 9.5 [9.5–9.6]  10–15 % 10.2 [10.1–10.3]  15–20 % 10.9 [10.8–11.0]  > 20 % 11.6 [11.5–11.7]  | a 1.949 [1.932–1.969]
+-- App-Kurve × a                   Ermüdung einheitlich (3:15 ≥ 4:45     0–5 % 8.4 [8.1–8.7]  5–10 % 9.3 [9.0–9.6]  10–15 % 9.9 [9.6–10.3]  15–20 % 10.6 [10.3–11.0]  > 20 % 11.3 [11.0–11.7]  | a 1.897 [1.839–1.962]
+-- App-Kurve × a                   ohne Ermüdung              alle       0–5 % 9.1 [9.1–9.2]  5–10 % 10.1 [10.1–10.2]  10–15 % 10.8 [10.8–10.9]  15–20 % 11.6 [11.5–11.6]  > 20 % 12.3 [12.3–12.4]  | a 2.066 [2.057–2.076]
+-- App-Kurve × a                   ohne Ermüdung              < 3:15     0–5 % 8.7 [8.6–8.8]  5–10 % 9.7 [9.5–9.8]  10–15 % 10.4 [10.2–10.5]  15–20 % 11.1 [10.9–11.2]  > 20 % 11.8 [11.6–11.9]  | a 1.978 [1.948–1.999]
+-- App-Kurve × a                   ohne Ermüdung              3:15–3:45  0–5 % 9.0 [8.9–9.1]  5–10 % 10.0 [9.9–10.1]  10–15 % 10.7 [10.6–10.8]  15–20 % 11.5 [11.3–11.5]  > 20 % 12.2 [12.1–12.3]  | a 2.043 [2.023–2.060]
+-- App-Kurve × a                   ohne Ermüdung              3:45–4:15  0–5 % 9.3 [9.3–9.4]  5–10 % 10.4 [10.3–10.4]  10–15 % 11.1 [11.0–11.2]  15–20 % 11.8 [11.8–11.9]  > 20 % 12.6 [12.5–12.7]  | a 2.113 [2.096–2.130]
+-- App-Kurve × a                   ohne Ermüdung              4:15–4:45  0–5 % 9.4 [9.3–9.5]  5–10 % 10.4 [10.3–10.5]  10–15 % 11.1 [11.0–11.2]  15–20 % 11.9 [11.8–12.0]  > 20 % 12.7 [12.6–12.8]  | a 2.122 [2.103–2.143]
+-- App-Kurve × a                   ohne Ermüdung              ≥ 4:45     0–5 % 9.2 [8.9–9.5]  5–10 % 10.2 [9.9–10.5]  10–15 % 10.9 [10.6–11.2]  15–20 % 11.6 [11.3–12.0]  > 20 % 12.4 [12.0–12.8]  | a 2.076 [2.014–2.146]
+-- App-Kurve × a                   Ermüdung je Klasse nach km alle       0–5 % 7.8 [7.8–7.9]  5–10 % 8.7 [8.6–8.7]  10–15 % 9.3 [9.2–9.3]  15–20 % 9.9 [9.9–10.0]  > 20 % 10.6 [10.5–10.6]  | a 1.773 [1.764–1.783]
+-- App-Kurve × a                   Ermüdung je Klasse nach km < 3:15     0–5 % 8.1 [8.0–8.2]  5–10 % 9.0 [8.9–9.1]  10–15 % 9.6 [9.5–9.8]  15–20 % 10.3 [10.2–10.4]  > 20 % 11.0 [10.9–11.1]  | a 1.839 [1.818–1.861]
+-- App-Kurve × a                   Ermüdung je Klasse nach km 3:15–3:45  0–5 % 8.2 [8.1–8.3]  5–10 % 9.1 [9.0–9.2]  10–15 % 9.7 [9.6–9.8]  15–20 % 10.4 [10.3–10.5]  > 20 % 11.1 [11.0–11.2]  | a 1.855 [1.837–1.870]
+-- App-Kurve × a                   Ermüdung je Klasse nach km 3:45–4:15  0–5 % 8.1 [8.0–8.1]  5–10 % 8.9 [8.8–9.0]  10–15 % 9.5 [9.5–9.6]  15–20 % 10.2 [10.1–10.3]  > 20 % 10.9 [10.8–11.0]  | a 1.822 [1.804–1.835]
+-- App-Kurve × a                   Ermüdung je Klasse nach km 4:15–4:45  0–5 % 7.4 [7.4–7.5]  5–10 % 8.2 [8.2–8.3]  10–15 % 8.8 [8.7–8.9]  15–20 % 9.4 [9.3–9.5]  > 20 % 10.0 [9.9–10.1]  | a 1.679 [1.665–1.696]
+-- App-Kurve × a                   Ermüdung je Klasse nach km ≥ 4:45     0–5 % 6.6 [6.4–6.8]  5–10 % 7.3 [7.1–7.6]  10–15 % 7.8 [7.6–8.1]  15–20 % 8.4 [8.1–8.7]  > 20 % 8.9 [8.6–9.2]  | a 1.498 [1.441–1.547]
+-- App-Kurve × a                   Ermüdung je Klasse nach Ze alle       0–5 % 7.9 [7.9–8.0]  5–10 % 8.8 [8.7–8.8]  10–15 % 9.4 [9.3–9.4]  15–20 % 10.0 [10.0–10.1]  > 20 % 10.7 [10.6–10.8]  | a 1.791 [1.782–1.802]
+-- App-Kurve × a                   Ermüdung je Klasse nach Ze < 3:15     0–5 % 8.2 [8.1–8.3]  5–10 % 9.1 [9.0–9.2]  10–15 % 9.7 [9.6–9.9]  15–20 % 10.4 [10.3–10.5]  > 20 % 11.1 [10.9–11.2]  | a 1.856 [1.834–1.880]
+-- App-Kurve × a                   Ermüdung je Klasse nach Ze 3:15–3:45  0–5 % 8.3 [8.2–8.4]  5–10 % 9.2 [9.1–9.3]  10–15 % 9.9 [9.8–9.9]  15–20 % 10.5 [10.4–10.6]  > 20 % 11.2 [11.1–11.3]  | a 1.881 [1.862–1.896]
+-- App-Kurve × a                   Ermüdung je Klasse nach Ze 3:45–4:15  0–5 % 8.2 [8.1–8.2]  5–10 % 9.0 [9.0–9.1]  10–15 % 9.7 [9.6–9.8]  15–20 % 10.4 [10.3–10.4]  > 20 % 11.0 [10.9–11.1]  | a 1.847 [1.832–1.862]
+-- App-Kurve × a                   Ermüdung je Klasse nach Ze 4:15–4:45  0–5 % 7.5 [7.4–7.6]  5–10 % 8.3 [8.2–8.4]  10–15 % 8.9 [8.8–9.0]  15–20 % 9.5 [9.4–9.6]  > 20 % 10.1 [10.0–10.2]  | a 1.698 [1.683–1.716]
+-- App-Kurve × a                   Ermüdung je Klasse nach Ze ≥ 4:45     0–5 % 6.5 [6.3–6.7]  5–10 % 7.2 [7.0–7.5]  10–15 % 7.7 [7.5–8.0]  15–20 % 8.3 [8.0–8.6]  > 20 % 8.8 [8.5–9.1]  | a 1.478 [1.423–1.526]
+-- App, Aufschlag wächst (a = 1)   Ermüdung einheitlich (3:15 alle       0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.685 [0.679–0.691]
+-- App, Aufschlag wächst (a = 1)   Ermüdung einheitlich (3:15 < 3:15     0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.641 [0.622–0.657]
+-- App, Aufschlag wächst (a = 1)   Ermüdung einheitlich (3:15 3:15–3:45  0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.677 [0.666–0.688]
+-- App, Aufschlag wächst (a = 1)   Ermüdung einheitlich (3:15 3:45–4:15  0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.711 [0.699–0.721]
+-- App, Aufschlag wächst (a = 1)   Ermüdung einheitlich (3:15 4:15–4:45  0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.711 [0.699–0.723]
+-- App, Aufschlag wächst (a = 1)   Ermüdung einheitlich (3:15 ≥ 4:45     0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.667 [0.628–0.705]
+-- App, Aufschlag wächst (a = 1)   ohne Ermüdung              alle       0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.817 [0.811–0.823]
+-- App, Aufschlag wächst (a = 1)   ohne Ermüdung              < 3:15     0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.769 [0.748–0.785]
+-- App, Aufschlag wächst (a = 1)   ohne Ermüdung              3:15–3:45  0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.808 [0.796–0.820]
+-- App, Aufschlag wächst (a = 1)   ohne Ermüdung              3:45–4:15  0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.845 [0.833–0.856]
+-- App, Aufschlag wächst (a = 1)   ohne Ermüdung              4:15–4:45  0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.846 [0.833–0.858]
+-- App, Aufschlag wächst (a = 1)   ohne Ermüdung              ≥ 4:45     0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.799 [0.758–0.841]
+-- App, Aufschlag wächst (a = 1)   Ermüdung je Klasse nach km alle       0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.595 [0.589–0.602]
+-- App, Aufschlag wächst (a = 1)   Ermüdung je Klasse nach km < 3:15     0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.661 [0.645–0.679]
+-- App, Aufschlag wächst (a = 1)   Ermüdung je Klasse nach km 3:15–3:45  0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.661 [0.649–0.671]
+-- App, Aufschlag wächst (a = 1)   Ermüdung je Klasse nach km 3:45–4:15  0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.625 [0.611–0.633]
+-- App, Aufschlag wächst (a = 1)   Ermüdung je Klasse nach km 4:15–4:45  0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.526 [0.515–0.537]
+-- App, Aufschlag wächst (a = 1)   Ermüdung je Klasse nach km ≥ 4:45     0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.410 [0.371–0.437]
+-- App, Aufschlag wächst (a = 1)   Ermüdung je Klasse nach Ze alle       0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.589 [0.582–0.596]
+-- App, Aufschlag wächst (a = 1)   Ermüdung je Klasse nach Ze < 3:15     0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.663 [0.648–0.682]
+-- App, Aufschlag wächst (a = 1)   Ermüdung je Klasse nach Ze 3:15–3:45  0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.667 [0.653–0.677]
+-- App, Aufschlag wächst (a = 1)   Ermüdung je Klasse nach Ze 3:45–4:15  0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.623 [0.611–0.632]
+-- App, Aufschlag wächst (a = 1)   Ermüdung je Klasse nach Ze 4:15–4:45  0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.512 [0.503–0.525]
+-- App, Aufschlag wächst (a = 1)   Ermüdung je Klasse nach Ze ≥ 4:45     0–5 % 4.4 [4.4–4.4]  5–10 % 4.9 [4.9–4.9]  10–15 % 5.2 [5.2–5.2]  15–20 % 5.6 [5.6–5.6]  > 20 % 6.0 [6.0–6.0]  | gauf 0.368 [0.334–0.395]
+-- App × a, Aufschlag wächst       Ermüdung einheitlich (3:15 alle       0–5 % 4.5 [4.4–4.5]  5–10 % 4.9 [4.9–5.0]  10–15 % 5.3 [5.2–5.4]  15–20 % 5.6 [5.6–5.7]  > 20 % 6.0 [5.9–6.1]  | a 1.008 [0.995–1.025]  gauf 0.675 [0.652–0.690]
+-- App × a, Aufschlag wächst       ohne Ermüdung              alle       0–5 % 4.5 [4.4–4.6]  5–10 % 5.0 [4.9–5.1]  10–15 % 5.3 [5.3–5.4]  15–20 % 5.7 [5.6–5.8]  > 20 % 6.1 [6.0–6.2]  | a 1.018 [1.005–1.037]  gauf 0.791 [0.765–0.808]
+-- App × a, Aufschlag wächst       Ermüdung je Klasse nach km alle       0–5 % 4.2 [4.1–4.3]  5–10 % 4.6 [4.6–4.7]  10–15 % 5.0 [4.9–5.1]  15–20 % 5.3 [5.2–5.4]  > 20 % 5.7 [5.6–5.8]  | a 0.948 [0.934–0.965]  gauf 0.663 [0.639–0.682]
+-- App × a, Aufschlag wächst       Ermüdung je Klasse nach Ze alle       0–5 % 4.9 [4.8–5.0]  5–10 % 5.4 [5.3–5.5]  10–15 % 5.8 [5.7–5.9]  15–20 % 6.2 [6.1–6.3]  > 20 % 6.6 [6.5–6.7]  | a 1.106 [1.091–1.124]  gauf 0.471 [0.453–0.485]
+-- Klassen monoton, Aufschlag wächst Ermüdung einheitlich (3:15 alle       0–5 % 4.4 [4.4–4.4]  5–10 % 4.6 [4.5–4.7]  10–15 % 5.6 [5.5–5.7]  15–20 % 5.6 [5.5–5.7]  > 20 % 5.6 [5.5–5.7]  | gauf 0.725 [0.695–0.743]
+
+== Langsamere gegen schnellere: Parameter je Leistungsklasse, Differenz zu 3:15–3:45 (gepaarter Bootstrap)
+  App-Kurve × a          a    Ermüdung einheitlich (3:15-Pro < 3:15 1.81 (Δ -0.06 [-0.10; -0.04]) | 3:15–3:45 1.88 (Δ +0.00 [+0.00; +0.00]) | 3:45–4:15 1.94 (Δ +0.06 [+0.04; +0.09]) | 4:15–4:45 1.95 (Δ +0.07 [+0.05; +0.10]) | ≥ 4:45 1.90 (Δ +0.02 [-0.04; +0.09])
+  App-Kurve × a          a    ohne Ermüdung                  < 3:15 1.98 (Δ -0.06 [-0.10; -0.04]) | 3:15–3:45 2.04 (Δ +0.00 [+0.00; +0.00]) | 3:45–4:15 2.11 (Δ +0.07 [+0.04; +0.10]) | 4:15–4:45 2.12 (Δ +0.08 [+0.05; +0.11]) | ≥ 4:45 2.08 (Δ +0.03 [-0.03; +0.11])
+  App-Kurve × a          a    Ermüdung je Klasse nach km     < 3:15 1.84 (Δ -0.01 [-0.04; +0.01]) | 3:15–3:45 1.85 (Δ +0.00 [+0.00; +0.00]) | 3:45–4:15 1.82 (Δ -0.03 [-0.06; -0.01]) | 4:15–4:45 1.68 (Δ -0.17 [-0.20; -0.15]) | ≥ 4:45 1.50 (Δ -0.37 [-0.42; -0.30])
+  App-Kurve × a          a    Ermüdung je Klasse nach Zeitan < 3:15 1.86 (Δ -0.02 [-0.06; +0.01]) | 3:15–3:45 1.88 (Δ +0.00 [+0.00; +0.00]) | 3:45–4:15 1.85 (Δ -0.03 [-0.06; -0.01]) | 4:15–4:45 1.70 (Δ -0.18 [-0.20; -0.16]) | ≥ 4:45 1.48 (Δ -0.41 [-0.46; -0.35])
+  App, Aufschlag wächst  gauf Ermüdung einheitlich (3:15-Pro < 3:15 0.64 (Δ -0.04 [-0.06; -0.02]) | 3:15–3:45 0.68 (Δ +0.00 [+0.00; +0.00]) | 3:45–4:15 0.71 (Δ +0.03 [+0.02; +0.05]) | 4:15–4:45 0.71 (Δ +0.03 [+0.02; +0.05]) | ≥ 4:45 0.67 (Δ -0.01 [-0.05; +0.03])
+  App, Aufschlag wächst  gauf ohne Ermüdung                  < 3:15 0.77 (Δ -0.04 [-0.07; -0.02]) | 3:15–3:45 0.81 (Δ +0.00 [+0.00; +0.00]) | 3:45–4:15 0.85 (Δ +0.04 [+0.02; +0.06]) | 4:15–4:45 0.85 (Δ +0.04 [+0.02; +0.05]) | ≥ 4:45 0.80 (Δ -0.01 [-0.05; +0.03])
+  App, Aufschlag wächst  gauf Ermüdung je Klasse nach km     < 3:15 0.66 (Δ +0.00 [-0.02; +0.02]) | 3:15–3:45 0.66 (Δ +0.00 [+0.00; +0.00]) | 3:45–4:15 0.62 (Δ -0.04 [-0.05; -0.02]) | 4:15–4:45 0.53 (Δ -0.13 [-0.15; -0.12]) | ≥ 4:45 0.41 (Δ -0.26 [-0.29; -0.22])
+  App, Aufschlag wächst  gauf Ermüdung je Klasse nach Zeitan < 3:15 0.66 (Δ -0.00 [-0.02; +0.02]) | 3:15–3:45 0.67 (Δ +0.00 [+0.00; +0.00]) | 3:45–4:15 0.62 (Δ -0.04 [-0.06; -0.03]) | 4:15–4:45 0.51 (Δ -0.15 [-0.17; -0.14]) | ≥ 4:45 0.37 (Δ -0.30 [-0.33; -0.27])
+
+== Bergab frei geschätzt (Faktor auf die App-Kurve bergab; 1 = „halb“), Modell App-Kurve × a, Ermüdung einheitlich
+  bergab ×0.0: a = 1.892, RMS 8.35 %
+  bergab ×0.5: a = 1.894, RMS 8.45 %
+  bergab ×1.0: a = 1.897, RMS 8.57 %
+  bergab ×1.5: a = 1.900, RMS 8.72 %
+  bergab ×2.0: a = 1.903, RMS 8.90 %
+
+== Zermatt: Marathon (ab km 20,6) gegen Halbmarathon (dieselbe Linie, frisch), gleiche Zeit Zermatt–Sunnegga
+gruppe       rennen   n  zermatt_sunnegga_min  sunnegga_riffelalp_rel  riffelalp_ziel_rel
+    Q1     Marathon 164                  79.3                   0.586               0.461
+    Q2     Marathon 163                  93.5                   0.588               0.450
+    Q3     Marathon 163                 103.8                   0.591               0.448
+    Q4     Marathon 163                 113.6                   0.599               0.446
+    Q5     Marathon 164                 125.4                   0.590               0.444
+    Q1 Halbmarathon 632                  79.6                   0.576               0.483
+    Q2 Halbmarathon 486                  93.1                   0.588               0.493
+    Q3 Halbmarathon 270                 103.0                   0.615               0.503
+    Q4 Halbmarathon 153                 112.9                   0.644               0.514
+    Q5 Halbmarathon  83                 124.7                   0.657               0.528
+   Vorhersage der Modelle für Riffelalp–Ziel / Zermatt–Sunnegga und Sunnegga–Riffelalp / Zermatt–Sunnegga (Marathon | Halbmarathon):
+     App-Kurve × a                    0.378 | 0.378    0.487 | 0.487
+     App × a + Bergermüdung           0.395 | 0.400    0.562 | 0.567
+     App, Aufschlag wächst (a = 1)    0.428 | 0.416    0.516 | 0.536
+     App × a, Aufschlag wächst        0.427 | 0.416    0.515 | 0.535
+
+== Prognosen der Zielzeit (gleichmäßige Anstrengung wie in der App) gegen den Median der Läufer mit dieser flachen Äquivalenzzeit (±10 min)
+flach   rennen    n beobachtet   viertel  App App-Kurve × a App × a + Bergermüdung App, Aufschlag wächst (a = 1) App × a, Aufschlag wächst Klassen monoton, Aufschlag wächst
+ 2:30 Jungfrau   79       3:27 3:20–3:36 3:05          3:39                   3:36                          3:31                      3:31                              3:31
+ 2:30  Zermatt    9          –         – 3:01          3:32                   3:37                          3:24                      3:24                              3:25
+ 2:30      LGT    2          –         – 3:02          3:35                   3:43                          3:27                      3:27                              3:29
+ 2:45 Jungfrau  217       3:50 3:41–4:03 3:24          4:00                   3:58                          3:52                      3:52                              3:52
+ 2:45  Zermatt   17       3:45 3:30–3:50 3:19          3:53                   3:59                          3:44                      3:44                              3:46
+ 2:45      LGT    5          –         – 3:20          3:56                   4:05                          3:47                      3:47                              3:49
+ 3:00 Jungfrau  607       4:17 4:06–4:28 3:42          4:22                   4:20                          4:13                      4:14                              4:14
+ 3:00  Zermatt   38       4:07 3:56–4:16 3:38          4:14                   4:21                          4:04                      4:05                              4:06
+ 3:00      LGT   13       4:11 3:48–4:19 3:39          4:18                   4:27                          4:08                      4:08                              4:10
+ 3:30 Jungfrau 2022       4:59 4:48–5:15 4:20          5:06                   5:03                          4:56                      4:56                              4:56
+ 3:30  Zermatt   77       4:51 4:41–4:58 4:14          4:57                   5:04                          4:45                      4:45                              4:47
+ 3:30      LGT   48       4:50 4:35–5:08 4:15          5:01                   5:12                          4:50                      4:50                              4:52
+ 4:00 Jungfrau 2506       5:44 5:29–6:01 4:57          5:50                   5:46                          5:38                      5:38                              5:38
+ 4:00  Zermatt  161       5:31 5:18–5:42 4:50          5:39                   5:48                          5:26                      5:26                              5:28
+ 4:00      LGT   68       5:26 5:16–5:40 4:52          5:44                   5:57                          5:31                      5:31                              5:34
+ 4:30 Jungfrau 1470       6:25 6:09–6:42 5:34          6:34                   6:30                          6:20                      6:21                              6:21
+ 4:30  Zermatt  140       6:13 6:00–6:27 5:27          6:22                   6:31                          6:07                      6:07                              6:10
+ 4:30      LGT   42       6:05 5:51–6:30 5:28          6:27                   6:41                          6:12                      6:13                              6:16
+ 5:00 Jungfrau   83       6:49 6:35–7:02 6:11          7:18                   7:13                          7:03                      7:03                              7:03
+ 5:00  Zermatt   85       6:52 6:40–7:06 6:03          7:04                   7:15                          6:48                      6:48                              6:51
+ 5:00      LGT    2          –         – 6:05          7:10                   7:26                          6:54                      6:54                              6:58
+
+== Spitze: Median der 5 schnellsten Zielzeiten je Rennen und Jahr, ihre flache Äquivalenzzeit aus dem Anker und das App-Modell
+  Jungfrau 2024 F: Ziel 3:43, Äquivalenz 2:45, Verhältnis 1.35, App bei dieser Zeit 3:24
+  Jungfrau 2024 M: Ziel 3:07, Äquivalenz 2:23, Verhältnis 1.31, App bei dieser Zeit 2:57
+  Jungfrau 2025 F: Ziel 3:40, Äquivalenz 2:42, Verhältnis 1.36, App bei dieser Zeit 3:20
+  Jungfrau 2025 M: Ziel 3:06, Äquivalenz 2:24, Verhältnis 1.29, App bei dieser Zeit 2:59
+  Jungfrau 2026 F: Ziel 3:33, Äquivalenz 2:39, Verhältnis 1.34, App bei dieser Zeit 3:17
+  Jungfrau 2026 M: Ziel 3:10, Äquivalenz 2:23, Verhältnis 1.32, App bei dieser Zeit 2:58
+  Zermatt 2025 F: Ziel 3:45, Äquivalenz 2:53, Verhältnis 1.30, App bei dieser Zeit 3:29
+  Zermatt 2025 M: Ziel 3:25, Äquivalenz 2:36, Verhältnis 1.31, App bei dieser Zeit 3:09
+  Zermatt 2026 F: Ziel 3:51, Äquivalenz 2:56, Verhältnis 1.32, App bei dieser Zeit 3:33
+  Zermatt 2026 M: Ziel 3:13, Äquivalenz 2:28, Verhältnis 1.31, App bei dieser Zeit 2:59
+  LGT 2026 F: Ziel 4:25, Äquivalenz 3:18, Verhältnis 1.33, App bei dieser Zeit 4:02
+  LGT 2026 M: Ziel 3:18, Äquivalenz 2:41, Verhältnis 1.23, App bei dieser Zeit 3:16

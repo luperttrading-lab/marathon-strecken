@@ -1,0 +1,323 @@
+modell,ermuedung,gruppe,groesse,wert,lo,hi
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),alle,0–5 %,8.387,8.349,8.428
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),alle,5–10 %,9.291,9.249,9.336
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),alle,10–15 %,9.941,9.895,9.989
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),alle,15–20 %,10.635,10.587,10.687
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),alle,> 20 %,11.32,11.268,11.375
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),alle,a,1.897,1.888,1.906
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),< 3:15,0–5 %,8.023,7.898,8.115
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),< 3:15,5–10 %,8.888,8.749,8.989
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),< 3:15,10–15 %,9.509,9.361,9.617
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),< 3:15,15–20 %,10.174,10.015,10.29
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),< 3:15,> 20 %,10.828,10.66,10.952
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),< 3:15,a,1.815,1.786,1.835
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),3:15–3:45,0–5 %,8.297,8.215,8.365
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),3:15–3:45,5–10 %,9.191,9.1,9.267
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),3:15–3:45,10–15 %,9.833,9.737,9.915
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),3:15–3:45,15–20 %,10.521,10.417,10.608
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),3:15–3:45,> 20 %,11.198,11.088,11.291
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),3:15–3:45,a,1.876,1.858,1.892
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),3:45–4:15,0–5 %,8.586,8.518,8.658
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),3:45–4:15,5–10 %,9.512,9.436,9.591
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),3:45–4:15,10–15 %,10.177,10.096,10.261
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),3:45–4:15,15–20 %,10.888,10.801,10.978
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),3:45–4:15,> 20 %,11.589,11.497,11.685
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),3:45–4:15,a,1.942,1.927,1.958
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),4:15–4:45,0–5 %,8.619,8.54,8.704
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),4:15–4:45,5–10 %,9.548,9.461,9.642
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),4:15–4:45,10–15 %,10.215,10.122,10.316
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),4:15–4:45,15–20 %,10.929,10.83,11.037
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),4:15–4:45,> 20 %,11.633,11.527,11.748
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),4:15–4:45,a,1.949,1.932,1.969
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),≥ 4:45,0–5 %,8.386,8.132,8.674
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),≥ 4:45,5–10 %,9.29,9.008,9.609
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),≥ 4:45,10–15 %,9.94,9.638,10.28
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),≥ 4:45,15–20 %,10.634,10.312,10.999
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),≥ 4:45,> 20 %,11.319,10.976,11.707
+App-Kurve × a,Ermüdung einheitlich (3:15-Profil),≥ 4:45,a,1.897,1.839,1.962
+App-Kurve × a,ohne Ermüdung,alle,0–5 %,9.135,9.095,9.178
+App-Kurve × a,ohne Ermüdung,alle,5–10 %,10.12,10.075,10.167
+App-Kurve × a,ohne Ermüdung,alle,10–15 %,10.827,10.78,10.878
+App-Kurve × a,ohne Ermüdung,alle,15–20 %,11.584,11.533,11.638
+App-Kurve × a,ohne Ermüdung,alle,> 20 %,12.329,12.276,12.387
+App-Kurve × a,ohne Ermüdung,alle,a,2.066,2.057,2.076
+App-Kurve × a,ohne Ermüdung,< 3:15,0–5 %,8.744,8.613,8.839
+App-Kurve × a,ohne Ermüdung,< 3:15,5–10 %,9.686,9.542,9.792
+App-Kurve × a,ohne Ermüdung,< 3:15,10–15 %,10.363,10.209,10.476
+App-Kurve × a,ohne Ermüdung,< 3:15,15–20 %,11.088,10.922,11.209
+App-Kurve × a,ohne Ermüdung,< 3:15,> 20 %,11.801,11.625,11.93
+App-Kurve × a,ohne Ermüdung,< 3:15,a,1.978,1.948,1.999
+App-Kurve × a,ohne Ermüdung,3:15–3:45,0–5 %,9.031,8.946,9.107
+App-Kurve × a,ohne Ermüdung,3:15–3:45,5–10 %,10.004,9.91,10.089
+App-Kurve × a,ohne Ermüdung,3:15–3:45,10–15 %,10.704,10.603,10.794
+App-Kurve × a,ohne Ermüdung,3:15–3:45,15–20 %,11.452,11.344,11.549
+App-Kurve × a,ohne Ermüdung,3:15–3:45,> 20 %,12.189,12.074,12.292
+App-Kurve × a,ohne Ermüdung,3:15–3:45,a,2.043,2.023,2.06
+App-Kurve × a,ohne Ermüdung,3:45–4:15,0–5 %,9.344,9.269,9.42
+App-Kurve × a,ohne Ermüdung,3:45–4:15,5–10 %,10.351,10.268,10.435
+App-Kurve × a,ohne Ermüdung,3:45–4:15,10–15 %,11.074,10.986,11.165
+App-Kurve × a,ohne Ermüdung,3:45–4:15,15–20 %,11.848,11.754,11.945
+App-Kurve × a,ohne Ermüdung,3:45–4:15,> 20 %,12.611,12.511,12.714
+App-Kurve × a,ohne Ermüdung,3:45–4:15,a,2.113,2.096,2.13
+App-Kurve × a,ohne Ermüdung,4:15–4:45,0–5 %,9.382,9.299,9.476
+App-Kurve × a,ohne Ermüdung,4:15–4:45,5–10 %,10.394,10.301,10.497
+App-Kurve × a,ohne Ermüdung,4:15–4:45,10–15 %,11.12,11.021,11.231
+App-Kurve × a,ohne Ermüdung,4:15–4:45,15–20 %,11.897,11.791,12.016
+App-Kurve × a,ohne Ermüdung,4:15–4:45,> 20 %,12.663,12.55,12.79
+App-Kurve × a,ohne Ermüdung,4:15–4:45,a,2.122,2.103,2.143
+App-Kurve × a,ohne Ermüdung,≥ 4:45,0–5 %,9.179,8.905,9.489
+App-Kurve × a,ohne Ermüdung,≥ 4:45,5–10 %,10.168,9.865,10.511
+App-Kurve × a,ohne Ermüdung,≥ 4:45,10–15 %,10.879,10.555,11.246
+App-Kurve × a,ohne Ermüdung,≥ 4:45,15–20 %,11.639,11.292,12.032
+App-Kurve × a,ohne Ermüdung,≥ 4:45,> 20 %,12.389,12.019,12.807
+App-Kurve × a,ohne Ermüdung,≥ 4:45,a,2.076,2.014,2.146
+App-Kurve × a,Ermüdung je Klasse nach km,alle,0–5 %,7.839,7.798,7.882
+App-Kurve × a,Ermüdung je Klasse nach km,alle,5–10 %,8.684,8.638,8.732
+App-Kurve × a,Ermüdung je Klasse nach km,alle,10–15 %,9.291,9.242,9.342
+App-Kurve × a,Ermüdung je Klasse nach km,alle,15–20 %,9.94,9.888,9.995
+App-Kurve × a,Ermüdung je Klasse nach km,alle,> 20 %,10.58,10.524,10.638
+App-Kurve × a,Ermüdung je Klasse nach km,alle,a,1.773,1.764,1.783
+App-Kurve × a,Ermüdung je Klasse nach km,< 3:15,0–5 %,8.131,8.039,8.23
+App-Kurve × a,Ermüdung je Klasse nach km,< 3:15,5–10 %,9.007,8.906,9.117
+App-Kurve × a,Ermüdung je Klasse nach km,< 3:15,10–15 %,9.637,9.528,9.755
+App-Kurve × a,Ermüdung je Klasse nach km,< 3:15,15–20 %,10.311,10.194,10.437
+App-Kurve × a,Ermüdung je Klasse nach km,< 3:15,> 20 %,10.974,10.851,11.108
+App-Kurve × a,Ermüdung je Klasse nach km,< 3:15,a,1.839,1.818,1.861
+App-Kurve × a,Ermüdung je Klasse nach km,3:15–3:45,0–5 %,8.2,8.124,8.266
+App-Kurve × a,Ermüdung je Klasse nach km,3:15–3:45,5–10 %,9.084,8.999,9.157
+App-Kurve × a,Ermüdung je Klasse nach km,3:15–3:45,10–15 %,9.719,9.628,9.798
+App-Kurve × a,Ermüdung je Klasse nach km,3:15–3:45,15–20 %,10.398,10.301,10.482
+App-Kurve × a,Ermüdung je Klasse nach km,3:15–3:45,> 20 %,11.067,10.964,11.157
+App-Kurve × a,Ermüdung je Klasse nach km,3:15–3:45,a,1.855,1.837,1.87
+App-Kurve × a,Ermüdung je Klasse nach km,3:45–4:15,0–5 %,8.057,7.978,8.114
+App-Kurve × a,Ermüdung je Klasse nach km,3:45–4:15,5–10 %,8.926,8.837,8.988
+App-Kurve × a,Ermüdung je Klasse nach km,3:45–4:15,10–15 %,9.55,9.455,9.617
+App-Kurve × a,Ermüdung je Klasse nach km,3:45–4:15,15–20 %,10.217,10.116,10.289
+App-Kurve × a,Ermüdung je Klasse nach km,3:45–4:15,> 20 %,10.875,10.767,10.951
+App-Kurve × a,Ermüdung je Klasse nach km,3:45–4:15,a,1.822,1.804,1.835
+App-Kurve × a,Ermüdung je Klasse nach km,4:15–4:45,0–5 %,7.426,7.362,7.5
+App-Kurve × a,Ermüdung je Klasse nach km,4:15–4:45,5–10 %,8.226,8.155,8.308
+App-Kurve × a,Ermüdung je Klasse nach km,4:15–4:45,10–15 %,8.801,8.725,8.889
+App-Kurve × a,Ermüdung je Klasse nach km,4:15–4:45,15–20 %,9.416,9.335,9.51
+App-Kurve × a,Ermüdung je Klasse nach km,4:15–4:45,> 20 %,10.022,9.936,10.122
+App-Kurve × a,Ermüdung je Klasse nach km,4:15–4:45,a,1.679,1.665,1.696
+App-Kurve × a,Ermüdung je Klasse nach km,≥ 4:45,0–5 %,6.622,6.372,6.841
+App-Kurve × a,Ermüdung je Klasse nach km,≥ 4:45,5–10 %,7.335,7.059,7.578
+App-Kurve × a,Ermüdung je Klasse nach km,≥ 4:45,10–15 %,7.848,7.552,8.108
+App-Kurve × a,Ermüdung je Klasse nach km,≥ 4:45,15–20 %,8.397,8.08,8.674
+App-Kurve × a,Ermüdung je Klasse nach km,≥ 4:45,> 20 %,8.937,8.6,9.232
+App-Kurve × a,Ermüdung je Klasse nach km,≥ 4:45,a,1.498,1.441,1.547
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,alle,0–5 %,7.919,7.877,7.967
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,alle,5–10 %,8.773,8.726,8.825
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,alle,10–15 %,9.386,9.336,9.442
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,alle,15–20 %,10.042,9.988,10.102
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,alle,> 20 %,10.688,10.631,10.753
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,alle,a,1.791,1.782,1.802
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,< 3:15,0–5 %,8.206,8.109,8.311
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,< 3:15,5–10 %,9.09,8.983,9.207
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,< 3:15,10–15 %,9.726,9.611,9.851
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,< 3:15,15–20 %,10.406,10.283,10.539
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,< 3:15,> 20 %,11.075,10.945,11.218
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,< 3:15,a,1.856,1.834,1.88
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,3:15–3:45,0–5 %,8.316,8.231,8.384
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,3:15–3:45,5–10 %,9.212,9.118,9.288
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,3:15–3:45,10–15 %,9.856,9.756,9.937
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,3:15–3:45,15–20 %,10.545,10.438,10.632
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,3:15–3:45,> 20 %,11.224,11.11,11.316
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,3:15–3:45,a,1.881,1.862,1.896
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,3:45–4:15,0–5 %,8.166,8.099,8.231
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,3:45–4:15,5–10 %,9.046,8.971,9.118
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,3:45–4:15,10–15 %,9.678,9.599,9.756
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,3:45–4:15,15–20 %,10.355,10.269,10.437
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,3:45–4:15,> 20 %,11.021,10.93,11.109
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,3:45–4:15,a,1.847,1.832,1.862
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,4:15–4:45,0–5 %,7.506,7.44,7.587
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,4:15–4:45,5–10 %,8.315,8.241,8.405
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,4:15–4:45,10–15 %,8.896,8.817,8.992
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,4:15–4:45,15–20 %,9.518,9.434,9.621
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,4:15–4:45,> 20 %,10.131,10.041,10.24
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,4:15–4:45,a,1.698,1.683,1.716
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,≥ 4:45,0–5 %,6.534,6.292,6.746
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,≥ 4:45,5–10 %,7.238,6.97,7.473
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,≥ 4:45,10–15 %,7.744,7.457,7.995
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,≥ 4:45,15–20 %,8.285,7.979,8.554
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,≥ 4:45,> 20 %,8.818,8.492,9.105
+App-Kurve × a,Ermüdung je Klasse nach Zeitanteil,≥ 4:45,a,1.478,1.423,1.526
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),alle,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),alle,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),alle,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),alle,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),alle,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),alle,gauf,0.685,0.679,0.691
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),< 3:15,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),< 3:15,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),< 3:15,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),< 3:15,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),< 3:15,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),< 3:15,gauf,0.641,0.622,0.657
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),3:15–3:45,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),3:15–3:45,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),3:15–3:45,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),3:15–3:45,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),3:15–3:45,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),3:15–3:45,gauf,0.677,0.666,0.688
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),3:45–4:15,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),3:45–4:15,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),3:45–4:15,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),3:45–4:15,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),3:45–4:15,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),3:45–4:15,gauf,0.711,0.699,0.721
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),4:15–4:45,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),4:15–4:45,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),4:15–4:45,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),4:15–4:45,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),4:15–4:45,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),4:15–4:45,gauf,0.711,0.699,0.723
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),≥ 4:45,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),≥ 4:45,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),≥ 4:45,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),≥ 4:45,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),≥ 4:45,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung einheitlich (3:15-Profil),≥ 4:45,gauf,0.667,0.628,0.705
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,alle,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,alle,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,alle,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,alle,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,alle,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,alle,gauf,0.817,0.811,0.823
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,< 3:15,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,< 3:15,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,< 3:15,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,< 3:15,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,< 3:15,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,< 3:15,gauf,0.769,0.748,0.785
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,3:15–3:45,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,3:15–3:45,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,3:15–3:45,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,3:15–3:45,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,3:15–3:45,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,3:15–3:45,gauf,0.808,0.796,0.82
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,3:45–4:15,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,3:45–4:15,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,3:45–4:15,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,3:45–4:15,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,3:45–4:15,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,3:45–4:15,gauf,0.845,0.833,0.856
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,4:15–4:45,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,4:15–4:45,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,4:15–4:45,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,4:15–4:45,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,4:15–4:45,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,4:15–4:45,gauf,0.846,0.833,0.858
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,≥ 4:45,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,≥ 4:45,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,≥ 4:45,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,≥ 4:45,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,≥ 4:45,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",ohne Ermüdung,≥ 4:45,gauf,0.799,0.758,0.841
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,alle,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,alle,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,alle,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,alle,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,alle,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,alle,gauf,0.595,0.589,0.602
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,< 3:15,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,< 3:15,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,< 3:15,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,< 3:15,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,< 3:15,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,< 3:15,gauf,0.661,0.645,0.679
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,3:15–3:45,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,3:15–3:45,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,3:15–3:45,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,3:15–3:45,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,3:15–3:45,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,3:15–3:45,gauf,0.661,0.649,0.671
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,3:45–4:15,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,3:45–4:15,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,3:45–4:15,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,3:45–4:15,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,3:45–4:15,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,3:45–4:15,gauf,0.625,0.611,0.633
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,4:15–4:45,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,4:15–4:45,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,4:15–4:45,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,4:15–4:45,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,4:15–4:45,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,4:15–4:45,gauf,0.526,0.515,0.537
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,≥ 4:45,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,≥ 4:45,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,≥ 4:45,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,≥ 4:45,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,≥ 4:45,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach km,≥ 4:45,gauf,0.41,0.371,0.437
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,alle,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,alle,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,alle,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,alle,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,alle,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,alle,gauf,0.589,0.582,0.596
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,< 3:15,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,< 3:15,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,< 3:15,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,< 3:15,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,< 3:15,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,< 3:15,gauf,0.663,0.648,0.682
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,3:15–3:45,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,3:15–3:45,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,3:15–3:45,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,3:15–3:45,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,3:15–3:45,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,3:15–3:45,gauf,0.667,0.653,0.677
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,3:45–4:15,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,3:45–4:15,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,3:45–4:15,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,3:45–4:15,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,3:45–4:15,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,3:45–4:15,gauf,0.623,0.611,0.632
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,4:15–4:45,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,4:15–4:45,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,4:15–4:45,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,4:15–4:45,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,4:15–4:45,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,4:15–4:45,gauf,0.512,0.503,0.525
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,≥ 4:45,0–5 %,4.421,4.421,4.421
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,≥ 4:45,5–10 %,4.898,4.898,4.898
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,≥ 4:45,10–15 %,5.24,5.24,5.24
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,≥ 4:45,15–20 %,5.607,5.607,5.607
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,≥ 4:45,> 20 %,5.968,5.968,5.968
+"App, Aufschlag wächst (a = 1)",Ermüdung je Klasse nach Zeitanteil,≥ 4:45,gauf,0.368,0.334,0.395
+"App × a, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,0–5 %,4.455,4.401,4.534
+"App × a, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,5–10 %,4.935,4.875,5.023
+"App × a, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,10–15 %,5.28,5.216,5.374
+"App × a, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,15–20 %,5.65,5.581,5.749
+"App × a, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,> 20 %,6.013,5.94,6.12
+"App × a, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,a,1.008,0.995,1.025
+"App × a, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,gauf,0.675,0.652,0.69
+"App × a, Aufschlag wächst",ohne Ermüdung,alle,0–5 %,4.501,4.446,4.585
+"App × a, Aufschlag wächst",ohne Ermüdung,alle,5–10 %,4.986,4.925,5.079
+"App × a, Aufschlag wächst",ohne Ermüdung,alle,10–15 %,5.335,5.269,5.434
+"App × a, Aufschlag wächst",ohne Ermüdung,alle,15–20 %,5.708,5.637,5.814
+"App × a, Aufschlag wächst",ohne Ermüdung,alle,> 20 %,6.075,6.0,6.188
+"App × a, Aufschlag wächst",ohne Ermüdung,alle,a,1.018,1.005,1.037
+"App × a, Aufschlag wächst",ohne Ermüdung,alle,gauf,0.791,0.765,0.808
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach km,alle,0–5 %,4.193,4.13,4.266
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach km,alle,5–10 %,4.644,4.575,4.726
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach km,alle,10–15 %,4.969,4.895,5.056
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach km,alle,15–20 %,5.316,5.237,5.41
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach km,alle,> 20 %,5.659,5.574,5.758
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach km,alle,a,0.948,0.934,0.965
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach km,alle,gauf,0.663,0.639,0.682
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach Zeitanteil,alle,0–5 %,4.891,4.826,4.969
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach Zeitanteil,alle,5–10 %,5.419,5.346,5.504
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach Zeitanteil,alle,10–15 %,5.797,5.72,5.889
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach Zeitanteil,alle,15–20 %,6.203,6.119,6.301
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach Zeitanteil,alle,> 20 %,6.602,6.513,6.706
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach Zeitanteil,alle,a,1.106,1.091,1.124
+"App × a, Aufschlag wächst",Ermüdung je Klasse nach Zeitanteil,alle,gauf,0.471,0.453,0.485
+"Klassen monoton, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,0–5 %,4.421,4.421,4.421
+"Klassen monoton, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,5–10 %,4.603,4.506,4.704
+"Klassen monoton, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,10–15 %,5.581,5.501,5.707
+"Klassen monoton, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,15–20 %,5.581,5.501,5.707
+"Klassen monoton, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,> 20 %,5.581,5.501,5.707
+"Klassen monoton, Aufschlag wächst",Ermüdung einheitlich (3:15-Profil),alle,gauf,0.725,0.695,0.743

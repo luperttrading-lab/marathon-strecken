@@ -29,7 +29,7 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
 - **Marathons in Deutschland, Österreich und der Schweiz** (Recherche 31.10.2026, Nutzer: „nach und nach alle“, Reichweite
   so wichtig wie das Profil, erst die flachen): Runde 1 Hannover, Düsseldorf, Zürich gebaut (Marathon 2.4), Runde 2 Münster,
   Luzern, Freiburg gebaut (Marathon 2.5). Runde 3 Berg: Jungfrau, Zermatt, Brocken gebaut mit Hinweis im Kern (Marathon 2.6), Runde 4 Graz,
-  Salzburg, LGT Alpin (Liechtenstein) mit mindestens 10-facher Überhöhung im Läuferblick (Marathon 2.7). Danach Graz, Salzburg, LGT Alpin, Allgäu, Ulm und die übrigen.
+  Salzburg, LGT Alpin (Liechtenstein) mit mindestens 10-facher Überhöhung im Läuferblick (Marathon 2.7). Graz, Salzburg, LGT Alpin gebaut (2.7). Nutzer 31.10.2026: erst die Bergläufe fertig machen (Eichung mit Zwischenzeiten), dann über die übrigen entscheiden (Allgäu, Schwarzwald, Ulm, Dresden, Linz, Bremen, Bonn, Leipzig …).
   Ranking und Quellen: Bericht vom 31.10.2026 (Jungfrau 3 604, Zermatt 355, Brocken 676, Luzern 3 076, Freiburg 1 560,
   Münster 3 114 Finisher).
 - **Bergmarathons, Zeitprognose:** Das Pace-Modell ist an Straßenrennen geeicht; ab etwa 10 % gehen die meisten. Später

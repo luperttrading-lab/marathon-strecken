@@ -1,0 +1,16 @@
+rennen,seg,abschnitt,km,h0,h1,auf200,ab200,hm_0_5,hm_5_10,hm_10_15,hm_15_20,hm_20p,steigung_hm_gew,hm_vorher,app_faktor,anker
+Jungfrau,0,Start–Runde Interlaken,0.0–3.3,567,567,8,7,9,0,0,0,0,0.8,4,1.005,False
+Jungfrau,1,Runde–km 5,3.3–5.0,567,567,4,4,6,0,0,0,0,2.3,10,1.007,True
+Jungfrau,2,km 5–Wilderswil,5.0–10.4,567,588,26,5,29,0,0,0,0,1.2,26,1.019,True
+Jungfrau,3,Wilderswil–Lauterbrunnen,10.4–21.1,588,800,262,50,150,121,0,0,0,4.8,179,1.106,False
+Jungfrau,4,Lauterbrunnen–Stocki,21.1–25.9,800,789,25,36,28,1,0,0,0,3.0,336,1.009,False
+Jungfrau,5,Stocki–Wengen,25.9–30.7,789,1276,502,13,24,85,72,145,182,16.3,663,1.575,False
+Jungfrau,6,Wengen–Wixi,30.7–38.5,1276,1857,590,13,57,200,319,25,0,10.2,1152,1.387,False
+Jungfrau,7,Wixi–Ziel,38.5–42.2,1857,2330,513,36,11,19,51,125,316,20.9,1670,1.803,False
+Zermatt,0,Start–Zermatt,0.0–20.6,1101,1605,564,59,200,239,79,71,4,7.8,296,1.132,True
+Zermatt,1,Zermatt–Sunnegga,20.6–32.0,1605,2256,704,53,66,260,389,0,0,9.8,896,1.306,False
+Zermatt,2,Sunnegga–Riffelalp,32.0–39.1,2256,2220,188,223,37,25,53,93,0,12.2,1456,1.105,False
+Zermatt,3,Riffelalp–Ziel,39.1–42.2,2220,2575,361,6,13,41,85,140,85,15.9,1719,1.636,False
+LGT,0,Start–Vaduz,0.0–10.1,441,455,30,15,30,5,0,0,0,2.2,15,1.01,True
+LGT,1,Vaduz–Steg,10.1–25.5,455,1317,1130,268,55,180,628,285,0,12.6,721,1.367,False
+LGT,2,Steg–Ziel,25.5–42.2,1317,1611,741,448,73,247,219,144,96,12.0,1608,1.205,False
