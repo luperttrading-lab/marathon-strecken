@@ -6,6 +6,12 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.11 (01.11.2026): Zielflagge steht beim Abspielen ruhig
+
+- **Karte** (Nutzer: „beim Abspielen wackelt die Zielflagge ein paar Pixel hin und her“): Die Flagge war als einziges Kartenelement
+  auf ganze Bildpunkte gerundet und sprang gegenüber der stufenlos mitlaufenden Karte bis zu 1 Bildpunkt (3 Gerätepunkte bei
+  Faktor 3). Jetzt auf Gerätepunkte gerundet: gemessen beim Abspielen 0,33 statt 0,99 Bildpunkte Spanne, Karos bleiben scharf.
+
 ## 2.10 (01.11.2026): Verschobene Karte behält den Versatz
 
 - **Karte** (Nutzer: „beim Abspielen springt der Bildschirm immer wieder auf die alte Einstellung zurück“, gewählt: Versatz behalten):
