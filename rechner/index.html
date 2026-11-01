@@ -54,6 +54,9 @@ h1 { margin: 0; font: 700 24px/1.05 var(--font-display); }
 .karte .m { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
 .summe { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 7px 10px; border-radius: 10px; background: var(--blue-soft); font-variant-numeric: tabular-nums; font-size: 14px; }
 .summe b { font: 700 19px/1 var(--font-display); }
+/* Rückgabe-Quote (Nutzer): wie viel der Bergauf-Kosten bergab zurückkommt, (flach − runter) ÷ (hoch − flach) */
+.quote { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 0 10px; font-size: 14px; color: var(--muted); }
+.quote b { font: 700 19px/1 var(--font-display); color: var(--down); font-variant-numeric: tabular-nums; }
 /* Gefühl */
 .gefuehl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .gefuehl label { display: grid; gap: 3px; font-size: 12.5px; color: var(--muted); }
@@ -75,7 +78,7 @@ details summary { cursor: pointer; color: var(--blue); font: 600 15px/1.2 var(--
 input[type=range] { width: 100%; accent-color: var(--blue); height: 28px; }
 .note { margin: 0; color: var(--muted); font-size: 12.5px; }
 table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 14px; }
-th { font: 600 12px/1.2 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 5px 4px; border-bottom: 1px solid var(--rule); }
+th { font: 600 12px/1.2 var(--font-display); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 5px 4px; border-bottom: 1px solid var(--rule); }
 td { text-align: right; padding: 6px 4px; border-bottom: 1px solid var(--rule); }
 th:first-child, td:first-child { text-align: left; }
 tr.aktiv td { color: var(--blue); font-weight: 600; }
@@ -96,6 +99,7 @@ tr.aktiv td { color: var(--blue); font-weight: 600; }
       <div class="karte hoch"><div class="k1"><span class="lbl">Hoch</span><span class="d" id="r-hoch-d">–</span></div><span class="t" id="r-hoch">–</span><span class="m" id="r-hoch-m">–</span></div>
       <div class="karte runter"><div class="k1"><span class="lbl">Runter</span><span class="d" id="r-runter-d">–</span></div><span class="t" id="r-runter">–</span><span class="m" id="r-runter-m">–</span></div>
       <div class="summe"><span>Hoch und runter</span><b id="r-summe">–</b></div>
+      <div class="quote"><span>Bergab zurück (runter ÷ hoch)</span><b id="r-quote">–</b></div>
     </div>
   </section>
 
@@ -124,7 +128,7 @@ tr.aktiv td { color: var(--blue); font-weight: 600; }
 
   <section class="panel" aria-label="Tabelle">
     <span class="lbl">Je km bei deinem Tempo</span>
-    <table><thead><tr><th>Steigung</th><th>hoch</th><th>runter</th><th>hoch + runter</th></tr></thead><tbody id="tab"></tbody></table>
+    <table><thead><tr><th>Steigung</th><th>hoch</th><th>runter</th><th>beides</th><th>zurück</th></tr></thead><tbody id="tab"></tbody></table>
     <p class="note">Wie in den Strecken-Apps: Pace an einer Steigung = flache Pace × Faktor; gleichmäßige Anstrengung, ohne Ermüdung, Untergrund und Höhe.</p>
   </section>
 </div>
@@ -186,6 +190,8 @@ function rechne() {
   $("r-hoch-m").textContent = ms(th / km) + " /km" + (hm ? " · " + nf((th - flach) / hm, 2) + " s je Höhenmeter" : "");
   $("r-runter-m").textContent = ms(tr / km) + " /km" + (hm ? " · " + nf((flach - tr) / hm, 2) + " s je Höhenmeter zurück" : "");
   $("r-summe").textContent = ms(th + tr) + " (" + sek(th + tr - 2 * flach) + ")";
+  const quote = (a, b, fl) => a - fl > 0.05 ? nf(100 * (fl - b) / (a - fl), 0) + " %" : "–";
+  $("r-quote").textContent = quote(th, tr, flach);
   // Gefühl: welche Einstellung passt zu deinen Zeiten? Hoch → k (Faktor − 1 ist proportional zu k), runter → f bei diesem k
   const gh = lies($("g-hoch").value), gr = lies($("g-runter").value), teile = []; vorschlag = null;
   if (g > 0.01 && (gh || gr)) {
@@ -203,7 +209,7 @@ function rechne() {
   for (const s of [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15]) {   // 0 %: das flache Tempo als Ausgangspunkt (Nutzer)
     const a = p * faktor(s / 100, k, f), b = p * faktor(-s / 100, k, f), tr2 = document.createElement("tr");
     if (Math.abs(s - g * 100) < 0.01) tr2.className = "aktiv";
-    tr2.innerHTML = "<td>" + s + " %</td><td>" + ms(a) + "</td><td>" + ms(b) + "</td><td>" + sek(a + b - 2 * p) + "</td>"; tb.appendChild(tr2);
+    tr2.innerHTML = "<td>" + s + " %</td><td>" + ms(a) + "</td><td>" + ms(b) + "</td><td>" + sek(a + b - 2 * p) + "</td><td>" + quote(a, b, p) + "</td>"; tb.appendChild(tr2);
   }
   try { localStorage.setItem("rechner", JSON.stringify({ pace: p, steig: W.steig, weg: km, k, r: f, "g-hoch": $("g-hoch").value, "g-runter": $("g-runter").value })); } catch (_) {}
 }
