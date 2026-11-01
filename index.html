@@ -151,7 +151,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
 <div class="wrap">
   <header>
     <span class="eyebrow">Steigungsprofile</span>
-    <button type="button" class="ver kopf-ver" aria-label="Nach Update suchen">v2.11</button>
+    <button type="button" class="ver kopf-ver" aria-label="Nach Update suchen">v2.12</button>
     <h1>Welcher Marathon?</h1>
     <p class="sub">Wo es bergauf geht, was dich das an Zeit kostet und wann du wo bist. Gemessen mit Laserscans entlang der offiziellen Strecke.</p>
   </header>
@@ -628,7 +628,7 @@ var VERSTECKT = ["clhuypnhhjcf/"];
   box.querySelector(".liste-seg").addEventListener("click", e => { const b = e.target.closest("[data-sort]"); if (!b) return; sort = b.dataset.sort; try { localStorage.setItem("start.listeSort", sort); } catch (_) {} zeige(); box.scrollTop = 0; });
   inhalt.addEventListener("click", e => { const a = e.target.closest("a.lz"); if (a) merke(a.getAttribute("href")); });
 })();
-const APP_VERSION = '2.11';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.12';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");

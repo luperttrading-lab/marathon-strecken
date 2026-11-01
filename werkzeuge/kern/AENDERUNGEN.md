@@ -6,6 +6,13 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.12 (01.11.2026): Zentrier-Knopf ◎ zuerst und immer da
+
+- **Karte** (Nutzer: „den Zentrierbutton als ersten von den vier Knöpfen“): ◎ steht über Plus und Minus und ist immer zu sehen,
+  grau, solange die Karte mittig ist, blau, sobald sie verschoben ist. Erschiene er nur beim Verschieben, rutschten Plus und
+  Minus jedes Mal eine Knopfhöhe nach unten. Ist die Karte zu niedrig für alle Knöpfe untereinander (320 × 568 im Laufmodus:
+  144 px für 152 px Knöpfe), stehen sie in zwei Spalten (`.mapctl.eng`).
+
 ## 2.11 (01.11.2026): Zielflagge steht beim Abspielen ruhig
 
 - **Karte** (Nutzer: „beim Abspielen wackelt die Zielflagge ein paar Pixel hin und her“): Die Flagge war als einziges Kartenelement
