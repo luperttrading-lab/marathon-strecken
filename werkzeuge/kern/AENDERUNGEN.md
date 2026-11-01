@@ -6,6 +6,12 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.13 (01.11.2026): Zentrier-Knopf ◎ als unterster, nur wenn verschoben
+
+- **Karte** (Nutzer: „den Zentrierpunkt als unterstes und wenn es zentriert ist weg“): ◎ steht unter Plus, Minus und ↕ und
+  erscheint nur bei verschobener Karte; als unterster verschiebt er beim Erscheinen keinen anderen Knopf. Zwei Spalten bei niedriger
+  Karte jetzt von oben nach unten (links + und −, rechts ↕ und ◎); ◎ zählt dabei immer mit, damit die Anordnung nicht springt.
+
 ## 2.12 (01.11.2026): Zentrier-Knopf ◎ zuerst und immer da
 
 - **Karte** (Nutzer: „den Zentrierbutton als ersten von den vier Knöpfen“): ◎ steht über Plus und Minus und ist immer zu sehen,
