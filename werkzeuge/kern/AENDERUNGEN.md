@@ -6,6 +6,14 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.10 (01.11.2026): Verschobene Karte behält den Versatz
+
+- **Karte** (Nutzer: „beim Abspielen springt der Bildschirm immer wieder auf die alte Einstellung zurück“, gewählt: Versatz behalten):
+  Verschieben speichert jetzt einen Versatz gegenüber der Mitte, die die Karte sonst hätte (`mapVersatz`, Zoomstufe 0; Läufer im
+  Zoom, Streckenmitte in der Übersicht) statt einer festen Mitte. Beim Abspielen, live und beim Wischen im Profil folgt die Karte
+  dem Läufer mit diesem Versatz, er bleibt an seiner Stelle im Bild. Plus und Minus lassen ihn dort ebenfalls stehen (Versatz in
+  Bildpunkten gleich); aus der Übersicht heraus bleibt die Mitte stehen. Zurück nur mit ◎ oder in der Übersicht.
+
 ## 2.9 (01.11.2026): Karte verschieben und mit zwei Fingern zoomen
 
 - **Karte** (Nutzer: „hin und her schieben, wenn man einen anderen Bereich sehen will“): Ziehen verschiebt die Karte in jedem

@@ -475,7 +475,7 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">TCS London Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.9</button></span>
+    <span class="eyebrow">TCS London Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.10</button></span>
     <h1>London</h1>
     <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Amtliches Laser-Höhenmodell (1-m-Raster) entlang der Strecke vom Blue Start, alle 10 m ausgewertet.</p>
@@ -484,7 +484,7 @@ body.run .close svg { width: 20px; height: 20px; }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.9</button></span>
+    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.10</button></span>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -1858,11 +1858,13 @@ function drawMap() {
   c.setTransform(dpr, 0, 0, dpr, 0, 0); c.fillStyle = COL["--bg"]; c.fillRect(0, 0, w, h);
   const ov = mapZ === null, fz = fitZ(w, h), z = ov ? fz : Math.max(mapZ, fz);   // nie weiter heraus als die Übersicht
   const lvl = clamp(Math.floor(z), 11, 15), sc = 2 ** (z - lvl), T = D.tiles[lvl], [la, lo] = routeAt(S.pos), [rx, ry] = merc(la, lo, lvl);
-  // verschoben (seit 2.9): eigene Mitte; wischt man im Profil oder läuft der Zeitraffer, folgt die Karte wieder (live bleibt sie, wo man sie hingeschoben hat)
-  if (mapMitte && !S.live && Math.abs(S.pos - mapMitte.pos) > 1) mapMitte = null;
-  if (mapMitte) { const [bx, by] = mapBegrenze(mapMitte.x, mapMitte.y, lvl); mapMitte.x = bx; mapMitte.y = by; }
-  const [cx, cy] = mapMitte ? [mapMitte.x * 2 ** lvl, mapMitte.y * 2 ** lvl] : ov ? [(RB.x0 + RB.x1) / 2 * 2 ** lvl, (RB.y0 + RB.y1) / 2 * 2 ** lvl] : [rx, ry], mx = ov && !mapMitte ? (w - 42) / 2 : w / 2;
-  MV = { z, lvl, cx, cy, mx, w, h, fz }; $("map-folgen").hidden = !mapMitte;
+  // verschoben (seit 2.9): Versatz gegenüber der Mitte, die die Karte sonst hätte (Läufer im Zoom, Streckenmitte in der Übersicht).
+  // Seit 2.10 bleibt er beim Abspielen, live und beim Wischen im Profil erhalten, die Karte folgt dem Läufer mit diesem Versatz (Nutzer);
+  // nur ◎ und die Übersicht nehmen ihn zurück
+  const basis = mapBasis(ov);
+  if (mapVersatz) { const [bx, by] = mapBegrenze(basis[0] + mapVersatz[0], basis[1] + mapVersatz[1], lvl); mapVersatz = [bx - basis[0], by - basis[1]]; }
+  const [cx, cy] = mapVersatz ? [(basis[0] + mapVersatz[0]) * 2 ** lvl, (basis[1] + mapVersatz[1]) * 2 ** lvl] : ov ? [(RB.x0 + RB.x1) / 2 * 2 ** lvl, (RB.y0 + RB.y1) / 2 * 2 ** lvl] : [rx, ry], mx = ov && !mapVersatz ? (w - 42) / 2 : w / 2;
+  MV = { z, lvl, cx, cy, mx, w, h, fz }; $("map-folgen").hidden = !mapVersatz;
   const SX = gx => (gx - cx) * sc + mx, SY = gy => (gy - cy) * sc + h / 2;
   c.imageSmoothingQuality = "high";
   let fehlt = false;
@@ -1917,18 +1919,24 @@ function drawMap() {
 }
 const zoomMap = d => {
   const r = $("map").getBoundingClientRect(), zs = mapStufen(r.width, r.height).slice(1), fz = fitZ(r.width, r.height), jetzt = mapZ === null ? -Infinity : Math.max(mapZ, fz);
+  const vorher = mapZ === null, mitte = mapVersatz ? mapBasis(vorher).map((v, i) => v + mapVersatz[i]) : null;
   if (d > 0) { const n = zs.find(v => v > jetzt + 0.05); if (n !== undefined) mapZ = n; }
   else if (mapZ !== null) { const n = [...zs].reverse().find(v => v < jetzt - 0.05); mapZ = n === undefined || n <= fz + 0.01 ? null : n; }
-  if (mapZ === null) mapMitte = null;
+  // verschoben: aus der Übersicht heraus bleibt die Mitte stehen, im Zoom bleibt der Läufer an seiner Stelle im Bild (Versatz in Bildpunkten gleich)
+  if (mapZ === null) mapVersatz = null;
+  else if (mitte) mapVersatz = vorher ? mapBasis(false).map((v, i) => mitte[i] - v) : mapVersatz.map(v => v * 2 ** (jetzt - Math.max(mapZ, fz)));
   store.set("mapz-v2", mapZ === null ? "ov" : mapZ); dirty = true;
 };
 $("map-in").addEventListener("click", () => zoomMap(1)); $("map-out").addEventListener("click", () => zoomMap(-1));
-$("map-folgen").addEventListener("click", () => { mapMitte = null; dirty = true; });
+$("map-folgen").addEventListener("click", () => { mapVersatz = null; dirty = true; });
 
 /* Karte verschieben und mit zwei Fingern zoomen (seit 2.9, Nutzer): ruhig ziehen verschiebt die Karte, ein kurzer schneller Wisch nach
-   links blättert wie bisher zu „Zahlen“ (die Verschiebung wird dann zurückgenommen). Verschoben folgt die Karte nicht mehr dem Punkt;
-   ◎ holt sie zurück, ebenso Wischen im Profil, der Zeitraffer und die Übersicht. Verschieben nur so weit, wie Kartenbilder sicher reichen. */
-let mapMitte = null, MV = null, mapGeste = null;
+   links blättert wie bisher zu „Zahlen“ (die Verschiebung wird dann zurückgenommen). Verschoben folgt die Karte dem Punkt mit dem
+   Versatz (seit 2.10, vorher sprang sie beim Abspielen zurück); ◎ und die Übersicht holen sie zurück. Verschieben nur so weit, wie
+   Kartenbilder sicher reichen. */
+let mapVersatz = null, MV = null, mapGeste = null;
+// Mitte der Karte ohne Verschieben, in Zoomstufe 0: Streckenmitte in der Übersicht, sonst der Läufer
+const mapBasis = ov => { if (ov) return [(RB.x0 + RB.x1) / 2, (RB.y0 + RB.y1) / 2]; const [la, lo] = routeAt(S.pos); return merc(la, lo, 0); };
 const mapZeiger = new Map(), mapCv = $("map");
 const RZ0 = RP.map(([a, b]) => merc(a, b, 0)), MPP0 = 40075016.686 * Math.cos(RP[0][0] * Math.PI / 180) / 256;   // Strecke in Zoomstufe 0, Meter je Bildpunkt dort
 // gemessen über die Strecken: Kartenbilder reichen in Stufe 12 mindestens 6,2 km, 13: 3,3 km, 14: 1,4 km, 15 (und 16): 0,9 km über die Strecke hinaus
@@ -1946,7 +1954,7 @@ mapCv.addEventListener("pointerdown", e => {
   if (!MV) return; try { mapCv.setPointerCapture(e.pointerId); } catch (_) {}
   mapZeiger.set(e.pointerId, mapZeigerLokal(e));
   if (mapZeiger.size === 1) { const q = mapZeiger.get(e.pointerId);
-    mapGeste = { art: "eins", x0: q.x, y0: q.y, t0: e.timeStamp, vorher: mapMitte, zieht: false, spur: [[e.timeStamp, q.x]] }; }
+    mapGeste = { art: "eins", x0: q.x, y0: q.y, t0: e.timeStamp, vorher: mapVersatz, zieht: false, spur: [[e.timeStamp, q.x]] }; }
   else if (mapZeiger.size === 2) { const [a, b] = [...mapZeiger.values()], m = [(a.x + b.x) / 2, (a.y + b.y) / 2];
     mapGeste = { art: "zwei", d0: Math.max(20, Math.hypot(a.x - b.x, a.y - b.y)), z0: MV.z, welt: mapWelt(m[0], m[1]) }; }
 });
@@ -1957,13 +1965,13 @@ mapCv.addEventListener("pointermove", e => {
     const g = mapGeste, dx = q.x - g.x0, dy = q.y - g.y0;
     g.spur.push([e.timeStamp, q.x]); while (g.spur.length > 2 && e.timeStamp - g.spur[0][0] > 100) g.spur.shift();
     if (!g.zieht && Math.hypot(dx, dy) > 6) { g.zieht = true; g.z = MV.z; g.mitte = mapWelt(MV.w / 2, MV.h / 2); }
-    if (g.zieht) { mapMitte = { x: g.mitte[0] - dx / 2 ** g.z, y: g.mitte[1] - dy / 2 ** g.z, pos: S.pos }; dirty = true; }
+    if (g.zieht) { const b = mapBasis(mapZ === null); mapVersatz = [g.mitte[0] - dx / 2 ** g.z - b[0], g.mitte[1] - dy / 2 ** g.z - b[1]]; dirty = true; }
   } else if (mapGeste.art === "zwei" && mapZeiger.size >= 2) {
     const g = mapGeste, [a, b] = [...mapZeiger.values()], m = [(a.x + b.x) / 2, (a.y + b.y) / 2];
     const z = clamp(g.z0 + Math.log2(Math.max(20, Math.hypot(a.x - b.x, a.y - b.y)) / g.d0), MV.fz, 16);
     mapZ = z <= MV.fz + 0.02 ? null : z;
     // der Punkt unter den Fingern bleibt unter den Fingern; die Mitte liegt dann bei w/2
-    mapMitte = { x: g.welt[0] - (m[0] - MV.w / 2) / 2 ** z, y: g.welt[1] - (m[1] - MV.h / 2) / 2 ** z, pos: S.pos }; dirty = true;
+    const bs = mapBasis(mapZ === null); mapVersatz = [g.welt[0] - (m[0] - MV.w / 2) / 2 ** z - bs[0], g.welt[1] - (m[1] - MV.h / 2) / 2 ** z - bs[1]]; dirty = true;
   }
 });
 const mapLos = (e, abbruch) => {
@@ -1974,7 +1982,7 @@ const mapLos = (e, abbruch) => {
     const q = g.spur[g.spur.length - 1], p0 = g.spur[0], vx = (q[1] - p0[1]) / Math.max(1, q[0] - p0[0]), dx = q[1] - g.x0;
     const dy = Math.abs((mapZeigerLokal(e).y) - g.y0);
     if (e.timeStamp - g.t0 < 320 && dx < -40 && Math.abs(dx) > 1.5 * dy && vx < -0.6) {
-      mapMitte = g.vorher; dirty = true; pager.scrollTo({ left: pager.clientWidth, behavior: REDUCED ? "auto" : "smooth" });
+      mapVersatz = g.vorher; dirty = true; pager.scrollTo({ left: pager.clientWidth, behavior: REDUCED ? "auto" : "smooth" });
     }
   }
   if (g && g.art === "zwei") store.set("mapz-v2", mapZ === null ? "ov" : mapZ);
@@ -2062,7 +2070,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '2.9';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.10';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
