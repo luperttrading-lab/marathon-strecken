@@ -6,6 +6,19 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.9 (01.11.2026): Karte verschieben und mit zwei Fingern zoomen
+
+- **Karte** (Nutzer: „hin und her schieben, wenn man einen anderen Bereich sehen will“): Ziehen verschiebt die Karte in jedem
+  Zoom und in der Übersicht, zwei Finger zoomen stufenlos (Punkt unter den Fingern bleibt stehen, Stufe 16 höchstens). Ein kurzer
+  schneller Wisch nach links blättert wie bisher zu „Zahlen“ (Nutzer: Wischen und Ziehen am Tempo unterscheiden): unter 320 ms,
+  über 40 px nach links, waagerecht, zuletzt schneller als 0,6 px/ms (letzte 100 ms); die Verschiebung dabei wird zurückgenommen.
+  Dafür nimmt die Karte alle Gesten selbst (`touch-action: none` statt `pan-x`).
+- Verschoben folgt die Karte nicht mehr dem Punkt; neuer Knopf ◎ unter Plus und Minus holt sie zurück, ebenso Wischen im Profil,
+  der Zeitraffer und die Übersicht (−). Live bleibt sie, wo man sie hingeschoben hat. Verschieben nur so weit, wie Kartenbilder
+  sicher reichen (Mitte höchstens 5 km / 2,5 km / 1,1 km / 0,7 km von der Strecke in Stufe ≤12 / 13 / 14 / 15–16; gemessen
+  reichen die Bilder mindestens 6,2 / 3,3 / 1,4 / 0,9 km über die Strecke hinaus). Plus und Minus springen auch nach
+  stufenlosem Zoom zur nächsten Stufe in der gewünschten Richtung.
+
 ## 2.8 (01.11.2026): Kern rechnet mit jeder Streckenlänge; versteckte Hausrunde
 
 - **Kern:** Alle Stellen mit fester Marathonlänge rechnen jetzt mit `L` (Nutzer: eigene Runde mit 9,85 km; dasselbe braucht ein

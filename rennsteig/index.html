@@ -315,9 +315,10 @@ td.leer { white-space: normal; }   /* „Keine Rampe …“ über alle Spalten *
 body.run .pager { --rpad: 12px; }
 .page { flex: 0 0 100%; box-sizing: border-box; min-width: 0; padding-inline: var(--rpad); scroll-snap-align: start; scroll-snap-stop: always; display: grid; gap: 10px; align-content: start; position: relative; }
 body.run .page { gap: 6px; }
-.page-map canvas { position: absolute; top: 6px; left: var(--rpad); width: calc(100% - 2 * var(--rpad)); height: calc(100% - 6px); border-radius: 8px; touch-action: pan-x; }
+.page-map canvas { position: absolute; top: 6px; left: var(--rpad); width: calc(100% - 2 * var(--rpad)); height: calc(100% - 6px); border-radius: 8px; touch-action: none; }
 .mapctl { position: absolute; top: 12px; right: calc(var(--rpad) + 6px); display: grid; gap: 6px; }
 .mapctl button { width: 32px; height: 32px; min-height: 0; padding: 0; font: 600 18px/1 var(--font-display); background: var(--surface); border-color: var(--edge); }
+.mapctl #map-folgen { font-size: 17px; color: var(--blue); }
 .credit { position: absolute; right: calc(var(--rpad) + 4px); bottom: 2px; font-size: 9.5px; color: var(--muted); background: var(--surface); padding: 0 4px; border-radius: 3px; opacity: 0.85; }
 /* Kartenfeld ohne Kartenbilder (seit 2.3; Nutzer: „im Kartenfeld wird angezeigt, dass das Handy offline ist“): links, frei von +/−,
    oben oder unten gegenüber dem Maßstab (drawMap) */
@@ -474,7 +475,7 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">GutsMuths-Rennsteiglauf · Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.8</button></span>
+    <span class="eyebrow">GutsMuths-Rennsteiglauf · Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.9</button></span>
     <h1>Rennsteig</h1>
     <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Laser-Geländemodell Thüringen (20-m-Raster) entlang der Strecke des Veranstalters, alle 10 m ausgewertet.</p>
@@ -483,7 +484,7 @@ body.run .close svg { width: 20px; height: 20px; }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.8</button></span>
+    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.9</button></span>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -497,8 +498,8 @@ body.run .close svg { width: 20px; height: 20px; }
       <div class="dots" id="dots" role="tablist" aria-label="Anzeige wählen"><button type="button" role="tab" data-go="0">Karte</button><button type="button" role="tab" data-go="1">Zahlen</button></div></div>
     <div class="pager" id="pager">
       <div class="page page-map">
-        <canvas id="map" aria-label="Karte mit der Strecke und deiner Position"></canvas>
-        <div class="mapctl"><button type="button" id="map-in" aria-label="Karte vergrößern">+</button><button type="button" id="map-out" aria-label="Karte verkleinern">−</button><button type="button" class="run-only" id="map-size" aria-label="Karte größer oder kleiner stellen">&#x2195;&#xFE0E;</button></div>
+        <canvas id="map" aria-label="Karte mit der Strecke und deiner Position. Ziehen verschiebt sie, zwei Finger zoomen, ein kurzer schneller Wisch nach links zeigt die Zahlen."></canvas>
+        <div class="mapctl"><button type="button" id="map-in" aria-label="Karte vergrößern">+</button><button type="button" id="map-out" aria-label="Karte verkleinern">−</button><button type="button" id="map-folgen" hidden aria-label="Karte wieder dem Punkt folgen lassen">&#x25CE;&#xFE0E;</button><button type="button" class="run-only" id="map-size" aria-label="Karte größer oder kleiner stellen">&#x2195;&#xFE0E;</button></div>
         <div class="map-hinweis" id="map-hinweis" role="status" hidden></div>
         <span class="credit map-credit">© OpenStreetMap-Mitwirkende</span>
       </div>
@@ -1856,7 +1857,11 @@ function drawMap() {
   c.setTransform(dpr, 0, 0, dpr, 0, 0); c.fillStyle = COL["--bg"]; c.fillRect(0, 0, w, h);
   const ov = mapZ === null, fz = fitZ(w, h), z = ov ? fz : Math.max(mapZ, fz);   // nie weiter heraus als die Übersicht
   const lvl = clamp(Math.floor(z), 11, 15), sc = 2 ** (z - lvl), T = D.tiles[lvl], [la, lo] = routeAt(S.pos), [rx, ry] = merc(la, lo, lvl);
-  const [cx, cy] = ov ? [(RB.x0 + RB.x1) / 2 * 2 ** lvl, (RB.y0 + RB.y1) / 2 * 2 ** lvl] : [rx, ry], mx = ov ? (w - 42) / 2 : w / 2;
+  // verschoben (seit 2.9): eigene Mitte; wischt man im Profil oder läuft der Zeitraffer, folgt die Karte wieder (live bleibt sie, wo man sie hingeschoben hat)
+  if (mapMitte && !S.live && Math.abs(S.pos - mapMitte.pos) > 1) mapMitte = null;
+  if (mapMitte) { const [bx, by] = mapBegrenze(mapMitte.x, mapMitte.y, lvl); mapMitte.x = bx; mapMitte.y = by; }
+  const [cx, cy] = mapMitte ? [mapMitte.x * 2 ** lvl, mapMitte.y * 2 ** lvl] : ov ? [(RB.x0 + RB.x1) / 2 * 2 ** lvl, (RB.y0 + RB.y1) / 2 * 2 ** lvl] : [rx, ry], mx = ov && !mapMitte ? (w - 42) / 2 : w / 2;
+  MV = { z, lvl, cx, cy, mx, w, h, fz }; $("map-folgen").hidden = !mapMitte;
   const SX = gx => (gx - cx) * sc + mx, SY = gy => (gy - cy) * sc + h / 2;
   c.imageSmoothingQuality = "high";
   let fehlt = false;
@@ -1910,11 +1915,72 @@ function drawMap() {
   c.fillStyle = COL["--blue"]; c.beginPath(); c.arc(SX(rx), SY(ry), 6, 0, 2 * Math.PI); c.fill();
 }
 const zoomMap = d => {
-  const r = $("map").getBoundingClientRect(), L = mapStufen(r.width, r.height);
-  let i = 0; if (mapZ !== null) { i = 1; for (let k = 2; k < L.length; k++) if (Math.abs(L[k] - mapZ) < Math.abs(L[i] - mapZ)) i = k; }   // nächste Stufe
-  const j = clamp(i + d, 0, L.length - 1); mapZ = j === 0 ? null : L[j]; store.set("mapz-v2", mapZ === null ? "ov" : mapZ); dirty = true;
+  const r = $("map").getBoundingClientRect(), zs = mapStufen(r.width, r.height).slice(1), fz = fitZ(r.width, r.height), jetzt = mapZ === null ? -Infinity : Math.max(mapZ, fz);
+  if (d > 0) { const n = zs.find(v => v > jetzt + 0.05); if (n !== undefined) mapZ = n; }
+  else if (mapZ !== null) { const n = [...zs].reverse().find(v => v < jetzt - 0.05); mapZ = n === undefined || n <= fz + 0.01 ? null : n; }
+  if (mapZ === null) mapMitte = null;
+  store.set("mapz-v2", mapZ === null ? "ov" : mapZ); dirty = true;
 };
 $("map-in").addEventListener("click", () => zoomMap(1)); $("map-out").addEventListener("click", () => zoomMap(-1));
+$("map-folgen").addEventListener("click", () => { mapMitte = null; dirty = true; });
+
+/* Karte verschieben und mit zwei Fingern zoomen (seit 2.9, Nutzer): ruhig ziehen verschiebt die Karte, ein kurzer schneller Wisch nach
+   links blättert wie bisher zu „Zahlen“ (die Verschiebung wird dann zurückgenommen). Verschoben folgt die Karte nicht mehr dem Punkt;
+   ◎ holt sie zurück, ebenso Wischen im Profil, der Zeitraffer und die Übersicht. Verschieben nur so weit, wie Kartenbilder sicher reichen. */
+let mapMitte = null, MV = null, mapGeste = null;
+const mapZeiger = new Map(), mapCv = $("map");
+const RZ0 = RP.map(([a, b]) => merc(a, b, 0)), MPP0 = 40075016.686 * Math.cos(RP[0][0] * Math.PI / 180) / 256;   // Strecke in Zoomstufe 0, Meter je Bildpunkt dort
+// gemessen über die Strecken: Kartenbilder reichen in Stufe 12 mindestens 6,2 km, 13: 3,3 km, 14: 1,4 km, 15 (und 16): 0,9 km über die Strecke hinaus
+const mapRand = lvl => (lvl <= 12 ? 5000 : lvl === 13 ? 2500 : lvl === 14 ? 1100 : 700);
+function mapBegrenze(x, y, lvl) {
+  let best = Infinity, bx = x, by = y;
+  for (const [a, b] of RZ0) { const d = (a - x) ** 2 + (b - y) ** 2; if (d < best) { best = d; bx = a; by = b; } }
+  const r = mapRand(lvl) / MPP0, d = Math.sqrt(best);
+  return d <= r ? [x, y] : [bx + (x - bx) * r / d, by + (y - by) * r / d];
+}
+// Bildschirmpunkt (im Kartenfeld) → Zoomstufe 0 und die Mitte, die einen Punkt in Stufe 0 an eine Bildschirmstelle legt
+const mapWelt = (sx, sy) => [(sx - MV.mx) / 2 ** MV.z + MV.cx / 2 ** MV.lvl, (sy - MV.h / 2) / 2 ** MV.z + MV.cy / 2 ** MV.lvl];
+const mapZeigerLokal = e => { const r = mapCv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+mapCv.addEventListener("pointerdown", e => {
+  if (!MV) return; try { mapCv.setPointerCapture(e.pointerId); } catch (_) {}
+  mapZeiger.set(e.pointerId, mapZeigerLokal(e));
+  if (mapZeiger.size === 1) { const q = mapZeiger.get(e.pointerId);
+    mapGeste = { art: "eins", x0: q.x, y0: q.y, t0: e.timeStamp, vorher: mapMitte, zieht: false, spur: [[e.timeStamp, q.x]] }; }
+  else if (mapZeiger.size === 2) { const [a, b] = [...mapZeiger.values()], m = [(a.x + b.x) / 2, (a.y + b.y) / 2];
+    mapGeste = { art: "zwei", d0: Math.max(20, Math.hypot(a.x - b.x, a.y - b.y)), z0: MV.z, welt: mapWelt(m[0], m[1]) }; }
+});
+mapCv.addEventListener("pointermove", e => {
+  if (!mapZeiger.has(e.pointerId) || !mapGeste || !MV) return;
+  const q = mapZeigerLokal(e); mapZeiger.set(e.pointerId, q);
+  if (mapGeste.art === "eins") {
+    const g = mapGeste, dx = q.x - g.x0, dy = q.y - g.y0;
+    g.spur.push([e.timeStamp, q.x]); while (g.spur.length > 2 && e.timeStamp - g.spur[0][0] > 100) g.spur.shift();
+    if (!g.zieht && Math.hypot(dx, dy) > 6) { g.zieht = true; g.z = MV.z; g.mitte = mapWelt(MV.w / 2, MV.h / 2); }
+    if (g.zieht) { mapMitte = { x: g.mitte[0] - dx / 2 ** g.z, y: g.mitte[1] - dy / 2 ** g.z, pos: S.pos }; dirty = true; }
+  } else if (mapGeste.art === "zwei" && mapZeiger.size >= 2) {
+    const g = mapGeste, [a, b] = [...mapZeiger.values()], m = [(a.x + b.x) / 2, (a.y + b.y) / 2];
+    const z = clamp(g.z0 + Math.log2(Math.max(20, Math.hypot(a.x - b.x, a.y - b.y)) / g.d0), MV.fz, 16);
+    mapZ = z <= MV.fz + 0.02 ? null : z;
+    // der Punkt unter den Fingern bleibt unter den Fingern; die Mitte liegt dann bei w/2
+    mapMitte = { x: g.welt[0] - (m[0] - MV.w / 2) / 2 ** z, y: g.welt[1] - (m[1] - MV.h / 2) / 2 ** z, pos: S.pos }; dirty = true;
+  }
+});
+const mapLos = (e, abbruch) => {
+  if (!mapZeiger.has(e.pointerId)) return; mapZeiger.delete(e.pointerId);
+  const g = mapGeste;
+  if (g && g.art === "eins" && g.zieht && !abbruch) {
+    // kurzer schneller Wisch nach links: Seite „Zahlen“ wie vor 2.9 (Tempo aus den letzten 100 ms, Bildpunkte je ms)
+    const q = g.spur[g.spur.length - 1], p0 = g.spur[0], vx = (q[1] - p0[1]) / Math.max(1, q[0] - p0[0]), dx = q[1] - g.x0;
+    const dy = Math.abs((mapZeigerLokal(e).y) - g.y0);
+    if (e.timeStamp - g.t0 < 320 && dx < -40 && Math.abs(dx) > 1.5 * dy && vx < -0.6) {
+      mapMitte = g.vorher; dirty = true; pager.scrollTo({ left: pager.clientWidth, behavior: REDUCED ? "auto" : "smooth" });
+    }
+  }
+  if (g && g.art === "zwei") store.set("mapz-v2", mapZ === null ? "ov" : mapZ);
+  mapGeste = mapZeiger.size ? { art: "ende" } : null;   // nach zwei Fingern nicht mit dem letzten weiterschieben (sonst springt die Karte)
+};
+mapCv.addEventListener("pointerup", e => mapLos(e, false));
+mapCv.addEventListener("pointercancel", e => mapLos(e, true));
 
 /* Zieleinlauf: Zielkarte mit den Werten der ganzen Strecke, dazu Konfetti in den Farben der Steigungsklassen */
 const zielEl = $("ziel"), konf = $("konfetti");
@@ -1995,7 +2061,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '2.8';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.9';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
