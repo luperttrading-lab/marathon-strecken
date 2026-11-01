@@ -148,7 +148,7 @@ function faktor(gi, k, f) {
 const $ = id => document.getElementById(id);
 const nf = (v, d) => v.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
 const ms = s => { const r = Math.round(s); return Math.floor(r / 60) + ":" + String(r % 60).padStart(2, "0"); };
-const sek = s => (s >= 0 ? "+" : "−") + nf(Math.abs(s), 0) + " s";
+const sek = s => (Math.round(s) === 0 ? "±" : s > 0 ? "+" : "−") + nf(Math.abs(s), 0) + " s";
 const lies = t => { t = String(t || "").trim().replace(",", ":").replace(".", ":"); if (!t) return null;
   let m = /^(\d+):(\d{1,2})$/.exec(t); if (m) return +m[1] * 60 + +m[2];
   m = /^(\d{1,2})(\d{2})$/.exec(t); if (m) return +m[1] * 60 + +m[2]; return null; };
@@ -200,7 +200,7 @@ function rechne() {
   $("g-antwort").innerHTML = teile.length ? teile.join("<br>") : "Trag deine Zeit für diese Strecke ein, z. B. „3:20“ oder „320“: Dann siehst du, welche Einstellung dazu passt.";
   $("uebernehmen").disabled = !vorschlag;
   const tb = $("tab"); tb.innerHTML = "";
-  for (const s of [1, 2, 3, 4, 5, 6, 8, 10, 12, 15]) {
+  for (const s of [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15]) {   // 0 %: das flache Tempo als Ausgangspunkt (Nutzer)
     const a = p * faktor(s / 100, k, f), b = p * faktor(-s / 100, k, f), tr2 = document.createElement("tr");
     if (Math.abs(s - g * 100) < 0.01) tr2.className = "aktiv";
     tr2.innerHTML = "<td>" + s + " %</td><td>" + ms(a) + "</td><td>" + ms(b) + "</td><td>" + sek(a + b - 2 * p) + "</td>"; tb.appendChild(tr2);
