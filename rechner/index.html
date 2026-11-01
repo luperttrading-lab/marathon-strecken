@@ -54,9 +54,10 @@ h1 { margin: 0; font: 700 24px/1.05 var(--font-display); }
 .karte .m { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
 .summe { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 7px 10px; border-radius: 10px; background: var(--blue-soft); font-variant-numeric: tabular-nums; font-size: 14px; }
 .summe b { font: 700 19px/1 var(--font-display); }
-/* Rückgabe-Quote (Nutzer): wie viel der Bergauf-Kosten bergab zurückkommt, (flach − runter) ÷ (hoch − flach) */
+/* Bergab gutgemacht (Nutzer): Anteil des Zeitverlusts bergauf, der bergab wieder hereinkommt, (flach − runter) ÷ (hoch − flach) */
 .quote { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 0 10px; font-size: 14px; color: var(--muted); }
 .quote b { font: 700 19px/1 var(--font-display); color: var(--down); font-variant-numeric: tabular-nums; }
+.quote small { display: block; font-size: 12.5px; font-variant-numeric: tabular-nums; }
 /* Gefühl */
 .gefuehl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .gefuehl label { display: grid; gap: 3px; font-size: 12.5px; color: var(--muted); }
@@ -99,7 +100,7 @@ tr.aktiv td { color: var(--blue); font-weight: 600; }
       <div class="karte hoch"><div class="k1"><span class="lbl">Hoch</span><span class="d" id="r-hoch-d">–</span></div><span class="t" id="r-hoch">–</span><span class="m" id="r-hoch-m">–</span></div>
       <div class="karte runter"><div class="k1"><span class="lbl">Runter</span><span class="d" id="r-runter-d">–</span></div><span class="t" id="r-runter">–</span><span class="m" id="r-runter-m">–</span></div>
       <div class="summe"><span>Hoch und runter</span><b id="r-summe">–</b></div>
-      <div class="quote"><span>Bergab zurück (runter ÷ hoch)</span><b id="r-quote">–</b></div>
+      <div class="quote"><span>Bergab gutgemacht<small id="r-quote-m">–</small></span><b id="r-quote">–</b></div>
     </div>
   </section>
 
@@ -119,16 +120,17 @@ tr.aktiv td { color: var(--blue); font-weight: 600; }
         <p class="note">App: 1,0 s bei 4:00 /km an sanften Anstiegen, steiler etwas mehr (Laborkurve nach Minetti × 0,77); skaliert mit dem Tempo.</p>
       </div>
       <div class="regler">
-        <div class="kopf"><span class="lbl">Rückgabe bergab</span><span class="wert" id="o-r">1,00<small> × App</small></span></div>
+        <div class="kopf"><span class="lbl">Bergab gutgemacht</span><span class="wert" id="o-r">1,00<small> × App</small></span></div>
         <input type="range" id="r" min="0.2" max="2.5" step="0.01" value="1" aria-label="Faktor auf die Bergab-Kurve der App">
-        <p class="note">App = 1: anfangs die Hälfte der Bergauf-Kosten zurück, am meisten bei −8 % (12 % schneller als flach), steiler kein weiterer Gewinn.</p>
+        <p class="note">App = 1: bei flachen Steigungen wird bergab die Hälfte des Zeitverlusts bergauf gutgemacht, am meisten bei −8 % (12 % schneller als flach), steiler kein weiterer Gewinn.</p>
       </div>
     </details>
   </section>
 
   <section class="panel" aria-label="Tabelle">
     <span class="lbl">Je km bei deinem Tempo</span>
-    <table><thead><tr><th>Steigung</th><th>hoch</th><th>runter</th><th>beides</th><th>zurück</th></tr></thead><tbody id="tab"></tbody></table>
+    <table><thead><tr><th>Steigung</th><th>hoch</th><th>runter</th><th>beides</th><th>gut&shy;gemacht</th></tr></thead><tbody id="tab"></tbody></table>
+    <p class="note"><b>beides</b>: hoch und runter zusammen gegenüber zweimal flach. <b>gutgemacht</b>: welcher Anteil der Zeit, die du bergauf verlierst, bergab wieder hereinkommt.</p>
     <p class="note">Wie in den Strecken-Apps: Pace an einer Steigung = flache Pace × Faktor; gleichmäßige Anstrengung, ohne Ermüdung, Untergrund und Höhe.</p>
   </section>
 </div>
@@ -188,10 +190,11 @@ function rechne() {
   $("r-hoch").textContent = ms(th); $("r-runter").textContent = ms(tr);
   $("r-hoch-d").textContent = sek(th - flach); $("r-runter-d").textContent = sek(tr - flach);
   $("r-hoch-m").textContent = ms(th / km) + " /km" + (hm ? " · " + nf((th - flach) / hm, 2) + " s je Höhenmeter" : "");
-  $("r-runter-m").textContent = ms(tr / km) + " /km" + (hm ? " · " + nf((flach - tr) / hm, 2) + " s je Höhenmeter zurück" : "");
+  $("r-runter-m").textContent = ms(tr / km) + " /km" + (hm ? " · " + nf((flach - tr) / hm, 2) + " s je Höhenmeter gutgemacht" : "");
   $("r-summe").textContent = ms(th + tr) + " (" + sek(th + tr - 2 * flach) + ")";
   const quote = (a, b, fl) => a - fl > 0.05 ? nf(100 * (fl - b) / (a - fl), 0) + " %" : "–";
   $("r-quote").textContent = quote(th, tr, flach);
+  $("r-quote-m").textContent = th - flach > 0.05 ? nf(flach - tr, 1) + " s der " + nf(th - flach, 1) + " s, die du bergauf verlierst" : "ohne Steigung nichts gutzumachen";
   // Gefühl: welche Einstellung passt zu deinen Zeiten? Hoch → k (Faktor − 1 ist proportional zu k), runter → f bei diesem k
   const gh = lies($("g-hoch").value), gr = lies($("g-runter").value), teile = []; vorschlag = null;
   if (g > 0.01 && (gh || gr)) {
@@ -199,8 +202,9 @@ function rechne() {
     if (gh) teile.push("Bergauf: <b>" + nf((gh - flach) / hm, 2) + " s je Höhenmeter</b> bei deinem Tempo, entspricht <b>" + nf(kNeu, 2) + " s</b> bei 4:00 (App 1,00).");
     let fNeu = f;
     if (gr) { const ab1 = 1 - faktor(-g, kNeu, 1); fNeu = ab1 > 0 ? (1 - gr / flach) / ab1 : f;
-      teile.push("Bergab: <b>" + nf((flach - gr) / hm, 2) + " s je Höhenmeter</b> zurück, das Modell " + nf((flach - flach * faktor(-g, kNeu, 1)) / hm, 2) + " s: Rückgabe <b>" + nf(fNeu, 2) + " × App</b>."
+      teile.push("Bergab: <b>" + nf((flach - gr) / hm, 2) + " s je Höhenmeter</b> gutgemacht, das Modell " + nf((flach - flach * faktor(-g, kNeu, 1)) / hm, 2) + " s, also <b>" + nf(fNeu, 2) + " × App</b>."
         + (gr < flach * 0.7 ? ' <span class="warn">Mehr als 30 % schneller als flach – bitte prüfen.</span>' : "")); }
+    if (gh && gr && gh - flach > 0.05) teile.push("Bergab gutgemacht: bei dir <b>" + quote(gh, gr, flach) + "</b>, im Modell " + quote(th, tr, flach) + ".");   // Nutzer: eigene Quote neben die des Modells
     vorschlag = { k: kNeu, f: fNeu };
   } else if (gh || gr) teile.push("Für den Vergleich eine Steigung über 1 % einstellen.");
   $("g-antwort").innerHTML = teile.length ? teile.join("<br>") : "Trag deine Zeit für diese Strecke ein, z. B. „3:20“ oder „320“: Dann siehst du, welche Einstellung dazu passt.";
