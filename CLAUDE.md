@@ -61,6 +61,8 @@ Offene Ideen und Punkte: `werkzeuge/VORGEMERKT.md`. Eichung des Pace-Modells: `w
 
 - Logins, Captchas und Sperren nie umgehen. Keine Daten erfinden; Unsicheres kennzeichnen.
 - Personendaten (Läufernamen aus Ergebnislisten) nie ins Repo; nur verdichtete Kennzahlen.
+- **Versteckte Strecke** `clhuypnhhjcf/` (Hausrunde des Nutzers am Schiffenberg, 9,85 km): nie auf die Startseite, ins README oder in
+  die Liste; Zugang nur durch eine Sekunde Drücken auf „Welcher Marathon?“. Vor dem öffentlichen Start entfernen (`VORGEMERKT.md`).
 
 ## Nächste Schritte (Stand 30.10.2026)
 

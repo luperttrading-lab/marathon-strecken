@@ -50,7 +50,7 @@ header { position: relative; padding-top: 8px; }
 /* Version oben rechts (seit 1.22, vorher in der Fußzeile): antippen prüft, ob es eine neuere gibt */
 .kopf-ver { position: absolute; right: 0; top: 0; padding: 8px 0 8px 16px; font: 600 13px/1.2 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); }
 .eyebrow { font: 600 13px/1.2 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); }
-h1 { margin: 4px 0 0; font: 700 34px/1.05 var(--font-display); font-size: clamp(28px, 8.6vw, 34px); }   /* „Welcher Marathon?“ passt auch auf 320 px in eine Zeile */
+h1 { margin: 4px 0 0; font: 700 34px/1.05 var(--font-display); font-size: clamp(28px, 8.6vw, 34px); -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }   /* „Welcher Marathon?“ passt auch auf 320 px in eine Zeile */
 .sub { margin: 6px 0 18px; color: var(--muted); font-size: 15px; }
 .card { position: relative; display: grid; gap: 2px; margin-bottom: 12px; padding: 14px 40px 0 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; color: inherit; text-decoration: none; overflow: hidden; }
 .card.top { border-color: var(--blue); background: linear-gradient(180deg, rgba(27, 91, 208, 0.28), var(--surface) 55%); }   /* Highlight oben */
@@ -151,7 +151,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
 <div class="wrap">
   <header>
     <span class="eyebrow">Steigungsprofile</span>
-    <button type="button" class="ver kopf-ver" aria-label="Nach Update suchen">v2.7</button>
+    <button type="button" class="ver kopf-ver" aria-label="Nach Update suchen">v2.8</button>
     <h1>Welcher Marathon?</h1>
     <p class="sub">Wo es bergauf geht, was dich das an Zeit kostet und wann du wo bist. Gemessen mit Laserscans entlang der offiziellen Strecke.</p>
   </header>
@@ -526,6 +526,17 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
       + ' <span class="' + (tage <= 14 ? "bald" : "bis") + '">· ' + bis + "</span>";
   });
 })();
+/* Versteckte Strecken (seit 2.8; Nutzer: „geheime Möglichkeit, diese Strecke zu starten, irgendwo lange hindrücken“): ohne Karte
+   auf der Startseite, offline aber wie alle anderen eingerichtet. Eine Sekunde auf „Welcher Marathon?“ drücken öffnet die Hausrunde.
+   Vor dem öffentlichen Start entfernen (VORGEMERKT). */
+var VERSTECKT = ["clhuypnhhjcf/"];
+(() => {
+  const h1 = document.querySelector("header h1"); let t = 0;
+  const los = () => { clearTimeout(t); t = 0; };
+  h1.addEventListener("pointerdown", () => { los(); t = setTimeout(() => { t = 0; location.href = VERSTECKT[0]; }, 1000); });
+  ["pointerup", "pointerleave", "pointercancel"].forEach(ev => h1.addEventListener(ev, los));
+  h1.addEventListener("contextmenu", e => e.preventDefault());
+})();
 /* Auswahl (seit 1.27): Suchfeld und Drehrad. Treffer in vier Stufen: Stadtname beginnt mit der Eingabe (seit 2.2: „St“ zeigt
    Stockholm, nicht auch Mexiko-Stadt), sonst Stadtname (Wortanfang), sonst weitere Namen, Land, Veranstalter (data-such,
    Wortanfang), sonst irgendwo im Text. „F“ zeigt so nur Frankfurt, „USA“ die drei US-Strecken. */
@@ -617,7 +628,7 @@ footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; }
   box.querySelector(".liste-seg").addEventListener("click", e => { const b = e.target.closest("[data-sort]"); if (!b) return; sort = b.dataset.sort; try { localStorage.setItem("start.listeSort", sort); } catch (_) {} zeige(); box.scrollTop = 0; });
   inhalt.addEventListener("click", e => { const a = e.target.closest("a.lz"); if (a) merke(a.getAttribute("href")); });
 })();
-const APP_VERSION = '2.7';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.8';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
@@ -691,7 +702,7 @@ const APP_VERSION = '2.7';   // eine Nummer für die ganze App (seit 2.0), setzt
   // neu geholt werden. Nie geöffnete Strecken bleiben außen vor. Dazu bekommt ihr Service Worker die Gelegenheit zum Update.
   if (navigator.onLine && "caches" in window) setTimeout(async () => {
     try {
-      const ordner = [...document.querySelectorAll('a.card[href$="/"]')].map(a => new URL(a.getAttribute("href"), location.href).href);
+      const ordner = [...document.querySelectorAll('a.card[href$="/"]')].map(a => a.getAttribute("href")).concat(VERSTECKT).map(h => new URL(h, location.href).href);
       const opt = { ignoreVary: true, ignoreSearch: true };
       for (const name of await caches.keys()) {
         if (name.startsWith("start-")) continue;
@@ -708,7 +719,7 @@ const APP_VERSION = '2.7';   // eine Nummer für die ganze App (seit 2.0), setzt
     } catch (_) {}
     // Alle Strecken offline bereit (seit 2.3; Nutzer: „alle Strecken offline, ohne Karten“): jede Strecke bekommt ihren Service
     // Worker, der bei der Installation nur Seite, version.json und Symbole speichert (≈ 65 KB gepackt je Strecke), keine Karten
-    if ("serviceWorker" in navigator) for (const o of [...document.querySelectorAll('a.card[href$="/"]')].map(a => a.getAttribute("href")))
+    if ("serviceWorker" in navigator) for (const o of [...document.querySelectorAll('a.card[href$="/"]')].map(a => a.getAttribute("href")).concat(VERSTECKT))
       navigator.serviceWorker.register(o + "sw.js", { scope: o }).catch(() => {});
     kartenStand();
   }, 1500);

@@ -43,6 +43,10 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
 
 ## Kleinigkeiten aus den Übergaben
 
+- **Versteckte Hausrunde** `clhuypnhhjcf/` (Schiffenberg, Gießen, für den Nutzer persönlich): vor dem öffentlichen Start
+  entfernen (Ordner, `werkzeuge/clhuypnhhjcf/`, `VERSTECKT` und den Langdruck auf „Welcher Marathon?“ in `index.html`, dann
+  `kern.py --version … --schreiben` für `karten.json`). Bleibt in der Git-Historie.
+
 - Hannover: Veranstalter nennt „19 m Höhenunterschied“, gemessen 9,4 m; zwei Unterführungen (Fernroder Straße, Kopernikusstraße)
   geschätzt; DGM1 2016 (Stadt hat 2021).
 - Düsseldorf: keine GPX, Linie aus dem Streckenplan-PDF 2026; Start Ehrenhof laut Plan, „Höhe Tonhalle“ laut Text.

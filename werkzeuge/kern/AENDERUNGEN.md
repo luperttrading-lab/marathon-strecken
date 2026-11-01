@@ -6,6 +6,27 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.8 (01.11.2026): Kern rechnet mit jeder Streckenlänge; versteckte Hausrunde
+
+- **Kern:** Alle Stellen mit fester Marathonlänge rechnen jetzt mit `L` (Nutzer: eigene Runde mit 9,85 km; dasselbe braucht ein
+  späterer Halbmarathon). `LTXT` („42,2“ beim Marathon wie entschieden, „21,1“, sonst die Länge), `MARA` (Halbmarathon-Zeile und
+  -Marke im Pace-Band nur beim Marathon), `KMSCHRITT` (km-Marken in Karte, Übersicht, Zuschauer-Tabelle: 5 km, ab unter 25 km 2 km,
+  unter 12 km 1 km). Zwischenzeiten je km/5/10 km bis zur Länge, letzter Abschnitt bis `LTXT`. Bahnzeiten: flacher Marathon aus der
+  flachen Zeit auf dieser Länge mit Riegel 1,07 (beim Marathon unverändert). Zielzeit-Rad bei unter 25 km ab 0 Stunden (bis 3),
+  Startzeit bei unter 30 km bis 22 Uhr, Schieberegler bis `L`, Teilen-Text „Mein Plan“ statt „Marathon-Plan“ außerhalb des Marathons.
+- **Kurze Strecken, nach der Prüfung mit der Hausrunde** (nur außerhalb des Marathons, `!MARA`): Zeile „Flach, 9,85 km“ in
+  „Ohne Höhenmeter entspricht das“ und Infotext ohne Marathon-Grundlage; letzter km-Abschnitt „9–9,85“; „je 10 km“ ab unter 12 km
+  ausgeblendet; „Für Zuschauer“: „Uhrzeit an jeder km-Marke“; Verpflegungs-Schalter nur mit Verpflegung in `D.marks`; Zielzeit
+  mindestens 2:30 /km; Ausschnitt 2 km und Tempo ×50 als Voreinstellung, Ausschnitt-Rad nicht über die Länge; Pace-Band-Datei
+  „pace-band-runde-…“ (verrät keinen Ordnernamen); „anderen Strecken“ statt „anderen Marathons“. Offen: Zeiten unter einer
+  Stunde mit „0:“; Markenbeschriftung im Läuferblick weicht unter dem Uhrzeit-Feld nach links aus (alle Strecken).
+- **Geprüft:** alle 40 Marathons zeigen Zwischenzeiten (4 Arten), Zuschauer-Tabelle, Bahnzeiten, Zielzeit, Übersichtsbild und km im
+  Ziel zeichengleich wie 2.7 (automatischer Vergleich gegen den alten Stand).
+- **Versteckte Strecke** `clhuypnhhjcf/` (Hausrunde des Nutzers am Schiffenberg, 9,85 km): keine Karte auf der Startseite, nicht im
+  README. Zugang (Nutzer: „geheime Möglichkeit … lange hindrücken“): auf der Startseite eine Sekunde auf „Welcher Marathon?“
+  drücken (`VERSTECKT` in `index.html`); die Startseite richtet sie offline mit ein. **Vor dem öffentlichen Start entfernen**
+  (Nutzer 01.11.2026): Ordner, Werkzeuge, `VERSTECKT`, dann `kern.py --schreiben` für `karten.json`.
+
 ## 2.7 (31.10.2026): Läuferblick mindestens 10-fach überhöht; Graz, Salzburg, Liechtenstein
 
 - **Kern:** Nutzer zu Zermatt: „im Höhenprofil sieht man nicht, wie steil es eigentlich ist“ (1 200 m Höhe auf der Achse, der
