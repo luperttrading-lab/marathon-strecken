@@ -58,29 +58,31 @@ h1 { margin: 0; font: 700 24px/1.05 var(--font-display); }
 .quote { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 0 10px; font-size: 14px; color: var(--muted); }
 .quote b { font: 700 19px/1 var(--font-display); color: var(--down); font-variant-numeric: tabular-nums; }
 .quote small { display: block; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+/* Kurve (Nutzer 01.11.2026): Pace je Steigung von −15 bis +15 %, folgt Tempo, Steigung und den beiden Schiebern; Antippen zeigt den Wert */
+.kopfzeile { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.kopfzeile button { font: 600 14px/1 var(--font-display); letter-spacing: 0.03em; color: var(--blue); background: none; border: 1px solid var(--rule); border-radius: 8px; padding: 6px 9px; cursor: pointer; }
+.kopfzeile button:disabled { color: var(--muted); opacity: 0.55; cursor: default; }
+#kurve { width: 100%; height: 210px; display: block; touch-action: pan-y; cursor: crosshair; }
+.regler2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
 /* Gefühl */
-.gefuehl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.gefuehl { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; align-items: end; }
 .gefuehl label { display: grid; gap: 3px; font-size: 12.5px; color: var(--muted); }
 .gefuehl input { width: 100%; height: 40px; border-radius: 9px; border: 1px solid var(--rule); background: var(--bg); color: var(--ink); font: 600 21px/1 var(--font-display); text-align: center; font-variant-numeric: tabular-nums; }
 .antwort { margin: 0; font-size: 13.5px; color: var(--muted); }
 .antwort b { color: var(--ink); }
 .antwort .warn { color: var(--warn); }
-.knoepfe { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--rule); border-radius: 9px; overflow: hidden; }
-.knoepfe button { font: 600 14px/1.2 var(--font-display); letter-spacing: 0.03em; color: var(--blue); background: none; border: 0; padding: 9px 4px; cursor: pointer; }
-.knoepfe button + button { border-left: 1px solid var(--rule); }
-.knoepfe button:disabled { color: var(--muted); opacity: 0.6; cursor: default; }
-/* Modell (aufklappbar) */
-details { border-top: 1px solid var(--rule); padding-top: 8px; }
-details summary { cursor: pointer; color: var(--blue); font: 600 15px/1.2 var(--font-display); letter-spacing: 0.03em; }
-.regler { display: grid; gap: 4px; margin-top: 8px; }
+.gefuehl button { height: 40px; border-radius: 9px; border: 1px solid var(--rule); background: none; color: var(--blue); font: 600 14px/1.1 var(--font-display); letter-spacing: 0.03em; cursor: pointer; padding: 0 4px; }
+.gefuehl button:disabled { color: var(--muted); opacity: 0.55; cursor: default; }
+.regler { display: grid; gap: 2px; }
 .regler .kopf { display: flex; justify-content: space-between; align-items: baseline; }
 .regler .wert { font: 700 20px/1 var(--font-display); font-variant-numeric: tabular-nums; }
 .regler .wert small { font-size: 13px; color: var(--muted); font-weight: 600; }
-input[type=range] { width: 100%; accent-color: var(--blue); height: 28px; }
+input[type=range] { width: 100%; accent-color: var(--blue); height: 28px; margin: 0; }
 .note { margin: 0; color: var(--muted); font-size: 12.5px; }
+.stand { margin: 0; text-align: center; color: var(--muted); font-size: 11.5px; opacity: 0.8; }
 table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 14px; }
 th { font: 600 12px/1.2 var(--font-display); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 5px 4px; border-bottom: 1px solid var(--rule); }
-td { text-align: right; padding: 6px 4px; border-bottom: 1px solid var(--rule); }
+td { text-align: right; padding: 4px 4px; border-bottom: 1px solid var(--rule); }
 th:first-child, td:first-child { text-align: left; }
 tr.aktiv td { color: var(--blue); font-weight: 600; }
 </style>
@@ -104,35 +106,38 @@ tr.aktiv td { color: var(--blue); font-weight: 600; }
     </div>
   </section>
 
+  <section class="panel" aria-label="Kurve und Modell">
+    <div class="kopfzeile"><span class="lbl" id="o-kurve">Pace je Steigung · flach 4:00</span><button type="button" id="zurueck" disabled>Wie die App</button></div>
+    <canvas id="kurve" aria-label="Kurve: Pace je Steigung von −15 bis +15 %. Antippen oder seitlich wischen zeigt den Wert."></canvas>
+    <div class="regler2">
+      <div class="regler">
+        <div class="kopf"><span class="lbl">Bergauf</span><span class="wert" id="o-k">1,00<small> s</small></span></div>
+        <input type="range" id="k" min="0.3" max="2" step="0.01" value="1" aria-label="Bergauf: Sekunden je Höhenmeter bei 4:00 je km">
+      </div>
+      <div class="regler">
+        <div class="kopf"><span class="lbl">Bergab</span><span class="wert" id="o-r">1,00<small> × App</small></span></div>
+        <input type="range" id="r" min="0.2" max="2.5" step="0.01" value="1" aria-label="Bergab: Faktor auf das, was die App bergab gutmacht">
+      </div>
+    </div>
+    <p class="note"><b>Bergauf</b>: Sekunden je Höhenmeter bei 4:00 /km an sanften Anstiegen, steiler mehr (App 1,00). <b>Bergab</b>: Faktor auf das, was die App gutmacht (App 1,00: anfangs die Hälfte, am schnellsten bei −8 %).</p>
+  </section>
+
   <section class="panel" aria-label="Dein Gefühl">
     <span class="lbl">Dein Gefühl bei gleicher Anstrengung</span>
     <div class="gefuehl">
       <label>Deine Zeit hoch<input id="g-hoch" inputmode="numeric" placeholder="m:ss" autocomplete="off"></label>
       <label>Deine Zeit runter<input id="g-runter" inputmode="numeric" placeholder="m:ss" autocomplete="off"></label>
+      <button type="button" id="uebernehmen" disabled>Übernehmen</button>
     </div>
     <p class="antwort" id="g-antwort">–</p>
-    <div class="knoepfe"><button type="button" id="zurueck">Wie die App</button><button type="button" id="uebernehmen" disabled>Mein Gefühl übernehmen</button></div>
-    <details id="modell">
-      <summary>Modell einstellen: <span id="o-modell">wie die App</span></summary>
-      <div class="regler">
-        <div class="kopf"><span class="lbl">Kosten je Höhenmeter bergauf</span><span class="wert" id="o-k">1,00<small> s bei 4:00</small></span></div>
-        <input type="range" id="k" min="0.3" max="2" step="0.01" value="1" aria-label="Sekunden je Höhenmeter bei 4:00 je km">
-        <p class="note">App: 1,0 s bei 4:00 /km an sanften Anstiegen, steiler etwas mehr (Laborkurve nach Minetti × 0,77); skaliert mit dem Tempo.</p>
-      </div>
-      <div class="regler">
-        <div class="kopf"><span class="lbl">Bergab gutgemacht</span><span class="wert" id="o-r">1,00<small> × App</small></span></div>
-        <input type="range" id="r" min="0.2" max="2.5" step="0.01" value="1" aria-label="Faktor auf die Bergab-Kurve der App">
-        <p class="note">App = 1: bei flachen Steigungen wird bergab die Hälfte des Zeitverlusts bergauf gutgemacht, am meisten bei −8 % (12 % schneller als flach), steiler kein weiterer Gewinn.</p>
-      </div>
-    </details>
   </section>
 
   <section class="panel" aria-label="Tabelle">
     <span class="lbl">Je km bei deinem Tempo</span>
     <table><thead><tr><th>Steigung</th><th>hoch</th><th>runter</th><th>beides</th><th>gut&shy;gemacht</th></tr></thead><tbody id="tab"></tbody></table>
-    <p class="note"><b>beides</b>: hoch und runter zusammen gegenüber zweimal flach. <b>gutgemacht</b>: welcher Anteil der Zeit, die du bergauf verlierst, bergab wieder hereinkommt.</p>
-    <p class="note">Wie in den Strecken-Apps: Pace an einer Steigung = flache Pace × Faktor; gleichmäßige Anstrengung, ohne Ermüdung, Untergrund und Höhe.</p>
+    <p class="note"><b>beides</b>: hoch und runter zusammen gegenüber zweimal flach. <b>gutgemacht</b>: welcher Anteil der Zeit, die du bergauf verlierst, bergab wieder hereinkommt. Wie in den Strecken-Apps: Pace an einer Steigung = flache Pace × Faktor; gleichmäßige Anstrengung, ohne Ermüdung, Untergrund und Höhe.</p>
   </section>
+  <p class="stand">Stand 01.11.2026 · Fassung 5</p>
 </div>
 <script>
 // Modell wie im Kern (hamburg/index.html, Stand Marathon 2.8), mit k = Kosten je Höhenmeter (S.secHm) und f = Faktor auf die Bergab-Kurve
@@ -178,21 +183,91 @@ const STEIG = Array.from({ length: 41 }, (_, i) => i / 2);                      
 const WEGE = Array.from({ length: 50 }, (_, i) => Math.round((i + 1)) / 10);          // 0,1 bis 5,0 km
 if (st.k != null) $("k").value = st.k; if (st.r != null) $("r").value = st.r;
 for (const id of ["g-hoch", "g-runter"]) if (st[id]) $(id).value = st[id];
-let vorschlag = null;
+let vorschlag = null, KV = null;
+// Kurve: x = Steigung −15 … +15 %, y = Pace je km (oben langsamer, wie das Pace-Diagramm der Strecken-Apps).
+// Bergab blaugrün, bergauf orange wie die Karten; gestrichelt die App, wenn die Schieber davon abweichen;
+// Punkte bei ± eingestellter Steigung, Ringe für die eigenen Zeiten; Antippen oder Wischen zeigt Steigung · Pace (Abweichung).
+const KU = { G0: -15, G1: 15, L0: 38, R0: 18, T0: 28, B0: 20, mark: null, zieh: false };
+const cv = $("kurve"), cx = cv.getContext("2d");
+const farbe = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function zeichne() {
+  if (!KV) return;
+  const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight; if (!w) return;
+  if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+  const c = cx; c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+  const { G0, G1, L0, R0, T0, B0 } = KU, { p, k, f } = KV, istApp = Math.abs(k - 1) < 0.005 && Math.abs(f - 1) < 0.005;
+  const mod = g => p * faktor(g / 100, k, f), app = g => p * faktor(g / 100, 1, 1);
+  const gs = []; for (let g = G0; g <= G1 + 1e-9; g += 0.1) gs.push(Math.round(g * 10) / 10);
+  const werte = gs.map(mod).concat(istApp ? [] : gs.map(app), [KV.gh, KV.gr].filter(v => v));
+  // Bereich auf halbe Minuten gerundet, Linien je 30 s, 1 oder 2 min, damit es höchstens etwa 7 sind
+  const y0 = Math.floor((Math.min(...werte) - 5) / 30) * 30, y1 = Math.ceil((Math.max(...werte) + 5) / 30) * 30, ys = (y1 - y0) / 30 > 14 ? 120 : (y1 - y0) / 30 > 7 ? 60 : 30;
+  const X = g => L0 + (g - G0) / (G1 - G0) * (w - L0 - R0), Y = v => T0 + (y1 - v) / (y1 - y0) * (h - T0 - B0);
+  const font = getComputedStyle(document.body).fontFamily, COL = { grid: farbe("--rule"), muted: farbe("--muted"), ink: farbe("--ink"), up: farbe("--up"), down: farbe("--down"), surf: farbe("--surface"), blue: farbe("--blue") };
+  c.font = "500 10.5px " + font; c.lineWidth = 1; c.strokeStyle = COL.grid; c.fillStyle = COL.muted;
+  c.textAlign = "right"; c.textBaseline = "middle";
+  for (let v = Math.ceil(y0 / ys) * ys; v <= y1 + 1e-9; v += ys) { const y = Math.round(Y(v)) + 0.5; c.beginPath(); c.moveTo(L0, y); c.lineTo(w - R0, y); c.stroke(); c.fillText(ms(v), L0 - 5, y); }
+  c.textAlign = "center"; c.textBaseline = "top";
+  for (let g = G0; g <= G1; g += 5) { const x = Math.round(X(g)) + 0.5; c.beginPath(); c.moveTo(x, T0); c.lineTo(x, h - B0); c.stroke(); c.fillText((g > 0 ? "+" : g < 0 ? "−" : "") + Math.abs(g) + " %", x, h - B0 + 5); }
+  { const x = Math.round(X(0)) + 0.5; c.strokeStyle = COL.muted; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, T0); c.lineTo(x, h - B0); c.stroke(); }
+  // flaches Tempo als waagerechte Linie: alles darunter ist schneller als flach
+  { const y = Math.round(Y(p)) + 0.5; c.strokeStyle = COL.muted; c.lineWidth = 1; c.setLineDash([2, 4]); c.beginPath(); c.moveTo(L0, y); c.lineTo(w - R0, y); c.stroke(); c.setLineDash([]); }
+  c.save(); c.beginPath(); c.rect(L0, T0, w - L0 - R0, h - T0 - B0); c.clip();
+  if (!istApp) { c.strokeStyle = COL.muted; c.lineWidth = 1.5; c.setLineDash([5, 4]); c.beginPath(); gs.forEach((g, i) => i ? c.lineTo(X(g), Y(app(g))) : c.moveTo(X(g), Y(app(g)))); c.stroke(); c.setLineDash([]); }
+  c.lineWidth = 2.5; c.lineJoin = "round";
+  for (const [farbeLinie, teil] of [[COL.down, gs.filter(g => g <= 0)], [COL.up, gs.filter(g => g >= 0)]]) {
+    c.strokeStyle = farbeLinie; c.beginPath(); teil.forEach((g, i) => i ? c.lineTo(X(g), Y(mod(g))) : c.moveTo(X(g), Y(mod(g)))); c.stroke(); }
+  c.restore();
+  const punkt = (x, y, fill, r) => { c.fillStyle = fill; c.strokeStyle = COL.surf; c.lineWidth = 2; c.beginPath(); c.arc(x, y, r, 0, 2 * Math.PI); c.fill(); c.stroke(); };
+  const ring = (x, y) => { c.strokeStyle = COL.ink; c.lineWidth = 2; c.beginPath(); c.arc(x, y, 6.5, 0, 2 * Math.PI); c.stroke(); };
+  c.font = "600 11px " + font;
+  // Flachpunkt mit Beschriftung links darüber (dort verläuft die Kurve nie: links fällt sie unter das flache Tempo)
+  punkt(X(0), Y(p), COL.ink, 4); c.fillStyle = COL.ink; c.textAlign = "right"; c.textBaseline = "bottom"; c.fillText("flach " + ms(p), X(0) - 7, Y(p) - 4);
+  const g = KV.g;
+  if (g > 0.01 && g <= G1) {
+    if (KV.gh) ring(X(g), Y(KV.gh)); if (KV.gr) ring(X(-g), Y(KV.gr));
+    const yu = Y(mod(g)), yd = Y(mod(-g));
+    punkt(X(g), yu, COL.up, 5); punkt(X(-g), yd, COL.down, 5);
+    // Beschriftung: bergauf links darüber, bergab rechts darunter (dort ist jeweils frei)
+    c.fillStyle = COL.up; c.textAlign = "right"; c.textBaseline = "bottom"; c.fillText(ms(mod(g)), X(g) - 7, yu - 3);
+    c.fillStyle = COL.down; c.textAlign = "left"; c.textBaseline = "top"; c.fillText(ms(mod(-g)), X(-g) + 7, yd + 3);
+  }
+  if (!istApp) { c.fillStyle = COL.muted; c.font = "500 10.5px " + font; c.textAlign = "right"; c.textBaseline = "bottom"; c.fillText("gestrichelt: App", w - R0 - 4, h - B0 - 4); }
+  // Markierung beim Antippen: Strich, Punkt und oben Steigung · Pace (Abweichung zu flach)
+  c.font = "600 12px " + font;
+  if (KU.mark !== null) {
+    const gm = Math.round(Math.min(G1, Math.max(G0, KU.mark)) * 2) / 2, xm = Math.round(X(gm)) + 0.5, pm = mod(gm), ym = Y(pm);
+    c.strokeStyle = COL.ink; c.lineWidth = 1; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xm, T0); c.lineTo(xm, h - B0); c.stroke(); c.setLineDash([]);
+    punkt(xm, ym, gm > 0 ? COL.up : gm < 0 ? COL.down : COL.ink, 5);
+    const txt = (gm > 0 ? "+" : gm < 0 ? "−" : "±") + nf(Math.abs(gm), 1) + " %  ·  " + ms(pm) + " /km  (" + sek(pm - p) + ")" + (istApp ? "" : "  App " + ms(app(gm)));
+    const tw = c.measureText(txt).width + 14, bx = Math.min(w - R0 - tw, Math.max(0, xm - tw / 2));
+    c.fillStyle = COL.surf; c.strokeStyle = COL.ink; c.beginPath(); if (c.roundRect) c.roundRect(bx, 2, tw, 21, 5); else c.rect(bx, 2, tw, 21); c.fill(); c.stroke();
+    c.fillStyle = COL.ink; c.textAlign = "left"; c.textBaseline = "middle"; c.fillText(txt, bx + 7, 12.5);
+  } else { c.fillStyle = COL.muted; c.textAlign = "left"; c.textBaseline = "middle"; c.font = "500 11px " + font; c.fillText("Antippen oder wischen zeigt den Wert", L0, 12.5); }
+}
+const kuSetze = e => { const r = cv.getBoundingClientRect(); KU.mark = KU.G0 + (e.clientX - r.left - KU.L0) / (r.width - KU.L0 - KU.R0) * (KU.G1 - KU.G0); zeichne(); };
+cv.addEventListener("pointerdown", e => { KU.zieh = true; kuSetze(e); });
+cv.addEventListener("pointermove", e => { if (KU.zieh) kuSetze(e); });
+for (const ev of ["pointerup", "pointercancel", "pointerleave"]) cv.addEventListener(ev, () => { KU.zieh = false; });
+document.addEventListener("click", e => { if (KU.mark !== null && e.target !== cv) { KU.mark = null; zeichne(); } });
+window.addEventListener("resize", zeichne);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(zeichne);   // Beschriftung in Barlow, sobald die Schrift da ist
 function rechne() {
   if (!$("k")) return;
   const p = W.pace, g = W.steig / 100, km = W.weg, k = +$("k").value, f = +$("r").value;
   const flach = p * km, hm = g * km * 1000;
-  $("o-k").innerHTML = nf(k, 2) + "<small> s bei 4:00</small>"; $("o-r").innerHTML = nf(f, 2) + "<small> × App</small>";
-  $("o-modell").textContent = Math.abs(k - 1) < 0.005 && Math.abs(f - 1) < 0.005 ? "wie die App" : nf(k, 2) + " s · bergab " + nf(f, 2) + " × App";
+  $("o-k").innerHTML = nf(k, 2) + "<small> s</small>"; $("o-r").innerHTML = nf(f, 2) + "<small> × App</small>";
+  $("zurueck").disabled = Math.abs(k - 1) < 0.005 && Math.abs(f - 1) < 0.005;
+  $("o-kurve").textContent = "Pace je Steigung · flach " + ms(p);
   $("o-hm").textContent = nf(hm, 0) + " Höhenmeter hoch bzw. runter · flach " + ms(flach);
   const th = flach * faktor(g, k, f), tr = flach * faktor(-g, k, f);
   $("r-hoch").textContent = ms(th); $("r-runter").textContent = ms(tr);
   $("r-hoch-d").textContent = sek(th - flach); $("r-runter-d").textContent = sek(tr - flach);
-  $("r-hoch-m").textContent = ms(th / km) + " /km" + (hm ? " · " + nf((th - flach) / hm, 2) + " s je Höhenmeter" : "");
-  $("r-runter-m").textContent = ms(tr / km) + " /km" + (hm ? " · " + nf((flach - tr) / hm, 2) + " s je Höhenmeter gutgemacht" : "");
+  // Pace je km nur, wenn die Strecke nicht 1 km ist (sonst steht dieselbe Zahl doppelt da)
+  const proKm = t => Math.abs(km - 1) > 1e-9 ? ms(t / km) + " /km" : "", zus = (a, b) => [a, b].filter(Boolean).join(" · ") || "flach";
+  $("r-hoch-m").textContent = zus(proKm(th), hm ? nf((th - flach) / hm, 2) + " s je Höhenmeter" : "");
+  $("r-runter-m").textContent = zus(proKm(tr), hm ? nf((flach - tr) / hm, 2) + " s je Höhenmeter" : "");
   $("r-summe").textContent = ms(th + tr) + " (" + sek(th + tr - 2 * flach) + ")";
-  const quote = (a, b, fl) => a - fl > 0.05 ? nf(100 * (fl - b) / (a - fl), 0) + " %" : "–";
+  const quote = (a, b, fl) => a - fl > 0.05 ? nf(100 * (fl - b) / (a - fl), 0) + "\u00a0%" : "–";
   $("r-quote").textContent = quote(th, tr, flach);
   $("r-quote-m").textContent = th - flach > 0.05 ? nf(flach - tr, 1) + " s der " + nf(th - flach, 1) + " s, die du bergauf verlierst" : "ohne Steigung nichts gutzumachen";
   // Gefühl: welche Einstellung passt zu deinen Zeiten? Hoch → k (Faktor − 1 ist proportional zu k), runter → f bei diesem k
@@ -202,12 +277,13 @@ function rechne() {
     if (gh) teile.push("Bergauf: <b>" + nf((gh - flach) / hm, 2) + " s je Höhenmeter</b> bei deinem Tempo, entspricht <b>" + nf(kNeu, 2) + " s</b> bei 4:00 (App 1,00).");
     let fNeu = f;
     if (gr) { const ab1 = 1 - faktor(-g, kNeu, 1); fNeu = ab1 > 0 ? (1 - gr / flach) / ab1 : f;
-      teile.push("Bergab: <b>" + nf((flach - gr) / hm, 2) + " s je Höhenmeter</b> gutgemacht, das Modell " + nf((flach - flach * faktor(-g, kNeu, 1)) / hm, 2) + " s, also <b>" + nf(fNeu, 2) + " × App</b>."
+      teile.push("Bergab: <b>" + nf((flach - gr) / hm, 2) + " s je Höhenmeter</b> gutgemacht, das Modell " + nf((flach - flach * faktor(-g, kNeu, 1)) / hm, 2) + "\u00a0s, also <b>" + nf(fNeu, 2) + " × App</b>."
         + (gr < flach * 0.7 ? ' <span class="warn">Mehr als 30 % schneller als flach – bitte prüfen.</span>' : "")); }
-    if (gh && gr && gh - flach > 0.05) teile.push("Bergab gutgemacht: bei dir <b>" + quote(gh, gr, flach) + "</b>, im Modell " + quote(th, tr, flach) + ".");   // Nutzer: eigene Quote neben die des Modells
+    if (gh && gr && gh - flach > 0.05) teile.push("Bergab gutgemacht: bei dir <b>" + quote(gh, gr, flach) + "</b>, App " + quote(flach * faktor(g, 1, 1), flach * faktor(-g, 1, 1), flach)
+      + (Math.abs(k - 1) < 0.005 && Math.abs(f - 1) < 0.005 ? "" : ", eingestellt " + quote(th, tr, flach)) + ".");   // Nutzer: eigene Quote neben die des Modells
     vorschlag = { k: kNeu, f: fNeu };
   } else if (gh || gr) teile.push("Für den Vergleich eine Steigung über 1 % einstellen.");
-  $("g-antwort").innerHTML = teile.length ? teile.join("<br>") : "Trag deine Zeit für diese Strecke ein, z. B. „3:20“ oder „320“: Dann siehst du, welche Einstellung dazu passt.";
+  $("g-antwort").innerHTML = teile.length ? teile.join("<br>") : "Zeiten für diese Strecke, z. B. „3:20“ oder „320“; sie erscheinen als Ringe in der Kurve.";
   $("uebernehmen").disabled = !vorschlag;
   const tb = $("tab"); tb.innerHTML = "";
   for (const s of [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15]) {   // 0 %: das flache Tempo als Ausgangspunkt (Nutzer)
@@ -215,11 +291,12 @@ function rechne() {
     if (Math.abs(s - g * 100) < 0.01) tr2.className = "aktiv";
     tr2.innerHTML = "<td>" + s + " %</td><td>" + ms(a) + "</td><td>" + ms(b) + "</td><td>" + sek(a + b - 2 * p) + "</td><td>" + quote(a, b, p) + "</td>"; tb.appendChild(tr2);
   }
+  KV = { p, g: g * 100, k, f, gh: gh && g > 0.01 ? gh / km : null, gr: gr && g > 0.01 ? gr / km : null }; zeichne();
   try { localStorage.setItem("rechner", JSON.stringify({ pace: p, steig: W.steig, weg: km, k, r: f, "g-hoch": $("g-hoch").value, "g-runter": $("g-runter").value })); } catch (_) {}
 }
 for (const id of ["k", "r", "g-hoch", "g-runter"]) $(id).addEventListener("input", rechne);
 $("zurueck").addEventListener("click", () => { $("k").value = 1; $("r").value = 1; rechne(); });
-$("uebernehmen").addEventListener("click", () => { if (!vorschlag) return; $("k").value = Math.min(2, Math.max(0.3, vorschlag.k)); $("r").value = Math.min(2.5, Math.max(0.2, vorschlag.f)); $("modell").open = true; rechne(); });
+$("uebernehmen").addEventListener("click", () => { if (!vorschlag) return; $("k").value = Math.min(2, Math.max(0.3, vorschlag.k)); $("r").value = Math.min(2.5, Math.max(0.2, vorschlag.f)); rechne(); });
 rad($("rad-pace"), PACES, v => ms(v), W.pace, v => { W.pace = v; rechne(); });
 rad($("rad-steig"), STEIG, v => nf(v, 1) + "<small>%</small>", W.steig, v => { W.steig = v; rechne(); });
 rad($("rad-weg"), WEGE, v => nf(v, 1) + "<small>km</small>", W.weg, v => { W.weg = v; rechne(); });
