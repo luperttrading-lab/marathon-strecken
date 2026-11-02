@@ -1,10 +1,10 @@
-# Linienmeter <-> Streckenmeter. Die in MapPlanner gezeichnete Linie ist 9 911 m lang; gelaufen sind laut Nutzer 9,85 km (Ecken
-# abgekürzt). Sie wird gleichmäßig gestaucht (Faktor 0,99381), wie die Marathons auf 42 195 m; Start am Linienanfang, Ziel am Linienende
-# (33 m neben dem Start).
+# Linienmeter <-> Streckenmeter. Bis 01.11.2026 wurde die MapPlanner-Linie (9 911 m) gleichmäßig auf die 9,85 km der Uhr des Nutzers
+# gestaucht. Seit 02.11.2026 korrigiert korrektur.py die Linie nach den Markierungen des Nutzers (Start +20 m, vier Kurven, zwei Haken):
+# 9 845,5 m, praktisch seine 9,85 km. Daher keine Stauchung mehr, L ist die gemessene Länge auf ganze Meter.
 import json, os
 import numpy as np
-L = 9850.0
 _D = os.path.dirname(os.path.abspath(__file__))
 GL = json.load(open(os.path.join(_D, "linie.json")))["d"][-1]
+L = float(round(GL))
 def official(s): return np.asarray(s, float) * (L / GL)
 def gpx_of(k): return np.asarray(k, float) * (GL / L)

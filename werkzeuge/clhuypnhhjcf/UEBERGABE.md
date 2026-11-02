@@ -6,13 +6,22 @@ im README, nicht in `karten.json` (`kern.py` meldet deshalb „karten.json veral
 hinein). Vor dem öffentlichen Start entfernen (siehe `../VORGEMERKT.md`). Speicherschlüssel `hrs-…`, Cache `hrs-marathon-profil`.
 Adresse nach dem Hochladen: https://luperttrading-lab.github.io/marathon-strecken/clhuypnhhjcf/.
 
+**Korrektur 02.11.2026 (Marathon 2.14):** Der Nutzer hat auf Luftbildern (DOP20 Hessen, frei, Datenlizenz Deutschland Zero) den echten
+Start markiert (20 m nach dem Linienanfang) und vier Kurven, die er abkürzt (km 0,67 und 2,29 Kehren, km 1,00 und 1,19 am Weg unter
+dem Gießener Ring). Zwei Haken von je gut 2 m (km 3,34 und 3,64) waren Zeichenfehler von MapPlanner, wo die Runde hin und zurück
+denselben Weg nimmt (Linienmeter 1 005–1 205 / 8 950–9 145 und 3 055–4 205 / 7 465–8 600). Neuer Schritt `korrektur.py` (Eingabe
+`linie_roh.json` aus `parse.py` und `korrektur.json`): Linie 9 911,3 → **9 845,5 m**, praktisch die 9,85 km der Uhr des Nutzers;
+daher keine Stauchung mehr (`common.py`: `L` = gemessene Länge, 9 846 m). Beschreibende Wegnamen (`ERSATZ` in `build.py`) über die
+Lage umgerechnet. Unterführung jetzt km 0,980–1,020 und 9,030–9,070; ↑ 111 m (200-m-Fenster), steilste 6,4 % bergauf (100 m);
+Zielzeit bei 4:00 /km flach 40:36 (vorher 40:37). Ziel unverändert am Linienende (33 m neben dem alten, 38 m neben dem neuen Start).
+
 **Besonderheiten:** Kein Rennen, 9,85 km statt 42,195 km: Prüfstein für den längenunabhängigen Kern (2.8). Kein `D.termine`, keine
 `D.wellen`, keine Staffel, keine Halbmarathon-Marke, keine Verpflegung; `D.start` 1080 (18:00), `D.tz` Europe/Berlin. Marken (Klasse
 `half`, immer sichtbar): „Höchster Punkt“ (km 5,37, 254 m) und „Schiffenberg“ (km 6,38, nächste Stelle zum Kloster, 0,3 km südlich).
 
 ## Daten (`work/`, aus `work/` heraus starten; `../dl` und `../assets` bleiben lokal)
 
-Reihenfolge: `parse.py`, `osm.py`, `strassen.py` (mit `namen.py`), `dgm.py`, `clean.py`, `orte.py` (nur Ausgabe), `build.py`, `route.py`,
+Reihenfolge: `parse.py`, `korrektur.py`, `osm.py`, `strassen.py` (mit `namen.py`), `dgm.py`, `clean.py`, `orte.py` (nur Ausgabe), `build.py`, `route.py`,
 `tiles.py`, dann aus `werkzeuge/`: `tiles_z11.py clhuypnhhjcf` (Ordner `clhuypnhhjcf/` muss es geben), `clhuypnhhjcf/work/app.py` (beim
 ersten Mal über `kern.py --neu`, danach ersetzt es nur die Felder), `tiles_rand.py clhuypnhhjcf 2`. Prüfbild der Linie: `karte.py`
 (`shots/_karte.png`). Prüfen: `pruefen.js`, `pruefen2.js` (Bilder), `pruefen3.js` (Randfälle), Server auf Port 8791,

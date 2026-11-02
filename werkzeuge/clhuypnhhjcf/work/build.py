@@ -14,8 +14,9 @@ for i in range(1, len(hg) - 1): hm[i] = np.median(hg[i-1:i+2])
 # Rathenaustraße). Wege ohne Namen beschreibend nach dem, was daneben liegt (ERSATZ, Streckenmeter; keine amtlichen Namen):
 # Uni-Gelände Philosophikum, Gießener Ring (A 485), Schiffenberger Weg (Straße 22 m daneben), Brauhofsweiher (17–25 m), Weiher (7 m).
 # Kurze Stücke unter 80 m (Kreuzungen, Kreisel) übernehmen den Namen davor.
-ERSATZ = [(0, 670, "Weg am Philosophikum"), (670, 1010, "Weg am Gießener Ring"), (1950, 2295, "Weg am Schiffenberger Weg"),
-          (4960, 5890, "Waldweg Richtung Schiffenberg"), (5890, 6570, "Weg am Brauhofsweiher"), (6570, 7120, "Waldweg am Weiher")]
+# Streckenmeter seit der Korrektur vom 02.11.2026 (korrektur.py) über die Lage umgerechnet (vorher 670, 1010, 1950, 2295, …).
+ERSATZ = [(0, 650, "Weg am Philosophikum"), (650, 979, "Weg am Gießener Ring"), (1918, 2252, "Weg am Schiffenberger Weg"),
+          (4925, 5861, "Waldweg Richtung Schiffenberg"), (5861, 6545, "Weg am Brauhofsweiher"), (6545, 7098, "Waldweg am Weiher")]
 st = json.load(open("strassen.json"))
 gx = gpx_of(np.minimum(grid, L))
 def name_an(x, kk):

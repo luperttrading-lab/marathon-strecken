@@ -3,7 +3,7 @@
 # werkzeuge/clhuypnhhjcf/work/felder.json (nur beim ersten Mal; gibt es clhuypnhhjcf/index.html schon, setzt dieses Skript die Felder
 # dort selbst ein, über die Funktionen von kern.py). Muster: werkzeuge/hannover/work/app.py.
 # Der Ordnername ist absichtlich nicht erratbar: Die Runde steht nicht auf der Startseite, nicht im README und nicht in karten.json.
-# Reihenfolge: parse.py, osm.py, strassen.py, dgm.py, clean.py, orte.py (nur Ausgabe), build.py, route.py, tiles.py, dann aus
+# Reihenfolge: parse.py, korrektur.py, osm.py, strassen.py, dgm.py, clean.py, orte.py (nur Ausgabe), build.py, route.py, tiles.py, dann aus
 # werkzeuge/: tiles_z11.py clhuypnhhjcf, clhuypnhhjcf/work/app.py, tiles_rand.py clhuypnhhjcf 2. Später allein laufen lassen geht:
 # Gibt es clhuypnhhjcf/index.html schon, bleiben Kartenbilder und D.tiles stehen.
 import json, os, shutil, subprocess, sys
