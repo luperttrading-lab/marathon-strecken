@@ -47,6 +47,12 @@ gegenüber flach auf 9,8 km, mit Riegel auf 10 km (× 1,022) zusammen den Faktor
 Nachgemessen (GPX aus MapPlanner, Laser-DGM1 Hessen): Linie 9,91 km, gelaufen mit abgekürzten Ecken ≈ 9,85 km; ↑ 112 m (200-m-Fenster;
 MapPlanner nennt 163 m, sein Höhenmodell liegt im Wald 15–25 m zu hoch). Modell: Runde = flache 10 km × 1,012 (mit Faktor 0,87 der
 Straßen-Eichung × 1,008), also 40:00 flach → 40:29 bzw. 40:20 auf der Runde – im Rahmen der Erfahrung des Nutzers.
+**Nachtrag 02.11.2026:** Start und Kurven nach Markierungen des Nutzers auf Luftbildern, dann kürzeste Linie innerhalb 1,5 m:
+**9,79 km**, ↑ 117 m (100-m-Fenster). Angaben des Nutzers: Gelände kostet ihn 50–60 s (seine Faustregel 0,5 s je Höhenmeter hin und
+zurück), Rückweg ab der 5-km-Marke (auf unserer Linie km 5,00–5,02) 2:00–2:30 schneller. Modell bei 4:00 /km und gleicher
+Anstrengung: App 72 s und 2:50–3:00; mit Kosten je Höhenmeter **0,8**: 58 s und 2:26 (Teilung 5,00) bzw. 2:36 (5,02). Der Nutzer
+hält 0,8 für passend; das liegt am unteren Rand der Straßen-Eichung (0,8–1,15, Mitte 0,87). 40:00 auf der Runde = flach 10 km 39:56
+(0,8) bzw. 39:41 (App). Offen: Stryd-Lauf (Leistung) trennt Gelände von Einteilung (`../VORGEMERKT.md`).
 
 ## Daten
 
