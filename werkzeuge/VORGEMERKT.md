@@ -40,6 +40,14 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
   Befunde: Jungfrau-Richtzeiten des Veranstalters für 5 h: 1:59 / 3:11 / 4:16 (Halbmarathon / Wengen / Wixi), Modell 2:08 / 3:20 /
   4:22; Zermatt Median-Anteile der Etappen 39,8 / 29,5 / 17,2 / 13,3 %, Modell 45,6 / 29,1 / 15,3 / 9,9 %; Brocken Modell 3:04 bei
   4:00 /km flach, Median 2026 4:42. Das Modell unterschätzt die steilen Stücke auch bei fester Zielzeit.
+- **Eigene Strecke einschicken** (Nutzer 02.11.2026: „tolles Zusatzelement“, als Option der App oder eigene App; im Hintergrund
+  behalten). Anlass: die Hausrunde (GPX aus MapPlanner), deren Start ein paar Meter anders liegt. Einschätzung: **In der App**
+  machbar sind kleine Korrekturen an einer fertigen Strecke (Start oder Ziel auf der Linie verschieben, Gesamtlänge setzen; die
+  Höhen alle 10 m liegen schon vor, die App müsste nur abschneiden und neu zählen). Das ganze Verfahren (Linie bereinigen, Höhen
+  aus amtlichem Geländemodell, Unterführungen, Kartenbilder, Straßennamen) besser **außerhalb**: GitHub Pages hat keinen Server,
+  amtliche Höhendienste wie DGM1 Hessen sind aus dem Browser vermutlich nicht abrufbar (CORS), Kartenbilder in Menge von
+  tile.openstreetmap.org nur mit eigenem Anbieter. Vorschlag: einschicken, Claude baut wie die Hausrunde, Korrekturpunkte per
+  markiertem Luftbild.
 
 ## Kleinigkeiten aus den Übergaben
 
