@@ -6,6 +6,15 @@ im README, nicht in `karten.json` (`kern.py` meldet deshalb „karten.json veral
 hinein). Vor dem öffentlichen Start entfernen (siehe `../VORGEMERKT.md`). Speicherschlüssel `hrs-…`, Cache `hrs-marathon-profil`.
 Adresse nach dem Hochladen: https://luperttrading-lab.github.io/marathon-strecken/clhuypnhhjcf/.
 
+**Straff gezogen 02.11.2026 (Marathon 2.15):** Der Nutzer läuft auf der Wegbreite die kürzeste Linie, nicht die Schlangenlinie der
+Wegmitte (und schätzt die Runde auf 9,8 km). `korrektur.py` zieht die korrigierte Linie deshalb zuletzt wie ein Gummiband straff, jeder
+Punkt höchstens 1,5 m neben seiner Lage (`korridor_m` in `korrektur.json`, vom Nutzer gewählt; gerechnet 0,5 m −19 m, 1 m −35 m,
+1,5 m −53 m, 2 m −63 m). Länge **9 792 m** (die App zeigt „9,79“). Die Ersparnis verteilt sich über viele kleine Bögen, am meisten bei
+km 6,3–7,0 und am Kreisel vor dem Ziel (km 9,5–9,75). Wegnamen ohne OSM-Namen hängen jetzt an Punkten (`GRENZEN` in `build.py`),
+nicht an Metern. Unterführung km 0,970–1,020 und 8,980–9,030; ↑ 111 m (200 m); höchster Punkt km 5,45 (Kuppe flach, vorher 5,34);
+Zielzeit bei 4:00 /km flach 40:22, Gelände +72 s. Nutzergefühl dazu: Die Runde kostet ihn 55–60 s; gegen 9,85 km gerechnet wären das
+bei 9,79 km etwa 69–74 s, also wie das Modell (Antwort vom 02.11.2026).
+
 **Korrektur 02.11.2026 (Marathon 2.14):** Der Nutzer hat auf Luftbildern (DOP20 Hessen, frei, Datenlizenz Deutschland Zero) den echten
 Start markiert (20 m nach dem Linienanfang) und vier Kurven, die er abkürzt (km 0,67 und 2,29 Kehren, km 1,00 und 1,19 am Weg unter
 dem Gießener Ring). Zwei Haken von je gut 2 m (km 3,34 und 3,64) waren Zeichenfehler von MapPlanner, wo die Runde hin und zurück

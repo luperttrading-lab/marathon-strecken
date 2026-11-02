@@ -3,7 +3,8 @@
 # und vier Kurven, die er abkürzt (km 0,67 und 2,29 Kehren; km 1,00 und 1,19 Anschluss an den Weg unter dem Gießener Ring, wo die
 # Runde hin und zurück läuft). Dazu zwei Haken von je gut 2 m (km 3,34 und 3,64), wo MapPlanner auf dem Hin- und Rückweg über
 # die Abzweigung hinaus und zurück gezeichnet hat. Ersetzen in UTM 32N: Strichenden auf die Linie setzen, Punkte neben den Enden
-# streichen, solange dort ein Knick über 45° bleibt (sonst Zacken). Ergebnis 9 845 m statt 9 911 m (die Uhr des Nutzers: 9,85 km).
+# streichen, solange dort ein Knick über 45° bleibt (sonst Zacken). Danach 9 845 m statt 9 911 m (die Uhr des Nutzers: 9,85 km);
+# zuletzt straff gezogen innerhalb ±1,5 m (unten): 9 796 m.
 import json, math
 import numpy as np
 from pyproj import Transformer, Geod
@@ -45,6 +46,31 @@ for h in K["haken"]:
     vorher = dn[-1]; neu.pop(i); dn = cum(neu)
     print(f"Haken bei {h['bei_m']} m entfernt ({vorher - dn[-1]:.1f} m)")
 S = at(neu, dn, K["start_m"]); neu = [S] + [q for q, s in zip(neu, dn) if s > K["start_m"]]
+# Kürzeste Linie innerhalb der Wegbreite (Nutzer 02.11.2026: „auf der Wegbreite immer die kürzeste Kurvenlinie, nicht die Schlangenlinie
+# in der Wegmitte“; gewählt 1,5 m, auf 3–4 m breiten Waldwegen realistisch): Linie alle 1 m, wie ein Gummiband straff gezogen
+# (jeder Punkt zur Mitte seiner Nachbarn), jeder Punkt höchstens KORRIDOR m neben seiner Lage auf der Linie; Start und Ziel fest.
+# Danach ausgedünnt (Douglas-Peucker 0,1 m). Gerechnet: 0,5 m −19 m, 1 m −35 m, 1,5 m −50 m, 2 m −63 m.
+KORRIDOR = K.get("korridor_m", 1.5)
+dn = cum(neu); ss = np.r_[np.arange(0, dn[-1], 1.0), dn[-1]]
+A = np.array(neu); O = np.c_[np.interp(ss, dn, A[:, 0]), np.interp(ss, dn, A[:, 1])]
+lang = lambda Q: float(np.linalg.norm(np.diff(Q, axis=0), axis=1).sum())
+Pk = O.copy()
+for it in range(12000):
+    Pk[1:-1] += 0.5 * ((Pk[:-2] + Pk[2:]) / 2 - Pk[1:-1])
+    v = Pk - O; n = np.linalg.norm(v, axis=1); z = n > KORRIDOR; Pk[z] = O[z] + v[z] * (KORRIDOR / n[z])[:, None]
+    if it == 5999: l6 = lang(Pk)
+print(f"Straff gezogen (±{KORRIDOR} m): {lang(O):.1f} -> {lang(Pk):.1f} m (UTM; nach 6000 Schritten {l6:.1f})")
+def dp(P, eps):
+    keep = np.zeros(len(P), bool); keep[0] = keep[-1] = True; st = [(0, len(P) - 1)]
+    while st:
+        i, j = st.pop()
+        if j <= i + 1: continue
+        a_, b_ = P[i], P[j]; v_ = b_ - a_; nn = float(v_ @ v_) or 1e-12
+        f = np.clip(((P[i + 1:j] - a_) @ v_) / nn, 0, 1); dist = np.linalg.norm(P[i + 1:j] - (a_ + f[:, None] * v_), axis=1)
+        k = int(np.argmax(dist))
+        if dist[k] > eps: m = i + 1 + k; keep[m] = True; st += [(i, m), (m, j)]
+    return P[keep]
+neu = [tuple(q) for q in dp(Pk, 0.1)]
 pts = [[round(la, 7), round(lo, 7)] for lo, la in (ti.transform(*q) for q in neu)]
 G = Geod(ellps="WGS84")
 _, _, dd = G.inv([p[1] for p in pts[:-1]], [p[0] for p in pts[:-1]], [p[1] for p in pts[1:]], [p[0] for p in pts[1:]])

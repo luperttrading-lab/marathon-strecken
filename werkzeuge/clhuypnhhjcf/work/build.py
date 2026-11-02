@@ -14,9 +14,19 @@ for i in range(1, len(hg) - 1): hm[i] = np.median(hg[i-1:i+2])
 # Rathenaustraße). Wege ohne Namen beschreibend nach dem, was daneben liegt (ERSATZ, Streckenmeter; keine amtlichen Namen):
 # Uni-Gelände Philosophikum, Gießener Ring (A 485), Schiffenberger Weg (Straße 22 m daneben), Brauhofsweiher (17–25 m), Weiher (7 m).
 # Kurze Stücke unter 80 m (Kreuzungen, Kreisel) übernehmen den Namen davor.
-# Streckenmeter seit der Korrektur vom 02.11.2026 (korrektur.py) über die Lage umgerechnet (vorher 670, 1010, 1950, 2295, …).
-ERSATZ = [(0, 650, "Weg am Philosophikum"), (650, 979, "Weg am Gießener Ring"), (1918, 2252, "Weg am Schiffenberger Weg"),
-          (4925, 5861, "Waldweg Richtung Schiffenberg"), (5861, 6545, "Weg am Brauhofsweiher"), (6545, 7098, "Waldweg am Weiher")]
+# Grenzen seit 02.11.2026 als Punkte (lat, lon) mit ungefährem Streckenmeter, damit sie Änderungen der Linie (korrektur.py) folgen;
+# der Meter grenzt die Suche ein (±150 m), weil die Runde zweimal hin und zurück denselben Weg nimmt.
+GRENZEN = {"a": (650, 50.570065, 8.702197), "b": (979, 50.572723, 8.703948), "c": (1918, 50.564752, 8.705797),
+           "d": (2252, 50.562771, 8.709282), "e": (4925, 50.563283, 8.734421), "f": (5861, 50.560054, 8.730818),
+           "g": (6545, 50.559735, 8.724106), "h": (7098, 50.562881, 8.724034)}
+_lin = json.load(open("linie.json")); _d = np.array(_lin["d"]); _la = np.array([p[0] for p in _lin["pts"]]); _lo = np.array([p[1] for p in _lin["pts"]])
+def _meter(m0, la0, lo0):
+    ss = np.arange(max(0, m0 - 150), min(L, m0 + 150), 1.0); g = gpx_of(ss)
+    dist = np.hypot((np.interp(g, _d, _la) - la0) * 111195, (np.interp(g, _d, _lo) - lo0) * 111195 * np.cos(np.radians(la0)))
+    return float(ss[np.argmin(dist)])
+M = {k: _meter(*v) for k, v in GRENZEN.items()}
+ERSATZ = [(0, M["a"], "Weg am Philosophikum"), (M["a"], M["b"], "Weg am Gießener Ring"), (M["c"], M["d"], "Weg am Schiffenberger Weg"),
+          (M["e"], M["f"], "Waldweg Richtung Schiffenberg"), (M["f"], M["g"], "Weg am Brauhofsweiher"), (M["g"], M["h"], "Waldweg am Weiher")]
 st = json.load(open("strassen.json"))
 gx = gpx_of(np.minimum(grid, L))
 def name_an(x, kk):
