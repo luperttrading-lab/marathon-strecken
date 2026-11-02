@@ -119,7 +119,7 @@ tr.aktiv td { color: var(--blue); font-weight: 600; }
         <input type="range" id="r" min="0.2" max="2.5" step="0.01" value="1" aria-label="Bergab: Faktor auf das, was die App bergab gutmacht">
       </div>
     </div>
-    <p class="note"><b>Bergauf</b>: Sekunden je Höhenmeter bei 4:00 /km an sanften Anstiegen, steiler mehr (App 1,00). <b>Bergab</b>: Faktor auf das, was die App gutmacht (App 1,00: anfangs die Hälfte, am schnellsten bei −8 %).</p>
+    <p class="note"><b>Bergauf</b>: Sekunden je Höhenmeter bei 4:00 /km an sanften Anstiegen, steiler mehr (App 1,00). <b>Bergab</b>: Faktor auf das, was die App bergab gutmacht, unabhängig vom Bergauf-Schieber (App 1,00: anfangs die Hälfte, am schnellsten bei −8 %). In den Strecken-Apps gibt es nur die Kosten je Höhenmeter; sie verändern bergauf und bergab gemeinsam.</p>
   </section>
 
   <section class="panel" aria-label="Dein Gefühl">
@@ -137,19 +137,21 @@ tr.aktiv td { color: var(--blue); font-weight: 600; }
     <table><thead><tr><th>Steigung</th><th>hoch</th><th>runter</th><th>beides</th><th>gut&shy;gemacht</th></tr></thead><tbody id="tab"></tbody></table>
     <p class="note"><b>beides</b>: hoch und runter zusammen gegenüber zweimal flach. <b>gutgemacht</b>: welcher Anteil der Zeit, die du bergauf verlierst, bergab wieder hereinkommt. Wie in den Strecken-Apps: Pace an einer Steigung = flache Pace × Faktor; gleichmäßige Anstrengung, ohne Ermüdung, Untergrund und Höhe.</p>
   </section>
-  <p class="stand">Stand 01.11.2026 · Fassung 5</p>
+  <p class="stand">Stand 02.11.2026 · Fassung 6</p>
 </div>
 <script>
-// Modell wie im Kern (hamburg/index.html, Stand Marathon 2.8), mit k = Kosten je Höhenmeter (S.secHm) und f = Faktor auf die Bergab-Kurve
+// Modell wie im Kern (hamburg/index.html, Stand Marathon 2.8), mit k = Kosten je Höhenmeter (S.secHm) und f = Faktor auf die Bergab-Kurve.
+// Seit 02.11.2026 (Nutzer) wirkt f unabhängig von k: bergab immer f × die Kurve der App (k = 1), sonst hieß „0,64 × App“ bei k = 1,48
+// in Wahrheit 0,95 × App. Im Kern gibt es nur k (secHm), das bergauf und bergab gemeinsam skaliert; mit k = f = 1 sind beide gleich.
 const minetti = i => 155.4 * i ** 5 - 30.4 * i ** 4 - 43.3 * i ** 3 + 46.3 * i ** 2 + 19.5 * i + 3.6;
 const B = { r: 0.5, w: 1, xm: -8, gm: 12 };
 function faktor(gi, k, f) {
   const pfAuf = x => k / 0.24 / (19.5 / 3.6) * (minetti(x / 100) / 3.6 - 1);
-  const pfAb = x => { const s0 = B.r * k / 24, tief = B.gm / 100 * k, h = -B.xm;
+  const pfAb = x => { const s0 = B.r / 24, tief = B.gm / 100, h = -B.xm;   // Bergab-Kurve der App (k = 1), f skaliert sie
     if (x >= B.xm) { const t = (x - B.xm) / h; return -tief * (2 * t ** 3 - 3 * t ** 2 + 1) + s0 * h * (t ** 3 - t ** 2); } return -tief; };
   const x = gi * 100, d = f, w = B.w, unten = xx => d * pfAb(xx);
   if (Math.abs(x) < w) {
-    const e = 1e-3, sm = (k / 24 + d * B.r * k / 24) / 2;
+    const e = 1e-3, sm = (k / 24 + d * B.r / 24) / 2;
     const [a, ya, ma, yb, mb] = x >= 0 ? [0, 0, sm, pfAuf(w), (pfAuf(w + e) - pfAuf(w - e)) / (2 * e)] : [-w, unten(-w), (unten(-w + e) - unten(-w - e)) / (2 * e), 0, sm];
     const t = (x - a) / w;
     return 1 + (2 * t ** 3 - 3 * t ** 2 + 1) * ya + (t ** 3 - 2 * t ** 2 + t) * w * ma + (-2 * t ** 3 + 3 * t ** 2) * yb + (t ** 3 - t ** 2) * w * mb;
@@ -181,7 +183,8 @@ function rad(el, werte, fmt, start, onChange) {
 const PACES = Array.from({ length: 331 }, (_, i) => 150 + i);                         // 2:30 bis 8:00 /km, je 1 s
 const STEIG = Array.from({ length: 41 }, (_, i) => i / 2);                            // 0 bis 20 %, je 0,5
 const WEGE = Array.from({ length: 50 }, (_, i) => Math.round((i + 1)) / 10);          // 0,1 bis 5,0 km
-if (st.k != null) $("k").value = st.k; if (st.r != null) $("r").value = st.r;
+if (st.k != null) $("k").value = st.k;
+if (st.r != null) $("r").value = st.v === 6 || st.k == null ? st.r : Math.min(2.5, Math.max(0.2, Math.round(st.r * st.k * 100) / 100));   // bis Fassung 5: wirksam r × k
 for (const id of ["g-hoch", "g-runter"]) if (st[id]) $(id).value = st[id];
 let vorschlag = null, KV = null;
 // Kurve: x = Steigung −15 … +15 %, y = Pace je km (oben langsamer, wie das Pace-Diagramm der Strecken-Apps).
@@ -292,7 +295,7 @@ function rechne() {
     tr2.innerHTML = "<td>" + s + " %</td><td>" + ms(a) + "</td><td>" + ms(b) + "</td><td>" + sek(a + b - 2 * p) + "</td><td>" + quote(a, b, p) + "</td>"; tb.appendChild(tr2);
   }
   KV = { p, g: g * 100, k, f, gh: gh && g > 0.01 ? gh / km : null, gr: gr && g > 0.01 ? gr / km : null }; zeichne();
-  try { localStorage.setItem("rechner", JSON.stringify({ pace: p, steig: W.steig, weg: km, k, r: f, "g-hoch": $("g-hoch").value, "g-runter": $("g-runter").value })); } catch (_) {}
+  try { localStorage.setItem("rechner", JSON.stringify({ v: 6, pace: p, steig: W.steig, weg: km, k, r: f, "g-hoch": $("g-hoch").value, "g-runter": $("g-runter").value })); } catch (_) {}
 }
 for (const id of ["k", "r", "g-hoch", "g-runter"]) $(id).addEventListener("input", rechne);
 $("zurueck").addEventListener("click", () => { $("k").value = 1; $("r").value = 1; rechne(); });
