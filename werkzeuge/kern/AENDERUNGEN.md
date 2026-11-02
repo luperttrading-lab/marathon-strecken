@@ -6,6 +6,12 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.16 (02.11.2026): Länge der Strecke im Kopf (nur außerhalb des Marathons)
+
+- **Anzeige** (Nutzer: „bei eigenen Strecken sollte man sehen, wie lang die Strecke ist; beim Marathon steht sie fest“): Über der
+  Kilometeranzeige steht bei `!MARA` „km von 9,79“ (bzw. „km von 21,1“) statt „Kilometer“, auf Karte und Zahlen. „Kilometer von 9,79“
+  wäre bei 320 px 27 px zu breit. Dazu Daten der Hausrunde: 2.14 Start und Kurven nach dem Nutzer, 2.15 straff gezogen (9 792 m).
+
 ## 2.13 (01.11.2026): Zentrier-Knopf ◎ als unterster, nur wenn verschoben
 
 - **Karte** (Nutzer: „den Zentrierpunkt als unterstes und wenn es zentriert ist weg“): ◎ steht unter Plus, Minus und ↕ und
