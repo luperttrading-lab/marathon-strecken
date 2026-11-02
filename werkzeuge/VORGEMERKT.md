@@ -40,6 +40,13 @@ Ideen und offene Punkte, die besprochen, aber noch nicht gebaut sind. Stand 30.1
   Befunde: Jungfrau-Richtzeiten des Veranstalters für 5 h: 1:59 / 3:11 / 4:16 (Halbmarathon / Wengen / Wixi), Modell 2:08 / 3:20 /
   4:22; Zermatt Median-Anteile der Etappen 39,8 / 29,5 / 17,2 / 13,3 %, Modell 45,6 / 29,1 / 15,3 / 9,9 %; Brocken Modell 3:04 bei
   4:00 /km flach, Median 2026 4:42. Das Modell unterschätzt die steilen Stücke auch bei fester Zielzeit.
+- **Hausrunde mit Stryd auswerten** (Nutzer 02.11.2026, läuft im Moment nicht): Der Nutzer hat einen Stryd-Sensor. Lauf der
+  Hausrunde als FIT-Datei (Uhr oder Stryd PowerCenter, Sekundenwerte: Strecke, Pace, Leistung), dann je 100 m Pace gegen Leistung
+  und Steigung aus unserem Profil: persönliche Kosten bergauf und bergab bei gleicher Leistung, getrennt von der Renneinteilung.
+  Anlass: Gefühl 50–60 s fürs Gelände (Faustregel des Nutzers 0,5 s je Höhenmeter hin und zurück: 58 s), beobachtet Rückweg ab
+  km 5,02 2:00–2:30 schneller; App-Modell bei gleicher Anstrengung 72 s und 3:00 (davon 60 s nur durch die kürzere zweite Hälfte).
+  Beides zusammen hieße bergauf ×0,6–0,8 und bergab ×0,3–0,8 der App, oder: bergauf härter gelaufen als gleichmäßig. Erst die
+  Leistung trennt das.
 - **Eigene Strecke einschicken** (Nutzer 02.11.2026: „tolles Zusatzelement“, als Option der App oder eigene App; im Hintergrund
   behalten). Anlass: die Hausrunde (GPX aus MapPlanner), deren Start ein paar Meter anders liegt. Einschätzung: **In der App**
   machbar sind kleine Korrekturen an einer fertigen Strecke (Start oder Ziel auf der Linie verschieben, Gesamtlänge setzen; die
