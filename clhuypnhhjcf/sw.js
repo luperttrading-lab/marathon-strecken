@@ -1,7 +1,7 @@
 const CACHE = "hrs-marathon-profil";
 const INDEX = new URL("./index.html", self.location).href;
 const SHELL = ["./", "./index.html", "../manifest.webmanifest", "../icon-192.png", "../apple-touch-icon.png", "./version.json"];
-const KARTE = ["./karte-dunkel-z11-0-0.jpg", "./karte-dunkel-z11-0-1.jpg", "./karte-dunkel-z11-1-0.jpg", "./karte-dunkel-z11-1-1.jpg", "./karte-dunkel-z12-0-0.jpg", "./karte-dunkel-z13-0-0.jpg", "./karte-dunkel-z14-0-0.jpg", "./karte-dunkel-z14-1-0.jpg", "./karte-dunkel-z15-0-0.jpg", "./karte-dunkel-z15-0-1.jpg", "./karte-dunkel-z15-1-0.jpg", "./karte-dunkel-z15-1-1.jpg"];
+const KARTE = ["./karte-osm-z11-0-0.jpg", "./karte-osm-z11-0-1.jpg", "./karte-osm-z11-1-0.jpg", "./karte-osm-z11-1-1.jpg", "./karte-osm-z12-0-0.jpg", "./karte-osm-z13-0-0.jpg", "./karte-osm-z14-0-0.jpg", "./karte-osm-z14-1-0.jpg", "./karte-osm-z15-0-0.jpg", "./karte-osm-z15-0-1.jpg", "./karte-osm-z15-1-0.jpg", "./karte-osm-z15-1-1.jpg"];
 
 self.addEventListener("install", e => {
   // SHELL am HTTP-Cache vorbei frisch holen (sonst kann eine bis zu 10 min alte Kopie in den Speicher kommen)

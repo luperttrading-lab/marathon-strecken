@@ -15,6 +15,7 @@ D = {"tz": "Europe/Berlin", "start": 1080}
 D.update(json.load(open("data.json"))); D["route"] = json.load(open("route50.json"))
 tm = json.load(open("tilemeta.json")); tm["11"] = json.load(open("tilemeta_z11.json")); D["tiles"] = {z: tm[z] for z in sorted(tm, key=int)}
 D["imgNote"] = open("imgnote.html", encoding="utf-8").read().strip()
+D["karte"] = "osm"   # seit 2.18 (Versuch des Nutzers): unveränderte OpenStreetMap-Bilder karte-osm-*.jpg, fünf Varianten rechnet die App
 NEU = not os.path.exists(OUT + "index.html")
 if NEU:
     os.makedirs(OUT, exist_ok=True)

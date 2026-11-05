@@ -6,6 +6,15 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.18 (05.11.2026): Original-Karte als fünfte Variante (Versuch auf der Hausrunde)
+
+- **Karte** (Nutzer: Original-Färbung, „alle 5 für die Heimstrecke“, um zu sehen, ob es sich lohnt): Hat eine Strecke `D.karte`
+  „osm“, lädt die App die unveränderten OpenStreetMap-Bilder `karte-osm-*.jpg` (JPEG 70) und rechnet alle fünf Varianten daraus:
+  1–3 wie bisher über ein dunkles Bild, das die App wie `tiles.py` baut (Differenz zu Weiß, Farbton über „hue“ zurück, Farbe auf
+  55 % über „saturation“ mit 45 % Deckung, × 0,62 über „multiply“, + 10 über „screen“), 4 hell wie `light()` (Farbe 45 %, aufgehellt),
+  5 Original unverändert; Linie bei 4 und 5 mit dunklem Rand. Strecken ohne Original behalten ihre vier Varianten; eine gemerkte 5
+  zeigt dort die 4. Erst die Hausrunde hat Original-Bilder (1,14 statt 1,02 MB, +12 %); die dunklen Bilder dort sind entfernt.
+
 ## 2.17 (05.11.2026): Vier Kartenvarianten, Knopf ◐ in der Karte
 
 - **Karte** (Nutzer: „alle vier Möglichkeiten zum Auswählen, nicht in den Einstellungen, sondern direkt in der Karte“): Knopf ◐ unter

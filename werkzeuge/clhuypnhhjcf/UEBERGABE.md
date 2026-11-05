@@ -6,6 +6,11 @@ im README, nicht in `karten.json` (`kern.py` meldet deshalb „karten.json veral
 hinein). Vor dem öffentlichen Start entfernen (siehe `../VORGEMERKT.md`). Speicherschlüssel `hrs-…`, Cache `hrs-marathon-profil`.
 Adresse nach dem Hochladen: https://luperttrading-lab.github.io/marathon-strecken/clhuypnhhjcf/.
 
+**Original-Karte 05.11.2026 (Marathon 2.18):** Versuch des Nutzers: statt der dunkel umgefärbten Bilder die unveränderten
+OpenStreetMap-Bilder `karte-osm-*.jpg` (aus `dl/tiles`, JPEG 70, 1,14 MB statt 1,02 MB), `D.karte` „osm“ (in `app.py`); die App rechnet
+daraus alle fünf Varianten (`werkzeuge/kern/AENDERUNGEN.md`, 2.18). Die dunklen Bilder sind aus dem Ordner genommen; zurück: `tiles.py`,
+`tiles_z11.py`, `tiles_rand.py` neu laufen lassen und `D.karte` streichen.
+
 **Straff gezogen 02.11.2026 (Marathon 2.15):** Der Nutzer läuft auf der Wegbreite die kürzeste Linie, nicht die Schlangenlinie der
 Wegmitte (und schätzt die Runde auf 9,8 km). `korrektur.py` zieht die korrigierte Linie deshalb zuletzt wie ein Gummiband straff, jeder
 Punkt höchstens 1,5 m neben seiner Lage (`korridor_m` in `korrektur.json`, vom Nutzer gewählt; gerechnet 0,5 m −19 m, 1 m −35 m,

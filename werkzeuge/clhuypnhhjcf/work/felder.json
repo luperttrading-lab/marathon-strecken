@@ -19,18 +19,18 @@
  "rohdaten": 139,
  "SHORT": {},
  "karte": [
-  "./karte-dunkel-z11-0-0.jpg",
-  "./karte-dunkel-z11-0-1.jpg",
-  "./karte-dunkel-z11-1-0.jpg",
-  "./karte-dunkel-z11-1-1.jpg",
-  "./karte-dunkel-z12-0-0.jpg",
-  "./karte-dunkel-z13-0-0.jpg",
-  "./karte-dunkel-z14-0-0.jpg",
-  "./karte-dunkel-z14-1-0.jpg",
-  "./karte-dunkel-z15-0-0.jpg",
-  "./karte-dunkel-z15-0-1.jpg",
-  "./karte-dunkel-z15-1-0.jpg",
-  "./karte-dunkel-z15-1-1.jpg"
+  "./karte-osm-z11-0-0.jpg",
+  "./karte-osm-z11-0-1.jpg",
+  "./karte-osm-z11-1-0.jpg",
+  "./karte-osm-z11-1-1.jpg",
+  "./karte-osm-z12-0-0.jpg",
+  "./karte-osm-z13-0-0.jpg",
+  "./karte-osm-z14-0-0.jpg",
+  "./karte-osm-z14-1-0.jpg",
+  "./karte-osm-z15-0-0.jpg",
+  "./karte-osm-z15-0-1.jpg",
+  "./karte-osm-z15-1-0.jpg",
+  "./karte-osm-z15-1-1.jpg"
  ],
  "D": {
   "tz": "Europe/Berlin",
@@ -2036,6 +2036,7 @@
     ]
    }
   },
-  "imgNote": "<b>Abgleich:</b> Start und Ziel an der Rathenaustraße (161 m), fast der tiefste Punkt (160,5 m kurz nach dem Start). Die ersten 3 km bleiben flach (161–170 m) bis auf einen Hügel von 12 m am Schiffenberger Weg (181 m, km 2,3). Dann der lange Anstieg auf dem Alten Steinbacher Weg: von 170 m (km 3,1) auf 254 m (km 5,4), im Schnitt 3,6 %, am steilsten 6,0 % über 200 m (km 4,9). Oben 1 km fast eben (248–254 m) bis unter den Schiffenberg (250 m, km 6,4), danach bergab über Weiher und 6. Schneise auf den Alten Steinbacher Weg (167 m bei km 9,0), am steilsten −8,3 % über 200 m (km 6,8), und flach zurück. Mit 200-m-Messfenster ergeben sich 111 Höhenmeter bergauf und ebenso viele bergab (100 m: 118). Die Höhen in der GPX-Datei von MapPlanner ergeben 163 m bergauf und reichen bis 278 m: Sie liegen im Mittel 10 m, im Wald bis 27 m über dem Laser-Geländemodell. <b>Geschätzt</b> (gestrichelt) ist die Unterführung unter der A 485, hin und zurück. <b>Kilometer:</b> eigene Linie, gleichmäßig auf 9,85 km gebracht."
+  "imgNote": "<b>Abgleich:</b> Start und Ziel an der Rathenaustraße (161 m), fast der tiefste Punkt (160,5 m kurz nach dem Start). Die ersten 3 km bleiben flach (161–170 m) bis auf einen Hügel von 12 m am Schiffenberger Weg (181 m, km 2,3). Dann der lange Anstieg auf dem Alten Steinbacher Weg: von 170 m (km 3,1) auf 254 m (km 5,4), im Schnitt 3,6 %, am steilsten 6,0 % über 200 m (km 4,9). Oben 1 km fast eben (248–254 m) bis unter den Schiffenberg (250 m, km 6,4), danach bergab über Weiher und 6. Schneise auf den Alten Steinbacher Weg (167 m bei km 9,0), am steilsten −8,3 % über 200 m (km 6,8), und flach zurück. Mit 200-m-Messfenster ergeben sich 111 Höhenmeter bergauf und ebenso viele bergab (100 m: 118). Die Höhen in der GPX-Datei von MapPlanner ergeben 163 m bergauf und reichen bis 278 m: Sie liegen im Mittel 10 m, im Wald bis 27 m über dem Laser-Geländemodell. <b>Geschätzt</b> (gestrichelt) ist die Unterführung unter der A 485, hin und zurück. <b>Kilometer:</b> eigene Linie, gleichmäßig auf 9,85 km gebracht.",
+  "karte": "osm"
  }
 }
