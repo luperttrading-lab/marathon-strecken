@@ -6,6 +6,13 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.21 (05.11.2026): Maßstab weicht dem Ziel nur in der Übersicht aus
+
+- **Karte** (Nutzer: „beim Zielbereich nur wegspringen, wenn er fest dort steht, nicht wenn er beim Ablaufen durchfährt“): Das Ziel
+  zählt nur in der Übersicht (dort steht die Karte); im Zoom zieht es mit der Karte nur kurz durch die Ecke. Der Läufer zählt weiter
+  (im Zoom steht er in der Mitte). Gezählt über ganze Strecken: im Zoom kein Wechsel mehr, in der Übersicht höchstens zwei, wenn der
+  Läufer durch die Ecke läuft.
+
 ## 2.20 (05.11.2026): Maßstab bleibt unten links
 
 - **Karte** (Nutzer: der Maßstab „ist 30-mal je Sekunde von oben nach unten gesprungen“, wenn die Strecke knapp an ihm vorbeiführte):

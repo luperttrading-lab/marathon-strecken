@@ -482,7 +482,7 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">JAL Honolulu Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.20</button></span>
+    <span class="eyebrow">JAL Honolulu Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.21</button></span>
     <h1>Honolulu</h1>
     <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Laser-Geländemodell 1 m des USGS (Befliegung 2023) entlang der Strava-Linie des Veranstalters, alle 10 m ausgewertet; die Ala-Wai-Brücke aus der Laser-Punktwolke, vier kurze Lücken an Brücken geschätzt.</p>
@@ -491,7 +491,7 @@ body.run .close svg { width: 20px; height: 20px; }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.20</button></span>
+    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.21</button></span>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -1932,9 +1932,10 @@ function drawMap() {
     const lab = d >= 1000 ? d / 1000 + " km" : d + " m", x0 = 10;
     c.font = "600 11px " + getComputedStyle(document.documentElement).getPropertyValue("--font-display");
     const bw = len + 6 + c.measureText(lab).width, ziel = (() => { const [a, b] = routeAt(L), [gx, gy] = merc(a, b, lvl); return [SX(gx), SY(gy)]; })();
-    // seit 2.20 (Nutzer: „sprang 30-mal je Sekunde von unten nach oben“): fest unten links. Nach oben nur, wenn Ziel oder Läufer im Feld
-    // des Maßstabs liegen; die Strecke selbst darf darunter durchlaufen. Zurück erst mit 12 px Abstand, damit nichts flackert
-    const imFeld = (y, r) => [ziel, [SX(rx), SY(ry)]].some(([x, yy]) => x > x0 - 12 - r && x < x0 + bw + 12 + r && yy > y - 22 - r && yy < y + 14 + r);
+    // seit 2.20 (Nutzer: „sprang 30-mal je Sekunde von unten nach oben“): fest unten links. Nach oben nur, wenn der Läufer oder – nur in
+    // der Übersicht, wo die Karte steht – das Ziel im Feld des Maßstabs liegt (2.21: im Zoom zieht das Ziel nur kurz durch, Nutzer);
+    // die Strecke selbst darf darunter durchlaufen. Zurück erst mit 12 px Abstand, damit nichts flackert
+    const imFeld = (y, r) => [...(ov ? [ziel] : []), [SX(rx), SY(ry)]].some(([x, yy]) => x > x0 - 12 - r && x < x0 + bw + 12 + r && yy > y - 22 - r && yy < y + 14 + r);
     if (!massOben && imFeld(h - 8, 0) && !imFeld(16, 0)) massOben = true;
     else if (massOben && !imFeld(h - 8, 12)) massOben = false;
     const y0 = massOben ? 16 : h - 8;
@@ -2115,7 +2116,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '2.20';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.21';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
