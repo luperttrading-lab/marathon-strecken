@@ -6,6 +6,13 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.20 (05.11.2026): Maßstab bleibt unten links
+
+- **Karte** (Nutzer: der Maßstab „ist 30-mal je Sekunde von oben nach unten gesprungen“, wenn die Strecke knapp an ihm vorbeiführte):
+  Er steht fest unten links und geht nur nach oben, wenn das Ziel oder der Läufer in seinem Feld liegt (die Strecke darf darunter
+  durchlaufen); zurück erst, wenn beide 12 px Abstand haben. Gezählt über eine ganze Strecke in Zoom 15, 13 und Übersicht: höchstens
+  zwei Wechsel (hin und zurück, wenn das Ziel ins Feld kommt), vorher bei jeder Annäherung der Linie.
+
 ## 2.19 (05.11.2026): Original-Kartenbilder für alle Strecken, Knopf ◐ dunkel ↔ Original
 
 - **Karte** (Nutzer: „Y nehmen, dunkel und Original“): Auf der Webseite liegen nur noch die unveränderten OpenStreetMap-Bilder

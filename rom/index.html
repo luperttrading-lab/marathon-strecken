@@ -482,7 +482,7 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Run Rome The Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.19</button></span>
+    <span class="eyebrow">Run Rome The Marathon · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.20</button></span>
     <h1>Rom</h1>
     <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Kein Laser-Höhenmodell verfügbar: Höhen aus dem 10-m-Modell TINITALY des INGV, angeglichen an Höhenpunkte der Regione Lazio; Strecke 2026 nach der Straßenliste des Veranstalters auf OpenStreetMap nachgezeichnet, alle 10 m ausgewertet.</p>
@@ -491,7 +491,7 @@ body.run .close svg { width: 20px; height: 20px; }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.19</button></span>
+    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.20</button></span>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -1867,6 +1867,7 @@ const mapImg = name => { const key = (KARTE_OSM ? "karte-osm-" : "karte-dunkel-"
   im.src = key; imgCache[key] = im; } return im; };
 const mapVersuch = {};
 window.addEventListener("online", () => setTimeout(() => { for (const k in imgCache) if (imgCache[k].fehlt) { delete imgCache[k]; delete mapVersuch[k]; } dirty = true; }, 800));
+let massOben = false;   // Maßstab oben statt unten links (nur wenn Ziel oder Läufer unten links liegen)
 function drawMap() {
   const cv = $("map"), { w, h, dpr } = sizeCanvas(cv); if (!w || !h) return; const c = cv.getContext("2d");
   c.setTransform(dpr, 0, 0, dpr, 0, 0); c.fillStyle = COL["--bg"]; c.fillRect(0, 0, w, h);
@@ -1931,8 +1932,12 @@ function drawMap() {
     const lab = d >= 1000 ? d / 1000 + " km" : d + " m", x0 = 10;
     c.font = "600 11px " + getComputedStyle(document.documentElement).getPropertyValue("--font-display");
     const bw = len + 6 + c.measureText(lab).width, ziel = (() => { const [a, b] = routeAt(L), [gx, gy] = merc(a, b, lvl); return [SX(gx), SY(gy)]; })();
-    const treffer = y => [...P, ziel, ziel, ziel, [SX(rx), SY(ry)]].filter(([x, yy]) => x > x0 - 10 && x < x0 + bw + 10 && yy > y - 16 && yy < y + 10).length;
-    const y0 = treffer(h - 8) <= treffer(16) ? h - 8 : 16;
+    // seit 2.20 (Nutzer: „sprang 30-mal je Sekunde von unten nach oben“): fest unten links. Nach oben nur, wenn Ziel oder Läufer im Feld
+    // des Maßstabs liegen; die Strecke selbst darf darunter durchlaufen. Zurück erst mit 12 px Abstand, damit nichts flackert
+    const imFeld = (y, r) => [ziel, [SX(rx), SY(ry)]].some(([x, yy]) => x > x0 - 12 - r && x < x0 + bw + 12 + r && yy > y - 22 - r && yy < y + 14 + r);
+    if (!massOben && imFeld(h - 8, 0) && !imFeld(16, 0)) massOben = true;
+    else if (massOben && !imFeld(h - 8, 12)) massOben = false;
+    const y0 = massOben ? 16 : h - 8;
     const strich = () => { c.beginPath(); c.moveTo(x0, y0 - 4); c.lineTo(x0, y0); c.lineTo(x0 + len, y0); c.lineTo(x0 + len, y0 - 4); c.stroke(); };
     c.lineCap = "butt"; c.lineJoin = "miter";
     c.strokeStyle = "rgba(11, 20, 28, 0.85)"; c.lineWidth = 4; strich();
@@ -2110,7 +2115,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '2.19';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.20';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
