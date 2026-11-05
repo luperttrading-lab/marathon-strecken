@@ -6,6 +6,15 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.17 (05.11.2026): Vier Kartenvarianten, Knopf ◐ in der Karte
+
+- **Karte** (Nutzer: „alle vier Möglichkeiten zum Auswählen, nicht in den Einstellungen, sondern direkt in der Karte“): Knopf ◐ unter
+  Plus und Minus schaltet reihum 1 dunkel, gedämpft (wie bisher) · 2 dunkel, heller (Weiß 24 % „screen“) · 3 dunkel, kräftig (mit
+  Grau 90 abgewedelt, „color-dodge“) · 4 hell (Differenz zu Weiß kehrt die Helligkeit um, dann „hue“ mit denselben Bildern: deren
+  Farbton stimmt; leicht gedämpft mit „multiply“, Linie mit dunklem Rand). Alles aus denselben dunklen Kartenbildern, keine neuen
+  Daten. Der Name erscheint 1,6 s links oben. Gemerkt für alle Strecken unter `marathon-kartenstil` (ohne Präfix der Strecke);
+  Voreinstellung 1. Knopfspalte bei 320 × 568 im Laufmodus in drei Spalten zu zwei Knöpfen.
+
 ## 2.16 (02.11.2026): Länge der Strecke im Kopf (nur außerhalb des Marathons)
 
 - **Anzeige** (Nutzer: „bei eigenen Strecken sollte man sehen, wie lang die Strecke ist; beim Marathon steht sie fest“): Über der

@@ -320,6 +320,10 @@ body.run .page { gap: 6px; }
 .mapctl button { width: 32px; height: 32px; min-height: 0; padding: 0; font: 600 18px/1 var(--font-display); background: var(--surface); border-color: var(--edge); }
 /* ◎ seit 2.13 als unterster Knopf, nur wenn die Karte verschoben ist (Nutzer); unten verschiebt sein Erscheinen keinen anderen Knopf */
 .mapctl #map-folgen { font-size: 17px; color: var(--blue); }
+.mapctl #map-stil { font-size: 17px; }
+/* Name der Kartenvariante kurz nach dem Umschalten (seit 2.17), links oben wie der Hinweis ohne Kartenbilder */
+.map-stil-name { position: absolute; top: 14px; left: calc(var(--rpad) + 10px); font: 600 13px/1.2 var(--font-display); letter-spacing: 0.03em; color: var(--ink); background: var(--surface); border: 1px solid var(--edge); border-radius: 8px; padding: 5px 8px; pointer-events: none; }
+.map-stil-name[hidden] { display: none; }
 /* niedrige Karte (kleine iPhones im Laufmodus): Knöpfe in zwei Spalten von oben nach unten, damit keiner unten herausragt */
 .mapctl.eng { grid-template-rows: 32px 32px; grid-auto-flow: column; }
 .credit { position: absolute; right: calc(var(--rpad) + 4px); bottom: 2px; font-size: 9.5px; color: var(--muted); background: var(--surface); padding: 0 4px; border-radius: 3px; opacity: 0.85; }
@@ -478,7 +482,7 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Shanghai Marathon · Kurs 2025 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.16</button></span>
+    <span class="eyebrow">Shanghai Marathon · Kurs 2025 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.17</button></span>
     <h1>Shanghai</h1>
     <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Kein Laser- oder amtliches Höhenmodell frei verfügbar: Höhen aus dem groben 30-m-Modell FABDEM, kräftig geglättet (die Stadt ist flach, das Modell zeigt sonst Hausreste), Brückendecks nach dem Höhenbild des Veranstalters geschätzt; Strecke nach dem Plan 2025 (Plan 2026 noch nicht veröffentlicht), alle 10 m ausgewertet.</p>
@@ -487,7 +491,7 @@ body.run .close svg { width: 20px; height: 20px; }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.16</button></span>
+    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.17</button></span>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -502,8 +506,9 @@ body.run .close svg { width: 20px; height: 20px; }
     <div class="pager" id="pager">
       <div class="page page-map">
         <canvas id="map" aria-label="Karte mit der Strecke und deiner Position. Ziehen verschiebt sie, zwei Finger zoomen, ein kurzer schneller Wisch nach links zeigt die Zahlen."></canvas>
-        <div class="mapctl"><button type="button" id="map-in" aria-label="Karte vergrößern">+</button><button type="button" id="map-out" aria-label="Karte verkleinern">−</button><button type="button" class="run-only" id="map-size" aria-label="Karte größer oder kleiner stellen">&#x2195;&#xFE0E;</button><button type="button" id="map-folgen" hidden aria-label="Karte wieder auf den Punkt zentrieren">&#x25CE;&#xFE0E;</button></div>
+        <div class="mapctl"><button type="button" id="map-in" aria-label="Karte vergrößern">+</button><button type="button" id="map-out" aria-label="Karte verkleinern">−</button><button type="button" id="map-stil" aria-label="Aussehen der Karte wechseln">&#x25D0;&#xFE0E;</button><button type="button" class="run-only" id="map-size" aria-label="Karte größer oder kleiner stellen">&#x2195;&#xFE0E;</button><button type="button" id="map-folgen" hidden aria-label="Karte wieder auf den Punkt zentrieren">&#x25CE;&#xFE0E;</button></div>
         <div class="map-hinweis" id="map-hinweis" role="status" hidden></div>
+        <div class="map-stil-name" id="map-stil-name" aria-live="polite" hidden></div>
         <span class="credit map-credit">© OpenStreetMap-Mitwirkende</span>
       </div>
       <div class="page">
@@ -1876,16 +1881,24 @@ function drawMap() {
   const SX = gx => (gx - cx) * sc + mx, SY = gy => (gy - cy) * sc + h / 2;
   c.imageSmoothingQuality = "high";
   let fehlt = false;
-  for (const [ox, oy, cw, ch, name] of T.chunks) {
-    const x = SX(T.x0 + ox), y = SY(T.y0 + oy), ww = cw * sc, hh = ch * sc;
-    if (x > w || y > h || x + ww < 0 || y + hh < 0) continue;
-    const im = mapImg(name); if (im.complete && im.naturalWidth) c.drawImage(im, x, y, ww, hh); else if (im.fehlt) fehlt = true;
-  }
-  // Untergrund: dunkel etwas aufhellen (Straßen sonst kaum zu sehen), hell etwas abdunkeln (blendet sonst)
-  c.globalCompositeOperation = isDark() ? "screen" : "multiply"; c.fillStyle = COL["--map-tint"];
-  c.fillRect(0, 0, w, h); c.globalCompositeOperation = "source-over";
+  const kacheln = op => { c.globalCompositeOperation = op;
+    for (const [ox, oy, cw, ch, name] of T.chunks) {
+      const x = SX(T.x0 + ox), y = SY(T.y0 + oy), ww = cw * sc, hh = ch * sc;
+      if (x > w || y > h || x + ww < 0 || y + hh < 0) continue;
+      const im = mapImg(name); if (im.complete && im.naturalWidth) c.drawImage(im, x, y, ww, hh); else if (im.fehlt) fehlt = true;
+    }
+    c.globalCompositeOperation = "source-over"; };
+  const flaeche = (op, farbe) => { c.globalCompositeOperation = op; c.fillStyle = farbe; c.fillRect(0, 0, w, h); c.globalCompositeOperation = "source-over"; };
+  // Aussehen (seit 2.17, Nutzer: „alle vier zum Auswählen, Knopf in der Karte“), alle aus denselben dunklen Bildern berechnet:
+  // 1 dunkel, gedämpft (wie bisher) · 2 heller · 3 kräftiger (mit Grau abgewedelt: heller, mehr Kontrast und Farbe) ·
+  // 4 hell: Helligkeit umgekehrt (Differenz zu Weiß), dann der Farbton der dunklen Bilder zurück (die tragen den Farbton der Karte)
+  kacheln("source-over");
+  if (MAPSTIL === 1) flaeche(isDark() ? "screen" : "multiply", COL["--map-tint"]);   // dunkel etwas aufhellen, hell etwas abdunkeln
+  else if (MAPSTIL === 2) flaeche("screen", "rgba(255, 255, 255, 0.24)");
+  else if (MAPSTIL === 3) flaeche("color-dodge", "rgb(90, 90, 90)");   // abgewedelt: heller, mehr Kontrast und Farbe
+  else { flaeche("difference", "#ffffff"); kacheln("hue"); flaeche("multiply", "rgba(236, 240, 243, 1)"); }
   const g = WIN[S.win].g, P = RP.map(([a, b]) => { const [gx, gy] = merc(a, b, lvl); return [SX(gx), SY(gy)]; });
-  c.lineCap = "round"; c.lineJoin = "round"; c.strokeStyle = COL["--ink"]; c.lineWidth = 7; c.beginPath(); // Rand im Gegenton zur Karte, sonst gehen die flachen grauen Abschnitte unter
+  c.lineCap = "round"; c.lineJoin = "round"; c.strokeStyle = MAPSTIL === 4 ? "#0b141c" : COL["--ink"]; c.lineWidth = 7; c.beginPath(); // Rand im Gegenton zur Karte, sonst gehen die flachen grauen Abschnitte unter
   P.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.stroke();
   const paths = CLASS_TOK.map(() => new Path2D());
   for (let i = 0; i < P.length - 1; i++) { const p = paths[cls(valAt(g, (RK[i] + RK[i + 1]) / 2))]; p.moveTo(P[i][0], P[i][1]); p.lineTo(P[i + 1][0], P[i + 1][1]); }
@@ -1939,6 +1952,15 @@ const zoomMap = d => {
 };
 $("map-in").addEventListener("click", () => zoomMap(1)); $("map-out").addEventListener("click", () => zoomMap(-1));
 $("map-folgen").addEventListener("click", () => { mapVersatz = null; dirty = true; });
+// Aussehen der Karte, gilt für alle Strecken (eigener Schlüssel ohne Präfix, alle Strecken liegen unter derselben Adresse)
+const MAPSTILE = ["dunkel, gedämpft", "dunkel, heller", "dunkel, kräftig", "hell"];
+let MAPSTIL = (() => { try { const v = +localStorage.getItem("marathon-kartenstil"); return v >= 1 && v <= 4 ? v : 1; } catch (e) { return 1; } })();
+let stilT = null;
+$("map-stil").addEventListener("click", () => {
+  MAPSTIL = MAPSTIL % 4 + 1; try { localStorage.setItem("marathon-kartenstil", String(MAPSTIL)); } catch (e) {}
+  const el = $("map-stil-name"); el.textContent = "Karte " + MAPSTIL + " von 4 · " + MAPSTILE[MAPSTIL - 1]; el.hidden = false;
+  clearTimeout(stilT); stilT = setTimeout(() => { el.hidden = true; }, 1600); dirty = true;
+});
 
 /* Karte verschieben und mit zwei Fingern zoomen (seit 2.9, Nutzer): ruhig ziehen verschiebt die Karte, ein kurzer schneller Wisch nach
    links blättert wie bisher zu „Zahlen“ (die Verschiebung wird dann zurückgenommen). Verschoben folgt die Karte dem Punkt mit dem
@@ -2080,7 +2102,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '2.16';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.17';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
