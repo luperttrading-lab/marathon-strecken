@@ -17,6 +17,9 @@ self.addEventListener("message", e => {
   const abs = s => new URL(s, self.location).href;
   e.waitUntil(caches.open(CACHE).then(async c => {
     for (const k of KARTE) if (!(await c.match(abs(k)))) await c.add(new Request(k, { cache: "reload" })).catch(() => {});
+    // seit 2.19: Kartenbilder, die nicht mehr in KARTE stehen (die alten dunklen), aus dem Speicher nehmen
+    const soll = new Set(KARTE.map(abs));
+    for (const r of await c.keys()) if (/\/karte-[^/]*\.jpg$/.test(new URL(r.url).pathname) && !soll.has(r.url)) await c.delete(r);
   }).catch(() => {}));
 });
 

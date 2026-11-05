@@ -6,6 +6,18 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.19 (05.11.2026): Original-Kartenbilder für alle Strecken, Knopf ◐ dunkel ↔ Original
+
+- **Karte** (Nutzer: „Y nehmen, dunkel und Original“): Auf der Webseite liegen nur noch die unveränderten OpenStreetMap-Bilder
+  `karte-osm-*.jpg` (JPEG 70, `werkzeuge/karten_osm.py`, aus den Kacheln in `werkzeuge/<strecke>/dl/tiles`; fehlende nur dort
+  nachgeladen, wo das alte dunkle Bild Inhalt zeigte). Die dunkle Ansicht rechnet die App wie bisher `tiles.py` (Differenz zu Weiß,
+  Farbton über „hue“ zurück, Farbe 55 %, × 0,62, + 10, dann die leichte Aufhellung); ◐ schaltet dunkel ↔ Original (Linie dort mit
+  dunklem Rand). Gemerkt für alle Strecken unter `marathon-karte`; aus 2.17/2.18 wird eine gemerkte 4 oder 5 zum Original.
+  `D.karte` „dunkel“ bliebe für eine Strecke mit alten dunklen Bildern (◐ dann: hell zurückgerechnet).
+- **Service Worker:** Beim Auftrag „karten“ löscht er Kartenbilder, die nicht mehr in `KARTE` stehen (die alten dunklen), aus dem
+  eigenen Speicher. Handys laden die Karten jeder geöffneten Strecke einmal neu (Original etwa +15 %).
+- Hinweis unter „Woher die Zahlen kommen“: Bilder unverändert, die dunkle Ansicht rechnet die App.
+
 ## 2.18 (05.11.2026): Original-Karte als fünfte Variante (Versuch auf der Hausrunde)
 
 - **Karte** (Nutzer: Original-Färbung, „alle 5 für die Heimstrecke“, um zu sehen, ob es sich lohnt): Hat eine Strecke `D.karte`

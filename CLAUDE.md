@@ -36,6 +36,9 @@ Offene Ideen und Punkte: `werkzeuge/VORGEMERKT.md`. Eichung des Pace-Modells: `w
 - Neue Strecken baut ein Agent nach dem Muster in `werkzeuge/athen/` bzw. `werkzeuge/wien/` (nicht committen) und liefert die
   Felder; die Seite entsteht mit `kern.py --neu <ordner> <felder.json>` (Format: `kern.py --felder tokio`). Startseite (Karte mit
   `data-land`, Reihenfolge nach Teilnehmerzahl, deutsche Strecken alphabetisch, Mini-Profil), README und Push macht die Hauptsitzung.
+- **Kartenbilder** (seit Marathon 2.19): Auf der Webseite liegen nur die unveränderten OpenStreetMap-Bilder `karte-osm-*.jpg`; die
+  dunkle Ansicht rechnet die App (Knopf ◐: dunkel ↔ Original). Die Bauskripte (`tiles.py`, `tiles_z11.py`, `tiles_rand.py`) schreiben
+  noch `karte-dunkel-*`: danach immer `python3 werkzeuge/karten_osm.py <strecke>` (setzt Original-Bilder und die Kartenliste in `sw.js`).
 - Commits auf Deutsch, direkt auf `main`.
 
 ## Prüfen
