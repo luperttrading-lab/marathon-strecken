@@ -71,6 +71,9 @@ nicht veröffentlicht („sarà comunicato successivamente“); der Hinweis in d
      liefert nur leere Bilder, GetFeatureInfo 503, der Blattschnitt (`QU_Lidar.map`) meldet eine abgebrochene Datenbank; der
      Download-Dienst (sim.mase.gov.it, laut Geoportale ohne Anmeldung) ist laut Hinweis vom 29.10. bis 06.11.2026 in Wartung. Ob
      Rom überhaupt abgedeckt ist, war deshalb nicht zu prüfen.
+     **Nachgeprüft 07.11.2026:** unverändert. WMS liefert über ganz Latium leere Bilder (1 m und 2 m), der Blattschnitt antwortet mit
+     500, das Portal sim.mase.gov.it ebenfalls mit 500 und dem Hinweis „manutenzione straordinaria dal 30 ottobre al martedì
+     10 novembre“: Die Wartung ist bis 10.11.2026 verlängert.
    - Regione Lazio: DTM 5 m aus der Carta Tecnica 2002/03 (photogrammetrisch, DXF) liegt in einem Datei-Browser, der nur nach einer
      Anmeldung (Token) liefert; nicht umgangen. Ein WCS mit Höhen gibt es dort nicht.
    - Roma Capitale (dati.comune.roma.it): kein Höhenmodell.
