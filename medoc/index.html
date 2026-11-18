@@ -482,7 +482,7 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Marathon des Châteaux du Médoc · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.21</button></span>
+    <span class="eyebrow">Marathon des Châteaux du Médoc · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.22</button></span>
     <h1>Médoc</h1>
     <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Weinmarathon durch die Châteaux des Médoc: die meisten laufen verkleidet, kaum jemand auf Zeit. Amtliches Höhenmodell der IGN (RGE ALTI, 1-m-Raster) entlang der Strecke des Veranstalters, alle 10 m ausgewertet und mit dem Laserscan LiDAR HD bestätigt.</p>
@@ -491,7 +491,7 @@ body.run .close svg { width: 20px; height: 20px; }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.21</button></span>
+    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.22</button></span>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -644,7 +644,7 @@ body.run .close svg { width: 20px; height: 20px; }
     </div>
     <div class="setting">
       <div class="head"><span class="lbl">So rechnet das Pace-Modell</span><span class="note" id="pk-out"></span></div>
-      <span class="note">Bergauf die Energiekosten des Laufens nach Steigung (Minetti u. a. 2002). Bergab bringt ein Höhenmeter die Hälfte dessen, was er bergauf kostet, weil man bergab nicht voll ins Rollen kommt. Steiler als −8 % kein weiterer Gewinn, weil man bremsen muss.</span>
+      <span class="note">Bergauf die Energiekosten des Laufens nach Steigung (Minetti u. a. 2002). Bergab bringt ein Höhenmeter die Hälfte dessen, was er bergauf kostet, weil man bergab nicht voll ins Rollen kommt. Steiler als −8 % wird man wieder langsamer, ab etwa −15 % langsamer als im Flachen (Felddaten Trailrennen).</span>
       <canvas id="pace-chart" aria-label="Diagramm: Pace je Steigung, Antippen zeigt die Pace bei dieser Steigung"></canvas>
       <span class="note" id="pk-note"></span>
     </div>
@@ -789,16 +789,20 @@ let P = null;
 // Höhenmeter (Minetti: 19,5/3,6 = 5,42 flache Meter je Höhenmeter). Bergab seit Hamburg 1.44 eine U-Kurve, abgestimmt im
 // Pace-Kurven-Simulator an Felddaten aus 20 belgischen Trailrennen (Jidovtseff und De Cock 2026) und Stravas
 // Herzfrequenzmodell: bei „halb“ anfangs die halbe Bergauf-Steigung, am schnellsten bei BERGAB.xm % (BERGAB.gm % schneller
-// als flach, kubisch), steiler kein weiterer Gewinn (seit 1.58 auf Wunsch des Nutzers statt des U-Asts, der bei −16 %
-// wieder flach erreichte: Labor und Feld liegen dort weit auseinander, auf Straßenmarathons kommt es nicht vor).
+// als flach, kubisch), steiler seit 2.22 wieder langsamer (JDC unten; 1.58–2.21: kein weiterer Gewinn, davor ein U-Ast, der bei
+// −16 % wieder flach erreichte).
 // Bergab fest „halb“ (S.down = 0,5, Schalter seit 1.58 entfernt). Auf ±BERGAB.w %
 // rundet ein Übergang den Knick bei 0 ab (Steigung dort: Mittel beider Seiten). Alles skaliert mit den Kosten je Höhenmeter.
-const BERGAB = { r: 0.5, w: 1, xm: -8, gm: 12 }, UNSICHER = -8;   // steiler als UNSICHER %: kein weiterer Gewinn
+const BERGAB = { r: 0.5, w: 1, xm: -8, gm: 12 }, UNSICHER = -8;   // steiler als UNSICHER %: seit 2.22 wieder langsamer
+// Steiler als −8 % (seit 2.22, Nutzer): wieder langsamer nach der Feldkurve von Jidovtseff und De Cock 2026 (Int J Perf Anal Sport,
+// 20 Trailrennen, 517 Läufer; schnellstes Tempo um −8 %, ab etwa −15 % langsamer als flach): Pace(g) = Pace(−8 %) × J(−0,08) / J(g),
+// J(g) = 1 − 2,491 g − 10,235 g² + 49,0 g³ (g als Bruch). Bei −8 % ohne Sprung; steiler als −20 % wie −20 % (Formel dort unbrauchbar)
+const JDC = g => 1 - 2.491 * g - 10.235 * g ** 2 + 49.0 * g ** 3, STEIL_GRENZE = -20;
 const pfAuf = x => S.secHm / 0.24 / (19.5 / 3.6) * (minetti(x / 100) / 3.6 - 1);       // x in % (≥ 0), Faktor − 1
 function pfAb(x) {                                                                       // x in % (< 0), Faktor − 1 bei „halb“
   const B = BERGAB, k = S.secHm, s0 = B.r * k / 24, tief = B.gm / 100 * k, h = -B.xm;
   if (x >= B.xm) { const t = (x - B.xm) / h; return -tief * (2 * t ** 3 - 3 * t ** 2 + 1) + s0 * h * (t ** 3 - t ** 2); }
-  return -tief;   // steiler: kein weiterer Gewinn, Übergang bei xm ohne Knick (Steigung dort 0)
+  return -tief;   // steiler: hier fest; paceFaktor rechnet steiler als xm seit 2.22 mit JDC (wieder langsamer)
 }
 function paceFaktor(gi) {
   const x = gi * 100, d = S.down * 2, w = d ? BERGAB.w : 0, unten = xx => d * pfAb(xx);
@@ -809,8 +813,11 @@ function paceFaktor(gi) {
     const t = (x - a) / w;
     return 1 + (2 * t ** 3 - 3 * t ** 2 + 1) * ya + (t ** 3 - 2 * t ** 2 + t) * w * ma + (-2 * t ** 3 + 3 * t ** 2) * yb + (t ** 3 - t ** 2) * w * mb;
   }
+  if (x < BERGAB.xm) return (1 + unten(BERGAB.xm)) * JDC(BERGAB.xm / 100) / JDC(Math.max(x, STEIL_GRENZE) / 100);
   return 1 + (x >= 0 ? pfAuf(x) : unten(x));
 }
+// bis Marathon 2.21: steiler als −8 % kein weiterer Gewinn (nur noch gestrichelt im Pace-Diagramm, zum Vergleich)
+const paceFaktorBisher = gi => paceFaktor(Math.max(gi, BERGAB.xm / 100));
 // Pace und Zeiten rechnen immer mit 100 m (seit 1.54), damit kurze Wellen mitkosten; das Messfenster ändert nur die Anzeige
 const RECHEN = 100;
 // Pace-Faktor je Messpunkt (1 = flach) und die damit gewichtete Strecke in Metern
@@ -1193,13 +1200,13 @@ function drawOverview() {
 // die sie verändern; senkrechte Achse bei 0 %, der weiße Punkt ist der Flachpunkt (0 %, Pace im Flachen). Antippen oder
 // waagerecht Wischen setzt eine Markierung mit Steigung und Pace (PK.mark, stufenlos; Tippen daneben nimmt sie weg).
 const pk = $("pace-chart"), pkctx = pk.getContext("2d");
-const PK = { G0: -15, G1: 10, L0: 40, R0: 18, T0: 8, B0: 20, mark: null, zieh: false };
+const PK = { G0: -25, G1: 10, L0: 40, R0: 18, T0: 8, B0: 20, mark: null, zieh: false };   // seit 2.22 ab −25 % (Anstieg und Grenze −20 % sichtbar)
 function drawPaceChart() {
   const { w, h, dpr } = sizeCanvas(pk); if (!w) return; const c = pkctx;
   c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
   const { G0, G1, L0, R0, T0, B0 } = PK, p0 = P.p0, app = g => paceFaktor(g / 100) * p0;
   const gs = []; for (let g = G0; g <= G1 + 1e-9; g += 0.25) gs.push(g);
-  const va = gs.map(app), y0 = Math.floor((Math.min(...va) - 10) / 30) * 30, y1 = Math.ceil(Math.max(...va) / 30) * 30;
+  const va = gs.map(app), y0 = Math.floor((Math.min(...va) - 10) / 30) * 30, y1 = Math.ceil((Math.max(...va) + 55) / 30) * 30;   // oben Platz für die Beschriftung
   const X = g => L0 + (g - G0) / (G1 - G0) * (w - L0 - R0), Y = v => T0 + (y1 - v) / (y1 - y0) * (h - T0 - B0);
   const font = getComputedStyle(document.body).fontFamily; c.font = "500 10.5px " + font;
   const ys = (y1 - y0) / 30 > 7 ? 60 : 30;
@@ -1210,9 +1217,14 @@ function drawPaceChart() {
   // Achse bei 0 %
   { const x = Math.round(X(0)) + 0.5; c.strokeStyle = COL["--muted"]; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, T0); c.lineTo(x, h - B0); c.stroke(); }
   c.textAlign = "left"; c.textBaseline = "top"; c.fillStyle = COL["--muted"];
-  // unter dem Platz für die Markierung oben; links unten liegt immer das flache Kurvenstück, darüber ist frei
-  c.fillText("steiler als", X(G0) + 5, T0 + 34); c.fillText(nf(UNSICHER, 0).replace("-", "−") + " %:", X(G0) + 5, T0 + 47); c.fillText("kein Gewinn", X(G0) + 5, T0 + 60); c.fillText("mehr", X(G0) + 5, T0 + 73);
+  // unter dem Platz für die Markierung oben, über dem Kurvenstück links (steiler als −20 % fest)
+  c.fillText("steiler als " + nf(UNSICHER, 0).replace("-", "−") + " %:", X(G0) + 5, T0 + 28); c.fillText("wieder langsamer", X(G0) + 5, T0 + 41);
   c.save(); c.beginPath(); c.rect(L0, T0, w - L0 - R0, h - T0 - B0); c.clip();
+  { // bisher (bis 2.21): steiler als −8 % kein Gewinn mehr, gestrichelt, nur dort, wo es sich unterscheidet
+    const yb = Y(paceFaktorBisher(BERGAB.xm / 100) * p0); c.strokeStyle = COL["--muted"]; c.lineWidth = 1.5; c.setLineDash([5, 4]);
+    c.beginPath(); c.moveTo(X(G0), yb); c.lineTo(X(BERGAB.xm), yb); c.stroke(); c.setLineDash([]);
+    c.fillStyle = COL["--muted"]; c.textAlign = "left"; c.textBaseline = "bottom"; c.fillText("bisher", X(G0) + 5, yb - 3);
+  }
   c.strokeStyle = COL["--blue"]; c.lineWidth = 2.25; c.lineJoin = "round"; c.beginPath();
   gs.forEach((g, k) => k ? c.lineTo(X(g), Y(app(g))) : c.moveTo(X(g), Y(app(g)))); c.stroke(); c.restore();
   // Flachpunkt: 0 % und die Pace im Flachen (die Kurve geht dort genau durch p0, seit 1.62 statt der aktuellen Stelle);
@@ -1251,9 +1263,10 @@ function paceChartNote() {
   $("pk-out").textContent = "flach " + mss2(p0) + " /km";
   $("pk-note").textContent = "Antippen zeigt die Pace bei jeder Steigung, Tippen daneben nimmt die Markierung weg. Der weiße Punkt ist die Pace im Flachen. Bergauf: +5 % "
     + mss(at(5)) + " /km (" + secs(at(5) - p0) + "), +10 % " + mss(at(10)) + " /km (" + secs(at(10) - p0) + "). "
-    + "Bergab: −4 % " + mss(at(-4)) + " /km (" + secs(at(-4) - p0) + "), am schnellsten ab " + pc(B.xm) + " mit " + mss(at(B.xm)) + " /km (" + secs(at(B.xm) - p0) + "). "
-    + "Steiler kein weiterer Gewinn: Im Labor sinkt der Energieverbrauch bis etwa −20 % weiter und erreicht erst bei etwa −40 % wieder den Wert im Flachen, im Rennen muss man aber bremsen. "
-    + "Felddaten aus 20 belgischen Trailrennen (Jidovtseff und De Cock 2026) zeigen das schnellste Tempo um −8 %. "
+    + "Bergab: −4 % " + mss(at(-4)) + " /km (" + secs(at(-4) - p0) + "), am schnellsten bei " + pc(B.xm) + " mit " + mss(at(B.xm)) + " /km (" + secs(at(B.xm) - p0) + "). "
+    + "Steiler wird man wieder langsamer: −12 % " + mss(at(-12)) + " /km, −15 % " + mss(at(-15)) + " /km (" + secs(at(-15) - p0) + "), −20 % " + mss(at(-20)) + " /km (" + secs(at(-20) - p0) + "); "
+    + "noch steiler rechnet die App wie −20 %. Grundlage: Felddaten aus 20 Trailrennen mit 517 Läufern (Jidovtseff und De Cock 2026): schnellstes Tempo um −8 %, "
+    + "ab etwa −15 % langsamer als im Flachen. Gestrichelt: bis Version 2.21, steiler als −8 % ohne weiteren Gewinn. "
     + (steil >= 50 ? "Auf dieser Strecke sind " + nf(steil / 1000, steil < 1000 ? 2 : 1) + " km so steil (" + fenster + ")." : "Auf dieser Strecke ist kein Stück so steil (" + fenster + ").");
 }
 
@@ -2116,7 +2129,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '2.21';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.22';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");

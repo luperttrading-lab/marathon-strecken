@@ -25,7 +25,7 @@ def pf_ab(x, sec=1.0):                        # x in %, < 0; Faktor − 1 bei �
     v = -tief * (2 * t**3 - 3 * t**2 + 1) + s0 * h * (t**3 - t**2)
     return np.where(x >= B_XM, v, -tief)
 
-def pace_faktor(gi, sec=1.0, ab=1.0, auf=None):
+def pace_faktor(gi, sec=1.0, ab=1.0, auf=None, bisher=False):
     """Pace-Faktor wie im Kern (gi Steigung als Bruch). sec: Kosten je Höhenmeter (1,0 s bei 4:00 /km);
     ab: Faktor auf die Bergab-Kurve (1 = „halb“); auf: eigene Funktion x(%) → Faktor − 1 bergauf (statt Minetti skaliert).
     Übergang auf ±1 % wie im Kern (Hermite), mit der jeweiligen Bergauf-Funktion."""
@@ -46,6 +46,12 @@ def pace_faktor(gi, sec=1.0, ab=1.0, auf=None):
     untn = (2 * t2**3 - 3 * t2**2 + 1) * unten(np.array(-w)) + (t2**3 - 2 * t2**2 + t2) * w * m_ab + (t2**3 - t2**2) * w * sm
     out = np.where((x >= 0) & (x < w), oben, out)
     out = np.where((x < 0) & (x > -w), untn, out)
+    # seit Marathon 2.22 wie im Kern: steiler als −8 % wieder langsamer (Jidovtseff und De Cock 2026), steiler als −20 % wie −20 %;
+    # bisher=True rechnet wie bis 2.21 (steiler kein weiterer Gewinn)
+    if not bisher:
+        J = lambda g: 1 - 2.491 * g - 10.235 * g**2 + 49.0 * g**3
+        f8 = 1 + float(unten(np.array(B_XM)))
+        out = np.where(x < B_XM, f8 * J(B_XM / 100) / J(np.maximum(x, -20.0) / 100) - 1, out)
     return 1 + out
 
 class Strecke:

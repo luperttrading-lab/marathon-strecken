@@ -6,6 +6,21 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.22 (18.11.2026): Steiler als −8 % wieder langsamer
+
+- **Pace-Modell** (Nutzer, Formel aus Jidovtseff & De Cock 2026, Int J Perf Anal Sport, https://doi.org/10.1080/24748668.2026.2651537,
+  Felddaten aus 20 Trailrennen, 517 Läufer): Bis −8 % unverändert. Steiler: Pace(g) = Pace(−8 %) × J(−0,08) / J(g) mit
+  J(g) = 1 − 2,491 g − 10,235 g² + 49,0 g³ (J(−0,08) = 1,1087), ohne Sprung bei −8 %; steiler als −20 % wie −20 %. Prüfwerte des
+  Nutzers bei flach 3:59,21 und Kosten je Höhenmeter 0,8 genau getroffen (−10 % 3:38, −12 % 3:45, −15 % 4:05, −16 % 4:16, −18 % 4:48,
+  −20 % 5:44); mit 1,0 liegen alle 6–9 s tiefer (−8 % 3:30,5). Gleich schnell wie flach bei −15,1 % (1,0) bzw. −14,3 % (0,8).
+- **Wirkung** (4:00 /km flach, 1,0): Great Wall +166 s (nach Steigung gerechnet; die Mauer-Minuten der App kommen aus echten
+  Zwischenzeiten, dort weniger), Liechtenstein +54 s, Zermatt +22 s, Rennsteig +12 s, Brocken +12 s, Jungfrau +3 s; alle anderen
+  unter 1 s.
+- **Texte und Diagramm:** „Steiler als −8 % wird man wieder langsamer, ab etwa −15 % langsamer als im Flachen (Felddaten
+  Trailrennen).“; Beschriftung „steiler als −8 %: wieder langsamer“; Pace-Diagramm von −25 bis +10 %, oben Platz für die
+  Beschriftung, die bisherige Kurve gestrichelt („bisher“). Steigungsrechner (Fassung 7, Kurve ab −25 %) und
+  `werkzeuge/eichung/berg/modell.py` (Schalter `bisher=True` für den alten Stand) mitgezogen.
+
 ## 2.21 (05.11.2026): Maßstab weicht dem Ziel nur in der Übersicht aus
 
 - **Karte** (Nutzer: „beim Zielbereich nur wegspringen, wenn er fest dort steht, nicht wenn er beim Ablaufen durchfährt“): Das Ziel

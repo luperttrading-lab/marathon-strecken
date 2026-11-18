@@ -119,7 +119,7 @@ tr.aktiv td { color: var(--blue); font-weight: 600; }
         <input type="range" id="r" min="0.2" max="2.5" step="0.01" value="1" aria-label="Bergab: Faktor auf das, was die App bergab gutmacht">
       </div>
     </div>
-    <p class="note"><b>Bergauf</b>: Sekunden je Höhenmeter bei 4:00 /km an sanften Anstiegen, steiler mehr (App 1,00). <b>Bergab</b>: Faktor auf das, was die App bergab gutmacht, unabhängig vom Bergauf-Schieber (App 1,00: anfangs die Hälfte, am schnellsten bei −8 %). In den Strecken-Apps gibt es nur die Kosten je Höhenmeter; sie verändern bergauf und bergab gemeinsam.</p>
+    <p class="note"><b>Bergauf</b>: Sekunden je Höhenmeter bei 4:00 /km an sanften Anstiegen, steiler mehr (App 1,00). <b>Bergab</b>: Faktor auf das, was die App bergab gutmacht, unabhängig vom Bergauf-Schieber (App 1,00: anfangs die Hälfte, am schnellsten bei −8 %, steiler wieder langsamer, ab etwa −15 % langsamer als flach). In den Strecken-Apps gibt es nur die Kosten je Höhenmeter; sie verändern bergauf und bergab gemeinsam.</p>
   </section>
 
   <section class="panel" aria-label="Dein Gefühl">
@@ -137,7 +137,7 @@ tr.aktiv td { color: var(--blue); font-weight: 600; }
     <table><thead><tr><th>Steigung</th><th>hoch</th><th>runter</th><th>beides</th><th>gut&shy;gemacht</th></tr></thead><tbody id="tab"></tbody></table>
     <p class="note"><b>beides</b>: hoch und runter zusammen gegenüber zweimal flach. <b>gutgemacht</b>: welcher Anteil der Zeit, die du bergauf verlierst, bergab wieder hereinkommt. Wie in den Strecken-Apps: Pace an einer Steigung = flache Pace × Faktor; gleichmäßige Anstrengung, ohne Ermüdung, Untergrund und Höhe.</p>
   </section>
-  <p class="stand">Stand 02.11.2026 · Fassung 6</p>
+  <p class="stand">Stand 18.11.2026 · Fassung 7</p>
 </div>
 <script>
 // Modell wie im Kern (hamburg/index.html, Stand Marathon 2.8), mit k = Kosten je Höhenmeter (S.secHm) und f = Faktor auf die Bergab-Kurve.
@@ -145,6 +145,8 @@ tr.aktiv td { color: var(--blue); font-weight: 600; }
 // in Wahrheit 0,95 × App. Im Kern gibt es nur k (secHm), das bergauf und bergab gemeinsam skaliert; mit k = f = 1 sind beide gleich.
 const minetti = i => 155.4 * i ** 5 - 30.4 * i ** 4 - 43.3 * i ** 3 + 46.3 * i ** 2 + 19.5 * i + 3.6;
 const B = { r: 0.5, w: 1, xm: -8, gm: 12 };
+// seit Marathon 2.22 wie im Kern: steiler als −8 % wieder langsamer (Jidovtseff und De Cock 2026), steiler als −20 % wie −20 %
+const JDC = g => 1 - 2.491 * g - 10.235 * g ** 2 + 49.0 * g ** 3;
 function faktor(gi, k, f) {
   const pfAuf = x => k / 0.24 / (19.5 / 3.6) * (minetti(x / 100) / 3.6 - 1);
   const pfAb = x => { const s0 = B.r / 24, tief = B.gm / 100, h = -B.xm;   // Bergab-Kurve der App (k = 1), f skaliert sie
@@ -156,6 +158,7 @@ function faktor(gi, k, f) {
     const t = (x - a) / w;
     return 1 + (2 * t ** 3 - 3 * t ** 2 + 1) * ya + (t ** 3 - 2 * t ** 2 + t) * w * ma + (-2 * t ** 3 + 3 * t ** 2) * yb + (t ** 3 - t ** 2) * w * mb;
   }
+  if (x < B.xm) return (1 + unten(B.xm)) * JDC(B.xm / 100) / JDC(Math.max(x, -20) / 100);
   return 1 + (x >= 0 ? pfAuf(x) : unten(x));
 }
 const $ = id => document.getElementById(id);
@@ -190,7 +193,7 @@ let vorschlag = null, KV = null;
 // Kurve: x = Steigung −15 … +15 %, y = Pace je km (oben langsamer, wie das Pace-Diagramm der Strecken-Apps).
 // Bergab blaugrün, bergauf orange wie die Karten; gestrichelt die App, wenn die Schieber davon abweichen;
 // Punkte bei ± eingestellter Steigung, Ringe für die eigenen Zeiten; Antippen oder Wischen zeigt Steigung · Pace (Abweichung).
-const KU = { G0: -15, G1: 15, L0: 38, R0: 18, T0: 28, B0: 20, mark: null, zieh: false };
+const KU = { G0: -25, G1: 15, L0: 38, R0: 18, T0: 28, B0: 20, mark: null, zieh: false };
 const cv = $("kurve"), cx = cv.getContext("2d");
 const farbe = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 function zeichne() {
