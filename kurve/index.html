@@ -76,7 +76,11 @@ button.mini { padding: 4px 8px; font-size: 13px; }
 .rz { height: var(--row); display: flex; align-items: center; justify-content: center; scroll-snap-align: center; font: 600 15px/1 var(--font-display); color: var(--muted); font-variant-numeric: tabular-nums; cursor: pointer; user-select: none; -webkit-user-select: none; white-space: nowrap; }
 .rz.mitte { font-size: 21px; font-weight: 700; color: var(--ink); }
 .rz small { font-size: 12px; color: var(--muted); margin-left: 2px; font-weight: 600; }
-.rz small.f { color: var(--feld); }
+.rz small.f { color: var(--feld); } .rz small.a { color: var(--app); }
+.seg.drei { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.seg { min-width: 0; } .seg button { min-width: 0; }
+.panel > *, .tab > * { min-width: 0; }
+@media (max-width: 360px) { .seg.klein button { padding: 6px 3px; font-size: 13px; letter-spacing: 0; } }
 .platz { height: var(--row); }
 .rad-band { position: absolute; left: 0; right: 0; top: var(--row); height: var(--row); border-top: 2px solid var(--blue); border-bottom: 2px solid var(--blue); pointer-events: none; }
 .seg.klein button { padding: 6px 8px; font-size: 13.5px; }
@@ -136,10 +140,11 @@ tr.null td { color: var(--muted); }
       <div class="zeile-u"><span class="naht-kurz" id="naht-ab"></span><button type="button" class="klein mini" id="feld-zurueck">Feldformel</button></div>
     </div>
     <div class="tab" id="tab-auf">
-      <div class="zeile-u"><div class="seg klein" role="group" aria-label="Form bergauf"><button type="button" data-form="modell">Modell weich</button><button type="button" data-form="poly">Polynom</button></div><span class="schalter" id="r-poly-h"></span><span class="m" id="versatz"></span></div>
+      <div class="seg klein drei" role="group" aria-label="Form bergauf"><button type="button" data-form="grenz">Grenzkosten</button><button type="button" data-form="modell">Modell weich</button><button type="button" data-form="poly">Polynom</button></div>
+      <div class="raeder" id="r-grenz"></div>
       <div class="raeder zwei" id="r-modell"></div>
       <div class="raeder" id="r-poly-r"></div>
-      <div class="zeile-u"><span class="naht-kurz" id="naht-auf"></span></div>
+      <div class="zeile-u"><span class="schalter" id="r-poly-h"></span><span class="m" id="versatz"></span><span class="m" id="gk-werte"></span><span class="naht-kurz" id="naht-auf"></span></div>
     </div>
   </section>
 
@@ -171,7 +176,7 @@ tr.null td { color: var(--muted); }
     <p class="note" id="st-note">Gegenüber derselben Strecke flach, bei deiner Pace flach. Gerechnet wie die App mit 100-m-Fenster, ohne Höhenlage, Hitze und Ermüdung.</p>
   </section>
 
-  <p class="stand">Pace am Hang zum Ausprobieren: Gefälle nach der Feldformel, Steigung frei, ohne Knick bei 0 %.<br>Stand 18.11.2026 · Fassung 4 · Vergleich mit Marathon 2.24</p>
+  <p class="stand">Pace am Hang zum Ausprobieren: Gefälle nach der Feldformel, Steigung frei, ohne Knick bei 0 %.<br>Stand 18.11.2026 · Fassung 5 · Vergleich mit Marathon 2.24</p>
 </div>
 <script>
 "use strict";
@@ -224,10 +229,11 @@ function appF(gi, sec) {
             fortgesetzt) zu unserem Modell: f′ = (1 − S)·f′ab + S·f′modell. Weil S′(0) = S′(1) = 0, stimmen bei 0 und bei w Wert, Steigung
             und Krümmung überein (zweimal stetig differenzierbar). Ab w liegt die Kurve um einen festen Versatz neben unserem Modell.
    Steigung „poly“:   f(x) = 1 / (1 + b1 g + b2 g² + b3 g³); b1 = a1 heißt ohne Knick, dazu b2 = a2 ohne Krümmungssprung. */
-const VOR = { p: 240, a1: FELD.a1, a2: FELD.a2, a3: FELD.a3, form: "modell", s: 0.8, w: 3, knick: true, kruemm: false,
+const VOR = { p: 240, a1: FELD.a1, a2: FELD.a2, a3: FELD.a3, form: "grenz", m5: 9.8, m10: 11.3, m15: 12.5, s: 0.8, w: 3, knick: true, kruemm: false,
   b1: FELD.a1, b2: FELD.a2, b3: FELD.a3, zeig: { neu: true, feld: true, app08: true, app10: true }, strecke: "boston", abl: true, tab: "auf" };
 let K = (() => { try { const v = JSON.parse(localStorage.getItem("kurvenlabor")); if (v && typeof v === "object") return Object.assign(structuredClone(VOR), v, { zeig: Object.assign({}, VOR.zeig, v.zeig) }); } catch (_) {} return structuredClone(VOR); })();
 const merken = () => { try { localStorage.setItem("kurvenlabor", JSON.stringify(K)); } catch (_) {} };
+if (K.v !== 5) { K.v = 5; K.form = "grenz"; K.tab = "auf"; }   // Fassung 5: einmal auf die neue Form Grenzkosten umstellen
 
 const KM = 1 / (0.24 * 19.5 / 3.6);   // = 1/1,3
 const fM = x => 1 + K.s * KM * (minetti(x / 100) / 3.6 - 1);
@@ -240,9 +246,34 @@ const mMisch = x => { const s = S3(x / K.w); return (1 - s) * mAb(x) + s * mM(x)
 function simpson(f, a, b, n) { if (b <= a) return 0; n += n % 2; const h = (b - a) / n; let s = f(a) + f(b); for (let i = 1; i < n; i++) s += f(a + i * h) * (i % 2 ? 4 : 2); return s * h / 3; }
 let VERSATZ = 0;
 const b1e = () => K.knick ? K.a1 : K.b1, b2e = () => K.knick && K.kruemm ? K.a2 : K.b2;
+/* Steigung „grenz“ (Fassung 5, Nutzer: „mit dem Polynom nicht richtig einzustellen“): Man stellt die Grenzkosten m ein, also was
+   ein Prozentpunkt mehr Steigung kostet (s je % bei 4:00), bei +5, +10 und +15 %. Bei 0 % kommt m aus dem Gefälle (kein Knick), die
+   Krümmung dort ebenso, soweit es die Monotonie erlaubt. Dazwischen monotone kubische Hermite-Interpolation (Fritsch-Carlson, kein
+   Überschwingen), über +15 % gerade weiter. Die Pace ist das Integral: f(x) = 1 + ∫₀ˣ m(u) du ÷ 240 (geschlossen gerechnet). */
+const GX = [0, 5, 10, 15], GH = 5;
+let GK = null;
+function grenzVor() {
+  const m0 = -2.4 * K.a1, k0 = 240 * (2 * K.a1 ** 2 - 2 * K.a2) / 1e4;   // Steigung und Krümmung des Gefälles bei 0 (bei 4:00)
+  const M = [m0, K.m5, K.m10, K.m15], d = [0, 1, 2].map(k => (M[k + 1] - M[k]) / GH), D = [0, 0, 0, 0];
+  for (let k = 1; k < 3; k++) D[k] = d[k - 1] * d[k] <= 0 ? 0 : 2 / (1 / d[k - 1] + 1 / d[k]);
+  D[0] = d[0] === 0 || Math.sign(k0) !== Math.sign(d[0]) ? 0 : Math.sign(d[0]) * Math.min(Math.abs(k0), 3 * Math.abs(d[0]));
+  let de = (3 * d[2] - d[1]) / 2;
+  if (Math.sign(de) !== Math.sign(d[2])) de = 0; else if (Math.sign(d[1]) !== Math.sign(d[2]) && Math.abs(de) > 3 * Math.abs(d[2])) de = 3 * d[2];
+  D[3] = de;
+  const C = [0]; for (let k = 0; k < 3; k++) C.push(C[k] + GH * (M[k] + M[k + 1]) / 2 + GH * GH * (D[k] - D[k + 1]) / 12);
+  GK = { M, D, C, k0 };
+}
+function grenzF(x) {
+  const { M, D, C } = GK;
+  if (x >= 15) { const u = x - 15; return 1 + (C[3] + M[3] * u + D[3] * u * u / 2) / 240; }
+  const k = Math.min(2, Math.floor(x / GH)), t = (x - GX[k]) / GH;
+  const I00 = t ** 4 / 2 - t ** 3 + t, I10 = t ** 4 / 4 - 2 * t ** 3 / 3 + t * t / 2, I01 = -(t ** 4) / 2 + t ** 3, I11 = t ** 4 / 4 - t ** 3 / 3;
+  return 1 + (C[k] + GH * (M[k] * I00 + GH * D[k] * I10 + M[k + 1] * I01 + GH * D[k + 1] * I11)) / 240;
+}
 function neuF(gi) {
   const x = gi * 100;
   if (x <= 0) return fAb(x);
+  if (K.form === "grenz") return grenzF(x);
   if (K.form === "poly") { const j = J3(gi, b1e(), b2e(), K.b3); return j > 0.05 ? 1 / j : NaN; }
   if (K.w <= 0) return fM(x);
   if (x >= K.w) return fM(x) + VERSATZ;
@@ -259,6 +290,7 @@ const G0 = -20, G1 = 15, DX = 0.05, HD = 0.005;
 let DAT = null;   // je Kurve: Pace und Steigung (s je %) auf dem Raster
 const XS_RASTER = []; for (let x = G0; x <= G1 + 1e-9; x += DX) XS_RASTER.push(Math.round(x * 100) / 100);
 function rechneKurven() {
+  grenzVor();
   VERSATZ = K.form === "modell" && K.w > 0 ? 1 + simpson(mMisch, 0, K.w, 400) - fM(K.w) : 0;
   const xs = XS_RASTER, alt = DAT && DAT.p === K.p ? DAT : null;
   DAT = { xs, p: K.p };
@@ -315,6 +347,10 @@ function bild(cv, art) {
     else strich(G0, G1, k.dash, k.lw);
   }
   c.restore();
+  if (art === "steig" && K.form === "grenz" && K.zeig.neu && GK) {   // Stützstellen der Grenzkosten
+    c.strokeStyle = farbe("--neu"); c.fillStyle = COL.surf; c.lineWidth = 2;
+    GK.M.forEach((m, k) => { c.beginPath(); c.arc(X(GX[k]), Y(m * K.p / 240), 4.5, 0, 2 * Math.PI); c.fill(); c.stroke(); });
+  }
   // Markierung mit Werten aller sichtbaren Kurven
   if (art === "steig") ablZeile(null);
   if (MARK.x === null) {
@@ -432,6 +468,12 @@ rad($("r-modell"), "w", "Übergang bis", raster(0, 8, 0.25), v => v > 0 ? "+" + 
 rad($("r-poly-r"), "b1", "b1 · g", raster(-5, 0, 0.01, [FELD.a1]), fmtK(2, FELD.a1));
 rad($("r-poly-r"), "b2", "b2 · g²", raster(-40, 20, 0.05, [FELD.a2]), fmtK(2, FELD.a2));
 rad($("r-poly-r"), "b3", "b3 · g³", raster(-100, 300, 0.5, [FELD.a3]), fmtK(1, FELD.a3));
+// Grenzkosten-Räder: F = Feldformel, 0,8 = App bei 0,8 (jeweils der nächste Rasterwert)
+const REFM = { m5: [10.31, 9.76], m10: [15.13, 11.25], m15: [17.16, 12.49] };
+const fmtM = key => v => { const [f, a] = REFM[key], t = nf(v, 1); return t + (Math.abs(v - f) < 0.05 ? '<small class="f">F</small>' : "") + (Math.abs(v - a) < 0.05 ? '<small class="a">0,8</small>' : "") + (Math.abs(v - f) >= 0.05 && Math.abs(v - a) >= 0.05 ? "<small>s</small>" : ""); };
+rad($("r-grenz"), "m5", "bei +5 %", raster(2, 30, 0.1), fmtM("m5"));
+rad($("r-grenz"), "m10", "bei +10 %", raster(2, 30, 0.1), fmtM("m10"));
+rad($("r-grenz"), "m15", "bei +15 %", raster(2, 30, 0.1), fmtM("m15"));
 haken($("r-poly-h"), "knick", "b1 = a1", "ohne Knick bei 0 %");
 haken($("r-poly-h"), "kruemm", "b2 = a2", "auch ohne Krümmungssprung bei 0 %");
 for (const b of document.querySelectorAll("[data-tab]")) b.addEventListener("click", () => { K.tab = b.dataset.tab; neu(); });
@@ -448,29 +490,37 @@ const polyText = (c1, c2, c3) => `1 ${c1 < 0 ? "−" : "+"} ${koef(Math.abs(c1))
 const istFeld = () => Math.abs(K.a1 - FELD.a1) < 1e-9 && Math.abs(K.a2 - FELD.a2) < 1e-9 && Math.abs(K.a3 - FELD.a3) < 1e-9;
 function parameterText() {
   const ab = `Gefälle: Pace = P ÷ (${polyText(K.a1, K.a2, K.a3)})${istFeld() ? " (Feldformel)" : ""}`;
-  const auf = K.form === "poly" ? `Steigung: Pace = P ÷ (${polyText(b1e(), b2e(), K.b3)})`
+  const auf = K.form === "grenz" ? `Steigung: Grenzkosten (s je % bei 4:00) 0 % ${nf(GK.M[0], 2)} aus dem Gefälle, +5 % ${nf(K.m5, 1)}, +10 % ${nf(K.m10, 1)}, +15 % ${nf(K.m15, 1)}, monoton kubisch, Pace = Integral`
+    : K.form === "poly" ? `Steigung: Pace = P ÷ (${polyText(b1e(), b2e(), K.b3)})`
     : `Steigung: unser Modell mit Kosten je Höhenmeter ${nf(K.s, 2)} s, ` + (K.w > 0 ? `Übergang bis +${nf(K.w, 2)} % (Steigung gleitet, Versatz ${vz(VERSATZ * K.p, 1)} s bei ${ms(K.p)})` : "ohne Übergang");
-  return `Kurvenlabor (Fassung 4): Pace flach ${ms(K.p)} /km · ${ab} · ${auf}`;
+  return `Kurvenlabor (Fassung 5): Pace flach ${ms(K.p)} /km · ${ab} · ${auf}`;
 }
 function texte() {
   for (const b of document.querySelectorAll("[data-form]")) b.setAttribute("aria-pressed", String(b.dataset.form === K.form));
   for (const b of document.querySelectorAll("[data-tab]")) b.setAttribute("aria-pressed", String(b.dataset.tab === K.tab));
   for (const t of ["ab", "auf"]) $("tab-" + t).hidden = K.tab !== t;
   $("r-modell").hidden = $("versatz").hidden = K.form !== "modell"; $("r-poly-r").hidden = $("r-poly-h").hidden = K.form !== "poly";
+  $("r-grenz").hidden = $("gk-werte").hidden = K.form !== "grenz";
+  $("gk-werte").textContent = [5, 10, 15].map(x => pc(x) + " " + ms(K.p * neuF(x / 100))).join(" · ");
   $("versatz").textContent = K.w > 0 ? "Versatz " + vz(VERSATZ * K.p, 1) + " s" : "";
   REG.b1.el.classList.toggle("aus", K.knick); REG.kruemm.el.classList.toggle("aus", !K.knick); REG.b2.el.classList.toggle("aus", K.knick && K.kruemm);
   if (K.knick) REG.b1.zu(K.a1); if (K.knick && K.kruemm) REG.b2.zu(K.a2);   // gesperrte Räder zeigen den Wert, der gilt
   RAEDER.forEach(r => r.lage());   // nach dem Einblenden die Lage der Räder wiederherstellen
   const f = [`<div class="fz"><span>g ≤ 0</span><code>Pace = P ÷ (${polyText(K.a1, K.a2, K.a3)})</code></div>`];
   if (K.form === "poly") f.push(`<div class="fz"><span>g &gt; 0</span><code>Pace = P ÷ (${polyText(b1e(), b2e(), K.b3)})</code></div>`);
-  else {
+  else if (K.form === "grenz") {
+    f.push(`<div class="fz"><span>g &gt; 0</span><code>Pace = P · (1 + ∫₀ˣ m(u) du ÷ 240)</code></div>`);
+    f.push(`<div class="fz"><span></span><small>m = Grenzkosten in s je Prozentpunkt bei 4:00, glatt durch 0 % (${nf(GK.M[0], 2)}, aus dem Gefälle), +5 % (${nf(K.m5, 1)}), +10 % (${nf(K.m10, 1)}), +15 % (${nf(K.m15, 1)}); monotone kubische Interpolation, über +15 % gerade weiter; x = Steigung in %</small></div>`);
+  } else {
     if (K.w > 0) f.push(`<div class="fz"><span>0 bis ${nf(K.w, 2)} %</span><span>Die Steigung der Kurve gleitet von der Gefälle-Formel zu unserem Modell <small>(Gewicht 3t² − 2t³)</small></span></div>`);
     f.push(`<div class="fz"><span>ab ${nf(K.w, 2)} %</span><code>Pace = P · (1 + ${nf(K.s, 2)} ÷ 1,3 · (C(g) ÷ 3,6 − 1))${K.w > 0 ? " " + (VERSATZ < 0 ? "−" : "+") + " " + nf(Math.abs(VERSATZ * K.p), 1) + " s" : ""}</code></div>`);
     f.push(`<div class="fz"><span></span><small>C(g) = 155,4 g⁵ − 30,4 g⁴ − 43,3 g³ + 46,3 g² + 19,5 g + 3,6 (Minetti 2002, Energie je kg und m); 1,3 = 0,24 × 19,5 ÷ 3,6</small></div>`);
   }
   f.push(`<div class="fz"><span></span><small>P = Pace flach in s/km, g = Steigung als Bruch (0,05 = 5 %); steiler als −20 % wie −20 %</small></div>`);
   $("formel").innerHTML = f.join("");
-  $("form-note").innerHTML = K.form === "modell"
+  $("form-note").innerHTML = K.form === "grenz"
+    ? "Grenzkosten: Du stellst ein, was ein Prozentpunkt mehr Steigung kostet (Sekunden je Prozentpunkt bei 4:00), bei +5, +10 und +15 %. Bei 0 % kommt der Wert aus dem Gefälle, deshalb gibt es keinen Knick. Dazwischen verläuft das untere Bild glatt und ohne Überschwingen (die Ringe sind deine drei Werte); die obere Kurve ist seine Fläche. F = Feldformel, 0,8 = App bei 0,8."
+    : K.form === "modell"
     ? "Ab dem Übergang hat die grüne Kurve die Form unseres Modells (Minetti) mit deinen Kosten je Höhenmeter. Bis dahin wächst ihre Steigung glatt von der Feldformel (bei 0 % rund 6 s je Prozentpunkt bei 4:00) auf die unseres Modells; deshalb liegt sie ab dort um einen festen Versatz neben unserem Modell. Übergang 0 zeigt den harten Knick."
     : "Die Feldformel hat diese Form auch bergauf (b1 = a1, b2 = a2, b3 = a3). Mit b1 = a1 hat die Kurve bei 0 % keinen Knick, mit b2 = a2 auch keinen Krümmungssprung. Vorsicht oberhalb von +10 %: Das Polynom ist dort nicht mehr belegt und kann umbiegen.";
   // Naht bei 0 %: einseitige Steigungen und Krümmungen
