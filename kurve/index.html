@@ -20,7 +20,7 @@
   --neu: #5fd38d; --feld: #6a9cff; --app: #ee8b45;
   --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
   --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --row: 30px;
+  --row: 28px;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -45,11 +45,20 @@ button.klein:disabled { color: var(--muted); opacity: 0.55; cursor: default; }
 .chip i.gestr { border-top-style: dashed; }
 .chip[aria-pressed="false"] { opacity: 0.4; }
 .cv { width: 100%; display: block; touch-action: pan-y; cursor: crosshair; }
-#c-pace { height: 175px; } #c-steig { height: 105px; }
+#c-pace { height: 190px; } #c-steig { height: 95px; }
+@media (max-height: 640px) { #c-pace { height: 150px; } #c-steig { height: 75px; } }   /* kleine iPhones: Kurven und Räder trotzdem auf einen Bildschirm */
 /* Kurven bleiben oben stehen, solange die Drehräder im Bild sind (Nutzer: „beim Betätigen der Regler die Kurve sehen“) */
-.labor { display: grid; gap: 10px; }
-.kleben { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: env(safe-area-inset-top, 0px) 0 4px; }
-.kleben .panel { gap: 6px; padding: 8px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.45); }
+.bedien { gap: 6px; padding: 8px; }   /* Fassung 3: Kurven und die gerade bediente Reihe Drehräder auf einem Bildschirm */
+.tabs button { font-size: 14.5px; padding: 7px 6px; }
+.zeile-u { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; min-height: 28px; font-size: 13px; font-variant-numeric: tabular-nums; }
+.zeile-u .m { color: var(--muted); }
+.naht-kurz .ok { color: var(--neu); font-weight: 600; } .naht-kurz .warn { color: var(--warn); font-weight: 600; } .naht-kurz .m { color: var(--muted); }
+.tab { display: grid; gap: 6px; }
+.schalter { display: inline-flex; gap: 6px; }
+.schalt { font: 600 13.5px/1 var(--font-display); letter-spacing: 0.02em; color: var(--muted); background: var(--bg); border: 1px solid var(--rule); border-radius: 999px; padding: 6px 10px; cursor: pointer; }
+.schalt[aria-pressed="true"] { color: var(--ink); border-color: var(--blue); background: var(--blue-soft); }
+.schalt[aria-pressed="true"]::before { content: "✓ "; color: var(--neu); }
+.schalt.aus { opacity: 0.4; pointer-events: none; }
 .ohne-abl #c-steig { display: none; }
 button.mini { padding: 4px 8px; font-size: 13px; }
 /* Drehräder wie im Steigungsrechner: Liste mit Einrasten, Mitte zwischen zwei blauen Linien */
@@ -112,33 +121,31 @@ tr.null td { color: var(--muted); }
 <body>
 <div class="wrap">
   <div class="top"><h1>Kurvenlabor</h1><a class="back" href="../">‹ Alle Strecken</a></div>
-  <p class="sub">Pace am Hang zum Ausprobieren: Gefälle nach der Feldformel, Steigung frei, ohne Knick bei 0 %.</p>
 
-  <div class="labor">
-    <div class="kleben">
-      <section class="panel" aria-label="Kurven" id="kurven">
-        <div class="chips" id="chips"></div>
-        <canvas id="c-pace" class="cv" aria-label="Pace je Steigung von −20 bis +15 %. Antippen oder seitlich ziehen zeigt die Werte."></canvas>
-        <div class="kopfzeile"><span class="lbl">Steigung der Kurve · s je Prozentpunkt</span><button type="button" class="klein mini" id="abl">ausblenden</button></div>
-        <canvas id="c-steig" class="cv" aria-label="Ableitung: Sekunden je Prozentpunkt Steigung. Ein Sprung hier ist ein Knick in der Kurve darüber."></canvas>
-      </section>
-    </div>
-    <section class="panel" aria-label="Parameter">
-      <div class="kopfzeile"><span class="lbl">Gefälle · <span class="kl">g ≤ 0</span></span><button type="button" class="klein mini" id="feld-zurueck">Feldformel</button></div>
+  <section class="panel bedien" aria-label="Kurven und Regler" id="kurven">
+    <div class="chips" id="chips"></div>
+    <canvas id="c-pace" class="cv" aria-label="Pace je Steigung von −20 bis +15 %. Antippen oder seitlich ziehen zeigt die Werte."></canvas>
+    <div class="kopfzeile"><span class="lbl">Steigung der Kurve · s je Prozentpunkt</span><button type="button" class="klein mini" id="abl">ausblenden</button></div>
+    <canvas id="c-steig" class="cv" aria-label="Ableitung: Sekunden je Prozentpunkt Steigung. Ein Sprung hier ist ein Knick in der Kurve darüber."></canvas>
+    <div class="seg tabs" role="group" aria-label="Welche Regler"><button type="button" data-tab="ab">Gefälle · g ≤ 0</button><button type="button" data-tab="auf">Steigung · g &gt; 0</button></div>
+    <div class="tab" id="tab-ab">
       <div class="raeder" id="r-ab"></div>
-      <div class="trenn"></div>
-      <div class="kopfzeile"><span class="lbl">Steigung · <span class="kl">g &gt; 0</span></span><div class="seg klein" role="group" aria-label="Form bergauf"><button type="button" data-form="modell">Modell weich</button><button type="button" data-form="poly">Polynom</button></div></div>
+      <div class="zeile-u"><span class="naht-kurz" id="naht-ab"></span><button type="button" class="klein mini" id="feld-zurueck">Feldformel</button></div>
+    </div>
+    <div class="tab" id="tab-auf">
+      <div class="zeile-u"><div class="seg klein" role="group" aria-label="Form bergauf"><button type="button" data-form="modell">Modell weich</button><button type="button" data-form="poly">Polynom</button></div><span class="schalter" id="r-poly-h"></span><span class="m" id="versatz"></span></div>
       <div class="raeder zwei" id="r-modell"></div>
-      <div id="r-poly"><div class="raeder" id="r-poly-r"></div><div id="r-poly-h" style="display:grid;gap:6px;margin-top:8px"></div></div>
-      <div class="naht" id="naht"></div>
-    </section>
-  </div>
+      <div class="raeder" id="r-poly-r"></div>
+      <div class="zeile-u"><span class="naht-kurz" id="naht-auf"></span></div>
+    </div>
+  </section>
 
   <section class="panel" aria-label="Deine Kurve">
     <div class="kopfzeile"><span class="lbl">Deine Kurve (grün)</span><button type="button" class="klein" id="kopieren">Parameter kopieren</button></div>
     <div class="formel" id="formel"></div>
+    <div class="naht" id="naht"></div>
     <p class="note" id="form-note"></p>
-    <p class="note">Antippen oder seitlich ziehen in den Bildern zeigt die Werte. Im unteren Bild wird jeder Knick der Kurve zum Sprung: Die App wechselt bei 0 % innerhalb von ±1 % die Steigung. Drehräder: wischen oder eine Nachbarzeile antippen; die Kurve folgt schon beim Drehen. F = Wert der Feldformel.</p>
+    <p class="note">Antippen oder seitlich ziehen in den Bildern zeigt die Werte. Im unteren Bild wird jeder Knick der Kurve zum Sprung: Die App wechselt bei 0 % innerhalb von ±1 % die Steigung. Drehräder: wischen oder eine Nachbarzeile antippen; die Kurve folgt schon beim Drehen. F = Wert der Feldformel. Bei Polynom: „b1 = a1“ heißt ohne Knick, „b2 = a2“ zusätzlich ohne Krümmungssprung.</p>
     <button type="button" class="klein" id="alles-zurueck">Alles zurücksetzen</button>
   </section>
 
@@ -161,7 +168,7 @@ tr.null td { color: var(--muted); }
     <p class="note" id="st-note">Gegenüber derselben Strecke flach, bei deiner Pace flach. Gerechnet wie die App mit 100-m-Fenster, ohne Höhenlage, Hitze und Ermüdung.</p>
   </section>
 
-  <p class="stand">Stand 18.11.2026 · Fassung 2 · Vergleich mit Marathon 2.24</p>
+  <p class="stand">Pace am Hang zum Ausprobieren: Gefälle nach der Feldformel, Steigung frei, ohne Knick bei 0 %.<br>Stand 18.11.2026 · Fassung 3 · Vergleich mit Marathon 2.24</p>
 </div>
 <script>
 "use strict";
@@ -215,7 +222,7 @@ function appF(gi, sec) {
             und Krümmung überein (zweimal stetig differenzierbar). Ab w liegt die Kurve um einen festen Versatz neben unserem Modell.
    Steigung „poly“:   f(x) = 1 / (1 + b1 g + b2 g² + b3 g³); b1 = a1 heißt ohne Knick, dazu b2 = a2 ohne Krümmungssprung. */
 const VOR = { p: 240, a1: FELD.a1, a2: FELD.a2, a3: FELD.a3, form: "modell", s: 0.8, w: 3, knick: true, kruemm: false,
-  b1: FELD.a1, b2: FELD.a2, b3: FELD.a3, zeig: { neu: true, feld: true, app08: true, app10: true }, strecke: "boston", abl: true };
+  b1: FELD.a1, b2: FELD.a2, b3: FELD.a3, zeig: { neu: true, feld: true, app08: true, app10: true }, strecke: "boston", abl: true, tab: "auf" };
 let K = (() => { try { const v = JSON.parse(localStorage.getItem("kurvenlabor")); if (v && typeof v === "object") return Object.assign(structuredClone(VOR), v, { zeig: Object.assign({}, VOR.zeig, v.zeig) }); } catch (_) {} return structuredClone(VOR); })();
 const merken = () => { try { localStorage.setItem("kurvenlabor", JSON.stringify(K)); } catch (_) {} };
 
@@ -367,11 +374,11 @@ function regler(box, key, label, min, max, step, fmt, knopf = step) {
   minus.addEventListener("click", () => setze(K[key] - knopf)); plus.addEventListener("click", () => setze(K[key] + knopf));
   box.appendChild(el); REG[key] = { el, zeige }; zeige();
 }
-function haken(box, key, text) {
-  const el = document.createElement("label"); el.className = "haken"; el.innerHTML = `<input type="checkbox"><span>${text}</span>`;
-  const inp = el.querySelector("input"); inp.checked = K[key];
-  inp.addEventListener("change", () => { K[key] = inp.checked; neu(); });
-  box.appendChild(el); REG[key] = { el, zeige: () => { inp.checked = K[key]; } };
+function haken(box, key, text, titel) {   // Schalter als Pille (an: ✓)
+  const el = document.createElement("button"); el.type = "button"; el.className = "schalt"; el.textContent = text; el.title = titel;
+  const zeige = () => el.setAttribute("aria-pressed", String(K[key]));
+  el.addEventListener("click", () => { K[key] = !K[key]; zeige(); neu(); });
+  box.appendChild(el); REG[key] = { el, zeige }; zeige();
 }
 const koef = v => nf(v, Math.abs(v) >= 100 ? 1 : 3).replace("-", "−");
 regler($("r-pace"), "p", "Pace flach", 150, 420, 1, v => ms(v) + "<small> /km</small>");
@@ -415,12 +422,13 @@ rad($("r-modell"), "w", "Übergang bis", raster(0, 8, 0.25), v => v > 0 ? "+" + 
 rad($("r-poly-r"), "b1", "b1 · g", raster(-5, 0, 0.01, [FELD.a1]), fmtK(2, FELD.a1));
 rad($("r-poly-r"), "b2", "b2 · g²", raster(-40, 20, 0.05, [FELD.a2]), fmtK(2, FELD.a2));
 rad($("r-poly-r"), "b3", "b3 · g³", raster(-100, 300, 0.5, [FELD.a3]), fmtK(1, FELD.a3));
-haken($("r-poly-h"), "knick", "ohne Knick: b1 = a1");
-haken($("r-poly-h"), "kruemm", "auch ohne Krümmungssprung: b2 = a2");
+haken($("r-poly-h"), "knick", "b1 = a1", "ohne Knick bei 0 %");
+haken($("r-poly-h"), "kruemm", "b2 = a2", "auch ohne Krümmungssprung bei 0 %");
+for (const b of document.querySelectorAll("[data-tab]")) b.addEventListener("click", () => { K.tab = b.dataset.tab; neu(); });
 $("abl").addEventListener("click", () => { K.abl = !K.abl; merken(); ablZeigen(); zeichne(); });
 const ablZeigen = () => { $("kurven").classList.toggle("ohne-abl", !K.abl); $("abl").textContent = K.abl ? "ausblenden" : "einblenden"; };
 ablZeigen();
-for (const b of document.querySelectorAll(".seg button")) b.addEventListener("click", () => { K.form = b.dataset.form; neu(); });
+for (const b of document.querySelectorAll("[data-form]")) b.addEventListener("click", () => { K.form = b.dataset.form; neu(); });
 $("feld-zurueck").addEventListener("click", () => { Object.assign(K, { a1: FELD.a1, a2: FELD.a2, a3: FELD.a3 }); alleZeigen(); neu(); });
 $("alles-zurueck").addEventListener("click", () => { const st = K.strecke; K = structuredClone(VOR); K.strecke = st; alleZeigen(); ablZeigen(); for (const [i, b] of [...chips.children].entries()) b.setAttribute("aria-pressed", String(K.zeig[KURVEN[i].id])); neu(); });
 const alleZeigen = () => Object.values(REG).forEach(r => r.zeige());
@@ -432,11 +440,14 @@ function parameterText() {
   const ab = `Gefälle: Pace = P ÷ (${polyText(K.a1, K.a2, K.a3)})${istFeld() ? " (Feldformel)" : ""}`;
   const auf = K.form === "poly" ? `Steigung: Pace = P ÷ (${polyText(b1e(), b2e(), K.b3)})`
     : `Steigung: unser Modell mit Kosten je Höhenmeter ${nf(K.s, 2)} s, ` + (K.w > 0 ? `Übergang bis +${nf(K.w, 2)} % (Steigung gleitet, Versatz ${vz(VERSATZ * K.p, 1)} s bei ${ms(K.p)})` : "ohne Übergang");
-  return `Kurvenlabor (Fassung 2): Pace flach ${ms(K.p)} /km · ${ab} · ${auf}`;
+  return `Kurvenlabor (Fassung 3): Pace flach ${ms(K.p)} /km · ${ab} · ${auf}`;
 }
 function texte() {
-  for (const b of document.querySelectorAll(".seg button")) b.setAttribute("aria-pressed", String(b.dataset.form === K.form));
-  $("r-modell").hidden = K.form !== "modell"; $("r-poly").hidden = K.form !== "poly";
+  for (const b of document.querySelectorAll("[data-form]")) b.setAttribute("aria-pressed", String(b.dataset.form === K.form));
+  for (const b of document.querySelectorAll("[data-tab]")) b.setAttribute("aria-pressed", String(b.dataset.tab === K.tab));
+  for (const t of ["ab", "auf"]) $("tab-" + t).hidden = K.tab !== t;
+  $("r-modell").hidden = $("versatz").hidden = K.form !== "modell"; $("r-poly-r").hidden = $("r-poly-h").hidden = K.form !== "poly";
+  $("versatz").textContent = K.w > 0 ? "Versatz " + vz(VERSATZ * K.p, 1) + " s" : "";
   REG.b1.el.classList.toggle("aus", K.knick); REG.kruemm.el.classList.toggle("aus", !K.knick); REG.b2.el.classList.toggle("aus", K.knick && K.kruemm);
   if (K.knick) REG.b1.zu(K.a1); if (K.knick && K.kruemm) REG.b2.zu(K.a2);   // gesperrte Räder zeigen den Wert, der gilt
   RAEDER.forEach(r => r.lage());   // nach dem Einblenden die Lage der Räder wiederherstellen
@@ -464,6 +475,11 @@ function texte() {
     + `<div>Krümmung links ${nf(kl, 2)} · rechts ${nf(kr, 2)} s je %² ${okK ? '<span class="ok">✓</span>' : '<span class="m">springt</span>'}</div>`
     + `<div class="m">App bei −0,5 % → +0,5 %: ${app(0.8)} s je % (0,8) bzw. ${app(1.0)} (1,0)</div>`
     + (kippt !== null ? `<div class="warn">Achtung: Ab ${pc(kippt, 1)} wird die grüne Kurve bergauf wieder schneller.</div>` : "");
+  // Kurzfassung direkt unter den Rädern
+  const kurz = "0 %: " + (okS ? '<span class="ok">✓ kein Knick</span>' : `<span class="warn">Knick ${nf(sl, 1)} → ${nf(sr, 1)} s/%</span>`)
+    + " · " + (okK ? '<span class="ok">✓ Krümmung gleich</span>' : `<span class="m">Krümmung ${nf(kl, 2)} → ${nf(kr, 2)}</span>`)
+    + (kippt !== null ? ` · <span class="warn">ab ${pc(kippt, 1)} wieder schneller</span>` : "");
+  $("naht-ab").innerHTML = kurz; $("naht-auf").innerHTML = kurz;
   $("o-tab").textContent = "Je km bei Pace flach " + ms(P);
   const XS = [-20, -15, -12, -10, -8, -6, -4, -2, -1, 0, 1, 2, 4, 5, 6, 8, 10, 12, 15];
   const zelle = v => Number.isFinite(v) ? vz(v, 1) : "–";
