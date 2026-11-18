@@ -68,6 +68,9 @@ Offene Ideen und Punkte: `werkzeuge/VORGEMERKT.md`. Eichung des Pace-Modells: `w
   Pace-Modell für einen Abschnitt hoch/runter und welche Einstellung zum Gefühl des Nutzers passt. Die Modellfunktion ist eine
   Kopie aus dem Kern (`minetti`, `pfAuf`, `pfAb`, `paceFaktor`): **bei jeder Änderung des Pace-Modells im Kern mit ändern.** Einzige gewollte Abweichung (02.11.2026): Der Bergab-Schieber wirkt unabhängig von den Kosten je Höhenmeter (× Bergab-Kurve der App);
   im Kern skaliert `secHm` bergauf und bergab gemeinsam. Mit beiden auf 1 rechnen Rechner und Kern gleich.
+- **Kurvenlabor** `kurve/index.html` (18.11.2026, nicht verlinkt, kein Service Worker): Pace-Kurve zum Ausprobieren (Gefälle nach der
+  Feldformel, Steigung frei, ohne Knick bei 0 %), dazu Ableitung, Tabellen und Mehrzeit je Strecke. Die App-Kurven sind eine Kopie aus dem
+  Kern (Stand 2.24): **bei jeder Änderung des Pace-Modells im Kern mit ändern.** Die Hausrunde nur über `?s=<ordner>`, nie im Code.
 - **Versteckte Strecke** `clhuypnhhjcf/` (Hausrunde des Nutzers am Schiffenberg, 9,85 km): nie auf die Startseite, ins README oder in
   die Liste; Zugang nur durch eine Sekunde Drücken auf „Welcher Marathon?“. Vor dem öffentlichen Start entfernen (`VORGEMERKT.md`).
 

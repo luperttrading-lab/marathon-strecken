@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b141c">
+<title>Kurvenlabor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Kurvenlabor (18.11.2026, Nutzer): die Pace-Kurve am Hang zum Ausprobieren. Gefälle nach der Feldformel (Jidovtseff und De Cock
+   2026), Steigung frei (unser Modell weich angesetzt oder ein eigenes Polynom), ohne Knick bei 0 %. Zum Vergleich die Feldformel und
+   die App (Kopie der Modellfunktion aus dem Kern, Stand Marathon 2.24: minetti, pfAuf, pfAb, paceFaktor). Nicht verlinkt, kein
+   Service Worker, keine Strecken-App. Nur dunkel wie die App. */
+:root {
+  --bg: #0b141c; --surface: #121f2a; --ink: #e5ecf1; --muted: #93a3b0; --rule: #22364a;
+  --blue: #6a9cff; --blue-soft: rgba(106, 156, 255, 0.16); --warn: #ff9f0a;
+  --neu: #5fd38d; --feld: #6a9cff; --app: #ee8b45;
+  --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.35 var(--font-body); }
+.wrap { max-width: 560px; margin: 0 auto; padding: calc(env(safe-area-inset-top, 0px) + 8px) max(12px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 24px) max(12px, env(safe-area-inset-left, 0px)); display: grid; gap: 10px; }
+.top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+a.back { color: var(--blue); text-decoration: none; font: 600 15px/1 var(--font-display); letter-spacing: 0.02em; white-space: nowrap; }
+h1 { margin: 0; font: 700 24px/1.05 var(--font-display); }
+.sub { margin: -4px 0 0; color: var(--muted); font-size: 13.5px; }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 10px; display: grid; gap: 9px; min-width: 0; }
+.lbl { font: 600 12px/1.2 var(--font-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.kopfzeile { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+button.klein, select { font: 600 14px/1 var(--font-display); letter-spacing: 0.03em; color: var(--blue); background: none; border: 1px solid var(--rule); border-radius: 8px; padding: 6px 9px; cursor: pointer; }
+select { background: var(--bg); max-width: 60%; }
+button.klein:disabled { color: var(--muted); opacity: 0.55; cursor: default; }
+/* Kurven an/aus */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font: 600 14px/1 var(--font-display); letter-spacing: 0.02em; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 999px; padding: 6px 10px 6px 8px; cursor: pointer; }
+.chip i { width: 18px; height: 0; border-top: 3px solid currentColor; display: inline-block; }
+.chip i.gestr { border-top-style: dashed; }
+.chip[aria-pressed="false"] { opacity: 0.4; }
+.cv { width: 100%; display: block; touch-action: pan-y; cursor: crosshair; }
+#c-pace { height: 250px; } #c-steig { height: 190px; }
+.note { margin: 0; color: var(--muted); font-size: 12.5px; }
+.note b { color: var(--ink); font-weight: 600; }
+/* Formel */
+.formel { display: grid; gap: 5px; font-size: 13.5px; }
+.fz { display: grid; grid-template-columns: 74px 1fr; gap: 8px; align-items: baseline; }
+.fz > span:first-child { font: 600 13px/1.2 var(--font-display); color: var(--neu); letter-spacing: 0.03em; font-variant-numeric: tabular-nums; }
+.fz code { font: 500 13px/1.35 ui-monospace, "SF Mono", Menlo, monospace; color: var(--ink); overflow-wrap: anywhere; }
+.fz small { color: var(--muted); font-size: 12px; }
+.naht { display: grid; gap: 3px; font-size: 13px; font-variant-numeric: tabular-nums; padding: 7px 9px; border-radius: 9px; background: var(--bg); }
+.naht .ok { color: var(--neu); font-weight: 600; } .naht .warn { color: var(--warn); font-weight: 600; } .naht .m { color: var(--muted); }
+/* Regler */
+.regler { display: grid; gap: 1px; }
+.regler .kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.regler .lbl { text-transform: none; letter-spacing: 0.03em; font-size: 14px; }
+.lbl .kl { text-transform: none; letter-spacing: 0.03em; }
+.regler .wert { font: 700 19px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.regler .wert small { font-size: 13px; color: var(--muted); font-weight: 600; }
+.regler .zeile { display: grid; grid-template-columns: 34px 1fr 34px; gap: 6px; align-items: center; }
+.regler .pm { height: 30px; border-radius: 8px; border: 1px solid var(--rule); background: var(--bg); color: var(--blue); font: 600 19px/1 var(--font-display); cursor: pointer; padding: 0; }
+.regler.aus { opacity: 0.4; }
+.regler.aus input, .regler.aus .pm { pointer-events: none; }
+input[type=range] { width: 100%; accent-color: var(--blue); height: 28px; margin: 0; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--rule); border-radius: 9px; overflow: hidden; }
+.seg button { font: 600 14px/1.15 var(--font-display); letter-spacing: 0.02em; color: var(--muted); background: var(--bg); border: 0; padding: 8px 6px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { color: var(--ink); background: var(--blue-soft); }
+.haken { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+.haken input { width: 18px; height: 18px; accent-color: var(--blue); margin: 0; }
+.haken.aus { opacity: 0.4; pointer-events: none; }
+.trenn { border-top: 1px solid var(--rule); margin: 2px 0; }
+/* Tabellen */
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 14px; }
+th { font: 600 12px/1.2 var(--font-display); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 5px 3px; border-bottom: 1px solid var(--rule); }
+td { text-align: right; padding: 4px 3px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+td.neu, th.neu { color: var(--neu); }
+tr.null td { color: var(--muted); }
+@media (max-width: 360px) { .wrap { padding-left: 8px; padding-right: 8px; } .panel { padding: 8px; } table { font-size: 13px; } th, td { padding-left: 2px; padding-right: 2px; } }
+.stand { margin: 0; text-align: center; color: var(--muted); font-size: 11.5px; opacity: 0.8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>Kurvenlabor</h1><a class="back" href="../">‹ Alle Strecken</a></div>
+  <p class="sub">Pace am Hang zum Ausprobieren: Gefälle nach der Feldformel, Steigung frei, ohne Knick bei 0 %.</p>
+
+  <section class="panel" aria-label="Kurven">
+    <div class="chips" id="chips"></div>
+    <canvas id="c-pace" class="cv" aria-label="Pace je Steigung von −20 bis +15 %. Antippen oder seitlich ziehen zeigt die Werte."></canvas>
+    <span class="lbl">Steigung der Kurve · Sekunden je Prozentpunkt</span>
+    <canvas id="c-steig" class="cv" aria-label="Ableitung: Sekunden je Prozentpunkt Steigung. Ein Sprung hier ist ein Knick in der Kurve darüber."></canvas>
+    <p class="note">Antippen oder seitlich ziehen zeigt die Werte in beiden Bildern. Unten wird jeder Knick der Kurve oben zum Sprung: Die App wechselt bei 0 % innerhalb von ±1 % die Steigung.</p>
+  </section>
+
+  <section class="panel" aria-label="Deine Kurve">
+    <div class="kopfzeile"><span class="lbl">Deine Kurve (grün)</span><button type="button" class="klein" id="kopieren">Parameter kopieren</button></div>
+    <div class="formel" id="formel"></div>
+    <div class="naht" id="naht"></div>
+  </section>
+
+  <section class="panel" aria-label="Parameter">
+    <div id="r-pace"></div>
+    <div class="trenn"></div>
+    <div class="kopfzeile"><span class="lbl">Gefälle · <span class="kl">g ≤ 0</span></span><button type="button" class="klein" id="feld-zurueck">Feldformel</button></div>
+    <div id="r-ab"></div>
+    <div class="trenn"></div>
+    <span class="lbl">Steigung · <span class="kl">g &gt; 0</span></span>
+    <div class="seg" role="group" aria-label="Form bergauf"><button type="button" data-form="modell">Unser Modell, weich angesetzt</button><button type="button" data-form="poly">Polynom wie Feldformel</button></div>
+    <div id="r-modell"></div>
+    <div id="r-poly"></div>
+    <p class="note" id="form-note"></p>
+    <button type="button" class="klein" id="alles-zurueck">Alles zurücksetzen</button>
+  </section>
+
+  <section class="panel" aria-label="Werte">
+    <span class="lbl" id="o-tab">Je km</span>
+    <table><thead><tr><th>Steigung</th><th class="neu">grün</th><th>Δ Feld</th><th>Δ App 0,8</th><th>Δ App 1,0</th></tr></thead><tbody id="tab"></tbody></table>
+    <p class="note"><b>grün</b>: Pace deiner Kurve. Δ: um wie viele Sekunden je km sie langsamer (+) oder schneller (−) ist als die anderen.</p>
+  </section>
+
+  <section class="panel" aria-label="Hin und zurück">
+    <span class="lbl">Hin und zurück · 1 km hoch, 1 km runter</span>
+    <table><thead><tr><th>Steigung</th><th class="neu">grün</th><th>Feld</th><th>App 0,8</th><th>App 1,0</th></tr></thead><tbody id="hz"></tbody></table>
+    <p class="note">Mehrzeit gegenüber 2 km flach. Daran hängt, was ein welliger Kurs kostet: Je mehr bergab hereinkommt, was bergauf verloren geht, desto weniger.</p>
+  </section>
+
+  <section class="panel" aria-label="Strecke">
+    <div class="kopfzeile"><span class="lbl">Strecke</span><select id="strecke" aria-label="Strecke"></select></div>
+    <table><thead><tr><th>Kurve</th><th>Mehrzeit</th><th>Ziel</th></tr></thead><tbody id="st"></tbody></table>
+    <p class="note" id="st-note">Gegenüber derselben Strecke flach, bei deiner Pace flach. Gerechnet wie die App mit 100-m-Fenster, ohne Höhenlage, Hitze und Ermüdung.</p>
+  </section>
+
+  <p class="stand">Stand 18.11.2026 · Fassung 1 · Vergleich mit Marathon 2.24</p>
+</div>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const nf = (v, d) => v.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+const vz = (v, d) => (v >= 0.5 * 10 ** -d ? "+" : v <= -0.5 * 10 ** -d ? "−" : "±") + nf(Math.abs(v), d);
+const pc = (x, d = 0) => vz(x, d).replace("±", "") + " %";
+function ms(s, d = 0) {   // m:ss bzw. m:ss,s
+  const f = 10 ** d, t = Math.round(s * f) / f, m = Math.floor(t / 60), r = t - 60 * m;
+  return m + ":" + (r < 10 ? "0" : "") + nf(r, d);
+}
+function hms(s) { const t = Math.round(s), h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), r = t % 60; return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(r).padStart(2, "0"); }
+const mz = s => (s < -0.5 ? "−" : "+") + hms(Math.abs(s));
+const farbe = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---------- Modelle ---------- */
+const minetti = i => 155.4 * i ** 5 - 30.4 * i ** 4 - 43.3 * i ** 3 + 46.3 * i ** 2 + 19.5 * i + 3.6;   // J/(kg·m), Minetti et al. 2002
+const minettiD = i => 777 * i ** 4 - 121.6 * i ** 3 - 129.9 * i ** 2 + 92.6 * i + 19.5;               // Ableitung nach i
+const J3 = (g, c1, c2, c3) => 1 + c1 * g + c2 * g * g + c3 * g * g * g;
+const FELD = { a1: -2.491, a2: -10.235, a3: 49.0 }, GMIN = -20, GELTUNG = 10;   // Feldformel; gilt von −20 bis +10 %
+const feldF = gi => { const j = J3(Math.max(gi * 100, GMIN) / 100, FELD.a1, FELD.a2, FELD.a3); return j > 0.05 ? 1 / j : NaN; };
+
+// App, Stand Marathon 2.24: Kopie von pfAuf, pfAb und paceFaktor aus dem Kern (hamburg/index.html), sec = Kosten je Höhenmeter
+function appF(gi, sec) {
+  const B = { r: 0.5, w: 1, xm: -8, gm: 12 }, down = 0.5, STEIL_GRENZE = -20;
+  const JDC = g => 1 - 2.491 * g - 10.235 * g ** 2 + 49.0 * g ** 3;
+  const pfAuf = x => sec / 0.24 / (19.5 / 3.6) * (minetti(x / 100) / 3.6 - 1);
+  const pfAb = x => {
+    const k = sec, s0 = B.r * k / 24, tief = B.gm / 100 * k, h = -B.xm;
+    if (x >= B.xm) { const t = (x - B.xm) / h; return -tief * (2 * t ** 3 - 3 * t ** 2 + 1) + s0 * h * (t ** 3 - t ** 2); }
+    return -tief;
+  };
+  const x = gi * 100, d = down * 2, w = d ? B.w : 0, unten = xx => d * pfAb(xx);
+  if (Math.abs(x) < w) {
+    const e = 1e-3, sm = (sec / 24 + d * B.r * sec / 24) / 2;
+    const [a, ya, ma, yb, mb] = x >= 0 ? [0, 0, sm, pfAuf(w), (pfAuf(w + e) - pfAuf(w - e)) / (2 * e)]
+      : [-w, unten(-w), (unten(-w + e) - unten(-w - e)) / (2 * e), 0, sm];
+    const t = (x - a) / w;
+    return 1 + (2 * t ** 3 - 3 * t ** 2 + 1) * ya + (t ** 3 - 2 * t ** 2 + t) * w * ma + (-2 * t ** 3 + 3 * t ** 2) * yb + (t ** 3 - t ** 2) * w * mb;
+  }
+  if (x < B.xm) return (1 + unten(B.xm)) * JDC(B.xm / 100) / JDC(Math.max(x, STEIL_GRENZE) / 100);
+  return 1 + (x >= 0 ? pfAuf(x) : unten(x));
+}
+
+/* Deine Kurve (grün), Faktor auf die flache Pace, x in %:
+   Gefälle  f(x) = 1 / (1 + a1 g + a2 g² + a3 g³), g = x/100 (steiler als −20 % wie −20 %)
+   Steigung „modell“: Ab x = w unser Modell 1 + s/1,3 · (C(g)/3,6 − 1) (C = Minetti; s = Kosten je Höhenmeter bei 4:00),
+            dazwischen gleitet die STEIGUNG der Kurve mit dem Gewicht S(t) = 3t² − 2t³, t = x/w, von der Gefälle-Formel (über 0 hinaus
+            fortgesetzt) zu unserem Modell: f′ = (1 − S)·f′ab + S·f′modell. Weil S′(0) = S′(1) = 0, stimmen bei 0 und bei w Wert, Steigung
+            und Krümmung überein (zweimal stetig differenzierbar). Ab w liegt die Kurve um einen festen Versatz neben unserem Modell.
+   Steigung „poly“:   f(x) = 1 / (1 + b1 g + b2 g² + b3 g³); b1 = a1 heißt ohne Knick, dazu b2 = a2 ohne Krümmungssprung. */
+const VOR = { p: 240, a1: FELD.a1, a2: FELD.a2, a3: FELD.a3, form: "modell", s: 0.8, w: 3, knick: true, kruemm: false,
+  b1: FELD.a1, b2: FELD.a2, b3: FELD.a3, zeig: { neu: true, feld: true, app08: true, app10: true }, strecke: "boston" };
+let K = (() => { try { const v = JSON.parse(localStorage.getItem("kurvenlabor")); if (v && typeof v === "object") return Object.assign(structuredClone(VOR), v, { zeig: Object.assign({}, VOR.zeig, v.zeig) }); } catch (_) {} return structuredClone(VOR); })();
+const merken = () => { try { localStorage.setItem("kurvenlabor", JSON.stringify(K)); } catch (_) {} };
+
+const KM = 1 / (0.24 * 19.5 / 3.6);   // = 1/1,3
+const fM = x => 1 + K.s * KM * (minetti(x / 100) / 3.6 - 1);
+const mM = x => K.s * KM * minettiD(x / 100) / 3.6 / 100;
+const jAb = g => J3(g, K.a1, K.a2, K.a3);
+const fAb = x => { const j = jAb(Math.max(x, GMIN) / 100); return j > 0.05 ? 1 / j : NaN; };
+const mAb = x => { const g = x / 100, j = jAb(g); return -(K.a1 + 2 * K.a2 * g + 3 * K.a3 * g * g) / (j * j) / 100; };
+const S3 = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t);
+const mMisch = x => { const s = S3(x / K.w); return (1 - s) * mAb(x) + s * mM(x); };
+function simpson(f, a, b, n) { if (b <= a) return 0; n += n % 2; const h = (b - a) / n; let s = f(a) + f(b); for (let i = 1; i < n; i++) s += f(a + i * h) * (i % 2 ? 4 : 2); return s * h / 3; }
+let VERSATZ = 0;
+const b1e = () => K.knick ? K.a1 : K.b1, b2e = () => K.knick && K.kruemm ? K.a2 : K.b2;
+function neuF(gi) {
+  const x = gi * 100;
+  if (x <= 0) return fAb(x);
+  if (K.form === "poly") { const j = J3(gi, b1e(), b2e(), K.b3); return j > 0.05 ? 1 / j : NaN; }
+  if (K.w <= 0) return fM(x);
+  if (x >= K.w) return fM(x) + VERSATZ;
+  return 1 + simpson(mMisch, 0, x, 48);
+}
+
+const KURVEN = [
+  { id: "neu", name: "grün (deine)", f: neuF, col: "--neu", lw: 3, dash: [] },
+  { id: "feld", name: "Feldformel", f: feldF, col: "--feld", lw: 2, dash: [] },
+  { id: "app08", name: "App 0,8", f: g => appF(g, 0.8), col: "--app", lw: 1.8, dash: [6, 4] },
+  { id: "app10", name: "App 1,0", f: g => appF(g, 1.0), col: "--app", lw: 1.8, dash: [] },
+];
+const G0 = -20, G1 = 15, DX = 0.05, HD = 0.005;
+let DAT = null;   // je Kurve: Pace und Steigung (s je %) auf dem Raster
+function rechneKurven() {
+  VERSATZ = K.form === "modell" && K.w > 0 ? 1 + simpson(mMisch, 0, K.w, 400) - fM(K.w) : 0;
+  const xs = []; for (let x = G0; x <= G1 + 1e-9; x += DX) xs.push(Math.round(x * 100) / 100);
+  DAT = { xs };
+  for (const k of KURVEN) {
+    const pace = xs.map(x => K.p * k.f(x / 100));
+    const steig = xs.map(x => x - HD < GMIN ? K.p * (k.f((x + HD) / 100) - k.f(x / 100)) / HD : K.p * (k.f((x + HD) / 100) - k.f((x - HD) / 100)) / (2 * HD));
+    DAT[k.id] = { pace, steig };
+  }
+}
+
+/* ---------- Zeichnen ---------- */
+const MARK = { x: null, zieh: false };
+const RAND = { L0: 40, R0: 17, T0: 10, B0: 20 };
+function bereich(werte, schritte) {
+  const v = werte.filter(Number.isFinite); let lo = Math.min(...v), hi = Math.max(...v);
+  for (const st of schritte) { const a = Math.floor(lo / st) * st, b = Math.ceil(hi / st) * st; if ((b - a) / st <= 8) return [a, b, st]; }
+  const st = schritte[schritte.length - 1]; return [Math.floor(lo / st) * st, Math.ceil(hi / st) * st, st];
+}
+function leinwand(cv) {
+  const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+  if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+  const c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h); return [c, w, h];
+}
+function bild(cv, art) {
+  if (!DAT) return;
+  const [c, w, h] = leinwand(cv); if (!w) return;
+  const { L0, R0, T0, B0 } = RAND, font = getComputedStyle(document.body).fontFamily;
+  const sicht = KURVEN.filter(k => K.zeig[k.id]);
+  const werte = sicht.flatMap(k => DAT[k.id][art]);
+  let y0, y1, ys;
+  if (art === "pace") { const lim = werte.filter(v => v < K.p * 2.4); [y0, y1, ys] = bereich(lim.length ? lim : [K.p * 0.8, K.p * 1.6], [30, 60, 120]); }
+  else { const lim = werte.filter(Number.isFinite).map(v => clamp(v, -20, 25)); [y0, y1, ys] = bereich((lim.length ? lim : [-10, 20]).concat([0]), [2, 5, 10, 20]); }
+  const X = x => L0 + (x - G0) / (G1 - G0) * (w - L0 - R0), Y = v => T0 + (y1 - v) / (y1 - y0) * (h - T0 - B0);
+  const COL = { grid: farbe("--rule"), muted: farbe("--muted"), ink: farbe("--ink"), surf: farbe("--surface") };
+  c.font = "500 10.5px " + font; c.lineWidth = 1; c.strokeStyle = COL.grid; c.fillStyle = COL.muted; c.textAlign = "right"; c.textBaseline = "middle";
+  for (let v = y0; v <= y1 + 1e-9; v += ys) { const y = Math.round(Y(v)) + 0.5; c.beginPath(); c.moveTo(L0, y); c.lineTo(w - R0, y); c.stroke(); c.fillText(art === "pace" ? ms(v) : vz(v, 0).replace("±", ""), L0 - 5, y); }
+  c.textAlign = "center"; c.textBaseline = "top";
+  for (let g = G0; g <= G1; g += 5) { const x = Math.round(X(g)) + 0.5; c.beginPath(); c.moveTo(x, T0); c.lineTo(x, h - B0); c.stroke(); c.fillText(pc(g), x, h - B0 + 5); }
+  { const x = Math.round(X(0)) + 0.5; c.strokeStyle = COL.muted; c.lineWidth = 1.2; c.beginPath(); c.moveTo(x, T0); c.lineTo(x, h - B0); c.stroke(); }
+  if (art === "pace") { const y = Math.round(Y(K.p)) + 0.5; c.strokeStyle = COL.muted; c.setLineDash([2, 4]); c.beginPath(); c.moveTo(L0, y); c.lineTo(w - R0, y); c.stroke(); c.setLineDash([]); }
+  else { const y = Math.round(Y(0)) + 0.5; c.strokeStyle = COL.muted; c.beginPath(); c.moveTo(L0, y); c.lineTo(w - R0, y); c.stroke(); }
+  // Feldformel jenseits ihres Geltungsbereichs (+10 %) nur gepunktet
+  c.save(); c.beginPath(); c.rect(L0, T0, w - L0 - R0, h - T0 - B0); c.clip(); c.lineJoin = "round"; c.lineCap = "round";
+  for (const k of sicht.slice().reverse()) {
+    const v = DAT[k.id][art];
+    const strich = (von, bis, dash, lw) => {
+      c.strokeStyle = farbe(k.col); c.lineWidth = lw; c.setLineDash(dash); c.beginPath(); let an = false;
+      DAT.xs.forEach((x, i) => { if (x < von - 1e-9 || x > bis + 1e-9 || !Number.isFinite(v[i])) { an = false; return; } const px = X(x), py = Y(v[i]); if (an) c.lineTo(px, py); else { c.moveTo(px, py); an = true; } });
+      c.stroke(); c.setLineDash([]);
+    };
+    if (k.id === "feld") { strich(G0, GELTUNG, k.dash, k.lw); strich(GELTUNG, G1, [1, 4], k.lw); }
+    else strich(G0, G1, k.dash, k.lw);
+  }
+  c.restore();
+  // Markierung mit Werten aller sichtbaren Kurven
+  if (MARK.x === null) {
+    if (art === "pace") { c.font = "500 11px " + font; c.fillStyle = COL.muted; c.textAlign = "left"; c.textBaseline = "top"; c.fillText("Antippen oder ziehen zeigt die Werte", L0 + 6, T0 + 4); }
+    return;
+  }
+  const xm = Math.round(clamp(MARK.x, G0, G1) * 10) / 10, px = Math.round(X(xm)) + 0.5;
+  c.strokeStyle = COL.ink; c.lineWidth = 1; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(px, T0); c.lineTo(px, h - B0); c.stroke(); c.setLineDash([]);
+  const zeilen = [{ t: pc(xm, 1), col: COL.ink }];
+  for (const k of sicht) {
+    const pace = K.p * k.f(xm / 100), st = K.p * (k.f((xm + HD) / 100) - k.f((xm - HD) / 100)) / (2 * HD);
+    const v = art === "pace" ? pace : st; if (!Number.isFinite(v)) continue;
+    c.fillStyle = farbe(k.col); c.strokeStyle = COL.surf; c.lineWidth = 2; c.beginPath(); c.arc(px, Y(v), 4, 0, 2 * Math.PI); c.fill(); c.stroke();
+    zeilen.push({ t: k.name.replace(" (deine)", "") + "  " + (art === "pace" ? ms(pace, 1) + "  (" + vz(pace - K.p, 1) + ")" : vz(st, 1) + " s je %"), col: farbe(k.col) });
+  }
+  c.font = "600 12px " + font; c.textAlign = "left"; c.textBaseline = "middle";
+  const bw = Math.max(...zeilen.map(z => c.measureText(z.t).width)) + 14, bh = zeilen.length * 16 + 6;
+  const links = X(xm) > (L0 + w - R0) / 2, bx = links ? L0 + 4 : w - R0 - bw - 4, by = T0 + 2;
+  c.fillStyle = COL.surf; c.globalAlpha = 0.94; c.strokeStyle = COL.grid; c.beginPath(); if (c.roundRect) c.roundRect(bx, by, bw, bh, 6); else c.rect(bx, by, bw, bh); c.fill(); c.globalAlpha = 1; c.stroke();
+  zeilen.forEach((z, i) => { c.fillStyle = z.col; c.fillText(z.t, bx + 7, by + 11 + i * 16); });
+}
+let raf = 0;
+const zeichne = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; bild($("c-pace"), "pace"); bild($("c-steig"), "steig"); }); };
+for (const cv of [$("c-pace"), $("c-steig")]) {
+  const setze = e => { const r = cv.getBoundingClientRect(); MARK.x = G0 + (e.clientX - r.left - RAND.L0) / (r.width - RAND.L0 - RAND.R0) * (G1 - G0); zeichne(); };
+  cv.addEventListener("pointerdown", e => { MARK.zieh = true; try { cv.setPointerCapture(e.pointerId); } catch (_) {} setze(e); });
+  cv.addEventListener("pointermove", e => { if (MARK.zieh) setze(e); });
+  for (const ev of ["pointerup", "pointercancel"]) cv.addEventListener(ev, () => { MARK.zieh = false; });
+}
+window.addEventListener("resize", zeichne);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(zeichne);
+
+/* ---------- Bedienung ---------- */
+const chips = $("chips");
+for (const k of KURVEN) {
+  const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.style.color = farbe(k.col);
+  b.innerHTML = `<i class="${k.dash.length ? "gestr" : ""}"></i><span style="color:var(--ink)">${k.name}</span>`;
+  b.setAttribute("aria-pressed", String(K.zeig[k.id]));
+  b.addEventListener("click", () => { K.zeig[k.id] = !K.zeig[k.id]; b.setAttribute("aria-pressed", String(K.zeig[k.id])); merken(); zeichne(); });
+  chips.appendChild(b);
+}
+const REG = {};
+function regler(box, key, label, min, max, step, fmt, knopf = step) {
+  const el = document.createElement("div"); el.className = "regler";
+  el.innerHTML = `<div class="kopf"><span class="lbl">${label}</span><span class="wert"></span></div><div class="zeile"><button type="button" class="pm" aria-label="${label} kleiner">−</button><input type="range" min="${min}" max="${max}" step="${step}" aria-label="${label}"><button type="button" class="pm" aria-label="${label} größer">+</button></div>`;
+  const inp = el.querySelector("input"), wert = el.querySelector(".wert"), [minus, plus] = el.querySelectorAll(".pm");
+  const dez = (String(step).split(".")[1] || "").length;
+  const zeige = () => { inp.value = K[key]; wert.innerHTML = fmt(K[key]); };
+  const setze = v => { K[key] = +clamp(v, min, max).toFixed(dez); zeige(); neu(); };
+  inp.addEventListener("input", () => setze(+inp.value));
+  minus.addEventListener("click", () => setze(K[key] - knopf)); plus.addEventListener("click", () => setze(K[key] + knopf));
+  box.appendChild(el); REG[key] = { el, zeige }; zeige();
+}
+function haken(box, key, text) {
+  const el = document.createElement("label"); el.className = "haken"; el.innerHTML = `<input type="checkbox"><span>${text}</span>`;
+  const inp = el.querySelector("input"); inp.checked = K[key];
+  inp.addEventListener("change", () => { K[key] = inp.checked; neu(); });
+  box.appendChild(el); REG[key] = { el, zeige: () => { inp.checked = K[key]; } };
+}
+const koef = v => nf(v, Math.abs(v) >= 100 ? 1 : 3).replace("-", "−");
+regler($("r-pace"), "p", "Pace flach", 150, 420, 1, v => ms(v) + "<small> /km</small>");
+regler($("r-ab"), "a1", "a1 · g", -4, -1, 0.001, koef, 0.01);
+regler($("r-ab"), "a2", "a2 · g²", -30, 10, 0.005, koef, 0.1);
+regler($("r-ab"), "a3", "a3 · g³", -50, 150, 0.1, v => nf(v, 1).replace("-", "−"), 1);
+regler($("r-modell"), "s", "Kosten je Höhenmeter (bei 4:00)", 0.4, 1.4, 0.01, v => nf(v, 2) + "<small> s</small>");
+regler($("r-modell"), "w", "Übergang bis", 0, 8, 0.25, v => v > 0 ? "+" + nf(v, 2) + "<small> %</small>" : "0<small> (Knick)</small>");
+haken($("r-poly"), "knick", "ohne Knick: b1 = a1");
+regler($("r-poly"), "b1", "b1 · g", -5, 0, 0.001, koef, 0.01);
+haken($("r-poly"), "kruemm", "auch ohne Krümmungssprung: b2 = a2");
+regler($("r-poly"), "b2", "b2 · g²", -40, 20, 0.005, koef, 0.1);
+regler($("r-poly"), "b3", "b3 · g³", -100, 300, 0.1, v => nf(v, 1).replace("-", "−"), 1);
+for (const b of document.querySelectorAll(".seg button")) b.addEventListener("click", () => { K.form = b.dataset.form; neu(); });
+$("feld-zurueck").addEventListener("click", () => { Object.assign(K, { a1: FELD.a1, a2: FELD.a2, a3: FELD.a3 }); alleZeigen(); neu(); });
+$("alles-zurueck").addEventListener("click", () => { const st = K.strecke; K = structuredClone(VOR); K.strecke = st; alleZeigen(); for (const [i, b] of [...chips.children].entries()) b.setAttribute("aria-pressed", String(K.zeig[KURVEN[i].id])); neu(); });
+const alleZeigen = () => Object.values(REG).forEach(r => r.zeige());
+
+/* ---------- Texte, Tabellen ---------- */
+const polyText = (c1, c2, c3) => `1 ${c1 < 0 ? "−" : "+"} ${koef(Math.abs(c1))}·g ${c2 < 0 ? "−" : "+"} ${koef(Math.abs(c2))}·g² ${c3 < 0 ? "−" : "+"} ${nf(Math.abs(c3), 1)}·g³`;
+const istFeld = () => Math.abs(K.a1 - FELD.a1) < 1e-9 && Math.abs(K.a2 - FELD.a2) < 1e-9 && Math.abs(K.a3 - FELD.a3) < 1e-9;
+function parameterText() {
+  const ab = `Gefälle: Pace = P ÷ (${polyText(K.a1, K.a2, K.a3)})${istFeld() ? " (Feldformel)" : ""}`;
+  const auf = K.form === "poly" ? `Steigung: Pace = P ÷ (${polyText(b1e(), b2e(), K.b3)})`
+    : `Steigung: unser Modell mit Kosten je Höhenmeter ${nf(K.s, 2)} s, ` + (K.w > 0 ? `Übergang bis +${nf(K.w, 2)} % (Steigung gleitet, Versatz ${vz(VERSATZ * K.p, 1)} s bei ${ms(K.p)})` : "ohne Übergang");
+  return `Kurvenlabor (Fassung 1): Pace flach ${ms(K.p)} /km · ${ab} · ${auf}`;
+}
+function texte() {
+  for (const b of document.querySelectorAll(".seg button")) b.setAttribute("aria-pressed", String(b.dataset.form === K.form));
+  $("r-modell").hidden = K.form !== "modell"; $("r-poly").hidden = K.form !== "poly";
+  REG.b1.el.classList.toggle("aus", K.knick); REG.kruemm.el.classList.toggle("aus", !K.knick); REG.b2.el.classList.toggle("aus", K.knick && K.kruemm);
+  const f = [`<div class="fz"><span>g ≤ 0</span><code>Pace = P ÷ (${polyText(K.a1, K.a2, K.a3)})</code></div>`];
+  if (K.form === "poly") f.push(`<div class="fz"><span>g &gt; 0</span><code>Pace = P ÷ (${polyText(b1e(), b2e(), K.b3)})</code></div>`);
+  else {
+    if (K.w > 0) f.push(`<div class="fz"><span>0 bis ${nf(K.w, 2)} %</span><span>Die Steigung der Kurve gleitet von der Gefälle-Formel zu unserem Modell <small>(Gewicht 3t² − 2t³)</small></span></div>`);
+    f.push(`<div class="fz"><span>ab ${nf(K.w, 2)} %</span><code>Pace = P · (1 + ${nf(K.s, 2)} ÷ 1,3 · (C(g) ÷ 3,6 − 1))${K.w > 0 ? " " + (VERSATZ < 0 ? "−" : "+") + " " + nf(Math.abs(VERSATZ * K.p), 1) + " s" : ""}</code></div>`);
+    f.push(`<div class="fz"><span></span><small>C(g) = 155,4 g⁵ − 30,4 g⁴ − 43,3 g³ + 46,3 g² + 19,5 g + 3,6 (Minetti 2002, Energie je kg und m); 1,3 = 0,24 × 19,5 ÷ 3,6</small></div>`);
+  }
+  f.push(`<div class="fz"><span></span><small>P = Pace flach in s/km, g = Steigung als Bruch (0,05 = 5 %); steiler als −20 % wie −20 %</small></div>`);
+  $("formel").innerHTML = f.join("");
+  $("form-note").innerHTML = K.form === "modell"
+    ? "Ab dem Übergang hat die grüne Kurve die Form unseres Modells (Minetti) mit deinen Kosten je Höhenmeter. Bis dahin wächst ihre Steigung glatt von der Feldformel (bei 0 % rund 6 s je Prozentpunkt bei 4:00) auf die unseres Modells; deshalb liegt sie ab dort um einen festen Versatz neben unserem Modell. Übergang 0 zeigt den harten Knick."
+    : "Die Feldformel hat diese Form auch bergauf (b1 = a1, b2 = a2, b3 = a3). Mit b1 = a1 hat die Kurve bei 0 % keinen Knick, mit b2 = a2 auch keinen Krümmungssprung. Vorsicht oberhalb von +10 %: Das Polynom ist dort nicht mehr belegt und kann umbiegen.";
+  // Naht bei 0 %: einseitige Steigungen und Krümmungen
+  const P = K.p, h = 1e-3, h2 = 0.01, f0 = neuF(0);
+  const sl = P * (f0 - neuF(-h / 100)) / h, sr = P * (neuF(h / 100) - f0) / h;
+  const kl = P * (f0 - 2 * neuF(-h2 / 100) + neuF(-2 * h2 / 100)) / h2 ** 2, kr = P * (neuF(2 * h2 / 100) - 2 * neuF(h2 / 100) + f0) / h2 ** 2;
+  const okS = Math.abs(sl - sr) < 0.05, okK = Math.abs(kl - kr) < 0.05;
+  const app = sec => { const a = x => P * appF(x / 100, sec), s = x => (a(x + HD) - a(x - HD)) / (2 * HD); return `${nf(s(-0.5), 1)} → ${nf(s(0.5), 1)}`; };
+  // bergauf wieder schneller? (unbrauchbar)
+  let kippt = null; for (let i = 0; i < DAT.xs.length; i++) if (DAT.xs[i] > 0 && DAT.neu.steig[i] < 0) { kippt = DAT.xs[i]; break; }
+  $("naht").innerHTML = `<div>Bei 0 %: Steigung links ${nf(sl, 2)} · rechts ${nf(sr, 2)} s je % ${okS ? '<span class="ok">✓ kein Knick</span>' : '<span class="warn">Knick</span>'}</div>`
+    + `<div>Krümmung links ${nf(kl, 2)} · rechts ${nf(kr, 2)} s je %² ${okK ? '<span class="ok">✓</span>' : '<span class="m">springt</span>'}</div>`
+    + `<div class="m">App bei −0,5 % → +0,5 %: ${app(0.8)} s je % (0,8) bzw. ${app(1.0)} (1,0)</div>`
+    + (kippt !== null ? `<div class="warn">Achtung: Ab ${pc(kippt, 1)} wird die grüne Kurve bergauf wieder schneller.</div>` : "");
+  $("o-tab").textContent = "Je km bei Pace flach " + ms(P);
+  const XS = [-20, -15, -12, -10, -8, -6, -4, -2, -1, 0, 1, 2, 4, 5, 6, 8, 10, 12, 15];
+  const zelle = v => Number.isFinite(v) ? vz(v, 1) : "–";
+  $("tab").innerHTML = XS.map(x => {
+    const n = P * neuF(x / 100), d = id => n - P * KURVEN.find(k => k.id === id).f(x / 100);
+    return `<tr class="${x === 0 ? "null" : ""}"><td>${pc(x)}</td><td class="neu">${Number.isFinite(n) ? ms(n, 1) : "–"}</td><td>${zelle(d("feld"))}${x > GELTUNG ? "*" : ""}</td><td>${zelle(d("app08"))}</td><td>${zelle(d("app10"))}</td></tr>`;
+  }).join("") + `<tr><td colspan="5" style="text-align:left;color:var(--muted);font-size:12px;border:0">* Feldformel dort außerhalb ihres Bereichs (−20 bis +10 %)</td></tr>`;
+  $("hz").innerHTML = [1, 2, 3, 4, 6, 8, 10].map(x => {
+    const hz = f => P * (f(x / 100) + f(-x / 100) - 2);
+    return `<tr><td>±${x} %</td>` + KURVEN.map(k => `<td class="${k.id === "neu" ? "neu" : ""}">${zelle(hz(k.f))} s</td>`).join("") + "</tr>";
+  }).join("");
+}
+
+/* ---------- Strecke: Profil der App laden, Mehrzeit je Kurve ---------- */
+let ST = null;   // { name, L, STEP, g[] (Steigung in %, 100-m-Fenster wie die App) }
+async function streckenListe() {
+  const sel = $("strecke"), extra = new URLSearchParams(location.search).get("s");
+  let liste = [];
+  try {
+    const html = await (await fetch("../index.html", { cache: "no-cache" })).text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    liste = [...doc.querySelectorAll("a.card[href]")].map(a => ({ ordner: a.getAttribute("href").replace(/\/$/, ""), name: (a.querySelector(".city") || a).textContent.trim() }))
+      .filter(s => /^[a-z0-9]+$/.test(s.ordner));
+    liste.sort((a, b) => a.name.localeCompare(b.name, "de"));
+  } catch (_) {}
+  if (extra && /^[a-z0-9]+$/.test(extra) && !liste.some(s => s.ordner === extra)) liste.unshift({ ordner: extra, name: "Eigene Strecke" });
+  if (!liste.length) { sel.innerHTML = "<option>nicht geladen</option>"; sel.disabled = true; return; }
+  sel.innerHTML = liste.map(s => `<option value="${s.ordner}">${s.name}</option>`).join("");
+  if (!liste.some(s => s.ordner === K.strecke)) K.strecke = liste[0].ordner;
+  if (extra && liste.some(s => s.ordner === extra)) K.strecke = extra;
+  sel.value = K.strecke;
+  sel.addEventListener("change", () => { K.strecke = sel.value; merken(); ladeStrecke(); });
+  ladeStrecke();
+}
+async function ladeStrecke() {
+  const ordner = K.strecke; ST = null; $("st").innerHTML = `<tr><td colspan="3" style="color:var(--muted)">lädt …</td></tr>`;
+  try {
+    const s = await (await fetch(`../${ordner}/index.html`, { cache: "no-cache" })).text();
+    const m = s.match(/^const D = (\{.*\});\s*$/m); if (!m) throw new Error("keine Daten");
+    const D = JSON.parse(m[1]), L = D.len, STEP = D.step, H = D.h.map(v => v / 100), N = H.length;
+    const hAt = x => { const t = clamp(x, 0, (N - 1) * STEP) / STEP; const i = Math.min(N - 2, Math.floor(t)); const f = t - i; return H[i] * (1 - f) + H[i + 1] * f; };
+    const g = new Float64Array(N);
+    for (let i = 0; i < N; i++) { const x = i * STEP, a = clamp(x - 50, 0, L), b = clamp(x + 50, 0, L); g[i] = b > a ? (hAt(b) - hAt(a)) / (b - a) * 100 : 0; }
+    if (K.strecke !== ordner) return;
+    ST = { ordner, name: $("strecke").selectedOptions[0]?.textContent || ordner, L, STEP, N, g };
+    streckeRechnen();
+  } catch (e) { $("st").innerHTML = `<tr><td colspan="3" style="color:var(--warn)">Strecke nicht geladen (${e.message})</td></tr>`; }
+}
+function streckeRechnen() {
+  if (!ST) return;
+  const { L, STEP, N, g } = ST, P = K.p;
+  const zeit = f => {   // Trapez über die Punkte wie im Kern, dann bis L
+    const r = new Float64Array(N); for (let i = 0; i < N; i++) r[i] = f(g[i] / 100);
+    let kum = 0, x = 0;
+    for (let i = 1; i < N; i++) { const st = Math.min(STEP, Math.max(0, L - x)); if (st <= 0) break; const fr = st / STEP; kum += (r[i - 1] + (r[i - 1] + (r[i] - r[i - 1]) * fr)) / 2 * st; x += st; }
+    return P * kum / 1000;
+  };
+  const flach = P * L / 1000;
+  $("st").innerHTML = KURVEN.map(k => { const t = zeit(k.f); return `<tr><td class="${k.id === "neu" ? "neu" : ""}">${k.name}</td><td>${Number.isFinite(t) ? mz(t - flach) : "–"}</td><td>${Number.isFinite(t) ? hms(t) : "–"}</td></tr>`; }).join("")
+    + `<tr class="null"><td>flach</td><td>±0:00</td><td>${hms(flach)}</td></tr>`;
+  $("st-note").textContent = `${nf(L / 1000, 2)} km. Gegenüber derselben Strecke flach, bei Pace flach ${ms(P)}. Gerechnet wie die App mit 100-m-Fenster, ohne Höhenlage, Hitze und Ermüdung.`;
+}
+
+/* ---------- Ablauf ---------- */
+let neuRaf = 0;
+function neu() {
+  merken();
+  if (neuRaf) return;
+  neuRaf = requestAnimationFrame(() => { neuRaf = 0; rechneKurven(); texte(); zeichne(); streckeRechnen(); });
+}
+$("kopieren").addEventListener("click", async () => {
+  const t = parameterText(), b = $("kopieren");
+  try { await navigator.clipboard.writeText(t); b.textContent = "Kopiert ✓"; }
+  catch (_) { prompt("Parameter zum Kopieren:", t); }
+  setTimeout(() => { b.textContent = "Parameter kopieren"; }, 1800);
+});
+rechneKurven(); texte(); zeichne(); streckenListe();
+window.KL = { neuF, feldF, appF, K: () => K, parameterText };   // für Prüfungen
+</script>
+</body>
+</html>
