@@ -50,6 +50,9 @@ button.klein:disabled { color: var(--muted); opacity: 0.55; cursor: default; }
 /* Kurven bleiben oben stehen, solange die Drehräder im Bild sind (Nutzer: „beim Betätigen der Regler die Kurve sehen“) */
 .bedien { gap: 6px; padding: 8px; }   /* Fassung 3: Kurven und die gerade bediente Reihe Drehräder auf einem Bildschirm */
 .tabs button { font-size: 14.5px; padding: 7px 6px; }
+.abl-zeile { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.abl-zeile.wert { text-transform: none; letter-spacing: 0; font: 600 13px/1.2 var(--font-display); font-variant-numeric: tabular-nums; }
+.abl-zeile.wert b { font-weight: 600; margin-right: 6px; }
 .zeile-u { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; min-height: 28px; font-size: 13px; font-variant-numeric: tabular-nums; }
 .zeile-u .m { color: var(--muted); }
 .naht-kurz .ok { color: var(--neu); font-weight: 600; } .naht-kurz .warn { color: var(--warn); font-weight: 600; } .naht-kurz .m { color: var(--muted); }
@@ -125,7 +128,7 @@ tr.null td { color: var(--muted); }
   <section class="panel bedien" aria-label="Kurven und Regler" id="kurven">
     <div class="chips" id="chips"></div>
     <canvas id="c-pace" class="cv" aria-label="Pace je Steigung von −20 bis +15 %. Antippen oder seitlich ziehen zeigt die Werte."></canvas>
-    <div class="kopfzeile"><span class="lbl">Steigung der Kurve · s je Prozentpunkt</span><button type="button" class="klein mini" id="abl">ausblenden</button></div>
+    <div class="kopfzeile"><span class="lbl abl-zeile" id="abl-lbl">Steigung der Kurve · s je Prozentpunkt</span><button type="button" class="klein mini" id="abl">ausblenden</button></div>
     <canvas id="c-steig" class="cv" aria-label="Ableitung: Sekunden je Prozentpunkt Steigung. Ein Sprung hier ist ein Knick in der Kurve darüber."></canvas>
     <div class="seg tabs" role="group" aria-label="Welche Regler"><button type="button" data-tab="ab">Gefälle · g ≤ 0</button><button type="button" data-tab="auf">Steigung · g &gt; 0</button></div>
     <div class="tab" id="tab-ab">
@@ -168,7 +171,7 @@ tr.null td { color: var(--muted); }
     <p class="note" id="st-note">Gegenüber derselben Strecke flach, bei deiner Pace flach. Gerechnet wie die App mit 100-m-Fenster, ohne Höhenlage, Hitze und Ermüdung.</p>
   </section>
 
-  <p class="stand">Pace am Hang zum Ausprobieren: Gefälle nach der Feldformel, Steigung frei, ohne Knick bei 0 %.<br>Stand 18.11.2026 · Fassung 3 · Vergleich mit Marathon 2.24</p>
+  <p class="stand">Pace am Hang zum Ausprobieren: Gefälle nach der Feldformel, Steigung frei, ohne Knick bei 0 %.<br>Stand 18.11.2026 · Fassung 4 · Vergleich mit Marathon 2.24</p>
 </div>
 <script>
 "use strict";
@@ -313,6 +316,7 @@ function bild(cv, art) {
   }
   c.restore();
   // Markierung mit Werten aller sichtbaren Kurven
+  if (art === "steig") ablZeile(null);
   if (MARK.x === null) {
     if (art === "pace") { c.font = "500 11px " + font; c.fillStyle = COL.muted; c.textAlign = "left"; c.textBaseline = "top"; c.fillText("Antippen oder ziehen zeigt die Werte", L0 + 6, T0 + 4); }
     return;
@@ -326,19 +330,17 @@ function bild(cv, art) {
     c.fillStyle = farbe(k.col); c.strokeStyle = COL.surf; c.lineWidth = 2; c.beginPath(); c.arc(px, Y(v), 4, 0, 2 * Math.PI); c.fill(); c.stroke();
     zeilen.push({ t: k.name.replace(" (deine)", "") + "  " + (art === "pace" ? ms(pace, 1) + "  (" + vz(pace - K.p, 1) + ")" : vz(st, 1) + " s je %"), kurz: k.kurz.replace("App ", "") + " " + vz(st, 1), col: farbe(k.col) });
   }
-  if (art === "steig") {   // im flachen Bild nur eine Zeile, damit die Kurven sichtbar bleiben
-    const teile = [{ t: zeilen[0].t, col: COL.ink }].concat(zeilen.slice(1).map(z => ({ t: z.kurz, col: z.col })), [{ t: "s je %", col: COL.muted }]);
-    let fs = 12; c.textBaseline = "middle"; c.textAlign = "left";
-    const breite = () => { c.font = "600 " + fs + "px " + font; return teile.reduce((a, z) => a + c.measureText(z.t).width, 0) + (teile.length - 1) * 8 + 12; };
-    while (breite() > w - L0 - R0 - 4 && fs > 9) fs -= 0.5;
-    const bw = breite(), bx = clamp(X(xm) - bw / 2, L0 + 2, w - R0 - bw - 2), by = T0 + 1;
-    c.fillStyle = COL.surf; c.globalAlpha = 0.94; c.strokeStyle = COL.grid; c.beginPath(); if (c.roundRect) c.roundRect(bx, by, bw, fs + 8, 5); else c.rect(bx, by, bw, fs + 8); c.fill(); c.globalAlpha = 1; c.stroke();
-    let x = bx + 6; for (const z of teile) { c.fillStyle = z.col; c.fillText(z.t, x, by + (fs + 8) / 2); x += c.measureText(z.t).width + 8; }
-    return;
-  }
+  if (art === "steig") { ablZeile(zeilen); return; }   // unteres Bild (Nutzer): Werte über dem Bild, nicht darin
+  // oberes Bild: Kasten dorthin, wo am wenigsten Kurve liegt (bei Gleichstand nah an der Markierung)
   c.font = "600 12px " + font; c.textAlign = "left"; c.textBaseline = "middle";
-  const bw = Math.max(...zeilen.map(z => c.measureText(z.t).width)) + 14, bh = zeilen.length * 16 + 6;
-  const links = X(xm) > (L0 + w - R0) / 2, bx = links ? L0 + 4 : w - R0 - bw - 4, by = T0 + 2;
+  zeilen.forEach(z => { z.t = z.t.replace("Feldformel", "Feld"); });
+  const bw = Math.max(...zeilen.map(z => c.measureText(z.t).width)) + 14, bh = zeilen.length * 16 + 6, by = T0 + 2;
+  const pkt = []; for (const k of sicht) { const v = DAT[k.id][art]; for (let i = 0; i < DAT.xs.length; i += 3) if (Number.isFinite(v[i])) pkt.push(X(DAT.xs[i]), Y(v[i])); }
+  let bx = L0 + 4, best = Infinity;
+  for (let x0 = L0 + 2; x0 <= w - R0 - bw - 2; x0 += 4) {
+    let n = 0; for (let j = 0; j < pkt.length; j += 2) if (pkt[j] > x0 - 4 && pkt[j] < x0 + bw + 4 && pkt[j + 1] > by - 4 && pkt[j + 1] < by + bh + 4) n++;
+    const wert = n * 1000 + Math.abs(x0 + bw / 2 - X(xm)); if (wert < best) { best = wert; bx = x0; }
+  }
   c.fillStyle = COL.surf; c.globalAlpha = 0.94; c.strokeStyle = COL.grid; c.beginPath(); if (c.roundRect) c.roundRect(bx, by, bw, bh, 6); else c.rect(bx, by, bw, bh); c.fill(); c.globalAlpha = 1; c.stroke();
   zeilen.forEach((z, i) => { c.fillStyle = z.col; c.fillText(z.t, bx + 7, by + 11 + i * 16); });
 }
@@ -351,6 +353,14 @@ for (const cv of [$("c-pace"), $("c-steig")]) {
   for (const ev of ["pointerup", "pointercancel"]) cv.addEventListener(ev, () => { MARK.zieh = false; });
 }
 window.addEventListener("resize", zeichne);
+// Tippen außerhalb der Bilder nimmt die Markierung weg (Nutzer)
+document.addEventListener("click", e => { if (MARK.x !== null && !e.target.closest(".cv")) { MARK.x = null; zeichne(); } });
+function ablZeile(zeilen) {
+  const el = $("abl-lbl");
+  if (!zeilen) { if (el.classList.contains("wert")) { el.classList.remove("wert"); el.textContent = "Steigung der Kurve · s je Prozentpunkt"; } return; }
+  el.classList.add("wert");
+  el.innerHTML = `<b style="color:var(--ink)">${zeilen[0].t}</b>` + zeilen.slice(1).map(z => `<b style="color:${z.col}">${z.kurz}</b>`).join("") + '<span style="color:var(--muted)">s je %</span>';
+}
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(zeichne);
 
 /* ---------- Bedienung ---------- */
@@ -440,7 +450,7 @@ function parameterText() {
   const ab = `Gefälle: Pace = P ÷ (${polyText(K.a1, K.a2, K.a3)})${istFeld() ? " (Feldformel)" : ""}`;
   const auf = K.form === "poly" ? `Steigung: Pace = P ÷ (${polyText(b1e(), b2e(), K.b3)})`
     : `Steigung: unser Modell mit Kosten je Höhenmeter ${nf(K.s, 2)} s, ` + (K.w > 0 ? `Übergang bis +${nf(K.w, 2)} % (Steigung gleitet, Versatz ${vz(VERSATZ * K.p, 1)} s bei ${ms(K.p)})` : "ohne Übergang");
-  return `Kurvenlabor (Fassung 3): Pace flach ${ms(K.p)} /km · ${ab} · ${auf}`;
+  return `Kurvenlabor (Fassung 4): Pace flach ${ms(K.p)} /km · ${ab} · ${auf}`;
 }
 function texte() {
   for (const b of document.querySelectorAll("[data-form]")) b.setAttribute("aria-pressed", String(b.dataset.form === K.form));
