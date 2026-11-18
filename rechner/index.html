@@ -137,7 +137,7 @@ tr.aktiv td { color: var(--blue); font-weight: 600; }
     <table><thead><tr><th>Steigung</th><th>hoch</th><th>runter</th><th>beides</th><th>gut&shy;gemacht</th></tr></thead><tbody id="tab"></tbody></table>
     <p class="note"><b>beides</b>: hoch und runter zusammen gegenüber zweimal flach. <b>gutgemacht</b>: welcher Anteil der Zeit, die du bergauf verlierst, bergab wieder hereinkommt. Wie in den Strecken-Apps: Pace an einer Steigung = flache Pace × Faktor; gleichmäßige Anstrengung, ohne Ermüdung, Untergrund und Höhe.</p>
   </section>
-  <p class="stand">Stand 18.11.2026 · Fassung 7</p>
+  <p class="stand">Stand 18.11.2026 · Fassung 8</p>
 </div>
 <script>
 // Modell wie im Kern (hamburg/index.html, Stand Marathon 2.8), mit k = Kosten je Höhenmeter (S.secHm) und f = Faktor auf die Bergab-Kurve.
@@ -193,7 +193,7 @@ let vorschlag = null, KV = null;
 // Kurve: x = Steigung −15 … +15 %, y = Pace je km (oben langsamer, wie das Pace-Diagramm der Strecken-Apps).
 // Bergab blaugrün, bergauf orange wie die Karten; gestrichelt die App, wenn die Schieber davon abweichen;
 // Punkte bei ± eingestellter Steigung, Ringe für die eigenen Zeiten; Antippen oder Wischen zeigt Steigung · Pace (Abweichung).
-const KU = { G0: -25, G1: 15, L0: 38, R0: 18, T0: 28, B0: 20, mark: null, zieh: false };
+const KU = { G0: -15, G1: 15, L0: 38, R0: 18, T0: 28, B0: 20, mark: null, zieh: false };
 const cv = $("kurve"), cx = cv.getContext("2d");
 const farbe = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 function zeichne() {

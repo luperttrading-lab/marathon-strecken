@@ -6,6 +6,13 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.23 (18.11.2026): Pace-Diagramm nur −15 bis +15 %
+
+- **Diagramm** (Nutzer: „nur von −15 bis +15, alles andere ist unrealistisch“): Pace-Diagramm der App und Kurve im Steigungsrechner
+  (Fassung 8) von −15 bis +15 %; oben kein Zusatzplatz mehr (links liegt die Kurve bei −15 % etwa auf der flachen Pace), „bisher“
+  unter der gestrichelten Linie. Gerechnet wird unverändert wie 2.22 (bis −20 %, steiler wie −20 %); der Text unter dem Diagramm
+  nennt weiter die Werte bei −12, −15 und −20 %.
+
 ## 2.22 (18.11.2026): Steiler als −8 % wieder langsamer
 
 - **Pace-Modell** (Nutzer, Formel aus Jidovtseff & De Cock 2026, Int J Perf Anal Sport, https://doi.org/10.1080/24748668.2026.2651537,
