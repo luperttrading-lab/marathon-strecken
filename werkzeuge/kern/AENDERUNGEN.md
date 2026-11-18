@@ -6,6 +6,17 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.24 (18.11.2026): Letzter Prozentpunkt beim Antippen, flüssigeres Ziehen
+
+- **Grenzwert im Pace-Diagramm** (Nutzer: „was der letzte Prozentpunkt langsamer oder schneller macht … zum Ein- und Ausschalten“):
+  Beim Antippen zeigt der Kasten unter Steigung und Pace eine zweite Zeile „letzter Prozentpunkt +x s“ = Pace(g) − Pace(g ∓ 1 %)
+  (bergauf gegenüber 1 % weniger, bergab gegenüber 1 % weniger Gefälle; grau = kostet, blau = bringt). Knopf unter dem Diagramm
+  „Beim Antippen auch: was der letzte Prozentpunkt kostet“ (`pk-grenz`, gemerkt in `pk-grenz`, Vorgabe an). Bei 4:00 /km bergauf
+  +10,2 s (0→1 %) bis +15,5 s (14→15 %), bergab −5,1 s (0→−1 %), um −8 % nahe 0, +8,4 s (−14→−15 %).
+- **Ziehen:** Das Diagramm zeichnet beim Ziehen nur noch sich selbst, höchstens einmal je Bildschirmbild (`requestAnimationFrame`),
+  statt bei jedem Zeigerereignis die ganze Seite (0,14 ms statt 3,4 ms je Bild); der Finger bleibt am Diagramm, auch wenn er es
+  verlässt (`setPointerCapture`).
+
 ## 2.23 (18.11.2026): Pace-Diagramm nur −15 bis +15 %
 
 - **Diagramm** (Nutzer: „nur von −15 bis +15, alles andere ist unrealistisch“): Pace-Diagramm der App und Kurve im Steigungsrechner

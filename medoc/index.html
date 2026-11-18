@@ -153,6 +153,9 @@ canvas { display: block; width: 100%; }
 .ovfarbe:focus-visible { outline: none; }
 .ovfarbe:focus-visible i { outline: 2px solid var(--blue); outline-offset: 2px; }
 #pace-chart { height: 240px; touch-action: pan-y; cursor: crosshair; }
+/* Schalter unter dem Pace-Diagramm (seit 2.24): zweite Zeile im Kästchen, was der letzte Prozentpunkt kostet oder bringt */
+.pk-grenz { justify-self: start; min-height: 0; padding: 5px 10px; font: 600 13px/1.2 var(--font-display); letter-spacing: 0.02em; color: var(--muted); background: none; border: 1px solid var(--edge); border-radius: 8px; }
+.pk-grenz[aria-pressed="true"] { color: var(--blue); border-color: var(--blue); background: var(--blue-soft); }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: var(--muted); }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
 input[type="range"] { width: 100%; accent-color: var(--blue); margin: 0; }
@@ -482,7 +485,7 @@ body.run .close svg { width: 20px; height: 20px; }
 <div class="wrap">
   <header class="top">
     <a class="back" href="../">‹ Alle Strecken</a>
-    <span class="eyebrow">Marathon des Châteaux du Médoc · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.23</button></span>
+    <span class="eyebrow">Marathon des Châteaux du Médoc · Kurs 2026 · <button type="button" class="ver" id="app-ver" aria-label="Nach Update suchen">v2.24</button></span>
     <h1>Médoc</h1>
     <p class="untertitel">Streckenplan und Steigungsprofil</p>
     <p class="sub">Weinmarathon durch die Châteaux des Médoc: die meisten laufen verkleidet, kaum jemand auf Zeit. Amtliches Höhenmodell der IGN (RGE ALTI, 1-m-Raster) entlang der Strecke des Veranstalters, alle 10 m ausgewertet und mit dem Laserscan LiDAR HD bestätigt.</p>
@@ -491,7 +494,7 @@ body.run .close svg { width: 20px; height: 20px; }
   <div class="stage" id="stage">
   <section class="panel readout" aria-label="Anzeige an der aktuellen Stelle">
     <a class="corner back" href="../" aria-label="Alle Strecken"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.23</button></span>
+    <span class="corner r ort run-only"><span id="run-ort"></span><button type="button" class="ver" id="run-ver" aria-label="Nach Update suchen">v2.24</button></span>
     <div class="big">
       <div><div class="lbl">Kilometer</div><div class="val" id="r-km">0,00</div></div>
       <div>
@@ -646,6 +649,7 @@ body.run .close svg { width: 20px; height: 20px; }
       <div class="head"><span class="lbl">So rechnet das Pace-Modell</span><span class="note" id="pk-out"></span></div>
       <span class="note">Bergauf die Energiekosten des Laufens nach Steigung (Minetti u. a. 2002). Bergab bringt ein Höhenmeter die Hälfte dessen, was er bergauf kostet, weil man bergab nicht voll ins Rollen kommt. Steiler als −8 % wird man wieder langsamer, ab etwa −15 % langsamer als im Flachen (Felddaten Trailrennen).</span>
       <canvas id="pace-chart" aria-label="Diagramm: Pace je Steigung, Antippen zeigt die Pace bei dieser Steigung"></canvas>
+      <button type="button" class="pk-grenz" id="pk-grenz" aria-pressed="true">Beim Antippen auch: was der letzte Prozentpunkt kostet</button>
       <span class="note" id="pk-note"></span>
     </div>
     <div class="setting">
@@ -1241,19 +1245,30 @@ function drawPaceChart() {
     c.fillStyle = COL["--blue"]; c.strokeStyle = COL["--surface"]; c.lineWidth = 2; c.beginPath(); c.arc(xm, ym, 5, 0, 2 * Math.PI); c.fill(); c.stroke();
     // feste Kästchenbreite und Ziffern in festen Zellen (tabText), damit beim Wischen nichts wackelt
     const gz = Math.round(gm * 10) / 10, txt = (gz > 0 ? "+" : gz < 0 ? "−" : "±") + nf(Math.abs(gz), 1) + " %  ·  " + mss(pm) + " /km  (" + secs(pm - p0) + ")";
-    c.font = "600 12px " + font; const tw = tabBreite(c, "−00,0 %  ·  0:00 /km  (−000 s)") + 12, bx = clamp(xm - tw / 2, L0, w - R0 - tw);
-    c.fillStyle = COL["--surface"]; c.strokeStyle = COL["--ink"]; c.lineWidth = 1; c.beginPath(); if (c.roundRect) c.roundRect(bx, T0 + 2, tw, 20, 5); else c.rect(bx, T0 + 2, tw, 20); c.fill(); c.stroke();
+    // seit 2.24 (Nutzer: Grenzkosten bzw. Grenznutzen): was der letzte Prozentpunkt bis hierher kostet (+) oder bringt (−), in
+    // Richtung der Steigung gezählt: bergauf von +9 auf +10 %, bergab von −7 auf −8 %
+    const grenz = PK.grenz ? app(gm) - app(gm - (gm >= 0 ? 1 : -1)) : null;
+    const txt2 = grenz === null ? "" : "letzter Prozentpunkt  " + (grenz >= 0.05 ? "+" : grenz <= -0.05 ? "−" : "±") + nf(Math.abs(grenz), 1) + " s";
+    c.font = "600 12px " + font; const tw = tabBreite(c, "−00,0 %  ·  0:00 /km  (−000 s)") + 12, bx = clamp(xm - tw / 2, L0, w - R0 - tw), bh = txt2 ? 36 : 20;
+    c.fillStyle = COL["--surface"]; c.strokeStyle = COL["--ink"]; c.lineWidth = 1; c.beginPath(); if (c.roundRect) c.roundRect(bx, T0 + 2, tw, bh, 5); else c.rect(bx, T0 + 2, tw, bh); c.fill(); c.stroke();
     c.fillStyle = COL["--ink"]; c.textBaseline = "middle"; tabText(c, txt, bx + 6, T0 + 12, "left");
+    if (txt2) { c.fillStyle = grenz > 0 ? COL["--muted"] : COL["--blue"]; tabText(c, txt2, bx + 6, T0 + 28, "left"); }
   }
 }
-// Antippen setzt die Markierung, waagerechtes Wischen zieht sie mit; senkrecht scrollt die Seite weiter (touch-action: pan-y)
+// Antippen setzt die Markierung, waagerechtes Wischen zieht sie mit; senkrecht scrollt die Seite weiter (touch-action: pan-y).
+// Seit 2.24 flüssiger (Nutzer): beim Ziehen nur das Diagramm neu zeichnen, höchstens einmal je Bild (nicht Profil, Karte, Tabellen),
+// und den Finger festhalten, damit die Markierung nicht abreißt, wenn er kurz über den Rand rutscht
+let pkRaf = 0;
+const pkZeichnen = () => { if (!pkRaf) pkRaf = requestAnimationFrame(() => { pkRaf = 0; drawPaceChart(); }); };
 const pkSetze = e => { const r = pk.getBoundingClientRect(), g = PK.G0 + (e.clientX - r.left - PK.L0) / (r.width - PK.L0 - PK.R0) * (PK.G1 - PK.G0);
-  PK.mark = clamp(g, PK.G0, PK.G1); dirty = true; };
-pk.addEventListener("pointerdown", e => { PK.zieh = true; pkSetze(e); });
+  PK.mark = clamp(g, PK.G0, PK.G1); pkZeichnen(); };
+pk.addEventListener("pointerdown", e => { PK.zieh = true; try { pk.setPointerCapture(e.pointerId); } catch (_) {} pkSetze(e); });
 pk.addEventListener("pointermove", e => { if (PK.zieh) pkSetze(e); });
-for (const ev of ["pointerup", "pointercancel", "pointerleave"]) pk.addEventListener(ev, () => { PK.zieh = false; });
-// Tippen außerhalb des Diagramms nimmt die Markierung weg (click, damit Scrollen sie stehen lässt)
-document.addEventListener("click", e => { if (PK.mark !== null && e.target !== pk) { PK.mark = null; dirty = true; } });
+for (const ev of ["pointerup", "pointercancel"]) pk.addEventListener(ev, () => { PK.zieh = false; });
+// Tippen außerhalb des Diagramms nimmt die Markierung weg (click, damit Scrollen sie stehen lässt); der Schalter darunter nicht
+document.addEventListener("click", e => { if (PK.mark !== null && e.target !== pk && e.target.id !== "pk-grenz") { PK.mark = null; pkZeichnen(); } });
+PK.grenz = store.get("pk-grenz", true); $("pk-grenz").setAttribute("aria-pressed", String(PK.grenz));
+$("pk-grenz").addEventListener("click", () => { PK.grenz = !PK.grenz; store.set("pk-grenz", PK.grenz); $("pk-grenz").setAttribute("aria-pressed", String(PK.grenz)); pkZeichnen(); });
 // Text zum Diagramm: Zahlen für die eingestellte Pace und wie viel der Strecke steiler als UNSICHER bergab geht
 function paceChartNote() {
   const p0 = P.p0, at = g => paceFaktor(g / 100) * p0, g = WIN[S.win].g, B = BERGAB, pc = v => nf(v, 0).replace("-", "−") + " %";
@@ -2129,7 +2144,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ap
 if (GAST) setTimeout(() => { window.zeigeInfo && window.zeigeInfo("Geteilter Plan: Start " + uhr(S.start) + " Uhr, Ziel nach " + hms(S.goal), 5); if (RENNTAG === ortsZeit().tag) live(); }, 500);
 </script>
 <script>
-const APP_VERSION = '2.23';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
+const APP_VERSION = '2.24';   // eine Nummer für die ganze App (seit 2.0), setzt werkzeuge/kern/kern.py
 /* Updates, die auf dem iPhone ankommen: Service Worker (Netz zuerst), aktive Prüfung, Meldung danach */
 (() => {
   const updateEl = document.getElementById("update");
