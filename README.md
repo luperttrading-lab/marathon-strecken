@@ -23,7 +23,7 @@ dann liegen alle Strecken in einer App.
 | Osaka (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/osaka/ | [`osaka/`](osaka/) | [`werkzeuge/osaka/`](werkzeuge/osaka/UEBERGABE.md) |
 | Boston (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/boston/ | [`boston/`](boston/) | [`werkzeuge/boston/`](werkzeuge/boston/UEBERGABE.md) |
 | Honolulu, JAL Honolulu Marathon (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/honolulu/ | [`honolulu/`](honolulu/) | [`werkzeuge/honolulu/`](werkzeuge/honolulu/UEBERGABE.md) |
-| Shanghai, Shanghai Marathon (Kurs 2025) | https://luperttrading-lab.github.io/marathon-strecken/shanghai/ | [`shanghai/`](shanghai/) | [`werkzeuge/shanghai/`](werkzeuge/shanghai/UEBERGABE.md) |
+| Shanghai, Shanghai Marathon (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/shanghai/ | [`shanghai/`](shanghai/) | [`werkzeuge/shanghai/`](werkzeuge/shanghai/UEBERGABE.md) |
 | Amsterdam (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/amsterdam/ | [`amsterdam/`](amsterdam/) | [`werkzeuge/amsterdam/`](werkzeuge/amsterdam/UEBERGABE.md) |
 | Rom (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/rom/ | [`rom/`](rom/) | [`werkzeuge/rom/`](werkzeuge/rom/UEBERGABE.md) |
 | Barcelona (Kurs 2026) | https://luperttrading-lab.github.io/marathon-strecken/barcelona/ | [`barcelona/`](barcelona/) | [`werkzeuge/barcelona/`](werkzeuge/barcelona/UEBERGABE.md) |

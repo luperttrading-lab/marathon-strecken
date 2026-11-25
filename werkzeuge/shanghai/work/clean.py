@@ -1,4 +1,4 @@
-# Höhenprofil für die App -> clean.json. Grundlage FABDEM (dgm2025_10m.json bzw. dgm_vergleich.json, 1″-Raster; Wahl in vergleich.py
+# Höhenprofil für die App -> clean.json. Grundlage FABDEM (dgm2026_10m.json bzw. dgm_vergleich.json, 1″-Raster; Wahl in vergleich.py
 # und UEBERGABE.md). Shanghai ist auf der ganzen Strecke flach (Gelände 1–3 m über dem Meer); was FABDEM darüber hinaus zeigt, sind
 # zum größten Teil Reste von Häusern, die das 30-m-Modell nicht ganz herausrechnet (bis 10 m an der Nanjing Lu/Hubei Lu, 4–6 m an
 # der Nanjing Xilu, an der Xizang Nanlu und am Ufer), und Wasser an den Bächen unter den Brücken. Deshalb:

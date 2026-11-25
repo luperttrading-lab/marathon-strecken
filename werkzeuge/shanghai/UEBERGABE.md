@@ -1,7 +1,33 @@
 # Übergabe: Steigungsprofil Shanghai Marathon
 
-Stand 31.10.2026, App-Version **2.2** (erste Fassung, angelegt mit `werkzeuge/kern/kern.py --neu` auf dem gemeinsamen Kern; die
-Hauptsitzung zählt die Nummer beim Veröffentlichen hoch).
+Stand 25.11.2026, App-Version **2.25: Kurs 2026** (erste Fassung 31.10.2026, Version 2.2, angelegt mit `werkzeuge/kern/kern.py --neu`
+auf dem gemeinsamen Kern; die Hauptsitzung zählt die Nummer beim Veröffentlichen hoch).
+
+**2.25 (25.11.2026): Kurs 2026.** Der Veranstalter hat die Pläne 2026 veröffentlicht (Seiten Nr. 3289 „赛事路线图“, 3290 „起点平面图“, 3291
+„终点平面图“, vorher „敬请期待“; Bilder `../dl/bilder/5Inp4haCyXKZme35.jpg`, `BgGqHh8WwOj6DXm4.jpg`, `UwE41cYHn6PpsgNR.jpg`, Liste
+`../dl/api/ev_232_20261125.json`). `plan2026.py` passt den Streckenplan 2026 auf den Plan 2025 ein (gleiche Kartengrundlage, nur
+verkleinert: Maßstab 0,831, Median 1 px Abstand bis km 15), damit `georef.json` weiter gilt; `plan2026.json` enthält die Abbildung und
+die Mitten der Kilometerkreise 1–42 (gefunden wie in `plan.py`). Bis km 17 liegen die Kreise beider Jahre auf 90 m übereinander, ab km 18
+zählt der Plan 2026 rund 0,55 km mehr. Unterschiede, alle im Süden (`linie.py` → `linie2026.json`; `linie2025.json` bleibt zum Vergleich):
+1. **Ufer am Huangpu:** Wende auf der Bansongyuan Lu nicht mehr an der Nanchezhan Lu, sondern 59 m vor der (nördlichen) Kreuzung mit der
+   Miaojiang Lu; zurück bis zur Wangda Lu, Miaojiang Lu nach Norden bis zur Bansongyuan Lu, auf ihr unter der Nanpu-Brücke zur Waima Lu
+   und direkt auf den Uferweg; die Schleife über die Lujiabang Lu fällt weg. Zusammen 0,49 km länger als 2025 (Plan: etwa 0,55 km).
+   Vorsicht: `kr("苗江路", "半淞园路")` ohne Ortsangabe findet eine falsche Stelle an der Nanchezhan Lu; deshalb mit `ll(31.20751, 121.49396)`.
+2. **Stichstraße bei km 37** (Plan „Fenggu Rd.“, OSM Ruijiang Lu) etwa halb so lang gezeichnet wie 2025: Wende am Knoten 247 m statt
+   an der Yunjin Lu (464 m).
+3. **Ziel auf der Zhongshan Nan Er Lu** statt im Park: laut Zielplan 2026 („终点平面示意图“, eingepasst an Stadion, Hallenstadion und
+   Schwimmhalle, Restfehler 5–6 m) an Tor 12 vorbei bis vor Tor 13 (169 m hinter Tor 12); danach führt der Weg der Läufer über die Caoxi
+   Lu in den Park. 2025 ging es durch Tor 12 379 m durch den Park.
+4. Die **Wende auf der Longteng Dadao** ergibt sich wie bisher aus der Länge: 6027 m südlich der Ruining Lu (2025: 5973 m), km 32,51.
+   Die Südspitzen beider Pläne liegen 45 m auseinander, die Wende ist also praktisch geblieben; der Plan setzt den Kreis „33“ an die
+   Spitze (Kreise von Hand, wie 2025 „32“).
+Abgleich (`marken.py`, 13 Kreise an erkennbaren Stellen): Median +0,17 km, |Abweichung| im Median 0,24 km, höchstens 0,64 km (km 16,
+wie 2025). Brücken unverändert sechs (Bäche jetzt nach der Reihenfolge benannt, `build.py`), Höhen wie bisher (FABDEM, `clean.py`).
+**Verpflegung 2026** laut Plan: Energie an 12,5, 15, 17,5, 25, 27,5, 32,5, 35, 37,5 und 40 km (km 30 nur noch Getränke). **Schlusszeiten**
+laut Plan 2026: km 5 8:10 (2025 8:05), sonst wie unten. **Startzeiten je Bereich 2026 noch nicht veröffentlicht** (Stand 25.11.2026;
+2025 kam die Mitteilung acht Tage vor dem Lauf): dann `WELLEN` in `app.py`. Kette wie unten, danach `app.py`, `tiles_rand.py shanghai 2`,
+`karten_osm.py shanghai` (lud 36 fehlende Kacheln nach), `kern.py --version 2.25 --schreiben`; Startseite (Karte: Kurs 2026, Mini-Profil,
+Höhe 1–12 m) und README von Hand. Der Text unten beschreibt den Kurs 2025, wo er abweicht.
 Adresse nach dem Hochladen: https://luperttrading-lab.github.io/marathon-strecken/shanghai/.
 
 Die App hat den gemeinsamen Kern aus `hamburg/` und eigene Felder (Texte, `const D`, Speicherschlüssel `sha-…`, Service-Worker-Cache
@@ -10,7 +36,7 @@ Symbol. Alle Entscheidungen zur Bedienung und zum Aussehen stehen in [`../hambur
 README und `version.json` sind noch nicht angepasst (Hauptsitzung).
 
 **Wichtigste Unterschiede zu den anderen Strecken:**
-1. **Keine GPS-Datei und noch kein Plan 2026.** Die Linie folgt dem Streckenplan 2025 des Veranstalters (gleich 2024) auf den Straßen
+1. **Keine GPS-Datei.** Die Linie folgt seit 2.25 dem Streckenplan 2026 (bis 2.24 dem Plan 2025, gleich 2024) auf den Straßen
    von OpenStreetMap; die Wendepunkte zeigt der Plan nur ungefähr (Daten 4). Kilometer auf etwa ±0,3 km.
 2. **Kein Laser- oder amtliches Höhenmodell.** FABDEM (30 m), kräftig geglättet, weil die Stadt flach ist und das Modell sonst Hausreste
    als Hügel zeigt. Die einzigen spürbaren Steigungen sind sechs Brücken über Bäche; ihre Fahrbahn kennt kein freies Modell, sie ist

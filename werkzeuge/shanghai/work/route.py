@@ -2,7 +2,7 @@
 import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import json, numpy as np
 from common import official
-r = json.load(open("dgm2025_10m.json"))
+r = json.load(open("dgm2026_10m.json"))
 s = np.array([x[0] for x in r]); la = np.array([x[1] for x in r]); lo = np.array([x[2] for x in r])
 k = official(s)
 grid = np.append(np.arange(0, 42195, 50.0), 42195.0)

@@ -6,6 +6,12 @@ und welche Felder jede Strecke hat, steht im Kopf von [`kern.py`](kern.py) und i
 [`../hamburg/UEBERGABE.md`](../hamburg/UEBERGABE.md) („Gemeinsamer Kern“). Ältere Stände (bis Hamburg 1.82, Startseite 1.40)
 stehen in den Köpfen der `UEBERGABE.md` je Strecke.
 
+## 2.25 (25.11.2026): Shanghai Kurs 2026 (Kern unverändert)
+
+- Nur Daten und Texte der Strecke Shanghai (Kurs 2026 nach den Plänen des Veranstalters: Ufer am Huangpu neu, Stichstraße bei km 37
+  kürzer, Ziel auf der Zhongshan Nan Er Lu), Kartenbilder, `karten.json`, Startseite. Einzelheiten im Kopf von
+  [`../shanghai/UEBERGABE.md`](../shanghai/UEBERGABE.md).
+
 ## 2.24 (18.11.2026): Letzter Prozentpunkt beim Antippen, flüssigeres Ziehen
 
 - **Grenzwert im Pace-Diagramm** (Nutzer: „was der letzte Prozentpunkt langsamer oder schneller macht … zum Ein- und Ausschalten“):

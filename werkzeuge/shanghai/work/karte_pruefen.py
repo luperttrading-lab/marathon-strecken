@@ -1,19 +1,21 @@
 # Nur zur Kontrolle: Ausschnitt mit den OSM-Straßen (chinesische Namen), der eingepassten blauen Linie des Plans (hellblau), den
 # Kilometerkreisen (rot) und – falls vorhanden – der gebauten Linie (rot) als Bild.
-# Aufruf: python3 karte_pruefen.py <lat> <lon> <Breite in m> <Ausgabe.png>
+# Aufruf: python3 karte_pruefen.py <lat> <lon> <Breite in m> <Ausgabe.png> [2026]
+# Mit „2026“: blaue Linie des Plans 2026 (../dl/plan2026_blau.npy, plan2026.py), Kreise aus plan2026.json (falls schon da), Linie linie2026.json.
 import json, os, sys
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from geo import utm, osm
 la, lo, B, aus = float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]), sys.argv[4]
+JAHR = sys.argv[5] if len(sys.argv) > 5 else "2025"
 cx, cy = (float(v) for v in utm(la, lo)); sc = 1400 / B
-M = np.array(json.load(open("georef.json"))["M"]); P = json.load(open("plan2025.json"))
+M = np.array(json.load(open("georef.json"))["M"]); P = json.load(open(f"plan{JAHR}.json"))
 def ab(p): return np.asarray(p, float) @ M[:2] + M[2]
 im = Image.new("RGB", (1400, 1400), (255, 255, 255)); d = ImageDraw.Draw(im)
 f = ImageFont.truetype("/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc", 15)
 def px(q): q = np.atleast_2d(q); return list(zip((q[:, 0] - cx) * sc + 700, (cy - q[:, 1]) * sc + 700))
 N, W, _ = osm()
-BL = np.load("../dl/plan_blau.npy").astype(float); X = ab(BL)
+BL = np.load("../dl/plan_blau.npy" if JAHR == "2025" else "../dl/plan2026_blau.npy").astype(float); X = ab(BL)
 sel = (np.abs(X[:, 0] - cx) < B * 0.6) & (np.abs(X[:, 1] - cy) < B * 0.6)
 for p in px(X[sel]): d.point(p, fill=(140, 190, 255))
 texte = []
@@ -31,8 +33,8 @@ for wid, (tg, refs) in W.items():
     d.line(px(q), fill=col, width=3 if hw in ("trunk", "primary", "secondary") else 1)
     if tg.get("name"): texte.append((px(q[len(q) // 2])[0], tg["name"], col))
 for (u, v), t, col in texte: d.text((u + 2, v + 2), t, fill=(60, 60, 60) if col == (120, 120, 120) else col, font=f)
-for k, v in P["km"].items():
+for k, v in P.get("km", {}).items():
     u, w = px(ab(v[:2]))[0]; d.ellipse((u - 5, w - 5, u + 5, w + 5), outline=(220, 0, 0), width=2); d.text((u + 6, w - 8), k, fill=(220, 0, 0), font=f)
-if os.path.exists("linie2025.json"):
-    L = json.load(open("linie2025.json")); ll = np.array(L["pts"]); x, y = utm(ll[:, 0], ll[:, 1]); d.line(px(np.c_[x, y]), fill=(230, 30, 30), width=2)
+if os.path.exists(f"linie{JAHR}.json"):
+    L = json.load(open(f"linie{JAHR}.json")); ll = np.array(L["pts"]); x, y = utm(ll[:, 0], ll[:, 1]); d.line(px(np.c_[x, y]), fill=(230, 30, 30), width=2)
 im.save(aus); print(aus)

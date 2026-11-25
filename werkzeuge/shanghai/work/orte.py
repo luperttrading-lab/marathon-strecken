@@ -4,7 +4,7 @@
 # Kennungen in den Kacheln, die vollständigen Flächen kommen einzeln über die OSM-API (api.openstreetmap.org/api/0.6/relation/<id>/full,
 # eine Abfrage je Sekunde, ../dl/orte/). Muster: werkzeuge/stockholm/work/orte.py. Viele Straßen der Strecke sind selbst die Grenze:
 # je 40 m links und rechts nachsehen, bei zwei Vierteln „links / rechts“.
-# -> orte2025.json [Linienmeter, Name, Bezirk in der Mitte, Straßenviertel in der Mitte]
+# -> orte2026.json [Linienmeter, Name, Bezirk in der Mitte, Straßenviertel in der Mitte]
 import glob, json, os, time, urllib.request, xml.etree.ElementTree as ET
 import numpy as np
 from matplotlib.path import Path
@@ -45,7 +45,7 @@ for rid, tg in sorted(ids.items()):
     I = [Path(np.array([kn[k] for k in ring])) for ring in ring_zusammen(innen)]
     if not A: print("  keine Fläche:", tg.get("name")); continue
     FL.append((tg.get("name"), tg.get("admin_level"), A, I))
-g = json.load(open("linie2025.json")); d = np.array(g["d"]); P = np.array([p[:2] for p in g["pts"]])
+g = json.load(open("linie2026.json")); d = np.array(g["d"]); P = np.array([p[:2] for p in g["pts"]])
 # Viele Straßen der Strecke sind selbst die Grenze (Marathonos zwischen Gerakas und Glyka Nera, Mesogeion zwischen Chalandri und
 # Cholargos): je 40 m links und rechts der Linie nachsehen; liegen beide Seiten in verschiedenen Orten, heißt die Stelle „links / rechts“.
 def wo(la, lo):
@@ -66,7 +66,7 @@ for s in np.arange(0, d[-1], 100.0):
     mitte = viertel(einheit, dimos)
     namen = [x for x in dict.fromkeys(seiten) if x] or [mitte]
     out.append([float(s), " / ".join(namen), dimos, einheit])
-json.dump(out, open("orte2025.json", "w"), ensure_ascii=False)
+json.dump(out, open("orte2026.json", "w"), ensure_ascii=False)
 from itertools import groupby
 from common import official
 for key, grp in groupby(out, key=lambda o: o[1]):

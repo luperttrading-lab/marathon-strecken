@@ -1,19 +1,25 @@
-# Linie der Strecke aus dem Streckenplan 2025 des Veranstalters und OSM -> linie2025.json {"pts": [[lat, lon], …], "d": [laufende Länge in
+# Linie der Strecke aus dem Streckenplan 2026 des Veranstalters und OSM -> linie2026.json {"pts": [[lat, lon], …], "d": [laufende Länge in
 # m, UTM 51N], "info": [["osm", Weg] oder ["plan", 0] je Punkt], "wegpunkte": [[Name, Linienmeter], …], "wende_longteng": Meter}.
 #
-# Eine GPX-Datei gibt der Veranstalter nicht heraus; der Plan für 2026 ist noch nicht veröffentlicht (Stand 31.10.2026: „敬请期待“). Die
-# Linie folgt dem Plan 2025 (gleich dem Plan 2024; die Wettkampfordnung 2026 nennt dieselben Orte, siehe UEBERGABE.md). Der Plan ist
+# Eine GPX-Datei gibt der Veranstalter nicht heraus. Seit Marathon 2.25 (25.11.2026) folgt die Linie dem Plan 2026 (Seite „赛事路线图“
+# Nr. 3289, plan2026.py); bis dahin dem Plan 2025 (linie2025.json, Stand der Datei in Git vor 2.25). Unterschiede 2026 gegen 2025, alle im
+# Süden: Wende auf der Bansongyuan Lu weiter nordöstlich (kurz vor der Miaojiang Lu statt an der Nanchezhan Lu), am Nordende ohne die
+# Schleife über die Lujiabang Lu (Miaojiang Lu, Bansongyuan Lu, Waima Lu direkt zum Uferweg),
+# die Stichstraße bei km 37 kürzer, dafür die Wende auf der Longteng Dadao weiter südlich (Plan: kurz hinter km 33 statt km 32). Der Rest
+# ist gleich. Der Plan ist
 # eine stark vereinfachte Zeichnung (eingepasst liegt die Linie bis 450 m neben den Straßen, georef.py); er dient deshalb nur für die
 # Reihenfolge der Straßen, die er beschriftet. Die Linie selbst besteht aus OSM-Wegen:
 #   Wegpunkte sind die Kreuzungen, an denen die Strecke laut Plan abbiegt (OSM-Knoten, an dem sich die Wege beider Namen treffen),
 #   dazwischen der kürzeste Weg im OSM-Netz, wobei Wege mit dem Namen der Straße, auf der das Stück laut Plan läuft, einfach zählen,
 #   Wege ohne Namen 1,3-fach, Fuß- und Radwege 2-fach (am Ufer einfach) und alle anderen benannten Straßen 4-fach. Hochstraßen (Namen
 #   mit 高架), große Brücken (大桥: Nanpu, Lupu), Tunnel, Rampen und highway=motorway bleiben draußen.
-# Wendepunkte (der Plan zeigt sie nur ungefähr): Bansongyuan Lu an der Kreuzung Nanchezhan Lu; die Stichstraße bei km 37 (im Plan
-# „Fenggu Rd.“, in OSM Ruijiang Lu) an der Kreuzung Yunjin Lu; die Wende auf der Longteng Dadao im Süden so, dass die Linie 42 195 m
-# lang wird (der Plan zeigt sie kurz hinter km 32; Kontrolle in marken.py).
+# Wendepunkte (der Plan zeigt sie nur ungefähr): Bansongyuan Lu 50 m vor der Kreuzung mit der Miaojiang Lu (im Plan 2026 knapp davor);
+# die Stichstraße bei km 37 (im Plan „Fenggu Rd.“, in OSM Ruijiang Lu) nach rund 250 m (2026 halb so lang gezeichnet wie 2025, als sie
+# bis zur Yunjin Lu ging); die Wende auf der Longteng Dadao im Süden so, dass die Linie 42 195 m lang wird (der Plan 2026 zeigt sie kurz
+# hinter km 33).
 # Start: Zhongshan Dongyi Lu zwischen Fuzhou Lu und Hankou Lu, ein Drittel des Wegs von der Fuzhou Lu (Startplan „起点示意图“ 2025).
-# Ziel: vom Tor 12 an der Zhongshan Nan'er Lu durch den Xujiahui-Sportpark bis zur Ziellinie südlich der Sponsorenfläche zwischen
+# Ziel (2026): auf der Zhongshan Nan'er Lu am Tor 12 vorbei bis zur Ziellinie vor dem Tor 13 (Zielplan 2026). Bis 2025: vom Tor 12 durch
+# den Xujiahui-Sportpark bis zur Ziellinie südlich der Sponsorenfläche zwischen
 # Hallenstadion und Stadion, gezeichnet nach dem Zielplan „终点示意图“ 2025 (eingepasst an Stadion, Hallenstadion und Schwimmhalle).
 import json, math, heapq, sys
 import numpy as np
@@ -97,12 +103,11 @@ STRECKE = [
     ("Xizang Nanlu/Gaoxiong Lu", kr("西藏南路", "高雄路"), {"高雄路"}),
     ("Gaoxiong Lu/Zhizaoju Lu", kr("高雄路", "制造局路"), {"制造局路"}),
     ("Zhizaoju Lu/Longhua Donglu", kr("制造局路", "龙华东路"), {"龙华东路", "半淞园路"}),
-    ("Wende Bansongyuan Lu", kr("半淞园路", "南车站路"), {"半淞园路"}),
+    ("Wende Bansongyuan Lu", None, {"半淞园路"}),                     # Knoten unten: 50 m vor der Miaojiang Lu
     ("Bansongyuan Lu/Wangda Lu", kr("半淞园路", "望达路"), {"望达路"}),
-    ("Wangda Lu/Miaojiang Lu", kr("望达路", "苗江路"), {"苗江路", "外马路"}),
-    ("Waima Lu/Bansongyuan Lu", kr("外马路", "半淞园路"), {"半淞园路"}),
-    ("Bansongyuan Lu/Lujiabang Lu", kr("半淞园路", "陆家浜路"), {"陆家浜路"}),
-    ("Lujiabang Lu/Waima Lu", kr("陆家浜路", "外马路"), {"外马路"}),
+    ("Wangda Lu/Miaojiang Lu", kr("望达路", "苗江路"), {"苗江路"}),
+    ("Miaojiang Lu/Bansongyuan Lu", kr("苗江路", "半淞园路", ll(31.20751, 121.49396)), {"半淞园路"}),   # die nördliche Kreuzung, nicht am Nanchezhan Lu
+    ("Bansongyuan Lu/Waima Lu", kr("半淞园路", "外马路"), {"外马路"}),
     ("Uferweg (Nanpu-Brücke)", knoten_bei(ll(31.20667, 121.49770), art=FUSS), set()),
     ("Uferweg (Huayuangang Lu)", knoten_bei(ll(31.20366, 121.49516), art=FUSS), {"苗江路"}),
     ("Miaojiang Lu/Longhua Donglu", kr("苗江路", "龙华东路"), {"龙华东路"}),
@@ -112,18 +117,33 @@ STRECKE = [
     ("Ruining Lu/Longteng Dadao", kr("瑞宁路", "龙腾大道"), {"龙腾大道"}),
     ("Wende Longteng Dadao", None, {"龙腾大道"}),
     ("Longteng Dadao/Ruijiang Lu", kr("龙腾大道", "瑞江路"), {"瑞江路"}),
-    ("Wende Ruijiang Lu", kr("瑞江路", "云锦路"), {"瑞江路"}),
-    ("Ruijiang Lu/Longteng Dadao", None, {"龙腾大道"}),
+    ("Wende Ruijiang Lu", None, {"瑞江路"}),                         # Knoten unten: rund 250 m in die Stichstraße
+    ("Ruijiang Lu/Longteng Dadao", None, {"龙腾大道"}),              # zurück an dieselbe Kreuzung
     ("Longteng Dadao/Longheng Donglu", kr("龙腾大道", "龙恒东路"), {"龙恒东路"}),
     ("Longheng Donglu/Wanping Nanlu", kr("龙恒东路", "宛平南路"), {"宛平南路", "云锦路"}),
     ("Wanping Nanlu/Longhua Lu", kr("宛平南路", "龙华路"), {"龙华路"}),
     ("Longhua Lu/Longhua Xilu", kr("龙华路", "龙华西路"), {"龙华西路"}),
     ("Longhua Xilu/Zhongshan Nan'erlu", kr("龙华西路", "中山南二路"), {"中山南二路"}),
 ]
-UFER = {"Lujiabang Lu/Waima Lu", "Uferweg (Nanpu-Brücke)", "Uferweg (Huayuangang Lu)"}
-STRECKE[37] = (STRECKE[37][0], STRECKE[35][1], STRECKE[37][2])        # zurück an dieselbe Kreuzung
-# Ziel nach dem Zielplan (Vorschaubild 1500 px breit): eingepasst an drei Bauten (Mitte im Plan von Hand, Schwerpunkt in OSM)
-ZP = {"上海体育场": (785, 705), "上海体育馆": (388, 710), "上海游泳馆": (640, 980)}
+UFER = {"Bansongyuan Lu/Waima Lu", "Uferweg (Nanpu-Brücke)", "Uferweg (Huayuangang Lu)"}
+I = {n: i for i, (n, _, _) in enumerate(STRECKE)}
+# Wende Bansongyuan Lu: auf dem Weg entlang der Bansongyuan Lu der Knoten 50 m vor der Kreuzung mit der Miaojiang Lu
+_a, _b = STRECKE[I["Zhizaoju Lu/Longhua Donglu"]][1], STRECKE[I["Miaojiang Lu/Bansongyuan Lu"]][1]
+_t = dijkstra(_a, _b, {"半淞园路", "龙华东路"}); _s = laenge(np.array([XY[k] for k in _t]))
+_i = int(np.argmin(np.abs(_s - (_s[-1] - 50.0)))); _w = _t[_i]
+STRECKE[I["Wende Bansongyuan Lu"]] = ("Wende Bansongyuan Lu", _w, {"半淞园路"})
+print(f"Wende Bansongyuan Lu {_s[-1] - _s[_i]:.0f} m vor der Kreuzung mit der Miaojiang Lu")
+# Stichstraße bei km 37 (im Plan „Fenggu Rd.“, in OSM Ruijiang Lu): 2026 halb so lang gezeichnet wie 2025 (dort bis zur Yunjin Lu, 464 m);
+# Wende am Knoten nächst 250 m
+_a = STRECKE[I["Longteng Dadao/Ruijiang Lu"]][1]
+_t = dijkstra(_a, kr("瑞江路", "云锦路"), {"瑞江路"}); _s = laenge(np.array([XY[k] for k in _t])); _i = int(np.argmin(np.abs(_s - 250.0)))
+STRECKE[I["Wende Ruijiang Lu"]] = ("Wende Ruijiang Lu", _t[_i], {"瑞江路"})
+STRECKE[I["Ruijiang Lu/Longteng Dadao"]] = ("Ruijiang Lu/Longteng Dadao", _a, {"龙腾大道"})
+print(f"Wende Ruijiang Lu {_s[_i]:.0f} m von der Longteng Dadao")
+# Ziel nach dem Zielplan 2026 („终点平面示意图“, ../dl/bilder/UwE41cYHn6PpsgNR.jpg, Vorschaubild 1500 px breit): eingepasst an drei Bauten
+# (Mitte im Plan von Hand, Schwerpunkt in OSM). Die Ziellinie liegt 2026 auf der Zhongshan Nan Er Lu zwischen Tor 12 und Tor 13 (beim
+# Sports Complex); bis 2025 ging es durch Tor 12 in den Park bis zwischen Stadion und Hallenstadion (Zielplan 2025, 379 m im Park).
+ZP = {"上海体育场": (789, 733), "上海体育馆": (378, 733), "上海游泳馆": (627, 1014)}
 def schwerpunkt(name):
     for tg, refs in W.values():
         if tg.get("name") == name and len(refs) > 3:
@@ -135,17 +155,21 @@ kz = (np.conj(za) @ zb) / (np.conj(za) @ za)
 def zab(p):
     p = np.asarray(p, float) - ca; z = kz * (p[..., 0] - 1j * p[..., 1]); return np.stack([z.real, z.imag], -1) + cb
 print("Zielplan eingepasst: Maßstab", round(abs(kz), 3), "m/px, Restfehler", np.round(np.hypot(*(zab(zs) - zd).T), 1).tolist(), "m")
-ZIELWEG = zab([(517, 1103), (563, 1008), (610, 913), (623, 869), (636, 825), (630, 800), (597, 778), (563, 772), (530, 770)])
-STRECKE.append(("Tor 12", knoten_bei(ZIELWEG[0], {"中山南二路"}), set()))
+TOR12, ZIELP = zab([(496, 1087), (324, 994)])
+ZK = knoten_bei(ZIELP, {"中山南二路"})
+print(f"Ziel: Knoten {np.hypot(*(XY[ZK] - ZIELP)):.0f} m neben der Ziellinie des Plans, {np.hypot(*(ZIELP - TOR12)):.0f} m hinter Tor 12")
+STRECKE.append(("Tor 12", knoten_bei(TOR12, {"中山南二路"}), {"中山南二路"}))
+STRECKE.append(("Ziel", ZK, set()))
+ZIELWEG = []        # 2025: gezeichnetes Stück im Park nach dem Zielplan
 # Longteng Dadao nach Süden als Kette von Knoten (für die Wende)
-A = STRECKE[33][1]
+A = STRECKE[I["Ruining Lu/Longteng Dadao"]][1]
 sued = max((r for tg, refs in W.values() if tg.get("name") == "龙腾大道" and tg.get("highway") in STRASSE for r in refs if r in XY),
            key=lambda r: -XY[r][1])
 LT = dijkstra(A, sued, {"龙腾大道"}); LTs = laenge(np.array([XY[k] for k in LT]))
 assert all(W[EDGE[(u, v)][1]][0].get("highway") not in FUSS for u, v in zip(LT[:-1], LT[1:])), "Longteng Dadao über einen Radweg"
 def bauen(s_wende):
     k = int(np.searchsorted(LTs, s_wende, side="right")) - 1; k = min(max(k, 0), len(LT) - 2)
-    STRECKE[34] = ("Wende Longteng Dadao", LT[k], {"龙腾大道"})
+    STRECKE[I["Wende Longteng Dadao"]] = ("Wende Longteng Dadao", LT[k], {"龙腾大道"})
     # genaue Wende zwischen zwei Knoten: das Reststück hin und zurück
     f = (s_wende - LTs[k]) / (LTs[k + 1] - LTs[k]); spitze = XY[LT[k]] + (XY[LT[k + 1]] - XY[LT[k]]) * f
     wid_lt = int(EDGE[(LT[k], LT[k + 1])][1])
@@ -170,7 +194,7 @@ for it in range(8):
 pts, info, d, marken = bauen(s)
 lat, lon = wgs(pts[:, 0], pts[:, 1])
 json.dump({"pts": np.c_[lat, lon].round(7).tolist(), "d": d.round(2).tolist(), "info": info,
-           "wegpunkte": [[n, round(x, 1)] for n, x in marken], "wende_longteng": round(s, 1)}, open("linie2025.json", "w"), ensure_ascii=False)
+           "wegpunkte": [[n, round(x, 1)] for n, x in marken], "wende_longteng": round(s, 1)}, open("linie2026.json", "w"), ensure_ascii=False)
 print(f"Linie {d[-1]:.1f} m, {len(pts)} Punkte, Wende auf der Longteng Dadao {s:.0f} m südlich der Ruining Lu")
 vor = 0.0
 for n, x in marken:

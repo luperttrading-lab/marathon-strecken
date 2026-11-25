@@ -4,6 +4,6 @@
 import json, os
 import numpy as np
 _D = os.path.dirname(os.path.abspath(__file__))
-GL = json.load(open(os.path.join(_D, "linie2025.json")))["d"][-1]
+GL = json.load(open(os.path.join(_D, "linie2026.json")))["d"][-1]
 def official(s): return np.asarray(s, float) * (42195.0 / GL)
 def gpx_of(k): return np.asarray(k, float) * (GL / 42195.0)

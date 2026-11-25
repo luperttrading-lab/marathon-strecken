@@ -6,7 +6,7 @@ import json
 import numpy as np
 from namen import name
 o = json.load(open("../dl/osm_netz.json")); WG = o["ways"]
-g = json.load(open("linie2025.json")); d = np.array(g["d"]); info = g["info"]
+g = json.load(open("linie2026.json")); d = np.array(g["d"]); info = g["info"]
 ss = np.arange(0, d[-1], 10.0)
 out = []
 for s in ss:

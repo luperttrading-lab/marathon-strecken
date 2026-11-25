@@ -10,16 +10,16 @@ grid = np.arange(0, 42200 + 1, STEP, dtype=float)
 hg = np.interp(np.minimum(grid, L), k, hc)
 hm = hg.copy()                                   # gleitender Median über 3 Punkte (30 m)
 for i in range(1, len(hg) - 1): hm[i] = np.median(hg[i-1:i+2])
-# Straßen aus den OSM-Wegen der Linie (strassen.json, alle 10 m, Pinyin aus namen.py), Straßenviertel (Jiedao) aus orte2025.json (alle
+# Straßen aus den OSM-Wegen der Linie (strassen.json, alle 10 m, Pinyin aus namen.py), Straßenviertel (Jiedao) aus orte2026.json (alle
 # 100 m). Unbekannte und kurze Stücke unter 80 m (Kreuzungen) übernehmen den Namen davor; Viertel unter 300 m dem Vorgänger
-# zugeschlagen und auf den nächsten Straßenwechsel gelegt. Ohne Namen in OSM: der Uferweg zwischen Lujiabang Lu und Miaojiang Lu
+# zugeschlagen und auf den nächsten Straßenwechsel gelegt. Ohne Namen in OSM: der Uferweg zwischen Waima Lu und Miaojiang Lu
 # (im Plan „黄浦滨江步道 Huangpu Riverside“) heißt „Huangpu-Uferweg“, das gezeichnete Stück im Park „Xujiahui-Sportpark“.
-st = json.load(open("strassen.json")); orte = json.load(open("orte2025.json"))
+st = json.load(open("strassen.json")); orte = json.load(open("orte2026.json"))
 gx = gpx_of(np.minimum(grid, L))
 def strasse(x):
     o = st[min(len(st) - 1, int(round(x / 10)))]
     if o[6] == "plan": return "Xujiahui-Sportpark"
-    if not o[2] and o[6] in ("footway", "path") and 20000 < float(official(x)) < 21500: return "Huangpu-Uferweg"
+    if not o[2] and o[6] in ("footway", "path") and 20500 < float(official(x)) < 22700: return "Huangpu-Uferweg"
     return o[2] or ""
 roads = [strasse(x) for x in gx]
 qs = [orte[min(len(orte) - 1, int(round(x / 100)))][1] for x in gx]
@@ -48,24 +48,24 @@ segs[0][0] = 0
 # geschätzte Stücke (schraffiert): die Brückendecks (clean.py)
 # Gewässer unter den Brücken aus OSM (waterway=river höchstens 40 m neben der Brückenmitte; der Longhua Gang ist an der Longteng Dadao
 # dort ohne Namen eingetragen, 220 m weiter mit): Longhua Gang (龙华港), Zhangjiatang Gang (张家塘港), Chunshen Gang (春申港)
-GEWAESSER = [(26000, 27500, "Longhua Gang"), (30000, 30700, "Zhangjiatang Gang"), (30700, 31500, "Chunshen Gang"),
-             (32500, 33200, "Chunshen Gang"), (33200, 34000, "Zhangjiatang Gang"), (38000, 39000, "Longhua Gang")]
+# Reihenfolge auf der Strecke (seit 2.25 nach der Reihenfolge statt nach km, weil sich die km mit dem Kurs 2026 verschoben haben)
+GEWAESSER = ["Longhua Gang", "Zhangjiatang Gang", "Chunshen Gang", "Chunshen Gang", "Zhangjiatang Gang", "Longhua Gang"]
+assert len(c["regions"]) == len(GEWAESSER), len(c["regions"])
 bridges = []
-for r in c["regions"]:
-    m = (r["a"] + r["b"]) / 2; gw = [n for a, b, n in GEWAESSER if a <= m < b][0]
+for r, gw in zip(sorted(c["regions"], key=lambda q: q["a"]), GEWAESSER):
     bridges.append({"a": round(r["a"]), "b": round(r["b"]), "name": f"{r['name']} über den {gw}", "kind": r["kind"]})
 bridges.sort(key=lambda x: x["a"])
 # Getränke laut Wettkampfordnung 2026 („补给站“): alle 5 km (5–40) Getränke und Wasser („饮料/饮水“), dazwischen alle 5 km (7,5–37,5)
-# Wasser und Schwämme („饮水/用水“), an der km-Angabe. Energie (Riegel o. Ä.) nennt die Ordnung 2026 nicht; der Plan 2025 zeigt sie an
-# 12,5, 15, 17,5, 25, 27,5, 30, 32,5, 35, 37,5 und 40 km: dort „Verpflegung“ (food), sonst „Getränke“ bzw. „Wasser“ (water).
+# Wasser und Schwämme („饮水/用水“), an der km-Angabe. Energie (Riegel o. Ä.) nennt die Ordnung 2026 nicht; der Plan 2026 zeigt sie an
+# 12,5, 15, 17,5, 25, 27,5, 32,5, 35, 37,5 und 40 km (2025 auch an km 30): dort „Verpflegung“ (food), sonst „Getränke“ bzw. „Wasser“.
 def kmtext(x): return f"{x:.1f}".replace(".", ",").replace(",0", "")
-ENERGIE_2025 = {12.5, 15, 17.5, 25, 27.5, 30, 32.5, 35, 37.5, 40}
+ENERGIE_2026 = {12.5, 15, 17.5, 25, 27.5, 32.5, 35, 37.5, 40}
 marks = []
 for i in range(15):
     km = 5 + 2.5 * i; getraenke = i % 2 == 0
     inhalt = "Getränke und Wasser" if getraenke else "Wasser und Schwämme"
-    if km in ENERGIE_2025:
-        marks.append({"k": round(km * 1000), "s": "Verpflegung", "c": "food", "n": f"Verpflegung km {kmtext(km)} ({inhalt}; Energie laut Plan 2025)"})
+    if km in ENERGIE_2026:
+        marks.append({"k": round(km * 1000), "s": "Verpflegung", "c": "food", "n": f"Verpflegung km {kmtext(km)} ({inhalt}; Energie laut Plan 2026)"})
     else:
         marks.append({"k": round(km * 1000), "s": "Getränke" if getraenke else "Wasser", "c": "water", "n": f"{'Getränke' if getraenke else 'Wasser'} km {kmtext(km)} ({inhalt})"})
 marks.append({"k": 21098, "s": "Halbmarathon", "c": "half", "n": "Halbmarathon"})
